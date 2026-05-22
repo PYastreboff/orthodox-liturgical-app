@@ -1,16 +1,25 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useMemo, useState } from 'react';
-import { useTheme } from '@react-navigation/native';
+import { useCallback, useMemo, useState } from 'react';
+import { useFocusEffect, useTheme } from '@react-navigation/native';
 
 import { CalendarKindBadge } from '../../src/components/CalendarKindBadge';
 import { CollapsibleSection } from '../../src/components/CollapsibleSection';
+import { SectionTitleRow } from '../../src/components/SectionTitleRow';
 import { DayHero } from '../../src/components/DayHero';
 import { TypikonSymbol } from '../../src/components/TypikonSymbol';
 import { useOrthocalDay } from '../../src/hooks/useOrthocalDay';
 import { dateToJulianPlainDate } from '../../src/lib/calendar/julianGregorian';
 import { formatGregorianReadableFromDate, formatJulianReadable } from '../../src/lib/calendar/formatDate';
 import { getLiturgicalAppearanceForLocalDate } from '../../src/lib/calendar/dayAppearance';
+import { startOfLocalDay } from '../../src/lib/calendar/localDate';
+import {
+  getDateDisplayFlags,
+  numericDateHint,
+  orderedDateLines,
+} from '../../src/lib/calendar/dateDisplay';
 import { buildDayDashboard } from '../../src/lib/liturgical/dayDashboard';
+import { useDayNavigation } from '../../src/state/DayNavigationContext';
+import { usePreferences } from '../../src/state/PreferencesContext';
 import { colors } from '../../src/theme/tokens';
 
 function pad2(n: number) {
@@ -37,10 +46,6 @@ const ROLE_OPTIONS: { id: ClergyRole; label: string }[] = [
   { id: 'bishop', label: 'Bishop' },
 ];
 
-function startOfLocalDay(d: Date) {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-}
-
 function addDays(d: Date, days: number) {
   const next = new Date(d);
   next.setDate(next.getDate() + days);
@@ -49,8 +54,17 @@ function addDays(d: Date, days: number) {
 
 export default function TodayScreen() {
   const theme = useTheme();
+  const { consumePendingDay } = useDayNavigation();
+  const { primaryCalendar, showAlternateCalendar } = usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
   const [selectedDate, setSelectedDate] = useState(today);
+
+  useFocusEffect(
+    useCallback(() => {
+      const day = consumePendingDay();
+      if (day) setSelectedDate(day);
+    }, [consumePendingDay]),
+  );
   const [role, setRole] = useState<ClergyRole>('priest');
   const [collapsed, setCollapsed] = useState<Record<CollapsibleKey, boolean>>({
     date: false,
@@ -110,6 +124,28 @@ export default function TodayScreen() {
   })();
   const roleTitle = ROLE_OPTIONS.find((r) => r.id === role)?.label ?? 'Priest';
 
+  const dateDisplay = useMemo(
+    () => getDateDisplayFlags({ primaryCalendar, showAlternateCalendar }),
+    [primaryCalendar, showAlternateCalendar],
+  );
+  const heroDateLines = useMemo(
+    () => orderedDateLines(dateDisplay, julianDateLabel, gregorianDateLabel),
+    [dateDisplay, gregorianDateLabel, julianDateLabel],
+  );
+  const primaryFastLabel =
+    primaryCalendar === 'julian' ? dashboard.julianFastLabel : dashboard.gregorianFastLabel;
+  const alternateFastLabel =
+    primaryCalendar === 'julian' ? dashboard.gregorianFastLabel : dashboard.julianFastLabel;
+  const numericHint = useMemo(
+    () =>
+      numericDateHint(
+        dateDisplay,
+        formatDateParts(liturgicalJulian.year, liturgicalJulian.month, liturgicalJulian.day),
+        gregorianLine,
+      ),
+    [dateDisplay, gregorianLine, liturgicalJulian.day, liturgicalJulian.month, liturgicalJulian.year],
+  );
+
   const canGoToToday = selectedDate.getTime() !== today.getTime();
   const toggleSection = (key: CollapsibleKey) => {
     setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -122,11 +158,10 @@ export default function TodayScreen() {
       <DayHero
         appearance={appearance}
         dayTitle={dashboard.dayTitle}
-        julianDateLabel={julianDateLabel}
-        gregorianDateLabel={gregorianDateLabel}
+        dateLines={heroDateLines}
         toneLabel={dashboard.toneLabel}
         feastRank={dashboard.feastRank}
-        fastLabel={dashboard.julianFastLabel}
+        fastLabel={primaryFastLabel}
         canGoToToday={canGoToToday}
         onPrevious={() => setSelectedDate((d) => addDays(d, -1))}
         onNext={() => setSelectedDate((d) => addDays(d, 1))}
@@ -142,7 +177,12 @@ export default function TodayScreen() {
       ) : null}
 
       <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Serving role</Text>
+        <SectionTitleRow
+          title="Serving Role"
+          icon="serving-role"
+          color={theme.colors.text}
+          marginBottom={10}
+        />
         <View style={styles.roleRow}>
           {ROLE_OPTIONS.map((option) => {
             const active = option.id === role;
@@ -168,42 +208,39 @@ export default function TodayScreen() {
 
       <CollapsibleSection
         title="Date & Liturgical Day"
+        icon="date"
         expanded={!collapsed.date}
         onToggle={() => toggleSection('date')}
         themeColors={theme.colors}
       >
-        <View style={styles.rowBetween}>
-          <View style={styles.dateTextWrap}>
-            <CalendarKindBadge kind="julian" align="left" />
-            <Text style={[styles.cardValue, styles.compactValue, { color: theme.colors.text }]}>
-              {julianDateLabel}
+        {heroDateLines.map((line, index) => (
+          <View
+            key={line.kind}
+            style={[styles.rowBetween, index > 0 ? styles.dateRowGap : null]}
+          >
+            <View style={styles.dateTextWrap}>
+              <CalendarKindBadge kind={line.kind} align="left" />
+              <Text style={[styles.cardValue, styles.compactValue, { color: theme.colors.text }]}>
+                {line.label}
+              </Text>
+            </View>
+            <Text style={[styles.pill, styles.dateFastPill]}>
+              {index === 0 ? primaryFastLabel : alternateFastLabel}
             </Text>
           </View>
-          <Text style={[styles.pill, styles.dateFastPill]}>{dashboard.julianFastLabel}</Text>
-        </View>
-        <View style={styles.rowBetween}>
-          <View style={styles.dateTextWrap}>
-            <CalendarKindBadge kind="gregorian" align="left" />
-            <Text style={[styles.cardValue, styles.compactValue, styles.gregorianDateRow, { color: theme.colors.text }]}>
-              {gregorianDateLabel}
-            </Text>
-          </View>
-          <Text style={[styles.pill, styles.dateFastPill]}>{dashboard.gregorianFastLabel}</Text>
-        </View>
+        ))}
         <View style={styles.serviceRankRow}>
           <TypikonSymbol feastRank={dashboard.feastRank} variant="medium" />
           <Text style={[styles.body, styles.serviceRankLabel, { color: theme.colors.text }]}>
             {dashboard.feastRank.shortName}
           </Text>
         </View>
-        <Text style={styles.cardHint}>
-          Numeric: Julian {formatDateParts(liturgicalJulian.year, liturgicalJulian.month, liturgicalJulian.day)} ·
-          Civil {gregorianLine}
-        </Text>
+        <Text style={styles.cardHint}>{numericHint}</Text>
       </CollapsibleSection>
 
       <CollapsibleSection
         title="Commemorations & Feasts"
+        icon="commemorations"
         expanded={!collapsed.commemorations}
         onToggle={() => toggleSection('commemorations')}
         themeColors={theme.colors}
@@ -229,6 +266,7 @@ export default function TodayScreen() {
 
       <CollapsibleSection
         title="Today's Fasting Information"
+        icon="fasting"
         expanded={!collapsed.fasting}
         onToggle={() => toggleSection('fasting')}
         themeColors={theme.colors}
@@ -243,6 +281,7 @@ export default function TodayScreen() {
 
       <CollapsibleSection
         title="Vestments"
+        icon="vestments"
         expanded={!collapsed.vestments}
         onToggle={() => toggleSection('vestments')}
         themeColors={theme.colors}
@@ -269,6 +308,7 @@ export default function TodayScreen() {
 
       <CollapsibleSection
         title="Readings & Liturgical Texts"
+        icon="readings"
         expanded={!collapsed.readings}
         onToggle={() => toggleSection('readings')}
         themeColors={theme.colors}
@@ -308,6 +348,7 @@ export default function TodayScreen() {
 
       <CollapsibleSection
         title="Data pipeline"
+        icon="pipeline"
         expanded={!collapsed.pipeline}
         onToggle={() => toggleSection('pipeline')}
         themeColors={theme.colors}
@@ -395,10 +436,8 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     alignItems: 'flex-start',
   },
-  gregorianDateRow: {
-    fontSize: 15,
-    fontWeight: '500',
-    opacity: 0.9,
+  dateRowGap: {
+    marginTop: 10,
   },
   dateFastPill: {
     backgroundColor: '#5c3b2e',

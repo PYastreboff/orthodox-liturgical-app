@@ -1,39 +1,161 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
+
+import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
 
 export type TextLanguage = 'en' | 'chu';
+export type ColorSchemePreference = 'system' | 'light' | 'dark';
+export type { PrimaryCalendar };
+
+type StoredPreferences = {
+  showGregorianAlongside?: boolean;
+  showAlternateCalendar?: boolean;
+  primaryCalendar?: PrimaryCalendar;
+  defaultTextLang?: TextLanguage;
+  colorSchemePreference?: ColorSchemePreference;
+};
 
 type Preferences = {
-  showGregorianAlongside: boolean;
+  /** Show the non-primary calendar next to the primary one. */
+  showAlternateCalendar: boolean;
+  primaryCalendar: PrimaryCalendar;
   defaultTextLang: TextLanguage;
+  colorSchemePreference: ColorSchemePreference;
+  preferencesReady: boolean;
 };
 
 type PreferencesContextValue = Preferences & {
-  setShowGregorianAlongside: (value: boolean) => void;
+  setShowAlternateCalendar: (value: boolean) => void;
+  setPrimaryCalendar: (value: PrimaryCalendar) => void;
   setDefaultTextLang: (value: TextLanguage) => void;
+  setColorSchemePreference: (value: ColorSchemePreference) => void;
 };
+
+const STORAGE_KEY = '@orthodaily/preferences/v1';
 
 const PreferencesContext = createContext<PreferencesContextValue | null>(null);
 
 export function PreferencesProvider({ children }: { children: ReactNode }) {
-  const [showGregorianAlongside, setShowGregorianAlongsideState] = useState(true);
+  const [showAlternateCalendar, setShowAlternateCalendarState] = useState(false);
+  const [primaryCalendar, setPrimaryCalendarState] = useState<PrimaryCalendar>('julian');
   const [defaultTextLang, setDefaultTextLangState] = useState<TextLanguage>('en');
+  const [colorSchemePreference, setColorSchemePreferenceState] =
+    useState<ColorSchemePreference>('system');
+  const [preferencesReady, setPreferencesReady] = useState(false);
 
-  const setShowGregorianAlongside = useCallback((value: boolean) => {
-    setShowGregorianAlongsideState(value);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(STORAGE_KEY);
+        if (raw && !cancelled) {
+          const parsed = JSON.parse(raw) as StoredPreferences;
+          if (typeof parsed.showAlternateCalendar === 'boolean') {
+            setShowAlternateCalendarState(parsed.showAlternateCalendar);
+          } else if (typeof parsed.showGregorianAlongside === 'boolean') {
+            setShowAlternateCalendarState(parsed.showGregorianAlongside);
+          }
+          if (parsed.primaryCalendar === 'julian' || parsed.primaryCalendar === 'gregorian') {
+            setPrimaryCalendarState(parsed.primaryCalendar);
+          }
+          if (parsed.defaultTextLang === 'en' || parsed.defaultTextLang === 'chu') {
+            setDefaultTextLangState(parsed.defaultTextLang);
+          }
+          if (
+            parsed.colorSchemePreference === 'system' ||
+            parsed.colorSchemePreference === 'light' ||
+            parsed.colorSchemePreference === 'dark'
+          ) {
+            setColorSchemePreferenceState(parsed.colorSchemePreference);
+          }
+        }
+      } catch {
+        // Keep defaults if storage is unavailable.
+      } finally {
+        if (!cancelled) setPreferencesReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const setDefaultTextLang = useCallback((value: TextLanguage) => {
-    setDefaultTextLangState(value);
-  }, []);
+  const persist = useCallback(
+    async (next: StoredPreferences) => {
+      try {
+        const raw = await AsyncStorage.getItem(STORAGE_KEY);
+        const prev = raw ? (JSON.parse(raw) as StoredPreferences) : {};
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ ...prev, ...next }));
+      } catch {
+        // Ignore write failures.
+      }
+    },
+    [],
+  );
+
+  const setShowAlternateCalendar = useCallback(
+    (value: boolean) => {
+      setShowAlternateCalendarState(value);
+      void persist({ showAlternateCalendar: value });
+    },
+    [persist],
+  );
+
+  const setPrimaryCalendar = useCallback(
+    (value: PrimaryCalendar) => {
+      setPrimaryCalendarState(value);
+      void persist({ primaryCalendar: value });
+    },
+    [persist],
+  );
+
+  const setDefaultTextLang = useCallback(
+    (value: TextLanguage) => {
+      setDefaultTextLangState(value);
+      void persist({ defaultTextLang: value });
+    },
+    [persist],
+  );
+
+  const setColorSchemePreference = useCallback(
+    (value: ColorSchemePreference) => {
+      setColorSchemePreferenceState(value);
+      void persist({ colorSchemePreference: value });
+    },
+    [persist],
+  );
 
   const value = useMemo(
     () => ({
-      showGregorianAlongside,
+      showAlternateCalendar,
+      primaryCalendar,
       defaultTextLang,
-      setShowGregorianAlongside,
+      colorSchemePreference,
+      preferencesReady,
+      setShowAlternateCalendar,
+      setPrimaryCalendar,
       setDefaultTextLang,
+      setColorSchemePreference,
     }),
-    [defaultTextLang, setDefaultTextLang, setShowGregorianAlongside, showGregorianAlongside],
+    [
+      colorSchemePreference,
+      defaultTextLang,
+      preferencesReady,
+      primaryCalendar,
+      setColorSchemePreference,
+      setDefaultTextLang,
+      setPrimaryCalendar,
+      setShowAlternateCalendar,
+      showAlternateCalendar,
+    ],
   );
 
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;

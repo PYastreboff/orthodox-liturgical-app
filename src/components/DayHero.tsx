@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
+import type { OrderedDateLine } from '../lib/calendar/dateDisplay';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { CalendarKindBadge } from './CalendarKindBadge';
 import { TypikonSymbol } from './TypikonSymbol';
@@ -9,8 +10,7 @@ import { TypikonSymbol } from './TypikonSymbol';
 type Props = {
   appearance: LiturgicalDayAppearance;
   dayTitle: string;
-  julianDateLabel: string;
-  gregorianDateLabel: string;
+  dateLines: OrderedDateLine[];
   toneLabel: string;
   feastRank: FeastRankDisplay;
   fastLabel: string;
@@ -23,8 +23,7 @@ type Props = {
 export function DayHero({
   appearance,
   dayTitle,
-  julianDateLabel,
-  gregorianDateLabel,
+  dateLines,
   toneLabel,
   feastRank,
   fastLabel,
@@ -56,14 +55,22 @@ export function DayHero({
         </Pressable>
 
         <View style={styles.dateBlock}>
-          <View style={styles.dateLine}>
-            <CalendarKindBadge kind="julian" variant="hero" />
-            <Text style={[styles.julianDate, { color: fg }]}>{julianDateLabel}</Text>
-          </View>
-          <View style={[styles.dateLine, styles.dateLineGregorian]}>
-            <CalendarKindBadge kind="gregorian" variant="hero" />
-            <Text style={[styles.gregorianDate, { color: fg }]}>{gregorianDateLabel}</Text>
-          </View>
+          {dateLines.map((line, index) => (
+            <View
+              key={line.kind}
+              style={[styles.dateLine, index > 0 ? styles.dateLineSecondary : null]}
+            >
+              <CalendarKindBadge kind={line.kind} variant="hero" />
+              <Text
+                style={[
+                  index === 0 ? styles.primaryDate : styles.secondaryDate,
+                  { color: fg },
+                ]}
+              >
+                {line.label}
+              </Text>
+            </View>
+          ))}
         </View>
 
         <Pressable
@@ -159,16 +166,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
-  dateLineGregorian: {
+  dateLineSecondary: {
     marginTop: 8,
   },
-  julianDate: {
+  primaryDate: {
     fontSize: 17,
     fontWeight: '600',
     textAlign: 'center',
     lineHeight: 22,
   },
-  gregorianDate: {
+  secondaryDate: {
     fontSize: 13,
     textAlign: 'center',
     marginTop: 4,

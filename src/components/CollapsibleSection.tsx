@@ -1,5 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { SectionTitleRow } from './SectionTitleRow';
+import type { SectionIconName } from './SectionIcon';
 import Animated, {
   Easing,
   interpolate,
@@ -16,13 +18,21 @@ const COLLAPSE_TIMING = {
 
 type Props = {
   title: string;
+  icon: SectionIconName;
   expanded: boolean;
   onToggle: () => void;
   children: ReactNode;
   themeColors: { card: string; border: string; text: string };
 };
 
-export function CollapsibleSection({ title, expanded, onToggle, children, themeColors }: Props) {
+export function CollapsibleSection({
+  title,
+  icon,
+  expanded,
+  onToggle,
+  children,
+  themeColors,
+}: Props) {
   const progress = useSharedValue(expanded ? 1 : 0);
 
   useEffect(() => {
@@ -46,7 +56,7 @@ export function CollapsibleSection({ title, expanded, onToggle, children, themeC
   return (
     <View style={[styles.card, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
       <Pressable style={styles.sectionHeaderRow} onPress={onToggle}>
-        <Text style={[styles.cardLabel, { color: themeColors.text }]}>{title}</Text>
+        <SectionTitleRow title={title} icon={icon} color={themeColors.text} />
         <Animated.View style={[styles.sectionChevronWrap, chevronStyle]}>
           <Text style={[styles.sectionChevron, { color: themeColors.text }]}>▾</Text>
         </Animated.View>
@@ -85,10 +95,5 @@ const styles = StyleSheet.create({
   },
   sectionBody: {
     overflow: 'hidden',
-  },
-  cardLabel: {
-    fontSize: 20,
-    letterSpacing: 0.2,
-    fontWeight: '700',
   },
 });

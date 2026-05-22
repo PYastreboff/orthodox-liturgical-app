@@ -11,22 +11,19 @@ type Props = {
   focused?: boolean;
 };
 
-const ICON_SIZE = 24;
+export const TAB_ICON_SIZE = 22;
+const ICON_SIZE = TAB_ICON_SIZE;
 
 export function TabBarIcon({ name, color, size = ICON_SIZE, focused }: Props) {
   switch (name) {
     case 'today':
       return (
-        <MaterialCommunityIcons
-          name={focused ? 'book-cross' : 'book-open-page-variant-outline'}
-          size={size}
-          color={color}
-        />
+        <MaterialCommunityIcons name="book-cross" size={size} color={color} />
       );
     case 'calendar':
       return <Feather name="calendar" size={size} color={color} />;
     case 'settings':
-      return <Feather name="sliders" size={size} color={color} />;
+      return <Feather name="settings" size={size} color={color} />;
     default:
       return <Feather name="circle" size={size} color={color} />;
   }
@@ -35,7 +32,7 @@ export function TabBarIcon({ name, color, size = ICON_SIZE, focused }: Props) {
 export function tabBarIconOptions(name: TabName) {
   return {
     tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-      <TabBarIcon name={name} color={color} focused={focused} />
+      <TabBarIcon name={name} color={color} size={TAB_ICON_SIZE} focused={focused} />
     ),
   };
 }
