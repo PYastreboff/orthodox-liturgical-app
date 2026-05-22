@@ -1,11 +1,14 @@
 import { StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, type SharedValue } from 'react-native-reanimated';
 
+import { HoverAccessible } from '../HoverAccessible';
+
 type Props = {
   index: number;
   progress: SharedValue<number>;
   size?: number;
   inactiveColor: string;
+  accessibilityLabel: string;
   renderIcon: (color: string) => React.ReactNode;
 };
 
@@ -15,6 +18,7 @@ export function AnimatedSegmentIcon({
   progress,
   size = 18,
   inactiveColor,
+  accessibilityLabel,
   renderIcon,
 }: Props) {
   const activeOpacity = useAnimatedStyle(() => {
@@ -30,14 +34,14 @@ export function AnimatedSegmentIcon({
   });
 
   return (
-    <View style={[styles.stack, { width: size, height: size }]}>
+    <HoverAccessible label={accessibilityLabel} style={[styles.stack, { width: size, height: size }]}>
       <Animated.View style={[styles.layer, inactiveOpacity]}>
         {renderIcon(inactiveColor)}
       </Animated.View>
       <Animated.View style={[styles.layer, activeOpacity]}>
         {renderIcon('#ffffff')}
       </Animated.View>
-    </View>
+    </HoverAccessible>
   );
 }
 

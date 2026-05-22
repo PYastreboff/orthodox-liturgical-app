@@ -21,6 +21,7 @@ type StoredPreferences = {
   primaryCalendar?: PrimaryCalendar;
   defaultTextLang?: TextLanguage;
   colorSchemePreference?: ColorSchemePreference;
+  showVestmentGradient?: boolean;
 };
 
 type Preferences = {
@@ -29,6 +30,8 @@ type Preferences = {
   primaryCalendar: PrimaryCalendar;
   defaultTextLang: TextLanguage;
   colorSchemePreference: ColorSchemePreference;
+  /** Subtle liturgical-colour gradient over the black Today background. */
+  showVestmentGradient: boolean;
   preferencesReady: boolean;
 };
 
@@ -37,6 +40,7 @@ type PreferencesContextValue = Preferences & {
   setPrimaryCalendar: (value: PrimaryCalendar) => void;
   setDefaultTextLang: (value: TextLanguage) => void;
   setColorSchemePreference: (value: ColorSchemePreference) => void;
+  setShowVestmentGradient: (value: boolean) => void;
 };
 
 const STORAGE_KEY = '@orthodaily/preferences/v1';
@@ -49,6 +53,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [defaultTextLang, setDefaultTextLangState] = useState<TextLanguage>('en');
   const [colorSchemePreference, setColorSchemePreferenceState] =
     useState<ColorSchemePreference>('system');
+  const [showVestmentGradient, setShowVestmentGradientState] = useState(false);
   const [preferencesReady, setPreferencesReady] = useState(false);
 
   useEffect(() => {
@@ -75,6 +80,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
             parsed.colorSchemePreference === 'dark'
           ) {
             setColorSchemePreferenceState(parsed.colorSchemePreference);
+          }
+          if (typeof parsed.showVestmentGradient === 'boolean') {
+            setShowVestmentGradientState(parsed.showVestmentGradient);
           }
         }
       } catch {
@@ -133,17 +141,27 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     [persist],
   );
 
+  const setShowVestmentGradient = useCallback(
+    (value: boolean) => {
+      setShowVestmentGradientState(value);
+      void persist({ showVestmentGradient: value });
+    },
+    [persist],
+  );
+
   const value = useMemo(
     () => ({
       showAlternateCalendar,
       primaryCalendar,
       defaultTextLang,
       colorSchemePreference,
+      showVestmentGradient,
       preferencesReady,
       setShowAlternateCalendar,
       setPrimaryCalendar,
       setDefaultTextLang,
       setColorSchemePreference,
+      setShowVestmentGradient,
     }),
     [
       colorSchemePreference,
@@ -154,7 +172,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setDefaultTextLang,
       setPrimaryCalendar,
       setShowAlternateCalendar,
+      setShowVestmentGradient,
       showAlternateCalendar,
+      showVestmentGradient,
     ],
   );
 

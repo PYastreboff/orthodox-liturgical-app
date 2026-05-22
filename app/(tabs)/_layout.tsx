@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppBrandHeader } from '../../src/components/AppBrandHeader';
 import { TAB_ICON_SIZE, tabBarIconOptions } from '../../src/components/TabBarIcon';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
+import { PAGE_BACKGROUND_BLACK } from '../../src/lib/liturgical/vestmentGradient';
 import { colors } from '../../src/theme/tokens';
 
 const TAB_BAR_CONTENT_HEIGHT = 52;
@@ -25,20 +26,28 @@ export default function TabsLayout() {
           backgroundColor: isDark ? colors.darkSurface : colors.parchment,
           borderTopColor: isDark ? colors.darkBorder : colors.border,
           height: tabBarHeight,
-          paddingTop: 6,
-          paddingBottom: bottomInset > 0 ? bottomInset : Platform.OS === 'android' ? 10 : 6,
+          paddingTop: 0,
+          paddingBottom: bottomInset > 0 ? bottomInset : Platform.OS === 'android' ? 8 : 0,
         },
         tabBarItemStyle: {
-          paddingVertical: 4,
+          height: TAB_BAR_CONTENT_HEIGHT,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingVertical: 0,
         },
         tabBarIconStyle: {
-          marginBottom: 2,
+          marginTop: 0,
+          marginBottom: 0,
+          height: TAB_ICON_SIZE,
+          width: TAB_ICON_SIZE,
         },
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '500',
-          marginTop: 0,
-          marginBottom: Platform.OS === 'ios' ? 2 : 4,
+          marginTop: 4,
+          marginBottom: 0,
+          includeFontPadding: false,
+          textAlignVertical: 'center',
         },
         tabBarActiveTintColor: isDark ? colors.tabActiveDark : colors.tabActiveLight,
         tabBarInactiveTintColor: isDark ? '#8a8580' : colors.muted,
@@ -50,16 +59,27 @@ export default function TabsLayout() {
           title: 'OrthoDaily',
           tabBarLabel: 'Today',
           headerTitle: () => <AppBrandHeader />,
+          sceneStyle: { backgroundColor: PAGE_BACKGROUND_BLACK },
           ...tabBarIconOptions('today'),
         }}
       />
       <Tabs.Screen
         name="calendar"
-        options={{ title: 'Calendar', tabBarLabel: 'Calendar', ...tabBarIconOptions('calendar') }}
+        options={{
+          title: 'OrthoDaily',
+          headerTitle: 'Calendar',
+          tabBarLabel: 'Calendar',
+          ...tabBarIconOptions('calendar'),
+        }}
       />
       <Tabs.Screen
         name="settings"
-        options={{ title: 'Settings', tabBarLabel: 'Settings', ...tabBarIconOptions('settings') }}
+        options={{
+          title: 'OrthoDaily',
+          headerTitle: 'Settings',
+          tabBarLabel: 'Settings',
+          ...tabBarIconOptions('settings'),
+        }}
       />
     </Tabs>
   );

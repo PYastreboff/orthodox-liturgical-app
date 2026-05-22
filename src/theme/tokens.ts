@@ -8,6 +8,8 @@ export const colors = {
   muted: '#6f6a64',
   border: '#e2d8ca',
   accentWine: '#6b2d3c',
+  /** Major feast outline on the month grid — brighter than accentWine. */
+  feastBorder: '#d63a52',
   accentGold: '#b08d57',
   accentTheotokos: '#2f4a6f',
   /** Tab bar active — high contrast on parchment / dark surfaces */

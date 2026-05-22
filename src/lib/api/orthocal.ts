@@ -102,6 +102,9 @@ export function fastingFoodsForLevel(fastLevel: number, fallbackKey: string): st
   if (fallbackKey.includes('lent')) {
     return FAST_FOODS_BY_LEVEL[5];
   }
+  if (fallbackKey === 'wednesday_fast' || fallbackKey === 'friday_fast') {
+    return FAST_FOODS_BY_LEVEL[5];
+  }
   if (fallbackKey.includes('fast')) {
     return 'Plant-based foods; wine and oil may be allowed depending on the day.';
   }
@@ -121,7 +124,7 @@ export type LiturgicalReadingView = {
   source?: string;
 };
 
-function passageToParagraphs(passage: OrthocalVerse[]): LiturgicalVerseLine[][] {
+export function passageToParagraphs(passage: OrthocalVerse[]): LiturgicalVerseLine[][] {
   const paragraphs: LiturgicalVerseLine[][] = [];
   let current: LiturgicalVerseLine[] = [];
 

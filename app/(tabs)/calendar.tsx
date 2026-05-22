@@ -36,7 +36,7 @@ export default function CalendarScreen() {
 
   const subtitle = useMemo(
     () =>
-      'Each cell uses the Julian liturgical date for that civil day. Colours follow Pascha, major feasts, and fasts (approximate until your SQLite pack supplies ranks).',
+      'Each cell uses the Julian liturgical date for that civil day. Colours follow Pascha, major feasts, fasting seasons, and Wednesday & Friday fasts (except Bright Week).',
     [],
   );
 

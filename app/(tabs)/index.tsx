@@ -7,6 +7,7 @@ import { CollapsibleSection } from '../../src/components/CollapsibleSection';
 import { SectionTitleRow } from '../../src/components/SectionTitleRow';
 import { DayHero } from '../../src/components/DayHero';
 import { TypikonSymbol } from '../../src/components/TypikonSymbol';
+import { VestmentIcon } from '../../src/components/VestmentIcon';
 import { useOrthocalDay } from '../../src/hooks/useOrthocalDay';
 import { dateToJulianPlainDate } from '../../src/lib/calendar/julianGregorian';
 import { formatGregorianReadableFromDate, formatJulianReadable } from '../../src/lib/calendar/formatDate';
@@ -17,7 +18,12 @@ import {
   numericDateHint,
   orderedDateLines,
 } from '../../src/lib/calendar/dateDisplay';
+import { LiturgicalTextSectionBlock } from '../../src/components/LiturgicalPassageBlock';
+import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
+import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
+import { useLiturgicalTexts } from '../../src/hooks/useLiturgicalTexts';
 import { buildDayDashboard } from '../../src/lib/liturgical/dayDashboard';
+import { vestmentGuidanceForRole } from '../../src/lib/liturgical/vestments';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
 import { colors } from '../../src/theme/tokens';
@@ -31,7 +37,7 @@ function formatDateParts(y: number, m: number, d: number) {
   return `${y}-${pad2(m)}-${pad2(d)}`;
 }
 
-type ClergyRole = 'altar_server' | 'deacon' | 'priest' | 'bishop';
+type ClergyRole = 'layperson' | 'altar_server' | 'deacon' | 'priest' | 'bishop';
 type CollapsibleKey =
   | 'date'
   | 'commemorations'
@@ -41,6 +47,7 @@ type CollapsibleKey =
   | 'pipeline';
 
 const ROLE_OPTIONS: { id: ClergyRole; label: string }[] = [
+  { id: 'layperson', label: 'Layperson' },
   { id: 'altar_server', label: 'Altar server' },
   { id: 'deacon', label: 'Deacon' },
   { id: 'priest', label: 'Priest' },
@@ -58,7 +65,8 @@ export default function TodayScreen() {
   const isDark = useResolvedColorScheme() === 'dark';
   const verseNumberColor = isDark ? '#a39e98' : colors.muted;
   const { consumePendingDay } = useDayNavigation();
-  const { primaryCalendar, showAlternateCalendar } = usePreferences();
+  const { primaryCalendar, showAlternateCalendar, showVestmentGradient, defaultTextLang, setDefaultTextLang } =
+    usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
   const [selectedDate, setSelectedDate] = useState(today);
 
@@ -106,26 +114,20 @@ export default function TodayScreen() {
     () => buildDayDashboard(julianDay, gregorianDay, appearance),
     [appearance, gregorianDay, julianDay],
   );
+  const { sections: liturgicalTextSections, loadingSlavonic } = useLiturgicalTexts(
+    julianDay,
+    defaultTextLang,
+  );
 
   const julianDateLabel = useMemo(() => formatJulianReadable(liturgicalJulian, true), [liturgicalJulian]);
   const gregorianDateLabel = useMemo(
     () => formatGregorianReadableFromDate(selectedDate),
     [selectedDate],
   );
-  const baseVestment = appearance.label.includes('Theophany')
-    ? 'Blue'
-    : appearance.label.includes('Pascha') || appearance.label.includes('Sunday')
-      ? 'Gold'
-      : appearance.key.includes('lent') || appearance.key.includes('fast')
-        ? 'Dark'
-        : 'Gold';
-  const roleVestment = (() => {
-    if (role === 'bishop') return `${baseVestment} (hierarchical set)`;
-    if (role === 'deacon') return `${baseVestment} (sticharion/orarion)`;
-    if (role === 'altar_server') return `${baseVestment} (sticharion)`;
-    return `${baseVestment} (epitrachelion/phelonion)`;
-  })();
-  const roleTitle = ROLE_OPTIONS.find((r) => r.id === role)?.label ?? 'Priest';
+  const vestmentLines = useMemo(
+    () => vestmentGuidanceForRole(role, appearance),
+    [role, appearance],
+  );
 
   const dateDisplay = useMemo(
     () => getDateDisplayFlags({ primaryCalendar, showAlternateCalendar }),
@@ -155,8 +157,10 @@ export default function TodayScreen() {
   };
 
   return (
+    <VestmentPageBackground appearance={appearance} gradientEnabled={showVestmentGradient}>
     <ScrollView
-      contentContainerStyle={[styles.container, { backgroundColor: theme.colors.background }]}
+      style={styles.scroll}
+      contentContainerStyle={styles.container}
     >
       <DayHero
         appearance={appearance}
@@ -222,8 +226,8 @@ export default function TodayScreen() {
             style={[styles.rowBetween, index > 0 ? styles.dateRowGap : null]}
           >
             <View style={styles.dateTextWrap}>
-              <CalendarKindBadge kind={line.kind} align="left" />
-              <Text style={[styles.cardValue, styles.compactValue, { color: theme.colors.text }]}>
+              <CalendarKindBadge kind={line.kind} variant="date" align="left" isDark={isDark} />
+              <Text style={[styles.dateLineValue, { color: theme.colors.text }]}>
                 {line.label}
               </Text>
             </View>
@@ -233,8 +237,8 @@ export default function TodayScreen() {
           </View>
         ))}
         <View style={styles.serviceRankRow}>
-          <TypikonSymbol feastRank={dashboard.feastRank} variant="medium" />
-          <Text style={[styles.body, styles.serviceRankLabel, { color: theme.colors.text }]}>
+          <TypikonSymbol feastRank={dashboard.feastRank} variant="chip" />
+          <Text style={[styles.serviceRankLabel, { color: theme.colors.text }]}>
             {dashboard.feastRank.shortName}
           </Text>
         </View>
@@ -268,7 +272,7 @@ export default function TodayScreen() {
       </CollapsibleSection>
 
       <CollapsibleSection
-        title="Today's Fasting Information"
+        title="Fasting Information"
         icon="fasting"
         expanded={!collapsed.fasting}
         onToggle={() => toggleSection('fasting')}
@@ -282,85 +286,68 @@ export default function TodayScreen() {
         <Text style={styles.cardHint}>{dashboard.fastingNote}</Text>
       </CollapsibleSection>
 
-      <CollapsibleSection
-        title="Vestments"
-        icon="vestments"
-        expanded={!collapsed.vestments}
-        onToggle={() => toggleSection('vestments')}
-        themeColors={theme.colors}
-      >
-        <Text style={[styles.sectionHeading, { color: theme.colors.text, marginTop: 0 }]}>
-          {roleTitle} guidance
-        </Text>
-        <View style={styles.rowBetween}>
-          <Text style={[styles.body, { color: theme.colors.text }]}>Outer vestments</Text>
-          <Text style={[styles.pill, { backgroundColor: colors.accentWine, color: '#fff' }]}>{roleVestment}</Text>
-        </View>
-        <View style={styles.rowBetween}>
-          <Text style={[styles.body, { color: theme.colors.text }]}>Under-cassock (podryasnik)</Text>
-          <Text style={[styles.pill, { backgroundColor: '#3c4458', color: '#fff' }]}>Black</Text>
-        </View>
-        <View style={styles.rowBetween}>
-          <Text style={[styles.body, { color: theme.colors.text }]}>Ryassa</Text>
-          <Text style={[styles.pill, { backgroundColor: '#1f2433', color: '#fff' }]}>Black</Text>
-        </View>
-        <Text style={styles.cardHint}>
-          Color rationale: Resurrection/Sunday emphasizes bright tones (gold/white), while fasting seasons use dark colors.
-        </Text>
-      </CollapsibleSection>
+      {vestmentLines ? (
+        <CollapsibleSection
+          title="Vestments"
+          icon="vestments"
+          expanded={!collapsed.vestments}
+          onToggle={() => toggleSection('vestments')}
+          themeColors={theme.colors}
+        >
+          {vestmentLines.map((item) => (
+            <View key={item.kind} style={styles.rowBetween}>
+              <View style={styles.vestmentLabelRow}>
+                <VestmentIcon kind={item.kind} color={theme.colors.text} />
+                <Text style={[styles.body, { color: theme.colors.text }]}>{item.label}</Text>
+              </View>
+              <Text
+                style={[
+                  styles.pill,
+                  { backgroundColor: item.pillBg, color: item.pillText },
+                ]}
+              >
+                {item.value}
+              </Text>
+            </View>
+          ))}
+          <Text style={styles.cardHint}>
+            Colours follow this Julian liturgical day (approximate until your typikon pack is loaded).
+          </Text>
+        </CollapsibleSection>
+      ) : null}
 
       <CollapsibleSection
-        title="Readings & Liturgical Texts"
+        title="Liturgical Texts"
         icon="readings"
         expanded={!collapsed.readings}
         onToggle={() => toggleSection('readings')}
         themeColors={theme.colors}
+        headerTrailing={
+          <ReadingsLanguageToggle
+            value={defaultTextLang}
+            onChange={setDefaultTextLang}
+            isDark={isDark}
+          />
+        }
       >
-        <Text style={[styles.sectionHeading, { color: theme.colors.text }]}>Troparion</Text>
-        <Text style={[styles.body, { color: theme.colors.text }]}>{dashboard.troparion}</Text>
-        <Text style={[styles.sectionHeading, styles.topGap, { color: theme.colors.text }]}>Kontakion</Text>
-        <Text style={[styles.body, { color: theme.colors.text }]}>{dashboard.kontakion}</Text>
-        <Text style={[styles.sectionHeading, styles.topGap, { color: theme.colors.text }]}>Readings</Text>
-        {dashboard.readings.length > 0 ? (
-          dashboard.readings.map((r) => (
-            <View key={`${r.label}-${r.citation}`} style={styles.readingBlock}>
-              <Text style={[styles.body, styles.readingHeader, { color: theme.colors.text }]}>
-                {r.label}: {r.citation}
-                {r.source ? ` (${r.source})` : ''}
-              </Text>
-              {r.paragraphs.length > 0 ? (
-                <View style={styles.readingPassage}>
-                  {r.paragraphs.map((paragraph, pi) => (
-                    <Text
-                      key={pi}
-                      style={[
-                        styles.readingParagraph,
-                        { color: theme.colors.text },
-                        pi > 0 ? styles.readingParagraphGap : null,
-                      ]}
-                    >
-                      {paragraph.map((line, li) => (
-                        <Text key={`${line.verse}-${li}`}>
-                          <Text style={[styles.verseNumber, { color: verseNumberColor }]}>
-                            {line.verse}{' '}
-                          </Text>
-                          <Text>
-                            {line.text}
-                            {li < paragraph.length - 1 ? ' ' : ''}
-                          </Text>
-                        </Text>
-                      ))}
-                    </Text>
-                  ))}
-                </View>
-              ) : null}
-            </View>
-          ))
-        ) : (
-          <Text style={[styles.body, { color: theme.colors.text }]}>
-            Epistle: {dashboard.epistleSummary} · Gospel: {dashboard.gospelSummary}
+        {defaultTextLang === 'chu' ? (
+          <Text style={[styles.cardHint, { color: isDark ? '#a39e98' : colors.muted }]}>
+            {loadingSlavonic
+              ? 'Loading Church Slavonic scripture…'
+              : 'Scripture from Elizabeth Bible (1757). Troparia and kontakia stay in English when orthocal has no Slavonic.'}
           </Text>
-        )}
+        ) : null}
+        {liturgicalTextSections.map((section, index) => (
+          <LiturgicalTextSectionBlock
+            key={section.id}
+            title={section.title}
+            items={section.items}
+            textColor={theme.colors.text}
+            verseNumberColor={verseNumberColor}
+            headingColor={theme.colors.text}
+            topGap={index > 0}
+          />
+        ))}
       </CollapsibleSection>
 
       <CollapsibleSection
@@ -371,16 +358,22 @@ export default function TodayScreen() {
         themeColors={theme.colors}
       >
         <Text style={[styles.body, { color: theme.colors.text }]}>
-          Liturgical day, saints, fasting, and readings load from orthocal.info (OCA rubrics). Vestment colours
-          still use the local Pascha-based script until your typikon pack is added. Church Slavonic / English
-          troparia require a separate licensed text source.
+          Liturgical day, saints, fasting, and readings load from orthocal.info (OCA rubrics, KJV scripture).
+          Troparia and kontakia appear when the API includes them or when noted in a saint’s life; otherwise
+          sections show “None for this day.” Vestment colours still use the local Pascha-based script until
+          your typikon pack is added.
         </Text>
       </CollapsibleSection>
     </ScrollView>
+    </VestmentPageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  scroll: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
   container: {
     flexGrow: 1,
     padding: 20,
@@ -395,30 +388,6 @@ const styles = StyleSheet.create({
   statusError: {
     color: colors.accentWine,
     lineHeight: 18,
-  },
-  readingBlock: {
-    marginBottom: 24,
-  },
-  readingHeader: {
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  readingPassage: {
-    marginTop: 4,
-    gap: 6,
-  },
-  readingParagraph: {
-    fontSize: 13,
-    lineHeight: 19,
-  },
-  readingParagraphGap: {
-    marginTop: 6,
-  },
-  verseNumber: {
-    fontSize: 11,
-    fontWeight: '600',
-    lineHeight: 13,
-    transform: [{ translateY: -3 }],
   },
   card: {
     borderRadius: 12,
@@ -456,6 +425,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 4,
   },
+  serviceRankRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 10,
+    marginBottom: 2,
+  },
+  serviceRankLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    lineHeight: 18,
+    opacity: 0.85,
+  },
+  dateLineValue: {
+    fontSize: 17,
+    fontWeight: '600',
+    lineHeight: 22,
+    marginTop: 2,
+  },
   dateTextWrap: {
     flex: 1,
     paddingRight: 8,
@@ -476,15 +464,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     opacity: 0.9,
   },
-  serviceRankRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginTop: 10,
-  },
-  serviceRankLabel: {
-    fontWeight: '600',
-  },
   feastRankRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -502,15 +481,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
-  topGap: {
-    marginTop: 12,
-  },
   rowBetween: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
     gap: 8,
+  },
+  vestmentLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1,
+    paddingRight: 8,
   },
   pill: {
     fontSize: 12,

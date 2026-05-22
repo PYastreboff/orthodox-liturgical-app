@@ -75,6 +75,32 @@ function fromDescription(description: string): FeastRankDisplay | null {
   return null;
 }
 
+/** Screen reader and web hover text for typikon rank icons. */
+export function feastRankAccessibilityLabel(rank: FeastRankDisplay): string {
+  switch (rank.glyph) {
+    case 'no_liturgy':
+      return 'No liturgy';
+    case 'liturgy':
+      return 'Liturgy, unranked service';
+    case 'presanctified':
+      return 'Presanctified Liturgy ranked service';
+    case 'six_stichera':
+      return 'Six stichera ranked service';
+    case 'doxology':
+      return 'Doxology ranked service';
+    case 'polyeleos':
+      return 'Polyeleos ranked service';
+    case 'vigil':
+      return 'Vigil ranked service';
+    case 'great_feast':
+      return `${rank.shortName} ranked service`;
+    case 'ordinary':
+      return 'Ordinary day';
+    default:
+      return rank.shortName;
+  }
+}
+
 export function getFeastRankDisplay(
   feastLevel: number | undefined,
   feastLevelDescription?: string,

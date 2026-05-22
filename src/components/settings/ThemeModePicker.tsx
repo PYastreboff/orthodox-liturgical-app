@@ -57,6 +57,7 @@ function ThemeOptionIcon({
         progress={progress}
         inactiveColor={inactiveColor}
         size={size}
+        accessibilityLabel="Match system light or dark appearance"
         renderIcon={(color) => (
           <MaterialCommunityIcons name="theme-light-dark" size={size} color={color} />
         )}
@@ -71,6 +72,7 @@ function ThemeOptionIcon({
         progress={progress}
         inactiveColor={inactiveColor}
         size={size}
+        accessibilityLabel="Light appearance"
         renderIcon={(color) => <Feather name="sun" size={size} color={color} />}
       />
     );
@@ -82,6 +84,7 @@ function ThemeOptionIcon({
       progress={progress}
       inactiveColor={inactiveColor}
       size={size}
+      accessibilityLabel="Dark appearance"
       renderIcon={(color) => <Feather name="moon" size={size} color={color} />}
     />
   );

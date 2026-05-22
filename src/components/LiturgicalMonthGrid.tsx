@@ -12,14 +12,15 @@ import { useTheme } from '@react-navigation/native';
 import { CalendarKindBadge } from './CalendarKindBadge';
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';
 import { useOrthocalMonth } from '../hooks/useOrthocalMonth';
-import { getCalendarCellStyle } from '../lib/calendar/calendarCellStyle';
+import { getCalendarCellStyle, isMajorFeastAppearance } from '../lib/calendar/calendarCellStyle';
 import { getLiturgicalAppearanceForLocalDate } from '../lib/calendar/dayAppearance';
 import {
   getDateDisplayFlags,
   orderedDateLines,
   type DateDisplayOptions,
 } from '../lib/calendar/dateDisplay';
-import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import { feastRankAccessibilityLabel, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import { HoverAccessible } from './HoverAccessible';
 import { colors } from '../theme/tokens';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -144,6 +145,7 @@ export function LiturgicalMonthGrid({
 
 /** Fixed height so every day in a week row aligns on phone. */
 const CELL_HEIGHT = 96;
+const CELL_BORDER_RADIUS = 10;
 
 function DayCell({
   date,
@@ -173,38 +175,69 @@ function DayCell({
     appearance.gregorianSubtitle,
   );
   const isToday = isSameLocalDay(date, today);
+  const hasFeastBackground = isMajorFeastAppearance(appearance.key);
   const isDark = scheme === 'dark';
   const defaultBorder = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)';
+  const borderWidth = hasFeastBackground ? 3 : isToday ? 2 : StyleSheet.hairlineWidth;
+  const borderColor = hasFeastBackground
+    ? colors.feastBorder
+    : isToday
+      ? colors.accentGold
+      : defaultBorder;
 
   return (
     <Pressable
       onPress={() => onPress?.(date)}
       accessibilityRole="button"
-      accessibilityLabel={
-        feastRank && showTypikon
-          ? `Open liturgical day for ${date.toLocaleDateString()}, ${feastRank.shortName}`
-          : `Open liturgical day for ${date.toLocaleDateString()}`
-      }
+      accessibilityLabel={`Open liturgical day for ${[
+        isToday ? 'today' : null,
+        feastRank && showTypikon ? feastRank.shortName : null,
+        date.toLocaleDateString(),
+      ]
+        .filter(Boolean)
+        .join(', ')}`}
       style={({ pressed }) => [
         styles.cellWrap,
         {
           opacity: pressed ? 0.92 : 1,
-          borderWidth: isToday ? 2 : StyleSheet.hairlineWidth,
-          borderColor: isToday ? colors.accentGold : defaultBorder,
+          backgroundColor: cellStyle.backgroundColor,
+          borderWidth,
+          borderColor,
         },
       ]}
     >
-      <View style={[styles.cellBody, { backgroundColor: cellStyle.backgroundColor }]}>
+      <View style={styles.cellBody}>
         {showTypikon && feastRank ? (
-          <View style={styles.typikonCorner} accessibilityLabel={feastRank.shortName}>
+          <HoverAccessible
+            label={feastRankAccessibilityLabel(feastRank)}
+            hint="Typikon service rank for this day"
+            style={styles.typikonCorner}
+          >
             <TypikonGlyphIcon
               glyph={feastRank.glyph}
               size={typikonSize}
               color={feastRank.tint ?? cellStyle.foreground}
             />
-          </View>
+          </HoverAccessible>
         ) : null}
-        <Text style={[styles.dayNum, { color: cellStyle.foreground }]}>{date.getDate()}</Text>
+        <View style={styles.dayNumWrap}>
+          {isToday ? (
+            <View
+              style={[styles.todayRing, { borderColor: colors.accentGold }]}
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+            />
+          ) : null}
+          <Text
+            style={[
+              styles.dayNum,
+              { color: cellStyle.foreground },
+              isToday ? styles.dayNumToday : null,
+            ]}
+          >
+            {date.getDate()}
+          </Text>
+        </View>
         <Text
           style={[styles.dayLabel, { color: cellStyle.foreground }]}
           numberOfLines={2}
@@ -277,19 +310,17 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-    borderRadius: 10,
+    borderRadius: CELL_BORDER_RADIUS,
     overflow: 'hidden',
   },
   cellBody: {
     flex: 1,
     width: '100%',
-    borderRadius: 10,
     paddingHorizontal: 4,
     paddingTop: 6,
     paddingBottom: 6,
     justifyContent: 'flex-start',
     position: 'relative',
-    overflow: 'hidden',
   },
   typikonCorner: {
     position: 'absolute',
@@ -297,10 +328,29 @@ const styles = StyleSheet.create({
     left: 2,
     zIndex: 1,
   },
+  dayNumWrap: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    marginBottom: 1,
+  },
+  todayRing: {
+    position: 'absolute',
+    top: -3,
+    left: -6,
+    right: -6,
+    bottom: -3,
+    borderRadius: 999,
+    borderWidth: 2,
+  },
   dayNum: {
     fontSize: 18,
     fontWeight: '700',
     textAlign: 'center',
+  },
+  dayNumToday: {
+    fontWeight: '800',
   },
   dayLabel: {
     marginTop: 2,

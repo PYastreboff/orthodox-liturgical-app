@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import Head from 'expo-router/head';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppThemeProvider } from '../src/components/AppThemeProvider';
@@ -7,7 +8,11 @@ import { PreferencesProvider } from '../src/state/PreferencesContext';
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
+    <>
+      <Head>
+        <title>OrthoDaily</title>
+      </Head>
+      <SafeAreaProvider>
       <PreferencesProvider>
         <AppThemeProvider>
           <DayNavigationProvider>
@@ -15,6 +20,7 @@ export default function RootLayout() {
           </DayNavigationProvider>
         </AppThemeProvider>
       </PreferencesProvider>
-    </SafeAreaProvider>
+      </SafeAreaProvider>
+    </>
   );
 }

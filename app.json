@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "OrthoDaily",
+    "description": "OrthoDaily",
     "slug": "orthodox-liturgical-app",
     "version": "0.1.0",
     "orientation": "portrait",
@@ -27,7 +28,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "name": "OrthoDaily",
+      "shortName": "OrthoDaily",
+      "description": "OrthoDaily",
+      "title": "OrthoDaily"
     },
     "plugins": ["expo-router"]
   }

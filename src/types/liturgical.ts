@@ -14,7 +14,7 @@ export type FastingLevel =
   | 'strict'
   | 'fast_free_week';
 
-export type ClergyRole = 'altar_server' | 'deacon' | 'priest' | 'bishop';
+export type ClergyRole = 'layperson' | 'altar_server' | 'deacon' | 'priest' | 'bishop';
 
 export type LiturgicalDaySummary = {
   jurisdictionId: string;

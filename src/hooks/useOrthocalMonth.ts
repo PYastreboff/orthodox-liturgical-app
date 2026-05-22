@@ -4,7 +4,7 @@ import { fetchOrthocalDay } from '../lib/api/orthocal';
 import { dateToJulianPlainDate } from '../lib/calendar/julianGregorian';
 import { toDayIso } from '../lib/calendar/localDate';
 import {
-  feastRankFallbackFromAppearance,
+  feastRankForLiturgicalDay,
   shouldShowCalendarTypikon,
 } from '../lib/liturgical/calendarTypikon';
 import { getLiturgicalAppearanceForLocalDate } from '../lib/calendar/dayAppearance';
@@ -63,10 +63,9 @@ export function useOrthocalMonth(visibleMonth: Date) {
   const feastRankForDate = useMemo(
     () => (date: Date) => {
       const iso = toDayIso(date);
-      const fromApi = apiRanks[iso];
-      if (fromApi) return fromApi;
+      const fromApi = apiRanks[iso] ?? null;
       const appearance = getLiturgicalAppearanceForLocalDate(date);
-      return feastRankFallbackFromAppearance(appearance.key);
+      return feastRankForLiturgicalDay(appearance.key, fromApi);
     },
     [apiRanks],
   );

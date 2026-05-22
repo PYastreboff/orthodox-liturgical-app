@@ -5,7 +5,8 @@ import { colors } from '../theme/tokens';
 const LEGEND = [
   { label: 'Non-fasting', swatch: '#ffffff', border: true },
   { label: 'Fasting', swatch: '#c4c1b8', border: false },
-  { label: 'Feast', swatch: '#f2a0ad', border: false },
+  { label: 'Feast', swatch: '#f2a0ad', feastOutline: true },
+  { label: 'Today', swatch: '#ffffff', todayRing: true },
 ] as const;
 
 type Props = {
@@ -22,7 +23,9 @@ export function CalendarColorLegend({ textColor }: Props) {
             style={[
               styles.swatch,
               { backgroundColor: item.swatch },
-              item.border ? styles.swatchBorder : null,
+              'border' in item && item.border ? styles.swatchBorder : null,
+              'feastOutline' in item && item.feastOutline ? styles.swatchFeastOutline : null,
+              'todayRing' in item && item.todayRing ? styles.swatchTodayRing : null,
             ]}
           />
           <Text style={[styles.label, { color: textColor }]}>{item.label}</Text>
@@ -61,6 +64,15 @@ const styles = StyleSheet.create({
   swatchBorder: {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
+  },
+  swatchFeastOutline: {
+    borderWidth: 2,
+    borderColor: colors.feastBorder,
+  },
+  swatchTodayRing: {
+    borderWidth: 2,
+    borderColor: colors.accentGold,
+    borderRadius: 999,
   },
   label: {
     fontSize: 12,

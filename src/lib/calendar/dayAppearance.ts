@@ -6,6 +6,7 @@ import {
 } from './julianGregorian';
 import { formatGregorianReadable, formatJulianReadable } from './formatDate';
 import { orthodoxPaschaJdn } from './pascha';
+import { isWeeklyFastDay } from './weeklyFast';
 
 export type LiturgicalDayAppearance = {
   /** Liturgical palette key (for debugging / future pack mapping). */
@@ -287,6 +288,17 @@ export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): Litu
       subtitle,
     gregorianSubtitle,
       label: 'Great Lent',
+    };
+  }
+
+  if (isWeeklyFastDay(jdn, wd, y)) {
+    return {
+      key: wd === 3 ? 'wednesday_fast' : 'friday_fast',
+      gradient: ['#dfe3ec', '#9aa8bc'],
+      foreground: '#1e1a16',
+      subtitle,
+      gregorianSubtitle,
+      label: wd === 3 ? 'Wednesday fast' : 'Friday fast',
     };
   }
 

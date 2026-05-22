@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -51,7 +52,7 @@ export function DayHero({
           onPress={onPrevious}
           accessibilityLabel="Previous day"
         >
-          <Text style={[styles.navArrow, { color: fg }]}>‹</Text>
+          <Feather name="chevron-left" size={26} color={fg} />
         </Pressable>
 
         <View style={styles.dateBlock}>
@@ -78,7 +79,7 @@ export function DayHero({
           onPress={onNext}
           accessibilityLabel="Next day"
         >
-          <Text style={[styles.navArrow, { color: fg }]}>›</Text>
+          <Feather name="chevron-right" size={26} color={fg} />
         </Pressable>
       </View>
 
@@ -86,10 +87,7 @@ export function DayHero({
         <View style={styles.chip}>
           <Text style={styles.chipText}>{toneLabel}</Text>
         </View>
-        <View
-          style={styles.chip}
-          accessibilityLabel={`Service rank: ${feastRank.shortName}`}
-        >
+        <View style={styles.chip}>
           <TypikonSymbol
             feastRank={feastRank}
             variant="chip"
@@ -136,6 +134,7 @@ const styles = StyleSheet.create({
   navRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
     marginBottom: 4,
   },
@@ -146,21 +145,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.22)',
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'center',
+    flexShrink: 0,
   },
   navBtnPressed: {
     opacity: 0.75,
-  },
-  navArrow: {
-    fontSize: 32,
-    fontWeight: '300',
-    lineHeight: 36,
-    marginTop: -2,
   },
   dateBlock: {
     flex: 1,
     paddingHorizontal: 8,
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'center',
   },
   dateLine: {
     alignItems: 'center',

@@ -38,7 +38,7 @@ The **Today** screen loads day name, saints, feasts, tone, fasting, and scriptur
 
 **Vestment colours** still come from the local Julian/Pascha script in `src/lib/calendar/dayAppearance.ts` (API does not provide colours).
 
-**Troparion / kontakion** and Church Slavonic texts are not in the API — placeholders until you add a licensed text pack.
+**Liturgical texts** use every `readings[]` entry from the API (KJV scripture, prokeimenon, communion verses when present). Troparia/kontakia are often absent from `readings[]`; the app may surface them from saint’s-life notes when quoted there, otherwise shows *None for this day.* On Today, toggle **English / Church Slavonic**: scripture is loaded from the [getBible](https://getbible.net) **Elizabeth Bible (1757)** by citation; hymns stay in English from orthocal when no Slavonic source exists.
 
 ## Backend / data direction (future)
 

@@ -22,10 +22,10 @@ export default function SettingsScreen() {
     setShowAlternateCalendar,
     primaryCalendar,
     setPrimaryCalendar,
-    defaultTextLang,
-    setDefaultTextLang,
     colorSchemePreference,
     setColorSchemePreference,
+    showVestmentGradient,
+    setShowVestmentGradient,
   } = usePreferences();
 
   const version = Constants.expoConfig?.version ?? '0.1.0';
@@ -54,6 +54,20 @@ export default function SettingsScreen() {
           onChange={setColorSchemePreference}
           isDark={isDark}
         />
+        <SettingsRow
+          label="Background Colour"
+          hint="Faint vestment-colour glow on black (Today only)."
+          isDark={isDark}
+          showDivider={false}
+          trailing={
+            <SettingsSwitch
+              value={showVestmentGradient}
+              onValueChange={setShowVestmentGradient}
+              isDark={isDark}
+              accessibilityLabel="Background Colour on Today tab"
+            />
+          }
+        />
       </SettingsSection>
 
       <SettingsSection
@@ -79,33 +93,8 @@ export default function SettingsScreen() {
               value={showAlternateCalendar}
               onValueChange={setShowAlternateCalendar}
               isDark={isDark}
+              accessibilityLabel={alternateLabel}
             />
-          }
-        />
-      </SettingsSection>
-
-      <SettingsSection
-        title="Liturgical texts"
-        description="Default language order when both are available."
-        isDark={isDark}
-        collapsible
-        defaultExpanded={false}
-      >
-        <SettingsRow
-          label="English first"
-          isDark={isDark}
-          onPress={() => setDefaultTextLang('en')}
-          trailing={
-            <SelectionMark selected={defaultTextLang === 'en'} isDark={isDark} />
-          }
-        />
-        <SettingsRow
-          label="Church Slavonic first"
-          isDark={isDark}
-          showDivider={false}
-          onPress={() => setDefaultTextLang('chu')}
-          trailing={
-            <SelectionMark selected={defaultTextLang === 'chu'} isDark={isDark} />
           }
         />
       </SettingsSection>
@@ -140,24 +129,6 @@ export default function SettingsScreen() {
         </Text>
       </View>
     </ScrollView>
-  );
-}
-
-function SelectionMark({ selected, isDark }: { selected: boolean; isDark: boolean }) {
-  if (!selected) {
-    return (
-      <View
-        style={[
-          styles.radioOuter,
-          { borderColor: isDark ? '#6a6560' : colors.border },
-        ]}
-      />
-    );
-  }
-  return (
-    <View style={[styles.radioOuter, styles.radioOuterActive, { borderColor: colors.accentWine }]}>
-      <View style={styles.radioInner} />
-    </View>
   );
 }
 
@@ -226,22 +197,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.accentWine,
     textDecorationLine: 'underline',
-  },
-  radioOuter: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radioOuterActive: {
-    backgroundColor: 'rgba(107, 45, 60, 0.12)',
-  },
-  radioInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: colors.accentWine,
   },
 });

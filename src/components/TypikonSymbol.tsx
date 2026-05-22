@@ -1,6 +1,10 @@
-import { View, type StyleProp, type ViewStyle } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 
-import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import {
+  feastRankAccessibilityLabel,
+  type FeastRankDisplay,
+} from '../lib/liturgical/typikonSymbols';
+import { HoverAccessible } from './HoverAccessible';
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';
 
 type Variant = 'chip' | 'medium' | 'large';
@@ -22,13 +26,15 @@ const PIXEL_SIZE: Record<Variant, number> = {
 export function TypikonSymbol({ feastRank, variant = 'medium', color, style }: Props) {
   const size = PIXEL_SIZE[variant];
   const stroke = color ?? feastRank.tint ?? '#2b2623';
+  const label = feastRankAccessibilityLabel(feastRank);
 
   return (
-    <View
-      accessibilityLabel={feastRank.shortName}
+    <HoverAccessible
+      label={label}
+      hint="Typikon service rank for this liturgical day"
       style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }, style]}
     >
       <TypikonGlyphIcon glyph={feastRank.glyph} size={size} color={stroke} />
-    </View>
+    </HoverAccessible>
   );
 }

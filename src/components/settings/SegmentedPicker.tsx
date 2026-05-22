@@ -16,9 +16,12 @@ import Animated, {
   type SharedValue,
 } from 'react-native-reanimated';
 
+import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import { colors } from '../../theme/tokens';
 
 const TRACK_PADDING = 4;
+/** Inset inside the settings card (matches field labels). */
+export const SEGMENTED_PICKER_HORIZONTAL_INSET = 14;
 
 export const SEGMENT_TIMING = {
   duration: 240,
@@ -138,6 +141,8 @@ function SegmentOption<T extends string>({
     };
   });
 
+  const a11yLabel = selected ? `${option.label} (selected)` : option.label;
+
   return (
     <Pressable
       style={[
@@ -145,8 +150,8 @@ function SegmentOption<T extends string>({
         optionStyle === 'row' ? styles.optionRow : styles.optionColumn,
       ]}
       onPress={onPress}
-      accessibilityRole="button"
       accessibilityState={{ selected }}
+      {...hoverAccessibilityProps(a11yLabel, { role: 'button' })}
     >
       {renderLeading}
       <Animated.Text
@@ -166,10 +171,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 12,
     padding: TRACK_PADDING,
-    marginHorizontal: 20,
+    marginHorizontal: SEGMENTED_PICKER_HORIZONTAL_INSET,
     marginVertical: 12,
-    alignSelf: 'center',
-    width: '100%',
+    alignSelf: 'stretch',
     maxWidth: 400,
     position: 'relative',
   },

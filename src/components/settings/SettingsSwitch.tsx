@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import { colors } from '../../theme/tokens';
 
 const TRACK_WIDTH = 50;
@@ -24,10 +25,11 @@ type Props = {
   value: boolean;
   onValueChange: (value: boolean) => void;
   isDark: boolean;
+  accessibilityLabel: string;
 };
 
 /** Custom toggle — avoids system green on iOS/Android Switch. */
-export function SettingsSwitch({ value, onValueChange, isDark }: Props) {
+export function SettingsSwitch({ value, onValueChange, isDark, accessibilityLabel }: Props) {
   const progress = useSharedValue(value ? 1 : 0);
   const trackOff = isDark ? '#4a4640' : '#d4cfc6';
 
@@ -50,9 +52,12 @@ export function SettingsSwitch({ value, onValueChange, isDark }: Props) {
   return (
     <Pressable
       onPress={() => onValueChange(!value)}
-      accessibilityRole="switch"
       accessibilityState={{ checked: value }}
       hitSlop={8}
+      {...hoverAccessibilityProps(
+        `${accessibilityLabel}: ${value ? 'on' : 'off'}`,
+        { role: 'switch' },
+      )}
     >
       <Animated.View style={[styles.track, trackStyle]}>
         <Animated.View style={[styles.thumb, thumbStyle]} />

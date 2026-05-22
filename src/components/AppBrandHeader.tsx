@@ -1,6 +1,7 @@
 import { StyleSheet, Text, useColorScheme, View } from 'react-native';
 
 import { colors } from '../theme/tokens';
+import { HoverAccessible } from './HoverAccessible';
 import { OrthoDailyLogo } from './OrthoDailyLogo';
 
 export function AppBrandHeader() {
@@ -8,8 +9,10 @@ export function AppBrandHeader() {
 
   return (
     <View style={styles.row}>
-      <OrthoDailyLogo size={26} />
-      <Text style={[styles.title, { color: isDark ? colors.darkInk : colors.ink }]}>OrthoDaily</Text>
+      <HoverAccessible label="OrthoDaily Home" accessibilityRole="image">
+        <OrthoDailyLogo size={26} />
+      </HoverAccessible>
+      <Text style={[styles.title, { color: isDark ? colors.darkInk : colors.ink }]}>OrthoDaily Home</Text>
     </View>
   );
 }
