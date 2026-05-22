@@ -108,31 +108,37 @@ export function fastingFoodsForLevel(fastLevel: number, fallbackKey: string): st
   return FAST_FOODS_BY_LEVEL[0];
 }
 
+export type LiturgicalVerseLine = {
+  verse: number;
+  text: string;
+};
+
 export type LiturgicalReadingView = {
   label: string;
   citation: string;
-  /** Verse groups within one reading (tighter spacing than between readings). */
-  paragraphs: string[];
+  /** Verse lines grouped into paragraphs (same breaks as orthocal passage). */
+  paragraphs: LiturgicalVerseLine[][];
   source?: string;
 };
 
-function passageToParagraphs(passage: OrthocalVerse[]): string[] {
-  const paragraphs: string[] = [];
-  let parts: string[] = [];
+function passageToParagraphs(passage: OrthocalVerse[]): LiturgicalVerseLine[][] {
+  const paragraphs: LiturgicalVerseLine[][] = [];
+  let current: LiturgicalVerseLine[] = [];
 
   for (const verse of passage) {
-    const content = stripHtml(verse.content).trim();
-    if (!content) continue;
-    if (verse.paragraph_start && parts.length > 0) {
-      paragraphs.push(parts.join(' '));
-      parts = [content];
+    const text = stripHtml(verse.content).trim();
+    if (!text) continue;
+    const line = { verse: verse.verse, text };
+    if (verse.paragraph_start && current.length > 0) {
+      paragraphs.push(current);
+      current = [line];
     } else {
-      parts.push(content);
+      current.push(line);
     }
   }
 
-  if (parts.length > 0) {
-    paragraphs.push(parts.join(' '));
+  if (current.length > 0) {
+    paragraphs.push(current);
   }
 
   return paragraphs;

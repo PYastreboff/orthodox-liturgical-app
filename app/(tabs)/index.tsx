@@ -21,6 +21,7 @@ import { buildDayDashboard } from '../../src/lib/liturgical/dayDashboard';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
 import { colors } from '../../src/theme/tokens';
+import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 
 function pad2(n: number) {
   return n < 10 ? `0${n}` : `${n}`;
@@ -54,6 +55,8 @@ function addDays(d: Date, days: number) {
 
 export default function TodayScreen() {
   const theme = useTheme();
+  const isDark = useResolvedColorScheme() === 'dark';
+  const verseNumberColor = isDark ? '#a39e98' : colors.muted;
   const { consumePendingDay } = useDayNavigation();
   const { primaryCalendar, showAlternateCalendar } = usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
@@ -330,9 +333,23 @@ export default function TodayScreen() {
                   {r.paragraphs.map((paragraph, pi) => (
                     <Text
                       key={pi}
-                      style={[styles.body, styles.readingParagraph, { color: theme.colors.text }]}
+                      style={[
+                        styles.readingParagraph,
+                        { color: theme.colors.text },
+                        pi > 0 ? styles.readingParagraphGap : null,
+                      ]}
                     >
-                      {paragraph}
+                      {paragraph.map((line, li) => (
+                        <Text key={`${line.verse}-${li}`}>
+                          <Text style={[styles.verseNumber, { color: verseNumberColor }]}>
+                            {line.verse}{' '}
+                          </Text>
+                          <Text>
+                            {line.text}
+                            {li < paragraph.length - 1 ? ' ' : ''}
+                          </Text>
+                        </Text>
+                      ))}
                     </Text>
                   ))}
                 </View>
@@ -393,7 +410,15 @@ const styles = StyleSheet.create({
   readingParagraph: {
     fontSize: 13,
     lineHeight: 19,
-    marginBottom: 0,
+  },
+  readingParagraphGap: {
+    marginTop: 6,
+  },
+  verseNumber: {
+    fontSize: 11,
+    fontWeight: '600',
+    lineHeight: 13,
+    transform: [{ translateY: -3 }],
   },
   card: {
     borderRadius: 12,

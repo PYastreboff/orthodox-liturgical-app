@@ -88,6 +88,8 @@ export default function SettingsScreen() {
         title="Liturgical texts"
         description="Default language order when both are available."
         isDark={isDark}
+        collapsible
+        defaultExpanded={false}
       >
         <SettingsRow
           label="English first"
