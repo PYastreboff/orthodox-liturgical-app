@@ -23,11 +23,15 @@ Then press `i` for iOS simulator or `a` for Android emulator, or scan the QR cod
 
 **Code:** [github.com/PYastreboff/orthodox-liturgical-app](https://github.com/PYastreboff/orthodox-liturgical-app) — set the repository to **Public** under GitHub → Settings → General → Danger zone → Change visibility.
 
-**Live web demo (GitHub Pages):** after you push `main` and enable Pages once:
+**Live web demo (GitHub Pages):**
 
-1. GitHub → **Settings** → **Pages** → **Build and deployment** → Source: **GitHub Actions**.
-2. Push this repo (includes `.github/workflows/deploy-web.yml`). The workflow builds the Expo web app and publishes it.
-3. Share: **https://pyastreboff.github.io/orthodox-liturgical-app/**
+1. Push `main` — the workflow builds the app and publishes **`dist`** to the **`gh-pages`** branch (not your README).
+2. GitHub → **Settings** → **Pages** → **Build and deployment**:
+   - **Source:** Deploy from a branch
+   - **Branch:** `gh-pages` / **/(root)**
+   - If you previously chose **main** or **GitHub Actions**, switch to **`gh-pages`** or you will only see the README.
+3. Wait for the [Actions](https://github.com/PYastreboff/orthodox-liturgical-app/actions) workflow to finish (green check).
+4. Share: **https://pyastreboff.github.io/orthodox-liturgical-app/**
 
 The web build needs network for orthocal.info and Church Slavonic scripture (getBible). To preview locally: `npm run build:web` then `npx serve dist`.
 
