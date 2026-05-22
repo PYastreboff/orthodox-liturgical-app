@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   header: {
-    marginBottom: 20,
+    marginBottom: 32,
   },
   title: {
     fontSize: 28,
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
     textTransform: 'uppercase',
     marginHorizontal: 14,
-    marginTop: 4,
+    marginTop: 12,
     marginBottom: 2,
   },
   footer: {
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   },
   footerMeta: {
     fontSize: 12,
-    marginTop: 4,
+    marginTop: 8,
     textAlign: 'center',
     lineHeight: 17,
   },
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 14,
+    marginTop: 8,
     paddingHorizontal: 8,
   },
   footerCredit: {
