@@ -34,6 +34,9 @@
       "description": "OrthoDaily",
       "title": "OrthoDaily"
     },
-    "plugins": ["expo-router"]
+    "plugins": ["expo-router"],
+    "experiments": {
+      "baseUrl": "/orthodox-liturgical-app"
+    }
   }
 }

@@ -19,6 +19,20 @@ Expo Router, SQLite, and navigation-related libraries are already pinned in `pac
 
 Then press `i` for iOS simulator or `a` for Android emulator, or scan the QR code with Expo Go.
 
+## Share online
+
+**Code:** [github.com/PYastreboff/orthodox-liturgical-app](https://github.com/PYastreboff/orthodox-liturgical-app) — set the repository to **Public** under GitHub → Settings → General → Danger zone → Change visibility.
+
+**Live web demo (GitHub Pages):** after you push `main` and enable Pages once:
+
+1. GitHub → **Settings** → **Pages** → **Build and deployment** → Source: **GitHub Actions**.
+2. Push this repo (includes `.github/workflows/deploy-web.yml`). The workflow builds the Expo web app and publishes it.
+3. Share: **https://pyastreboff.github.io/orthodox-liturgical-app/**
+
+The web build needs network for orthocal.info and Church Slavonic scripture (getBible). To preview locally: `npm run build:web` then `npx serve dist`.
+
+**Phone (Expo Go):** run `npm start`, share the QR code (same Wi‑Fi), or use `npx expo start --tunnel` for a public URL while your machine is running.
+
 ## Layout
 
 | Path | Role |
