@@ -25,15 +25,23 @@ Then press `i` for iOS simulator or `a` for Android emulator, or scan the QR cod
 
 **Live web demo (GitHub Pages):**
 
-1. Push `main` — the workflow builds the app and publishes **`dist`** to the **`gh-pages`** branch (not your README).
-2. GitHub → **Settings** → **Pages** → **Build and deployment**:
-   - **Source:** Deploy from a branch
-   - **Branch:** `gh-pages` / **/(root)**
-   - If you previously chose **main** or **GitHub Actions**, switch to **`gh-pages`** or you will only see the README.
-3. Wait for the [Actions](https://github.com/PYastreboff/orthodox-liturgical-app/actions) workflow to finish (green check).
-4. Share: **https://pyastreboff.github.io/orthodox-liturgical-app/**
+**Option A — GitHub Actions (no `gh-pages` branch needed)**
 
-The web build needs network for orthocal.info and Church Slavonic scripture (getBible). To preview locally: `npm run build:web` then `npx serve dist`.
+1. GitHub → **Settings** → **Pages** → **Build and deployment** → **Source: GitHub Actions** (not “Deploy from branch: main”).
+2. Push `main` and wait for **Deploy web to GitHub Pages** to succeed in [Actions](https://github.com/PYastreboff/orthodox-liturgical-app/actions).
+3. Share: **https://pyastreboff.github.io/orthodox-liturgical-app/**
+
+**Option B — Create `gh-pages` from your Mac (if Actions failed or you prefer a branch)**
+
+```bash
+npm run deploy:gh-pages
+```
+
+That builds the site and pushes a **`gh-pages`** branch. Then **Settings → Pages** → **Deploy from branch** → **`gh-pages`** / **/(root)**.
+
+**If you only see the README:** Pages is serving **`main`**, not the built app. Change the Pages source as above.
+
+The web build needs network for orthocal.info and Church Slavonic scripture (getBible). Preview locally: `npm run build:web` then `npx serve dist`.
 
 **Phone (Expo Go):** run `npm start`, share the QR code (same Wi‑Fi), or use `npx expo start --tunnel` for a public URL while your machine is running.
 
