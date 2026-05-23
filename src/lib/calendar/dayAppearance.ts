@@ -42,7 +42,12 @@ function sameLiturgicalDate(a: PlainDate, b: PlainDate): boolean {
  * Approximate liturgical colours for the Russian Orthodox **Julian** calendar,
  * relative to Pascha and a few fixed feasts. Replace with SQLite pack data when available.
  */
-export function getLiturgicalDayAppearance(liturgical: PlainDate, jdn: number): LiturgicalDayAppearance {
+export function getLiturgicalDayAppearance(
+  liturgical: PlainDate,
+  jdn: number,
+  /** Civil (Gregorian) weekday for the day being viewed — used for Wed/Fri fast styling. */
+  civilWeekday: number,
+): LiturgicalDayAppearance {
   const y = liturgical.year;
   const pascha = orthodoxPaschaJdn(y);
   const cleanMonday = pascha - 48;
@@ -292,14 +297,14 @@ export function getLiturgicalDayAppearance(liturgical: PlainDate, jdn: number): 
     };
   }
 
-  if (isWeeklyFastDay(jdn, wd, y)) {
+  if (isWeeklyFastDay(jdn, civilWeekday, y)) {
     return {
-      key: wd === 3 ? 'wednesday_fast' : 'friday_fast',
+      key: civilWeekday === 3 ? 'wednesday_fast' : 'friday_fast',
       gradient: ['#dfe3ec', '#9aa8bc'],
       foreground: '#1e1a16',
       subtitle,
       gregorianSubtitle,
-      label: wd === 3 ? 'Wednesday fast' : 'Friday fast',
+      label: civilWeekday === 3 ? 'Wednesday fast' : 'Friday fast',
     };
   }
 
@@ -317,7 +322,7 @@ export function getLiturgicalAppearanceForLocalDate(
   const liturgical = appearanceLiturgicalPlainDate(civil, liturgicalCalendar);
   const julian = gregorianPlainToJulianPlain(civil);
   const jdn = julianCalendarToJulianDayNumber(julian.year, julian.month, julian.day);
-  const appearance = getLiturgicalDayAppearance(liturgical, jdn);
+  const appearance = getLiturgicalDayAppearance(liturgical, jdn, d.getDay());
   const civilReadable = formatGregorianReadable(civil, true);
   return {
     ...appearance,

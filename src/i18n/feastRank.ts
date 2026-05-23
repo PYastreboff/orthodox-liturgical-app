@@ -38,6 +38,30 @@ export function feastRankServiceLabel(rank: FeastRankDisplay, lang: UiLanguage):
   return rank.shortName;
 }
 
+/**
+ * Typikon service rank beside the icon on major-feast days (orthocal FeastLevels 6–8).
+ * Level 6 = great-feast circle; 7–8 = major feast Lord / Theotokos.
+ */
+export function feastRankServiceLabelForMajorFeastDay(
+  rank: FeastRankDisplay,
+  orthocalFeastLevel: number | undefined,
+  lang: UiLanguage,
+): string {
+  if (orthocalFeastLevel === 7) {
+    return translate(lang, 'typikon.majorFeastTheotokos');
+  }
+  if (orthocalFeastLevel === 8) {
+    return translate(lang, 'typikon.majorFeast');
+  }
+  if (orthocalFeastLevel !== undefined && orthocalFeastLevel >= 6) {
+    return translate(lang, 'typikon.greatFeast');
+  }
+  if (rank.glyph === 'great_feast') {
+    return translate(lang, 'typikon.greatFeast');
+  }
+  return translate(lang, 'typikon.majorFeast');
+}
+
 export function feastRankAccessibilityLabel(rank: FeastRankDisplay, lang: UiLanguage): string {
   return feastRankServiceLabel(rank, lang);
 }

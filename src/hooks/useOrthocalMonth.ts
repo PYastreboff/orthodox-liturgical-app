@@ -1,82 +1,49 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { fetchOrthocalDay } from '../lib/api/orthocal';
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
-import { civilPlainDateFromLocal, orthocalQueryDate } from '../lib/calendar/liturgicalCalendar';
-import { toDayIso } from '../lib/calendar/localDate';
 import { getLiturgicalAppearanceForLocalDate } from '../lib/calendar/dayAppearance';
 import {
   buildCalendarDayInfo,
   type CalendarDayInfo,
 } from '../lib/liturgical/calendarDayInfo';
 import {
+  getCachedMonth,
+  loadOrthocalMonth,
+  prefetchAdjacentMonths,
+} from '../lib/liturgical/orthocalMonthCache';
+import {
   feastRankForLiturgicalDay,
   shouldShowCalendarTypikon,
 } from '../lib/liturgical/calendarTypikon';
-import { getFeastRankDisplay } from '../lib/liturgical/typikonSymbols';
-
-function daysInMonth(visibleMonth: Date): Date[] {
-  const y = visibleMonth.getFullYear();
-  const m = visibleMonth.getMonth();
-  const count = new Date(y, m + 1, 0).getDate();
-  const days: Date[] = [];
-  for (let d = 1; d <= count; d++) {
-    days.push(new Date(y, m, d));
-  }
-  return days;
-}
+import { toDayIso } from '../lib/calendar/localDate';
 
 export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: PrimaryCalendar) {
   const monthKey = `${visibleMonth.getFullYear()}-${visibleMonth.getMonth()}`;
-  const [dayByIso, setDayByIso] = useState<Record<string, CalendarDayInfo>>({});
-  const [loading, setLoading] = useState(true);
+  const cachedInitially = getCachedMonth(liturgicalCalendar, visibleMonth);
+  const [dayByIso, setDayByIso] = useState<Record<string, CalendarDayInfo>>(cachedInitially ?? {});
+  const [loading, setLoading] = useState(!cachedInitially);
 
   useEffect(() => {
     let cancelled = false;
-    const days = daysInMonth(visibleMonth);
-    setLoading(true);
-    setDayByIso({});
+    const cached = getCachedMonth(liturgicalCalendar, visibleMonth);
 
-    async function load() {
-      const entries = await Promise.all(
-        days.map(async (date) => {
-          const iso = toDayIso(date);
-          const civil = civilPlainDateFromLocal(date);
-          const queryDate = orthocalQueryDate(civil);
-          const appearance = getLiturgicalAppearanceForLocalDate(date, liturgicalCalendar);
+    if (cached) {
+      setDayByIso(cached);
+      setLoading(false);
+    } else {
+      setLoading(true);
+      setDayByIso({});
+    }
 
-          try {
-            const orthocalDay = await fetchOrthocalDay(liturgicalCalendar, queryDate);
-            const apiRank = getFeastRankDisplay(
-              orthocalDay.feast_level,
-              orthocalDay.feast_level_description,
-            );
-            const feastRank = feastRankForLiturgicalDay(appearance.key, apiRank, orthocalDay);
-            const info = buildCalendarDayInfo(
-              orthocalDay,
-              appearance.key,
-              appearance.label,
-              feastRank,
-            );
-            return [iso, info] as const;
-          } catch {
-            const info = buildCalendarDayInfo(null, appearance.key, appearance.label, null);
-            return [iso, info] as const;
-          }
-        }),
-      );
-
+    loadOrthocalMonth(liturgicalCalendar, visibleMonth).then((next) => {
       if (!cancelled) {
-        const next: Record<string, CalendarDayInfo> = {};
-        for (const [iso, info] of entries) {
-          next[iso] = info;
-        }
         setDayByIso(next);
         setLoading(false);
       }
-    }
+    });
 
-    load();
+    prefetchAdjacentMonths(liturgicalCalendar, visibleMonth);
+
     return () => {
       cancelled = true;
     };

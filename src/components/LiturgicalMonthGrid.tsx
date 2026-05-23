@@ -20,6 +20,7 @@ import {
 } from '../lib/calendar/calendarCellStyle';
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
 import { feastRankAccessibilityLabel } from '../i18n/feastRank';
+import { intlLocaleForLanguage } from '../i18n/locale';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
@@ -72,17 +73,19 @@ function calendarDayHoverLabel(
   isToday: boolean,
   t: (path: string) => string,
   lang: import('../i18n/types').UiLanguage,
+  intlLocale: string,
 ): string {
   const rankLabel =
     feastRank && showTypikon ? feastRankAccessibilityLabel(feastRank, lang) : null;
   return [
-    new Intl.DateTimeFormat(undefined, {
+    new Intl.DateTimeFormat(intlLocale, {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
     }).format(date),
     isToday ? t('calendarHover.today') : null,
     dayInfo.dayTitle,
+    dayInfo.feasts.length ? dayInfo.feasts.join(' · ') : null,
     dayInfo.saints.length ? dayInfo.saints.join(' · ') : null,
     rankLabel,
     t('calendarHover.clickToOpen'),
@@ -94,6 +97,8 @@ function calendarDayHoverLabel(
 type Props = {
   visibleMonth: Date;
   onChangeMonth: (delta: -1 | 1) => void;
+  onGoToThisMonth?: () => void;
+  canGoToThisMonth?: boolean;
   onDayPress?: (date: Date) => void;
   liturgicalCalendar: PrimaryCalendar;
 };
@@ -101,13 +106,16 @@ type Props = {
 export function LiturgicalMonthGrid({
   visibleMonth,
   onChangeMonth,
+  onGoToThisMonth,
+  canGoToThisMonth = false,
   onDayPress,
   liturgicalCalendar,
 }: Props) {
   const theme = useTheme();
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
-  const { t } = useAppTranslation();
+  const { t, lang } = useAppTranslation();
+  const intlLocale = intlLocaleForLanguage(lang);
   const { width } = useWindowDimensions();
   const today = useMemo(() => new Date(), []);
   const rows = useMemo(() => buildMonthCells(visibleMonth), [visibleMonth]);
@@ -116,7 +124,7 @@ export function LiturgicalMonthGrid({
     liturgicalCalendar,
   );
 
-  const title = new Intl.DateTimeFormat(undefined, {
+  const title = new Intl.DateTimeFormat(intlLocale, {
     month: 'long',
     year: 'numeric',
   }).format(visibleMonth);
@@ -146,6 +154,25 @@ export function LiturgicalMonthGrid({
           <Text style={[styles.navBtnText, { color: theme.colors.text }]}>›</Text>
         </Pressable>
       </View>
+
+      {canGoToThisMonth && onGoToThisMonth ? (
+        <Pressable
+          style={({ pressed }) => [
+            styles.thisMonthBtn,
+            {
+              backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(30,26,22,0.08)',
+              opacity: pressed ? 0.85 : 1,
+            },
+          ]}
+          onPress={onGoToThisMonth}
+          accessibilityRole="button"
+          accessibilityLabel={t('calendar.goToThisMonth')}
+        >
+          <Text style={[styles.thisMonthBtnText, { color: theme.colors.text }]}>
+            {t('calendar.goToThisMonth')}
+          </Text>
+        </Pressable>
+      ) : null}
 
       <View style={styles.gridArea}>
         <View style={[styles.weekHeaderRow, { width: contentWidth, gap }]}>
@@ -206,7 +233,9 @@ export function LiturgicalMonthGrid({
 }
 
 /** Fixed height so every day in a week row aligns on phone. */
-const CELL_HEIGHT = 108;
+const CELL_HEIGHT = 120;
+const MAX_CELL_FEASTS = 2;
+const MAX_CELL_SAINTS = 3;
 const CELL_BORDER_RADIUS = 10;
 
 function DayCell({
@@ -256,7 +285,16 @@ function DayCell({
   const typikonColor = feastRank
     ? typikonIconColor(feastRank, typikonOnMutedCell ? 'muted' : 'light')
     : cellStyle.foreground;
-  const hoverLabel = calendarDayHoverLabel(date, dayInfo, feastRank, showTypikon, isToday, t, lang);
+  const hoverLabel = calendarDayHoverLabel(
+    date,
+    dayInfo,
+    feastRank,
+    showTypikon,
+    isToday,
+    t,
+    lang,
+    intlLocaleForLanguage(lang),
+  );
   const hoverBorderColor =
     isWeb && hovered
       ? hasFeastBorder
@@ -324,13 +362,32 @@ function DayCell({
             {date.getDate()}
           </Text>
         </View>
-        <Text style={[styles.dayLabel, { color: titleColor }]} numberOfLines={3}>
+        <Text style={[styles.dayLabel, { color: titleColor }]} numberOfLines={2}>
           {dayInfo.dayTitle}
         </Text>
+        {dayInfo.feasts.length > 0 ? (
+          <View style={styles.commList}>
+            {dayInfo.feasts.slice(0, MAX_CELL_FEASTS).map((name, index) => (
+              <View key={`f-${index}-${name}`} style={styles.commRow}>
+                <View
+                  style={[styles.feastBullet, { backgroundColor: titleColor }]}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                />
+                <Text
+                  style={[styles.dayFeast, { color: titleColor }]}
+                  numberOfLines={1}
+                >
+                  {name}
+                </Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
         {dayInfo.saints.length > 0 ? (
-          <View style={styles.saintsList}>
-            {dayInfo.saints.map((name, index) => (
-              <View key={`${index}-${name}`} style={styles.saintRow}>
+          <View style={styles.commList}>
+            {dayInfo.saints.slice(0, MAX_CELL_SAINTS).map((name, index) => (
+              <View key={`s-${index}-${name}`} style={styles.commRow}>
                 <View
                   style={[styles.saintBullet, { backgroundColor: subColor }]}
                   accessibilityElementsHidden
@@ -360,7 +417,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 14,
+    marginBottom: 8,
+  },
+  thisMonthBtn: {
+    alignSelf: 'center',
+    marginBottom: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 999,
+  },
+  thisMonthBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
   monthTitle: {
     fontSize: 20,
@@ -479,17 +547,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 10,
   },
-  saintsList: {
+  commList: {
     marginTop: 2,
     alignSelf: 'stretch',
-    gap: 2,
+    gap: 1,
   },
-  saintRow: {
+  commRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     width: '100%',
     paddingRight: 1,
     gap: 4,
+  },
+  feastBullet: {
+    width: 3,
+    height: 3,
+    borderRadius: 2,
+    marginTop: 3,
+    opacity: 0.9,
+    flexShrink: 0,
   },
   saintBullet: {
     width: 3,
@@ -498,6 +574,14 @@ const styles = StyleSheet.create({
     marginTop: 3,
     opacity: 0.75,
     flexShrink: 0,
+  },
+  dayFeast: {
+    flex: 1,
+    fontSize: 7.5,
+    fontWeight: '700',
+    textAlign: 'left',
+    lineHeight: 10,
+    letterSpacing: 0.1,
   },
   daySaint: {
     flex: 1,

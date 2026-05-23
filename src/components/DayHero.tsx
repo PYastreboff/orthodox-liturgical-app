@@ -11,6 +11,7 @@ type Props = {
   appearance: LiturgicalDayAppearance;
   dayTitle: string;
   dateLabel: string;
+  julianDateLabel?: string | null;
   toneLabel: string;
   feastRank: FeastRankDisplay;
   fastLabel: string;
@@ -24,6 +25,7 @@ export function DayHero({
   appearance,
   dayTitle,
   dateLabel,
+  julianDateLabel,
   toneLabel,
   feastRank,
   fastLabel,
@@ -57,6 +59,9 @@ export function DayHero({
 
         <View style={styles.dateBlock}>
           <Text style={[styles.primaryDate, { color: fg }]}>{dateLabel}</Text>
+          {julianDateLabel ? (
+            <Text style={[styles.julianDate, { color: fg }]}>{julianDateLabel}</Text>
+          ) : null}
         </View>
 
         <Pressable
@@ -148,6 +153,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     lineHeight: 22,
+  },
+  julianDate: {
+    marginTop: 4,
+    fontSize: 12,
+    fontWeight: '500',
+    textAlign: 'center',
+    lineHeight: 16,
+    opacity: 0.88,
   },
   chipRow: {
     flexDirection: 'row',

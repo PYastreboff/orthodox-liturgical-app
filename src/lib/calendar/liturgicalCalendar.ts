@@ -40,11 +40,12 @@ export function orthocalApiPath(calendar: PrimaryCalendar, civil: PlainDate): st
 export function formatOrthocalLiturgicalDate(
   day: { year: number; month: number; day: number },
   calendar: PrimaryCalendar,
+  lang: UiLanguage = 'en',
 ): string {
   const plain = { year: day.year, month: day.month, day: day.day };
   return calendar === 'gregorian'
-    ? formatGregorianReadable(plain, true)
-    : formatJulianReadable(plain, true);
+    ? formatGregorianReadable(plain, true, lang)
+    : formatJulianReadable(plain, true, lang);
 }
 
 /** Local vestment / season appearance uses Julian dates when Julian rubrics are selected. */

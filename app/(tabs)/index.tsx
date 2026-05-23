@@ -8,7 +8,11 @@ import { DayHero } from '../../src/components/DayHero';
 import { TypikonSymbol } from '../../src/components/TypikonSymbol';
 import { VestmentIcon } from '../../src/components/VestmentIcon';
 import { useOrthocalDay } from '../../src/hooks/useOrthocalDay';
-import { formatGregorianReadableFromDate } from '../../src/lib/calendar/formatDate';
+import {
+  formatGregorianReadableFromDate,
+  formatJulianReadable,
+} from '../../src/lib/calendar/formatDate';
+import { gregorianPlainToJulianPlain } from '../../src/lib/calendar/julianGregorian';
 import { getLiturgicalAppearanceForLocalDate } from '../../src/lib/calendar/dayAppearance';
 import {
   civilPlainDateFromLocal,
@@ -25,7 +29,10 @@ import {
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
 import { useLiturgicalTexts } from '../../src/hooks/useLiturgicalTexts';
-import { feastRankServiceLabel } from '../../src/i18n/feastRank';
+import {
+  feastRankServiceLabel,
+  feastRankServiceLabelForMajorFeastDay,
+} from '../../src/i18n/feastRank';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { buildDayDashboard } from '../../src/lib/liturgical/dayDashboard';
 import { vestmentGuidanceForRole } from '../../src/lib/liturgical/vestments';
@@ -122,16 +129,22 @@ export default function TodayScreen() {
     readings: true,
   });
 
+  const civilPlain = useMemo(() => civilPlainDateFromLocal(selectedDate), [selectedDate]);
   const gregorianDateLabel = useMemo(
-    () => formatGregorianReadableFromDate(selectedDate),
-    [selectedDate],
+    () => formatGregorianReadableFromDate(selectedDate, true, uiLanguage),
+    [selectedDate, uiLanguage],
   );
+  const julianDateLabel = useMemo(() => {
+    const julian = gregorianPlainToJulianPlain(civilPlain);
+    return t('today.julianDate', {
+      date: formatJulianReadable(julian, true, uiLanguage),
+    });
+  }, [civilPlain, t, uiLanguage]);
   const appearance = useMemo(
     () => getLiturgicalAppearanceForLocalDate(selectedDate, primaryCalendar),
     [primaryCalendar, selectedDate],
   );
   const { liturgicalDay, loading, error } = useOrthocalDay(selectedDate, primaryCalendar);
-  const civilPlain = useMemo(() => civilPlainDateFromLocal(selectedDate), [selectedDate]);
   const dashboard = useMemo(
     () => buildDayDashboard(liturgicalDay, appearance, primaryCalendar, civilPlain, uiLanguage),
     [appearance, civilPlain, liturgicalDay, primaryCalendar, uiLanguage],
@@ -170,6 +183,7 @@ export default function TodayScreen() {
         appearance={appearance}
         dayTitle={dashboard.dayTitle}
         dateLabel={gregorianDateLabel}
+        julianDateLabel={julianDateLabel}
         toneLabel={dashboard.toneLabel}
         feastRank={dashboard.feastRank}
         fastLabel={dashboard.fastLabel}
@@ -230,14 +244,54 @@ export default function TodayScreen() {
           </Text>
           <Text style={[styles.pill, styles.dateFastPill]}>{dashboard.fastLabel}</Text>
         </View>
+        {dashboard.isMajorFeastDay ? (
+          <View
+            style={[
+              styles.majorFeastBlock,
+              {
+                backgroundColor: isDark ? 'rgba(139,46,60,0.22)' : 'rgba(139,46,60,0.1)',
+                borderColor: isDark ? colors.feastHoverBorderDark : colors.feastBorder,
+              },
+            ]}
+          >
+            <View style={styles.majorFeastRow}>
+              <Text
+                style={[
+                  styles.majorFeastBadge,
+                  { color: '#fff', backgroundColor: colors.feastBorder },
+                ]}
+              >
+                {t('today.majorFeastBadge')}
+              </Text>
+              <Text style={[styles.majorFeastDash, { color: colors.feastBorder }]}>—</Text>
+              <Text
+                style={[styles.majorFeastName, { color: colors.feastBorder }]}
+                numberOfLines={3}
+              >
+                {dashboard.dayTitle}
+              </Text>
+            </View>
+          </View>
+        ) : null}
         <View style={styles.serviceRankRow}>
           <TypikonSymbol
             feastRank={dashboard.feastRank}
             variant="chip"
             surface={isDark ? 'dark' : 'light'}
           />
-          <Text style={[styles.serviceRankLabel, { color: theme.colors.text }]}>
-            {feastRankServiceLabel(dashboard.feastRank, lang)}
+          <Text
+            style={[
+              styles.serviceRankLabel,
+              { color: dashboard.isMajorFeastDay ? colors.feastBorder : theme.colors.text },
+            ]}
+          >
+            {dashboard.isMajorFeastDay
+              ? feastRankServiceLabelForMajorFeastDay(
+                  dashboard.feastRank,
+                  liturgicalDay?.feast_level,
+                  lang,
+                )
+              : feastRankServiceLabel(dashboard.feastRank, lang)}
           </Text>
         </View>
         <Text style={styles.cardHint}>
@@ -446,6 +500,43 @@ const styles = StyleSheet.create({
     backgroundColor: '#5c3b2e',
     color: '#fff',
     alignSelf: 'flex-start',
+  },
+  majorFeastBlock: {
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 2,
+    gap: 4,
+  },
+  majorFeastRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  majorFeastBadge: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 999,
+    overflow: 'hidden',
+  },
+  majorFeastDash: {
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 22,
+  },
+  majorFeastName: {
+    flex: 1,
+    flexShrink: 1,
+    minWidth: 120,
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 22,
   },
   cardHint: {
     marginTop: 8,

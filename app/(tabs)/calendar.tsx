@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
@@ -15,14 +15,23 @@ export default function CalendarScreen() {
   const { t } = useAppTranslation();
   const { requestOpenDay } = useDayNavigation();
   const { primaryCalendar } = usePreferences();
-  const [cursor, setCursor] = useState(() => {
+  const thisMonth = useMemo(() => {
     const n = new Date();
     return new Date(n.getFullYear(), n.getMonth(), 1);
-  });
+  }, []);
+
+  const [cursor, setCursor] = useState(thisMonth);
+
+  const canGoToThisMonth =
+    cursor.getFullYear() !== thisMonth.getFullYear() || cursor.getMonth() !== thisMonth.getMonth();
 
   const onChangeMonth = useCallback((delta: -1 | 1) => {
     setCursor((prev) => new Date(prev.getFullYear(), prev.getMonth() + delta, 1));
   }, []);
+
+  const onGoToThisMonth = useCallback(() => {
+    setCursor(thisMonth);
+  }, [thisMonth]);
 
   const onDayPress = useCallback(
     (date: Date) => {
@@ -46,6 +55,8 @@ export default function CalendarScreen() {
       <LiturgicalMonthGrid
         visibleMonth={cursor}
         onChangeMonth={onChangeMonth}
+        onGoToThisMonth={onGoToThisMonth}
+        canGoToThisMonth={canGoToThisMonth}
         onDayPress={onDayPress}
         liturgicalCalendar={primaryCalendar}
       />
