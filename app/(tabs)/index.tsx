@@ -313,7 +313,7 @@ export default function TodayScreen() {
                 style={[styles.majorFeastName, type.majorFeastName, { color: colors.feastBorder }]}
                 numberOfLines={3}
               >
-                {dashboard.dayTitle}
+                {dashboard.feastsHighlightTitle}
               </Text>
             </View>
           </View>

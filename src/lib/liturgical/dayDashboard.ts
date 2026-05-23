@@ -11,8 +11,8 @@ import type { LiturgicalDayAppearance } from '../calendar/dayAppearance';
 import { civilWeekday, shouldApplyWeeklyFastOverride } from '../calendar/weeklyFast';
 import { feastRankForLiturgicalDay } from './calendarTypikon';
 import {
+  greatFeastDisplayTitle,
   liturgicalDayTitle,
-  primaryFeastTitleForFeastsSection,
   shouldUseMajorFeastDayTitle,
 } from './liturgicalDayTitle';
 import {
@@ -24,7 +24,7 @@ import {
 export type DayDashboardData = {
   /** Primary feast name on great feasts; otherwise orthocal title. */
   dayTitle: string;
-  /** Feast to highlight in the Feasts section (may differ from dayTitle on Holy Tuesday, etc.). */
+  /** Great feast for Date major-feast block and Feasts highlight (may differ from dayTitle in Holy Week). */
   feastsHighlightTitle: string;
   /** orthocal great feast / fixed major feast — highlight in Date & Liturgical Day. */
   isMajorFeastDay: boolean;
@@ -90,17 +90,24 @@ export function buildDayDashboard(
       ? localizedFastingFoodsForLevel(liturgicalDay.fast_level, appearanceKey, lang)
       : localizedFastingFoodsForLevel(0, appearanceKey, lang);
 
-  const isMajorFeastDay = shouldUseMajorFeastDayTitle(liturgicalDay, appearanceKey, feastRank);
   const dayTitle = liturgicalDayTitle(
     liturgicalDay,
     appearanceKey,
     localFallbackTitle,
     feastRank,
   );
+  const feastsHighlightTitle = greatFeastDisplayTitle(
+    liturgicalDay,
+    appearanceKey,
+    localFallbackTitle,
+    feastRank,
+    dayTitle,
+  );
+  const isMajorFeastDay = shouldUseMajorFeastDayTitle(liturgicalDay, appearanceKey, feastRank);
 
   return {
     dayTitle,
-    feastsHighlightTitle: primaryFeastTitleForFeastsSection(liturgicalDay, dayTitle),
+    feastsHighlightTitle,
     isMajorFeastDay,
     toneLabel,
     feastRank,

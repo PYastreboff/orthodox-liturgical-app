@@ -119,6 +119,93 @@ function primaryFeastTitle(day: OrthocalDay, appearanceKey: string): string | nu
   return filtered[0] ?? null;
 }
 
+const HOLY_WEEK_HEADLINE_PATTERNS = [
+  HOLY_TUESDAY_TITLE,
+  HOLY_WEDNESDAY_TITLE,
+  HOLY_THURSDAY_TITLE,
+  GREAT_FRIDAY_TITLE,
+  HOLY_SATURDAY_TITLE,
+] as const;
+
+function feastMatchesHolyWeekDayLabel(feast: string): boolean {
+  return HOLY_WEEK_HEADLINE_PATTERNS.some((pattern) => pattern.test(feast));
+}
+
+/** Ascension stays a subordinate commemoration on Holy Thursday / Great Friday. */
+function keepHolyWeekHeadlineOverAscension(day: OrthocalDay): boolean {
+  return (
+    isHolyThursdayDay(day) ||
+    isGreatFridayDay(day) ||
+    day.pascha_distance === -3 ||
+    day.pascha_distance === -2
+  );
+}
+
+function feastMatchesLevelDescription(feast: string, levelDesc: string): boolean {
+  const a = feast.trim().toLowerCase();
+  const b = levelDesc.trim().toLowerCase();
+  if (!a || !b) return false;
+  return a === b || a.includes(b) || b.includes(a);
+}
+
+/**
+ * orthocal `feasts` entry for the day's great / major feast (level 6+ or feast cell).
+ * Does not apply Holy Week headline filtering used for calendar titles.
+ */
+function greatFeastNameFromOrthocal(
+  day: OrthocalDay,
+  appearanceKey: string,
+  calendarTitle: string,
+): string | null {
+  const feasts = allFeastsFromOrthocalDay(day);
+  if (!feasts.length) return null;
+
+  const appearancePattern = APPEARANCE_FEAST_PATTERN[appearanceKey];
+  if (appearancePattern) {
+    const match = feasts.find((f) => appearancePattern.test(f));
+    if (match) return match;
+  }
+
+  const holyHeadline = holyWeekHeadline(day, appearanceKey);
+  if (holyHeadline && holyHeadline === calendarTitle) {
+    const annunciation = feasts.find((f) => ANNUNCIATION_FEAST.test(f));
+    if (annunciation) return annunciation;
+
+    if (!keepHolyWeekHeadlineOverAscension(day)) {
+      const transferred = feasts.find(
+        (f) =>
+          !feastMatchesHolyWeekDayLabel(f) &&
+          !ASCENSION_FEAST.test(f) &&
+          f.trim() !== calendarTitle.trim(),
+      );
+      if (transferred) return transferred;
+    }
+    return null;
+  }
+
+  const levelDesc = day.feast_level_description?.trim();
+  if (levelDesc) {
+    const cleanDesc = sanitizeTypikonProse(levelDesc);
+    const byDesc = feasts.find((f) => feastMatchesLevelDescription(f, cleanDesc));
+    if (byDesc) return byDesc;
+  }
+
+  const holyWeek = isHolyWeekContext(day, appearanceKey);
+  for (const feast of feasts) {
+    if (holyWeek && keepHolyWeekHeadlineOverAscension(day) && ASCENSION_FEAST.test(feast)) {
+      continue;
+    }
+    if (feastMatchesHolyWeekDayLabel(feast)) continue;
+    if (feast.trim() === calendarTitle.trim()) continue;
+    return feast;
+  }
+
+  const annunciation = feasts.find((f) => ANNUNCIATION_FEAST.test(f));
+  if (annunciation && annunciation.trim() !== calendarTitle.trim()) return annunciation;
+
+  return feasts[0] ?? null;
+}
+
 function holyWeekHeadline(day: OrthocalDay, appearanceKey: string): string | null {
   const byDistance = headlineForPaschaDistance(day);
   if (byDistance) return byDistance;
@@ -193,23 +280,29 @@ export function calendarFeastsForDay(
 }
 
 /**
- * Feast name to highlight in the Today → Feasts section (red great-feast styling).
- * Holy Week headlines (e.g. Great and Holy Tuesday) stay as `dayTitle` on the calendar;
- * the transferred feast (Annunciation on Holy Tuesday) is highlighted here instead.
+ * Great feast name for Today → Date (major feast block) and Feasts section highlighting.
+ * `calendarTitle` stays on the calendar grid / hero when it differs (e.g. Holy Week weekdays).
  */
-export function primaryFeastTitleForFeastsSection(
+export function greatFeastDisplayTitle(
   day: OrthocalDay | null | undefined,
-  dayTitle: string,
+  appearanceKey: string,
+  appearanceLabel: string,
+  feastRank: FeastRankDisplay | null | undefined,
+  calendarTitle: string,
 ): string {
-  if (!day) return dayTitle;
-
-  const isHolyTuesday =
-    day.pascha_distance === -5 || isHolyTuesdayDay(day) || HOLY_TUESDAY_TITLE.test(dayTitle);
-
-  if (isHolyTuesday) {
-    const annunciation = allFeastsFromOrthocalDay(day).find((f) => ANNUNCIATION_FEAST.test(f));
-    if (annunciation) return annunciation;
+  if (!day || !shouldUseMajorFeastDayTitle(day, appearanceKey, feastRank)) {
+    return calendarTitle;
   }
 
-  return dayTitle;
+  const feast = greatFeastNameFromOrthocal(day, appearanceKey, calendarTitle);
+  if (feast) return feast;
+
+  if (isFeastCellAppearance(appearanceKey)) {
+    return sanitizeTypikonProse(appearanceLabel);
+  }
+
+  const fallback = primaryFeastTitle(day, appearanceKey);
+  if (fallback) return fallback;
+
+  return calendarTitle;
 }
