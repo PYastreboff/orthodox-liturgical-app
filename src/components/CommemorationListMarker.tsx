@@ -5,7 +5,7 @@ type Kind = 'feast' | 'saint';
 type Props = {
   kind: Kind;
   color: string;
-  /** Match the adjacent line height for vertical centering. */
+  /** Match the adjacent first line height. */
   lineHeight?: number;
   size?: number;
 };
@@ -40,8 +40,8 @@ export function CommemorationListMarker({
 
 const styles = StyleSheet.create({
   box: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     flexShrink: 0,
   },
   glyph: {

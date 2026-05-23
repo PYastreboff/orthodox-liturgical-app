@@ -940,7 +940,7 @@ const styles = StyleSheet.create({
   },
   commRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     width: '100%',
     minWidth: 0,
     paddingRight: 1,
@@ -948,7 +948,7 @@ const styles = StyleSheet.create({
   },
   agendaCommRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 4,
     minWidth: 0,
   },

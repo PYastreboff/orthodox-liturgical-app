@@ -226,7 +226,7 @@ export default function TodayScreen() {
         julianDateLabel={julianDateLabel}
         toneLabel={dashboard.toneLabel}
         feastRank={dashboard.feastRank}
-        fastLabel={dashboard.fastLabel}
+        fastLabel={dashboard.fastSummaryLabel}
         canGoToToday={canGoToToday}
         onPrevious={() => setSelectedDate(addDays(selectedDate, -1))}
         onNext={() => setSelectedDate(addDays(selectedDate, 1))}
@@ -290,7 +290,7 @@ export default function TodayScreen() {
           <Text style={[styles.dateLineValue, type.dateLine, { color: theme.colors.text }]}>
             {gregorianDateLabel}
           </Text>
-          <Text style={[styles.pill, type.pill, styles.dateFastPill]}>{dashboard.fastLabel}</Text>
+          <Text style={[styles.pill, type.pill, styles.dateFastPill]}>{dashboard.fastSummaryLabel}</Text>
         </View>
         {dashboard.isMajorFeastDay ? (
           <View
@@ -357,13 +357,71 @@ export default function TodayScreen() {
       >
         <View style={styles.rowBetween}>
           <Text style={[styles.body, type.body, { color: theme.colors.text }]}>{t('today.level')}</Text>
-          <Text style={[styles.pill, type.pill, { backgroundColor: '#5c3b2e', color: '#fff' }]}>
-            {dashboard.fastingLevel}
-          </Text>
+          <Text style={[styles.pill, type.pill, styles.dateFastPill]}>{dashboard.fastSummaryLabel}</Text>
         </View>
-        <Text style={[styles.body, type.body, { color: theme.colors.text }]}>
-          {t('today.allowedFoods', { foods: dashboard.fastingFoods })}
-        </Text>
+        {dashboard.isFastDay ? (
+          <>
+            {dashboard.weeklyFastSectionLabel ? (
+              <Text style={[styles.fastWeeklyTitle, type.body, { color: theme.colors.text }]}>
+                {dashboard.weeklyFastSectionLabel}
+              </Text>
+            ) : null}
+            {dashboard.fastingFoods.ruleLabel !== dashboard.weeklyFastSectionLabel ? (
+              <Text style={[styles.fastRule, type.body, { color: theme.colors.text }]}>
+                {t('today.fastRule', { rule: dashboard.fastingFoods.ruleLabel })}
+              </Text>
+            ) : null}
+            {dashboard.fastingFoods.allowed.length > 0 ? (
+              <View style={styles.fastListBlock}>
+                <Text style={[styles.fastListHeading, type.body, { color: theme.colors.text }]}>
+                  {t('today.allowedHeading')}
+                </Text>
+                {dashboard.fastingFoods.allowed.map((item) => (
+                  <Text
+                    key={`allowed-${item}`}
+                    style={[styles.fastListItem, type.body, { color: theme.colors.text }]}
+                  >
+                    {item}
+                  </Text>
+                ))}
+              </View>
+            ) : null}
+            {dashboard.fastingFoods.notAllowed.length > 0 ? (
+              <View style={styles.fastListBlock}>
+                <Text style={[styles.fastListHeading, type.body, { color: theme.colors.text }]}>
+                  {t('today.notAllowedHeading')}
+                </Text>
+                {dashboard.fastingFoods.notAllowed.map((item) => (
+                  <Text
+                    key={`not-${item}`}
+                    style={[styles.fastListItem, type.body, { color: theme.colors.text }]}
+                  >
+                    {item}
+                  </Text>
+                ))}
+              </View>
+            ) : null}
+            {dashboard.fastingFoods.exceptionNote ? (
+              <Text style={[styles.fastException, type.hint, { color: theme.colors.text }]}>
+                {t('today.fastException', { note: dashboard.fastingFoods.exceptionNote })}
+              </Text>
+            ) : null}
+          </>
+        ) : (
+          <View style={styles.fastListBlock}>
+            <Text style={[styles.fastListHeading, type.body, { color: theme.colors.text }]}>
+              {t('today.allowedHeading')}
+            </Text>
+            {dashboard.fastingFoods.allowed.map((item) => (
+              <Text
+                key={`allowed-${item}`}
+                style={[styles.fastListItem, type.body, { color: theme.colors.text }]}
+              >
+                {item}
+              </Text>
+            ))}
+          </View>
+        )}
         <Text style={[styles.cardHint, type.hint]}>{dashboard.fastingNote}</Text>
       </CollapsibleSection>
 
@@ -555,7 +613,37 @@ const styles = StyleSheet.create({
   dateFastPill: {
     backgroundColor: '#5c3b2e',
     color: '#fff',
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
+    minWidth: 76,
+    textAlign: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+  },
+  fastWeeklyTitle: {
+    marginTop: 10,
+    fontWeight: '700',
+  },
+  fastRule: {
+    marginTop: 8,
+    fontWeight: '600',
+    opacity: 0.92,
+  },
+  fastListBlock: {
+    marginTop: 10,
+    gap: 4,
+  },
+  fastListHeading: {
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  fastListItem: {
+    paddingLeft: 4,
+    opacity: 0.9,
+  },
+  fastException: {
+    marginTop: 10,
+    fontStyle: 'italic',
+    opacity: 0.85,
   },
   majorFeastBlock: {
     marginTop: 10,

@@ -1,14 +1,20 @@
 import type { OrthocalDay } from '../api/orthocal';
 import {
-  localizedFastingFoodsForLevel,
-  localizedOrthocalFastLabel,
+  isOrthocalFastDay,
+  localizedFastSummaryLabel,
+  localizedFastingFoodsDetail,
+  type FastingFoodsDetail,
 } from '../../i18n/fastingLabels';
 import { localizedToneLabel } from '../../i18n/feastRank';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
 import type { PlainDate } from '../calendar/julianGregorian';
 import type { LiturgicalDayAppearance } from '../calendar/dayAppearance';
-import { civilWeekday, shouldApplyWeeklyFastOverride } from '../calendar/weeklyFast';
+import {
+  isWeeklyFastForCivilDate,
+  localizedWeeklyFastDayLabel,
+  shouldApplyWeeklyFastOverride,
+} from '../calendar/weeklyFast';
 import { feastRankForLiturgicalDay } from './calendarTypikon';
 import {
   greatFeastDisplayTitle,
@@ -30,17 +36,26 @@ export type DayDashboardData = {
   isMajorFeastDay: boolean;
   toneLabel: string;
   feastRank: FeastRankDisplay;
-  fastLabel: string;
-  fastingLevel: string;
-  fastingFoods: string;
+  /** Short pill: "Fast" / "No fast" (date row, hero, Fasting section). */
+  fastSummaryLabel: string;
+  isFastDay: boolean;
+  /** "Wednesday fast" / "Friday fast" in the Fasting section (null on other days). */
+  weeklyFastSectionLabel: string | null;
+  /** Rule name + allowed / not allowed for the Fasting section body. */
+  fastingFoods: FastingFoodsDetail;
   fastingNote: string;
 };
 
-function buildFastingNote(day: OrthocalDay | null, appearanceKey: string, lang: UiLanguage): string {
+function buildFastingNote(
+  day: OrthocalDay | null,
+  appearanceKey: string,
+  civil: PlainDate,
+  lang: UiLanguage,
+): string {
   if (day?.service_notes?.length) {
     return sanitizeTypikonProse(day.service_notes.join(' '));
   }
-  if (appearanceKey === 'wednesday_fast' || appearanceKey === 'friday_fast') {
+  if (isWeeklyFastForCivilDate(civil)) {
     return translate(lang, 'fasting.noteWeekly');
   }
   if (appearanceKey.includes('lent')) {
@@ -69,26 +84,27 @@ export function buildDayDashboard(
     feastRankForLiturgicalDay(appearanceKey, apiFeastRank, liturgicalDay) ??
     ({ glyph: 'ordinary', shortName: 'Ordinary', tint: '#2b2623' } as FeastRankDisplay);
 
-  const weeklyFast = shouldApplyWeeklyFastOverride(
+  const weeklyFast = shouldApplyWeeklyFastOverride(liturgicalDay, civil);
+
+  const isFastDay = isOrthocalFastDay(liturgicalDay, appearanceKey, weeklyFast);
+  const weeklyFastSectionLabel =
+    isFastDay && isWeeklyFastForCivilDate(civil)
+      ? localizedWeeklyFastDayLabel(civil, lang)
+      : null;
+  const fastSummaryLabel = localizedFastSummaryLabel(
     liturgicalDay,
     appearanceKey,
-    civilWeekday(civil),
+    weeklyFast,
+    lang,
   );
 
-  const fastLabel = weeklyFast
-    ? translate(lang, 'fasting.weeklyLevel')
-    : liturgicalDay
-      ? localizedOrthocalFastLabel(liturgicalDay, lang)
-      : appearanceKey.includes('lent') || appearanceKey.includes('fast')
-        ? translate(lang, 'fasting.strict')
-        : translate(lang, 'fasting.noFast');
-
-  const fastingLevel = fastLabel;
-  const fastingFoods = weeklyFast
-    ? translate(lang, 'fasting.weeklyFoods')
-    : liturgicalDay
-      ? localizedFastingFoodsForLevel(liturgicalDay.fast_level, appearanceKey, lang)
-      : localizedFastingFoodsForLevel(0, appearanceKey, lang);
+  const fastingFoods = localizedFastingFoodsDetail(
+    liturgicalDay,
+    appearanceKey,
+    weeklyFast,
+    lang,
+    civil,
+  );
 
   const dayTitle = liturgicalDayTitle(
     liturgicalDay,
@@ -116,9 +132,10 @@ export function buildDayDashboard(
     isMajorFeastDay,
     toneLabel,
     feastRank,
-    fastLabel,
-    fastingLevel,
+    fastSummaryLabel,
+    isFastDay,
+    weeklyFastSectionLabel,
     fastingFoods,
-    fastingNote: buildFastingNote(liturgicalDay, appearanceKey, lang),
+    fastingNote: buildFastingNote(liturgicalDay, appearanceKey, civil, lang),
   };
 }
