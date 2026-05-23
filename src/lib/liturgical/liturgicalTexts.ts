@@ -1,7 +1,11 @@
 import type { LiturgicalReadingView, OrthocalDay, OrthocalReading } from '../api/orthocal';
 import { passageToParagraphs, stripHtml } from '../api/orthocal';
+import { translate } from '../../i18n/translate';
+import type { UiLanguage } from '../../i18n/types';
 
-export const NONE_FOR_DAY = 'None for this day.';
+export function noneForDayLabel(lang: UiLanguage): string {
+  return translate(lang, 'readings.noneForDay');
+}
 
 export type LiturgicalTextCategory =
   | 'troparion'
@@ -35,14 +39,14 @@ const SECTION_ORDER: LiturgicalTextCategory[] = [
   'communion',
 ];
 
-const SECTION_TITLES: Record<LiturgicalTextCategory, { one: string; many: string }> = {
-  troparion: { one: 'Troparion', many: 'Troparia' },
-  kontakion: { one: 'Kontakion', many: 'Kontakia' },
-  prokeimenon: { one: 'Prokeimenon', many: 'Prokeimenon' },
-  alleluia: { one: 'Alleluia', many: 'Alleluia verses' },
-  epistle: { one: 'Epistle', many: 'Epistle readings' },
-  gospel: { one: 'Gospel', many: 'Gospel readings' },
-  communion: { one: 'Communion verse', many: 'Communion verses' },
+const SECTION_TITLE_KEYS: Record<LiturgicalTextCategory, { one: string; many: string }> = {
+  troparion: { one: 'readings.troparion', many: 'readings.troparia' },
+  kontakion: { one: 'readings.kontakion', many: 'readings.kontakia' },
+  prokeimenon: { one: 'readings.prokeimenon', many: 'readings.prokeimenon' },
+  alleluia: { one: 'readings.alleluia', many: 'readings.alleluia' },
+  epistle: { one: 'readings.epistle', many: 'readings.epistles' },
+  gospel: { one: 'readings.gospel', many: 'readings.gospels' },
+  communion: { one: 'readings.communion', many: 'readings.communions' },
 };
 
 const GOSPEL_BOOKS = new Set([
@@ -69,7 +73,7 @@ function isHymnPassage(passage: OrthocalReading['passage']): boolean {
   return passage.length === 1 && !passage[0]?.book;
 }
 
-export function classifyReading(r: OrthocalReading): LiturgicalTextCategory | null {
+function classifyReading(r: OrthocalReading): LiturgicalTextCategory | null {
   const desc = norm(r.description);
   const source = norm(r.source);
   const book = norm(r.book);
@@ -188,12 +192,15 @@ function extractHymnFromStories(
   return null;
 }
 
-function sectionTitle(id: LiturgicalTextCategory, count: number): string {
-  const titles = SECTION_TITLES[id];
-  return count === 1 ? titles.one : titles.many;
+function sectionTitle(id: LiturgicalTextCategory, count: number, lang: UiLanguage): string {
+  const keys = SECTION_TITLE_KEYS[id];
+  return translate(lang, count === 1 ? keys.one : keys.many);
 }
 
-export function buildLiturgicalTextSections(day: OrthocalDay | null): LiturgicalTextSection[] {
+export function buildLiturgicalTextSections(
+  day: OrthocalDay | null,
+  lang: UiLanguage = 'en',
+): LiturgicalTextSection[] {
   const buckets: Record<LiturgicalTextCategory, LiturgicalTextItem[]> = {
     troparion: [],
     kontakion: [],
@@ -225,7 +232,7 @@ export function buildLiturgicalTextSections(day: OrthocalDay | null): Liturgical
 
   return SECTION_ORDER.map((id) => ({
     id,
-    title: sectionTitle(id, buckets[id].length),
+    title: sectionTitle(id, buckets[id].length, lang),
     items: buckets[id],
   }));
 }

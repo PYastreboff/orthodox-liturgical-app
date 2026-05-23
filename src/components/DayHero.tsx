@@ -2,8 +2,9 @@ import { Feather } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
-import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import { typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { TypikonSymbol } from './TypikonSymbol';
 
 type Props = {
@@ -31,6 +32,7 @@ export function DayHero({
   onNext,
   onToday,
 }: Props) {
+  const { t } = useAppTranslation();
   const fg = appearance.foreground;
 
   return (
@@ -48,7 +50,7 @@ export function DayHero({
         <Pressable
           style={({ pressed }) => [styles.navBtn, pressed && styles.navBtnPressed]}
           onPress={onPrevious}
-          accessibilityLabel="Previous day"
+          accessibilityLabel={t('today.prevDay')}
         >
           <Feather name="chevron-left" size={26} color={fg} />
         </Pressable>
@@ -60,7 +62,7 @@ export function DayHero({
         <Pressable
           style={({ pressed }) => [styles.navBtn, pressed && styles.navBtnPressed]}
           onPress={onNext}
-          accessibilityLabel="Next day"
+          accessibilityLabel={t('today.nextDay')}
         >
           <Feather name="chevron-right" size={26} color={fg} />
         </Pressable>
@@ -74,7 +76,7 @@ export function DayHero({
           <TypikonSymbol
             feastRank={feastRank}
             variant="chip"
-            color={feastRank.tint ?? '#2b2623'}
+            color={typikonIconColor(feastRank, 'light')}
             style={styles.chipIcon}
           />
         </View>
@@ -85,7 +87,7 @@ export function DayHero({
 
       {canGoToToday ? (
         <Pressable style={styles.todayBtn} onPress={onToday}>
-          <Text style={styles.todayBtnText}>Jump to today</Text>
+          <Text style={styles.todayBtnText}>{t('today.jumpToToday')}</Text>
         </Pressable>
       ) : null}
     </LinearGradient>

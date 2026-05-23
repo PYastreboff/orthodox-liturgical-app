@@ -1,6 +1,6 @@
 # Orthodox Liturgical Assistant (Expo / React Native)
 
-Cross-platform **iOS + Android** shell for a Moscow Patriarchate–oriented daily liturgical assistant: Expo SDK 54, TypeScript, **Expo Router** (tab navigation), **expo-sqlite** placeholder for offline yearly packs, and Julian→Gregorian display helpers.
+Cross-platform **iOS + Android** shell for a Moscow Patriarchate–oriented daily liturgical assistant: Expo SDK 54, TypeScript, **Expo Router** (tab navigation), and Julian→Gregorian display helpers.
 
 ## Prerequisites
 
@@ -53,10 +53,10 @@ The web build needs network for orthocal.info and Church Slavonic scripture (get
 | `app/index.tsx` | Redirect into tab navigator |
 | `app/(tabs)/` | **Today**, **Calendar**, **Settings** |
 | `src/lib/calendar/julianGregorian.ts` | Julian calendar date → Gregorian civil date (for parallel labels) |
-| `src/lib/db/sqlite.ts` | Opens local SQLite file; extend with migrations + bundled pack import |
-| `src/types/liturgical.ts` | Shared enums/types for packs and UI |
+| `src/types/liturgical.ts` | Shared types (e.g. clergy role) |
+| `src/i18n/` | English / Russian UI strings |
 | `src/theme/tokens.ts` | Minimal “icon” palette |
-| `src/state/PreferencesContext.tsx` | In-memory prefs (add persistence next) |
+| `src/state/PreferencesContext.tsx` | Persisted display prefs (calendar, theme, language) |
 
 ## Liturgical data (orthocal.info)
 

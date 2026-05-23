@@ -1,6 +1,6 @@
 import type { OrthocalDay } from '../api/orthocal';
 import { isFeastCellAppearance } from '../calendar/calendarCellStyle';
-import { shouldUseOrthocalFeastRank } from './lectionaryDay';
+import { isGreatFridayDay, isHolyTuesdayDay, shouldUseOrthocalFeastRank } from './lectionaryDay';
 import type { FeastRankDisplay } from './typikonSymbols';
 import { sanitizeTypikonProse } from './typikonSymbols';
 
@@ -12,12 +12,14 @@ const ORTHOCAL_GREAT_FEAST_LEVEL_MIN = 6;
 
 export type CalendarDayInfo = {
   dayTitle: string;
-  saintsPreview: string | null;
+  saints: string[];
   feastRank: FeastRankDisplay | null;
   /** Red title / saints line (polyeleos+). */
   isFeastTitleRed: boolean;
   /** Pink cell + thick red border (Pascha, Pentecost, Transfiguration, or API great feast). */
   isFeastCell: boolean;
+  /** Great and Holy Friday — thick black border on the month grid. */
+  isGreatFridayBorder: boolean;
   appearanceKey: string;
 };
 
@@ -31,12 +33,9 @@ export function dayTitleFromOrthocalDay(day: OrthocalDay | null, fallback: strin
   return fallback;
 }
 
-export function saintsPreviewFromOrthocalDay(day: OrthocalDay | null): string | null {
-  if (!day?.saints?.length) return null;
-  const names = day.saints.map((s) => sanitizeTypikonProse(s)).filter(Boolean);
-  if (!names.length) return null;
-  if (names.length === 1) return names[0];
-  return `${names[0]} · +${names.length - 1}`;
+export function saintsFromOrthocalDay(day: OrthocalDay | null): string[] {
+  if (!day?.saints?.length) return [];
+  return day.saints.map((s) => sanitizeTypikonProse(s)).filter(Boolean);
 }
 
 function useOrthocalFeastRank(day: OrthocalDay | null, appearanceKey: string): boolean {
@@ -50,6 +49,7 @@ export function isCalendarFeastCell(
   feastRank: FeastRankDisplay | null,
 ): boolean {
   if (isFeastCellAppearance(appearanceKey)) return true;
+  if (isHolyTuesdayDay(day)) return true;
   if (!useOrthocalFeastRank(day, appearanceKey)) return false;
   if (feastRank?.glyph === 'great_feast') return true;
   if ((day?.feast_level ?? 0) >= ORTHOCAL_GREAT_FEAST_LEVEL_MIN) return true;
@@ -79,10 +79,11 @@ export function buildCalendarDayInfo(
   const isFeastTitleRed = isCalendarFeastTitleRed(day, appearanceKey, feastRank);
   return {
     dayTitle: dayTitleFromOrthocalDay(day, appearanceLabel),
-    saintsPreview: saintsPreviewFromOrthocalDay(day),
+    saints: saintsFromOrthocalDay(day),
     feastRank,
     isFeastTitleRed,
     isFeastCell,
+    isGreatFridayBorder: isGreatFridayDay(day),
     appearanceKey,
   };
 }

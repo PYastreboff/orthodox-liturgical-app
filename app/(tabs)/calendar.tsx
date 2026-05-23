@@ -1,16 +1,18 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
 
 import { CalendarColorLegend } from '../../src/components/CalendarColorLegend';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
+import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
 import { colors } from '../../src/theme/tokens';
 
 export default function CalendarScreen() {
   const theme = useTheme();
+  const { t } = useAppTranslation();
   const { requestOpenDay } = useDayNavigation();
   const { primaryCalendar } = usePreferences();
   const [cursor, setCursor] = useState(() => {
@@ -30,12 +32,6 @@ export default function CalendarScreen() {
     [requestOpenDay],
   );
 
-  const subtitle = useMemo(
-    () =>
-      'Day numbers are civil (Gregorian). Cell labels and colours follow your liturgical calendar setting (Settings).',
-    [],
-  );
-
   const calendarBg = theme.dark ? colors.darkBg : '#e8e3d8';
 
   return (
@@ -43,8 +39,8 @@ export default function CalendarScreen() {
       style={[styles.scroll, { backgroundColor: calendarBg }]}
       contentContainerStyle={styles.scrollContent}
     >
-      <Text style={[styles.title, { color: theme.colors.text }]}>Liturgical calendar</Text>
-      <Text style={[styles.lede, { color: colors.muted }]}>{subtitle}</Text>
+      <Text style={[styles.title, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
+      <Text style={[styles.lede, { color: colors.muted }]}>{t('calendar.subtitle')}</Text>
       <CalendarColorLegend textColor={theme.colors.text} />
 
       <LiturgicalMonthGrid

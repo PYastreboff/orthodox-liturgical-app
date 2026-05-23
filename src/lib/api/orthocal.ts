@@ -147,28 +147,3 @@ export function passageToParagraphs(passage: OrthocalVerse[]): LiturgicalVerseLi
   return paragraphs;
 }
 
-export function abbreviatedReadings(day: OrthocalDay): LiturgicalReadingView[] {
-  const indices = day.abbreviated_reading_indices ?? [];
-  return indices
-    .map((i) => day.readings[i])
-    .filter((r): r is OrthocalReading => Boolean(r))
-    .map((r) => ({
-      label: readingLabel(r),
-      citation: r.display || r.short_display || r.description,
-      paragraphs: passageToParagraphs(r.passage ?? []),
-      source: r.source,
-    }));
-}
-
-function readingLabel(r: OrthocalReading): string {
-  const book = r.book?.toLowerCase() ?? '';
-  if (book.includes('gospel')) return 'Gospel';
-  if (book.includes('apostol') || book.includes('epistle')) return 'Epistle';
-  if (r.description) return r.description;
-  return r.book || r.source || 'Reading';
-}
-
-export function toneLabelFromApi(tone: number): string {
-  if (tone >= 1 && tone <= 8) return `Tone ${tone}`;
-  return 'Tone —';
-}

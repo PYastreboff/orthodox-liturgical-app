@@ -17,10 +17,16 @@ import {
 import { startOfLocalDay } from '../../src/lib/calendar/localDate';
 import { CommemorationCard } from '../../src/components/CommemorationCard';
 import { LiturgicalTextSectionBlock } from '../../src/components/LiturgicalPassageBlock';
-import { buildCommemorationEntries } from '../../src/lib/liturgical/commemorations';
+import {
+  buildCommemorationEntries,
+  partitionCommemorations,
+  type CommemorationEntry,
+} from '../../src/lib/liturgical/commemorations';
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
 import { useLiturgicalTexts } from '../../src/hooks/useLiturgicalTexts';
+import { feastRankServiceLabel } from '../../src/i18n/feastRank';
+import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { buildDayDashboard } from '../../src/lib/liturgical/dayDashboard';
 import { vestmentGuidanceForRole } from '../../src/lib/liturgical/vestments';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
@@ -28,21 +34,27 @@ import { usePreferences } from '../../src/state/PreferencesContext';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 
-type ClergyRole = 'layperson' | 'altar_server' | 'deacon' | 'priest' | 'bishop';
+import type { ClergyRole } from '../../src/types/liturgical';
 type CollapsibleKey =
   | 'date'
-  | 'commemorations'
+  | 'feasts'
+  | 'saints'
   | 'fasting'
   | 'vestments'
   | 'readings';
 
-const ROLE_OPTIONS: { id: ClergyRole; label: string }[] = [
-  { id: 'layperson', label: 'Layperson' },
-  { id: 'altar_server', label: 'Altar server' },
-  { id: 'deacon', label: 'Deacon' },
-  { id: 'priest', label: 'Priest' },
-  { id: 'bishop', label: 'Bishop' },
-];
+const ROLE_IDS: ClergyRole[] = ['layperson', 'altar_server', 'deacon', 'priest', 'bishop'];
+
+function roleLabel(t: (path: string) => string, id: ClergyRole): string {
+  const keys: Record<ClergyRole, string> = {
+    layperson: 'today.roleLayperson',
+    altar_server: 'today.roleAltarServer',
+    deacon: 'today.roleDeacon',
+    priest: 'today.rolePriest',
+    bishop: 'today.roleBishop',
+  };
+  return t(keys[id]);
+}
 
 function addDays(d: Date, days: number) {
   const next = new Date(d);
@@ -50,12 +62,47 @@ function addDays(d: Date, days: number) {
   return startOfLocalDay(next);
 }
 
+function CommemorationEntryList({
+  entries,
+  emptyMessage,
+  textColor,
+  mutedColor,
+  cardBg,
+  borderColor,
+}: {
+  entries: CommemorationEntry[];
+  emptyMessage: string;
+  textColor: string;
+  mutedColor: string;
+  cardBg: string;
+  borderColor: string;
+}) {
+  if (!entries.length) {
+    return <Text style={[styles.body, { color: textColor }]}>{emptyMessage}</Text>;
+  }
+  return (
+    <>
+      {entries.map((entry) => (
+        <CommemorationCard
+          key={entry.id}
+          entry={entry}
+          textColor={textColor}
+          mutedColor={mutedColor}
+          cardBg={cardBg}
+          borderColor={borderColor}
+        />
+      ))}
+    </>
+  );
+}
+
 export default function TodayScreen() {
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
+  const { t, lang } = useAppTranslation();
   const verseNumberColor = isDark ? '#a39e98' : colors.muted;
   const { selectedDate, setSelectedDate, consumePendingDay } = useDayNavigation();
-  const { primaryCalendar, showVestmentGradient, defaultTextLang, setDefaultTextLang } =
+  const { primaryCalendar, showVestmentGradient, defaultTextLang, setDefaultTextLang, uiLanguage } =
     usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
 
@@ -68,10 +115,11 @@ export default function TodayScreen() {
   const [role, setRole] = useState<ClergyRole>('priest');
   const [collapsed, setCollapsed] = useState<Record<CollapsibleKey, boolean>>({
     date: false,
-    commemorations: false,
+    feasts: true,
+    saints: true,
     fasting: false,
     vestments: false,
-    readings: false,
+    readings: true,
   });
 
   const gregorianDateLabel = useMemo(
@@ -85,25 +133,26 @@ export default function TodayScreen() {
   const { liturgicalDay, loading, error } = useOrthocalDay(selectedDate, primaryCalendar);
   const civilPlain = useMemo(() => civilPlainDateFromLocal(selectedDate), [selectedDate]);
   const dashboard = useMemo(
-    () => buildDayDashboard(liturgicalDay, appearance, primaryCalendar, civilPlain),
-    [appearance, civilPlain, liturgicalDay, primaryCalendar],
+    () => buildDayDashboard(liturgicalDay, appearance, primaryCalendar, civilPlain, uiLanguage),
+    [appearance, civilPlain, liturgicalDay, primaryCalendar, uiLanguage],
   );
   const { sections: liturgicalTextSections, loadingSlavonic } = useLiturgicalTexts(
     liturgicalDay,
     defaultTextLang,
+    uiLanguage,
   );
-  const commemorations = useMemo(
-    () => buildCommemorationEntries(liturgicalDay),
-    [liturgicalDay],
-  );
+  const { feasts, saints } = useMemo(() => {
+    const entries = buildCommemorationEntries(liturgicalDay);
+    return partitionCommemorations(entries);
+  }, [liturgicalDay]);
   const vestmentLines = useMemo(
-    () => vestmentGuidanceForRole(role, appearance),
-    [role, appearance],
+    () => vestmentGuidanceForRole(role, appearance, uiLanguage),
+    [role, appearance, uiLanguage],
   );
 
   const liturgicalCalendarHint = useMemo(
-    () => liturgicalCalendarDescription(primaryCalendar),
-    [primaryCalendar],
+    () => liturgicalCalendarDescription(primaryCalendar, uiLanguage),
+    [primaryCalendar, uiLanguage],
   );
 
   const canGoToToday = selectedDate.getTime() !== today.getTime();
@@ -130,37 +179,37 @@ export default function TodayScreen() {
         onToday={() => setSelectedDate(today)}
       />
       {loading ? (
-        <Text style={[styles.statusLine, { color: colors.muted }]}>Loading liturgical data…</Text>
+        <Text style={[styles.statusLine, { color: colors.muted }]}>{t('today.loading')}</Text>
       ) : null}
       {error ? (
         <Text style={[styles.statusLine, styles.statusError]}>
-          Offline or API unavailable — showing local calendar defaults. ({error})
+          {t('today.offline', { error })}
         </Text>
       ) : null}
 
       <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
         <SectionTitleRow
-          title="Serving Role"
+          title={t('today.servingRole')}
           icon="serving-role"
           color={theme.colors.text}
           marginBottom={10}
         />
         <View style={styles.roleRow}>
-          {ROLE_OPTIONS.map((option) => {
-            const active = option.id === role;
+          {ROLE_IDS.map((id) => {
+            const active = id === role;
             return (
               <Pressable
-                key={option.id}
+                key={id}
                 style={[
                   styles.roleButton,
                   active
                     ? { backgroundColor: colors.accentWine, borderColor: colors.accentWine }
                     : { backgroundColor: 'transparent', borderColor: theme.colors.border },
                 ]}
-                onPress={() => setRole(option.id)}
+                onPress={() => setRole(id)}
               >
                 <Text style={[styles.roleButtonText, { color: active ? '#fff' : theme.colors.text }]}>
-                  {option.label}
+                  {roleLabel(t, id)}
                 </Text>
               </Pressable>
             );
@@ -169,7 +218,7 @@ export default function TodayScreen() {
       </View>
 
       <CollapsibleSection
-        title="Date & Liturgical Day"
+        title={t('today.sectionDate')}
         icon="date"
         expanded={!collapsed.date}
         onToggle={() => toggleSection('date')}
@@ -182,38 +231,44 @@ export default function TodayScreen() {
           <Text style={[styles.pill, styles.dateFastPill]}>{dashboard.fastLabel}</Text>
         </View>
         <View style={styles.serviceRankRow}>
-          <TypikonSymbol feastRank={dashboard.feastRank} variant="chip" />
+          <TypikonSymbol
+            feastRank={dashboard.feastRank}
+            variant="chip"
+            surface={isDark ? 'dark' : 'light'}
+          />
           <Text style={[styles.serviceRankLabel, { color: theme.colors.text }]}>
-            {dashboard.feastRank.shortName}
+            {feastRankServiceLabel(dashboard.feastRank, lang)}
           </Text>
         </View>
         <Text style={styles.cardHint}>
           {dashboard.orthocalQueryLabel}
           {dashboard.orthocalChurchDateLabel
-            ? ` · Church date: ${dashboard.orthocalChurchDateLabel}`
+            ? t('today.churchDate', { date: dashboard.orthocalChurchDateLabel })
             : ''}
         </Text>
         <Text style={styles.cardHint}>{liturgicalCalendarHint}</Text>
       </CollapsibleSection>
 
       <CollapsibleSection
-        title="Fasting Information"
+        title={t('today.sectionFasting')}
         icon="fasting"
         expanded={!collapsed.fasting}
         onToggle={() => toggleSection('fasting')}
         themeColors={theme.colors}
       >
         <View style={styles.rowBetween}>
-          <Text style={[styles.body, { color: theme.colors.text }]}>Level</Text>
+          <Text style={[styles.body, { color: theme.colors.text }]}>{t('today.level')}</Text>
           <Text style={[styles.pill, { backgroundColor: '#5c3b2e', color: '#fff' }]}>{dashboard.fastingLevel}</Text>
         </View>
-        <Text style={[styles.body, { color: theme.colors.text }]}>Allowed foods: {dashboard.fastingFoods}</Text>
+        <Text style={[styles.body, { color: theme.colors.text }]}>
+          {t('today.allowedFoods', { foods: dashboard.fastingFoods })}
+        </Text>
         <Text style={styles.cardHint}>{dashboard.fastingNote}</Text>
       </CollapsibleSection>
 
       {vestmentLines ? (
         <CollapsibleSection
-          title="Vestments"
+          title={t('today.sectionVestments')}
           icon="vestments"
           expanded={!collapsed.vestments}
           onToggle={() => toggleSection('vestments')}
@@ -235,14 +290,12 @@ export default function TodayScreen() {
               </Text>
             </View>
           ))}
-          <Text style={styles.cardHint}>
-            Colours follow this Julian liturgical day (approximate until your typikon pack is loaded).
-          </Text>
+          <Text style={styles.cardHint}>{t('today.vestmentsHint')}</Text>
         </CollapsibleSection>
       ) : null}
 
       <CollapsibleSection
-        title="Liturgical Texts"
+        title={t('today.sectionReadings')}
         icon="readings"
         expanded={!collapsed.readings}
         onToggle={() => toggleSection('readings')}
@@ -257,50 +310,68 @@ export default function TodayScreen() {
       >
         {defaultTextLang === 'chu' ? (
           <Text style={[styles.cardHint, { color: isDark ? '#a39e98' : colors.muted }]}>
-            {loadingSlavonic
-              ? 'Loading Church Slavonic scripture…'
-              : 'Scripture from Elizabeth Bible (1757). Troparia and kontakia stay in English when orthocal has no Slavonic.'}
+            {loadingSlavonic ? t('today.slavonicLoading') : t('today.slavonicHint')}
           </Text>
         ) : null}
-        {liturgicalTextSections.map((section, index) => (
-          <LiturgicalTextSectionBlock
-            key={section.id}
-            title={section.title}
-            items={section.items}
-            textColor={theme.colors.text}
-            verseNumberColor={verseNumberColor}
-            headingColor={theme.colors.text}
-            topGap={index > 0}
-          />
-        ))}
+        {liturgicalTextSections
+          .filter((section) => section.items.length > 0)
+          .map((section, index) => (
+            <LiturgicalTextSectionBlock
+              key={section.id}
+              category={section.id}
+              title={section.title}
+              items={section.items}
+              textColor={theme.colors.text}
+              verseNumberColor={verseNumberColor}
+              headingColor={theme.colors.text}
+              topGap={index > 0}
+            />
+          ))}
       </CollapsibleSection>
 
       <CollapsibleSection
-        title="Commemorations"
-        icon="commemorations"
-        expanded={!collapsed.commemorations}
-        onToggle={() => toggleSection('commemorations')}
+        title={t('today.sectionFeasts')}
+        icon="feasts"
+        expanded={!collapsed.feasts}
+        onToggle={() => toggleSection('feasts')}
         themeColors={theme.colors}
       >
         {loading ? (
           <Text style={[styles.cardHint, { color: isDark ? '#a39e98' : colors.muted }]}>
-            Loading commemorations…
+            {t('today.loadingFeasts')}
           </Text>
-        ) : commemorations.length > 0 ? (
-          commemorations.map((entry) => (
-            <CommemorationCard
-              key={entry.id}
-              entry={entry}
-              textColor={theme.colors.text}
-              mutedColor={isDark ? '#a39e98' : colors.muted}
-              cardBg={isDark ? colors.darkSurface : colors.card}
-              borderColor={theme.colors.border}
-            />
-          ))
         ) : (
-          <Text style={[styles.body, { color: theme.colors.text }]}>
-            No commemorations listed for this day.
+          <CommemorationEntryList
+            entries={feasts}
+            emptyMessage={t('today.noFeasts')}
+            textColor={theme.colors.text}
+            mutedColor={isDark ? '#a39e98' : colors.muted}
+            cardBg={isDark ? colors.darkSurface : colors.card}
+            borderColor={theme.colors.border}
+          />
+        )}
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        title={t('today.sectionSaints')}
+        icon="saints"
+        expanded={!collapsed.saints}
+        onToggle={() => toggleSection('saints')}
+        themeColors={theme.colors}
+      >
+        {loading ? (
+          <Text style={[styles.cardHint, { color: isDark ? '#a39e98' : colors.muted }]}>
+            {t('today.loadingSaints')}
           </Text>
+        ) : (
+          <CommemorationEntryList
+            entries={saints}
+            emptyMessage={t('today.noSaints')}
+            textColor={theme.colors.text}
+            mutedColor={isDark ? '#a39e98' : colors.muted}
+            cardBg={isDark ? colors.darkSurface : colors.card}
+            borderColor={theme.colors.border}
+          />
         )}
       </CollapsibleSection>
     </ScrollView>
@@ -334,12 +405,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: StyleSheet.hairlineWidth,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    letterSpacing: 0.2,
-    marginBottom: 10,
-  },
   roleRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -356,14 +421,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
   },
-  cardValue: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  compactValue: {
-    fontSize: 16,
-    marginTop: 4,
-  },
   serviceRankRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -372,6 +429,8 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   serviceRankLabel: {
+    flex: 1,
+    flexShrink: 1,
     fontSize: 13,
     fontWeight: '600',
     lineHeight: 18,
@@ -382,14 +441,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 22,
     marginTop: 2,
-  },
-  dateTextWrap: {
-    flex: 1,
-    paddingRight: 8,
-    alignItems: 'flex-start',
-  },
-  dateRowGap: {
-    marginTop: 10,
   },
   dateFastPill: {
     backgroundColor: '#5c3b2e',
@@ -402,23 +453,6 @@ const styles = StyleSheet.create({
     color: colors.muted,
     lineHeight: 20,
     opacity: 0.9,
-  },
-  feastRankRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginBottom: 4,
-  },
-  feastRankHeading: {
-    flex: 1,
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  sectionHeading: {
-    marginTop: 4,
-    marginBottom: 6,
-    fontSize: 16,
-    fontWeight: '700',
   },
   rowBetween: {
     flexDirection: 'row',

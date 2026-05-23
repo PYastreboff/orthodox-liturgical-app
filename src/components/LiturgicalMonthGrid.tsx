@@ -13,15 +13,28 @@ import { useTheme } from '@react-navigation/native';
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';
 import { useOrthocalMonth } from '../hooks/useOrthocalMonth';
 import type { CalendarDayInfo } from '../lib/liturgical/calendarDayInfo';
-import { getCalendarCellStyle } from '../lib/calendar/calendarCellStyle';
+import {
+  getCalendarCellStyle,
+  isCalendarFastingAppearance,
+} from '../lib/calendar/calendarCellStyle';
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
+import { feastRankAccessibilityLabel } from '../i18n/feastRank';
+import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
-import { feastRankAccessibilityLabel } from '../lib/liturgical/typikonSymbols';
+import { typikonIconColor } from '../lib/liturgical/typikonSymbols';
 import { HoverAccessible } from './HoverAccessible';
 import { colors } from '../theme/tokens';
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAY_KEYS = [
+  'weekdays.sun',
+  'weekdays.mon',
+  'weekdays.tue',
+  'weekdays.wed',
+  'weekdays.thu',
+  'weekdays.fri',
+  'weekdays.sat',
+] as const;
 
 function buildMonthCells(visibleMonth: Date): (Date | null)[][] {
   const y = visibleMonth.getFullYear();
@@ -56,18 +69,22 @@ function calendarDayHoverLabel(
   feastRank: FeastRankDisplay | null,
   showTypikon: boolean,
   isToday: boolean,
+  t: (path: string) => string,
+  lang: import('../i18n/types').UiLanguage,
 ): string {
+  const rankLabel =
+    feastRank && showTypikon ? feastRankAccessibilityLabel(feastRank, lang) : null;
   return [
     new Intl.DateTimeFormat(undefined, {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
     }).format(date),
-    isToday ? 'Today' : null,
+    isToday ? t('calendarHover.today') : null,
     dayInfo.dayTitle,
-    dayInfo.saintsPreview,
-    feastRank && showTypikon ? feastRank.shortName : null,
-    'Click to open',
+    dayInfo.saints.length ? dayInfo.saints.join(' · ') : null,
+    rankLabel,
+    t('calendarHover.clickToOpen'),
   ]
     .filter(Boolean)
     .join(' · ');
@@ -87,6 +104,7 @@ export function LiturgicalMonthGrid({
   liturgicalCalendar,
 }: Props) {
   const theme = useTheme();
+  const { t } = useAppTranslation();
   const { width } = useWindowDimensions();
   const today = useMemo(() => new Date(), []);
   const rows = useMemo(() => buildMonthCells(visibleMonth), [visibleMonth]);
@@ -127,15 +145,15 @@ export function LiturgicalMonthGrid({
       </View>
 
       <View style={[styles.weekHeaderRow, { width: contentWidth, gap }]}>
-        {WEEKDAYS.map((d) => (
+        {WEEKDAY_KEYS.map((key) => (
           <Text
-            key={d}
+            key={key}
             style={[
               styles.weekHeaderCell,
               { width: cellWidth, color: theme.colors.text },
             ]}
           >
-            {d}
+            {t(key)}
           </Text>
         ))}
       </View>
@@ -181,6 +199,7 @@ function DayCell({
   dayInfo: CalendarDayInfo;
   showTypikonForDate: (date: Date) => boolean;
 }) {
+  const { t, lang } = useAppTranslation();
   const scheme = useColorScheme();
   const isWeb = Platform.OS === 'web';
   const [hovered, setHovered] = useState(false);
@@ -191,18 +210,28 @@ function DayCell({
   const showTypikon = showTypikonForDate(date);
   const isToday = isSameLocalDay(date, today);
   const hasFeastBorder = dayInfo.isFeastCell;
+  const hasGreatFridayBorder = dayInfo.isGreatFridayBorder;
   const isDark = scheme === 'dark';
   const defaultBorder = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)';
-  const borderWidth = hasFeastBorder ? 3 : isToday ? 2 : StyleSheet.hairlineWidth;
-  const borderColor = hasFeastBorder
-    ? colors.feastBorder
-    : isToday
-      ? colors.accentGold
-      : defaultBorder;
+  const borderWidth =
+    hasFeastBorder || hasGreatFridayBorder ? 3 : isToday ? 2 : StyleSheet.hairlineWidth;
+  const borderColor = hasGreatFridayBorder
+    ? isDark
+      ? colors.greatFridayBorderDark
+      : colors.greatFridayBorder
+    : hasFeastBorder
+      ? colors.feastBorder
+      : isToday
+        ? colors.accentGold
+        : defaultBorder;
   const titleColor = dayInfo.isFeastTitleRed ? colors.feastBorder : cellStyle.foreground;
   const subColor = dayInfo.isFeastTitleRed ? colors.feastBorder : cellStyle.foreground;
   const dayNumColor = dayInfo.isFeastCell ? colors.feastBorder : cellStyle.foreground;
-  const hoverLabel = calendarDayHoverLabel(date, dayInfo, feastRank, showTypikon, isToday);
+  const typikonOnMutedCell = isCalendarFastingAppearance(dayInfo.appearanceKey);
+  const typikonColor = feastRank
+    ? typikonIconColor(feastRank, typikonOnMutedCell ? 'muted' : 'light')
+    : cellStyle.foreground;
+  const hoverLabel = calendarDayHoverLabel(date, dayInfo, feastRank, showTypikon, isToday, t, lang);
 
   return (
     <Pressable
@@ -210,7 +239,7 @@ function DayCell({
       onHoverIn={isWeb ? () => setHovered(true) : undefined}
       onHoverOut={isWeb ? () => setHovered(false) : undefined}
       {...hoverAccessibilityProps(hoverLabel, {
-        hint: 'Opens this day on Today',
+        hint: t('a11y.openDay'),
         role: 'button',
       })}
       style={({ pressed }) => [
@@ -237,15 +266,11 @@ function DayCell({
       <View style={styles.cellBody}>
         {showTypikon && feastRank ? (
           <HoverAccessible
-            label={feastRankAccessibilityLabel(feastRank)}
-            hint="Typikon service rank for this day"
+            label={feastRankAccessibilityLabel(feastRank, lang)}
+            hint={t('calendarHover.typikonRankHint')}
             style={styles.typikonCorner}
           >
-            <TypikonGlyphIcon
-              glyph={feastRank.glyph}
-              size={typikonSize}
-              color={feastRank.tint ?? cellStyle.foreground}
-            />
+            <TypikonGlyphIcon glyph={feastRank.glyph} size={typikonSize} color={typikonColor} />
           </HoverAccessible>
         ) : null}
         <View style={styles.dayNumWrap}>
@@ -269,10 +294,24 @@ function DayCell({
         <Text style={[styles.dayLabel, { color: titleColor }]} numberOfLines={3}>
           {dayInfo.dayTitle}
         </Text>
-        {dayInfo.saintsPreview ? (
-          <Text style={[styles.daySaints, { color: subColor }]} numberOfLines={2}>
-            {dayInfo.saintsPreview}
-          </Text>
+        {dayInfo.saints.length > 0 ? (
+          <View style={styles.saintsList}>
+            {dayInfo.saints.map((name, index) => (
+              <View key={`${index}-${name}`} style={styles.saintRow}>
+                <View
+                  style={[styles.saintBullet, { backgroundColor: subColor }]}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                />
+                <Text
+                  style={[styles.daySaint, { color: subColor }]}
+                  numberOfLines={1}
+                >
+                  {name}
+                </Text>
+              </View>
+            ))}
+          </View>
         ) : null}
       </View>
     </Pressable>
@@ -329,6 +368,19 @@ const styles = StyleSheet.create({
     borderRadius: CELL_BORDER_RADIUS,
     overflow: 'hidden',
   },
+  cellWrapWeb: {
+    cursor: 'pointer',
+  },
+  cellHoveredLight: {
+    boxShadow: '0 3px 10px rgba(0, 0, 0, 0.14)',
+  },
+  cellHoveredDark: {
+    boxShadow: '0 3px 12px rgba(0, 0, 0, 0.45)',
+  },
+  hoverOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: CELL_BORDER_RADIUS,
+  },
   cellBody: {
     flex: 1,
     width: '100%',
@@ -375,12 +427,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 10,
   },
-  daySaints: {
+  saintsList: {
     marginTop: 2,
-    fontSize: 7,
+    alignSelf: 'stretch',
+    gap: 2,
+  },
+  saintRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    width: '100%',
+    paddingRight: 1,
+    gap: 4,
+  },
+  saintBullet: {
+    width: 3,
+    height: 3,
+    borderRadius: 2,
+    marginTop: 3,
+    opacity: 0.75,
+    flexShrink: 0,
+  },
+  daySaint: {
+    flex: 1,
+    fontSize: 7.5,
     fontWeight: '500',
-    textAlign: 'center',
-    lineHeight: 9,
-    opacity: 0.92,
+    textAlign: 'left',
+    lineHeight: 10,
+    letterSpacing: 0.15,
+    opacity: 0.95,
   },
 });

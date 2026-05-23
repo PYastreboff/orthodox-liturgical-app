@@ -1,23 +1,29 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { LiturgicalTextItem } from '../lib/liturgical/liturgicalTexts';
-import { NONE_FOR_DAY } from '../lib/liturgical/liturgicalTexts';
+import type { LiturgicalTextCategory, LiturgicalTextItem } from '../lib/liturgical/liturgicalTexts';
+import { noneForDayLabel } from '../lib/liturgical/liturgicalTexts';
+import { useAppTranslation } from '../i18n/useAppTranslation';
+import { LiturgicalReadingIcon } from './LiturgicalReadingIcon';
 
 type Props = {
   item: LiturgicalTextItem;
+  category: LiturgicalTextCategory;
   textColor: string;
   verseNumberColor: string;
 };
 
-export function LiturgicalPassageBlock({ item, textColor, verseNumberColor }: Props) {
+export function LiturgicalPassageBlock({ item, category, textColor, verseNumberColor }: Props) {
   const hasText = item.paragraphs.some((p) => p.some((line) => line.text.trim()));
 
   return (
     <View style={styles.block}>
-      <Text style={[styles.header, { color: textColor }]}>
-        {item.citation}
-        {item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : ''}
-      </Text>
+      <View style={styles.headerRow}>
+        <LiturgicalReadingIcon category={category} color={textColor} size={18} />
+        <Text style={[styles.header, { color: textColor }]}>
+          {item.citation}
+          {item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : ''}
+        </Text>
+      </View>
       {hasText ? (
         <View style={styles.passage}>
           {item.paragraphs.map((paragraph, pi) => (
@@ -49,6 +55,7 @@ export function LiturgicalPassageBlock({ item, textColor, verseNumberColor }: Pr
 }
 
 type SectionProps = {
+  category: LiturgicalTextCategory;
   title: string;
   items: LiturgicalTextItem[];
   textColor: string;
@@ -58,6 +65,7 @@ type SectionProps = {
 };
 
 export function LiturgicalTextSectionBlock({
+  category,
   title,
   items,
   textColor,
@@ -65,20 +73,25 @@ export function LiturgicalTextSectionBlock({
   headingColor,
   topGap,
 }: SectionProps) {
+  const { lang } = useAppTranslation();
   return (
     <View style={topGap ? styles.sectionGap : null}>
-      <Text style={[styles.sectionHeading, { color: headingColor }]}>{title}</Text>
+      <View style={styles.sectionHeadingRow}>
+        <LiturgicalReadingIcon category={category} color={headingColor} size={22} />
+        <Text style={[styles.sectionHeading, { color: headingColor }]}>{title}</Text>
+      </View>
       {items.length > 0 ? (
         items.map((item, index) => (
           <LiturgicalPassageBlock
             key={`${item.citation}-${item.source ?? ''}-${index}`}
             item={item}
+            category={category}
             textColor={textColor}
             verseNumberColor={verseNumberColor}
           />
         ))
       ) : (
-        <Text style={[styles.placeholder, { color: textColor }]}>{NONE_FOR_DAY}</Text>
+        <Text style={[styles.placeholder, { color: textColor }]}>{noneForDayLabel(lang)}</Text>
       )}
     </View>
   );
@@ -88,20 +101,33 @@ const styles = StyleSheet.create({
   sectionGap: {
     marginTop: 14,
   },
-  sectionHeading: {
+  sectionHeadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     marginTop: 4,
     marginBottom: 8,
+  },
+  sectionHeading: {
+    flex: 1,
     fontSize: 16,
     fontWeight: '700',
+    lineHeight: 22,
   },
   block: {
     marginBottom: 20,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    marginBottom: 4,
+  },
   header: {
+    flex: 1,
     fontSize: 14,
     fontWeight: '700',
     lineHeight: 20,
-    marginBottom: 4,
   },
   passage: {
     marginTop: 4,

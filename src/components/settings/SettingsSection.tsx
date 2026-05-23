@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { CollapsibleChevron } from '../CollapsibleChevron';
 import { colors } from '../../theme/tokens';
 
 const COLLAPSE_TIMING = {
@@ -45,10 +46,6 @@ export function SettingsSection({
     progress.value = withTiming(expanded ? 1 : 0, COLLAPSE_TIMING);
   }, [expanded, progress]);
 
-  const chevronStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${interpolate(progress.value, [0, 1], [0, 180])}deg` }],
-  }));
-
   const bodyStyle = useAnimatedStyle(() => ({
     opacity: progress.value,
     maxHeight: interpolate(progress.value, [0, 1], [0, 400]),
@@ -66,9 +63,7 @@ export function SettingsSection({
       <View style={styles.headingRow}>
         <Text style={[styles.heading, styles.headingInRow, { color: titleColor }]}>{title}</Text>
         {collapsible ? (
-          <Animated.View style={chevronStyle}>
-            <Text style={[styles.chevron, { color: titleColor }]}>▾</Text>
-          </Animated.View>
+          <CollapsibleChevron expanded={expanded} color={titleColor} size={22} />
         ) : null}
       </View>
       {description && (!collapsible || expanded) ? (
@@ -127,11 +122,6 @@ const styles = StyleSheet.create({
   headingInRow: {
     marginBottom: 0,
     flex: 1,
-  },
-  chevron: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginLeft: 8,
   },
   description: {
     fontSize: 13,

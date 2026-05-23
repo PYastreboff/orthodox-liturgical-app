@@ -30,6 +30,10 @@ export function isFeastCellAppearance(appearanceKey: string): boolean {
   return FEAST_CELL_APPEARANCE_KEYS.has(appearanceKey);
 }
 
+export function isCalendarFastingAppearance(appearanceKey: string): boolean {
+  return FASTING_KEYS.has(appearanceKey);
+}
+
 /**
  * Calendar month cells: white · light grey (fast) · reddish pink (selected great feasts only).
  */

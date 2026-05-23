@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { SectionTitleRow } from './SectionTitleRow';
 import type { SectionIconName } from './SectionIcon';
@@ -11,6 +12,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+
+import { CollapsibleChevron } from './CollapsibleChevron';
 
 /** Linear expand/collapse — constant speed, no ease-in/out jerk. */
 const COLLAPSE_TIMING = {
@@ -38,24 +41,17 @@ export function CollapsibleSection({
   themeColors,
   headerTrailing,
 }: Props) {
+  const { t } = useAppTranslation();
   const progress = useSharedValue(expanded ? 1 : 0);
 
   useEffect(() => {
     progress.value = withTiming(expanded ? 1 : 0, COLLAPSE_TIMING);
   }, [expanded, progress]);
 
-  const chevronStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        rotate: `${interpolate(progress.value, [0, 1], [0, 180])}deg`,
-      },
-    ],
-  }));
-
   const bodyStyle = useAnimatedStyle(() => ({
-    maxHeight: interpolate(progress.value, [0, 1], [0, 2000]),
+    maxHeight: interpolate(progress.value, [0, 1], [0, 50000]),
     marginTop: interpolate(progress.value, [0, 1], [0, 8]),
-    opacity: interpolate(progress.value, [0, 0.15, 1], [0, 1, 1]),
+    opacity: interpolate(progress.value, [0, 0.08, 1], [0, 1, 1]),
   }));
 
   return (
@@ -76,14 +72,13 @@ export function CollapsibleSection({
         <Pressable
           style={styles.sectionChevronWrap}
           onPress={onToggle}
-          {...hoverAccessibilityProps(expanded ? 'Collapse section' : 'Expand section', {
-            role: 'button',
-          })}
+          {...hoverAccessibilityProps(
+            expanded ? t('a11y.collapseSection') : t('a11y.expandSection'),
+            { role: 'button' },
+          )}
           accessibilityState={{ expanded }}
         >
-          <Animated.View style={chevronStyle}>
-            <Text style={[styles.sectionChevron, { color: themeColors.text }]}>▾</Text>
-          </Animated.View>
+          <CollapsibleChevron expanded={expanded} color={themeColors.text} size={24} />
         </Pressable>
       </View>
       <Animated.View style={[styles.sectionBody, bodyStyle]} pointerEvents={expanded ? 'auto' : 'none'}>
@@ -121,10 +116,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-  },
-  sectionChevron: {
-    fontSize: 24,
-    fontWeight: '700',
   },
   sectionBody: {
     overflow: 'hidden',

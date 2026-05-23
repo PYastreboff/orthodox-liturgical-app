@@ -2,6 +2,8 @@ import type { PlainDate } from './julianGregorian';
 import { gregorianPlainToJulianPlain } from './julianGregorian';
 import { formatGregorianReadable, formatJulianReadable } from './formatDate';
 import type { PrimaryCalendar } from './dateDisplay';
+import { translate } from '../../i18n/translate';
+import type { UiLanguage } from '../../i18n/types';
 
 export function civilPlainDateFromLocal(d: Date): PlainDate {
   return {
@@ -19,19 +21,14 @@ export function orthocalQueryDate(civil: PlainDate): PlainDate {
   return civil;
 }
 
-/** @deprecated Use orthocalQueryDate — same civil date for both calendar modes. */
-export function orthocalPlainDate(civil: PlainDate, _calendar: PrimaryCalendar): PlainDate {
-  return orthocalQueryDate(civil);
-}
-
 export function liturgicalCalendarShortLabel(calendar: PrimaryCalendar): string {
   return calendar === 'julian' ? 'Julian' : 'Gregorian';
 }
 
-export function liturgicalCalendarDescription(calendar: PrimaryCalendar): string {
+export function liturgicalCalendarDescription(calendar: PrimaryCalendar, lang: UiLanguage = 'en'): string {
   return calendar === 'julian'
-    ? 'Saints and readings from orthocal Julian rubrics for this civil date.'
-    : 'Saints and readings from orthocal Gregorian rubrics for this civil date.';
+    ? translate(lang, 'calendarHint.julian')
+    : translate(lang, 'calendarHint.gregorian');
 }
 
 export function orthocalApiPath(calendar: PrimaryCalendar, civil: PlainDate): string {

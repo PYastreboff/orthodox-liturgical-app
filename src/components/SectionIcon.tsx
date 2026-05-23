@@ -1,22 +1,25 @@
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
+import { useAppTranslation } from '../i18n/useAppTranslation';
 import { HoverAccessible } from './HoverAccessible';
 
 export type SectionIconName =
   | 'serving-role'
   | 'date'
-  | 'commemorations'
+  | 'feasts'
+  | 'saints'
   | 'fasting'
   | 'vestments'
   | 'readings';
 
-export const SECTION_ICON_LABELS: Record<SectionIconName, string> = {
-  'serving-role': 'Serving role',
-  date: 'Date and liturgical day',
-  commemorations: 'Commemorations and feasts',
-  fasting: 'Fasting information',
-  vestments: 'Vestments',
-  readings: 'Liturgical texts',
+const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
+  'serving-role': 'today.servingRole',
+  date: 'today.sectionDate',
+  feasts: 'today.sectionFeasts',
+  saints: 'today.sectionSaints',
+  fasting: 'today.sectionFasting',
+  vestments: 'today.sectionVestments',
+  readings: 'today.sectionReadings',
 };
 
 const ICON_SIZE = 22;
@@ -27,6 +30,7 @@ type Props = {
 };
 
 export function SectionIcon({ name, color }: Props) {
+  const { t } = useAppTranslation();
   const icon = (() => {
     switch (name) {
       case 'serving-role':
@@ -35,8 +39,10 @@ export function SectionIcon({ name, color }: Props) {
         );
       case 'date':
         return <Feather name="calendar" size={ICON_SIZE} color={color} />;
-      case 'commemorations':
-        return <MaterialCommunityIcons name="church" size={ICON_SIZE} color={color} />;
+      case 'feasts':
+        return <MaterialCommunityIcons name="star-four-points-outline" size={ICON_SIZE} color={color} />;
+      case 'saints':
+        return <MaterialCommunityIcons name="account-outline" size={ICON_SIZE} color={color} />;
       case 'fasting':
         return <MaterialCommunityIcons name="baguette" size={ICON_SIZE} color={color} />;
       case 'vestments':
@@ -55,7 +61,7 @@ export function SectionIcon({ name, color }: Props) {
   })();
 
   return (
-    <HoverAccessible label={SECTION_ICON_LABELS[name]} accessibilityRole="image">
+    <HoverAccessible label={t(SECTION_ICON_KEYS[name])} accessibilityRole="image">
       {icon}
     </HoverAccessible>
   );

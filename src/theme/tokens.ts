@@ -10,6 +10,9 @@ export const colors = {
   accentWine: '#6b2d3c',
   /** Major feast outline on the month grid — brighter than accentWine. */
   feastBorder: '#d63a52',
+  /** Great and Holy Friday outline on the month grid. */
+  greatFridayBorder: '#3d1218',
+  greatFridayBorderDark: '#6b2832',
   accentGold: '#b08d57',
   accentTheotokos: '#2f4a6f',
   /** Tab bar active — high contrast on parchment / dark surfaces */

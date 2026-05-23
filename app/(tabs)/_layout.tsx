@@ -4,15 +4,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppBrandHeader } from '../../src/components/AppBrandHeader';
 import { TAB_ICON_SIZE, tabBarIconOptions } from '../../src/components/TabBarIcon';
+import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { PAGE_BACKGROUND_BLACK } from '../../src/lib/liturgical/vestmentGradient';
 import { colors } from '../../src/theme/tokens';
 
 const TAB_BAR_CONTENT_HEIGHT = 52;
 
-export default function TabsLayout() {
+function TabsLayoutContent() {
   const isDark = useResolvedColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
+  const { t } = useAppTranslation();
   const bottomInset = insets.bottom;
   const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + bottomInset;
 
@@ -57,7 +59,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'OrthoDaily',
-          tabBarLabel: 'Today',
+          tabBarLabel: t('tabs.today'),
           headerTitle: () => <AppBrandHeader />,
           sceneStyle: { backgroundColor: PAGE_BACKGROUND_BLACK },
           ...tabBarIconOptions('today'),
@@ -67,8 +69,8 @@ export default function TabsLayout() {
         name="calendar"
         options={{
           title: 'OrthoDaily',
-          headerTitle: 'Calendar',
-          tabBarLabel: 'Calendar',
+          headerTitle: t('tabs.calendarHeader'),
+          tabBarLabel: t('tabs.calendar'),
           ...tabBarIconOptions('calendar'),
         }}
       />
@@ -76,11 +78,15 @@ export default function TabsLayout() {
         name="settings"
         options={{
           title: 'OrthoDaily',
-          headerTitle: 'Settings',
-          tabBarLabel: 'Settings',
+          headerTitle: t('tabs.settings'),
+          tabBarLabel: t('tabs.settings'),
           ...tabBarIconOptions('settings'),
         }}
       />
     </Tabs>
   );
+}
+
+export default function TabsLayout() {
+  return <TabsLayoutContent />;
 }

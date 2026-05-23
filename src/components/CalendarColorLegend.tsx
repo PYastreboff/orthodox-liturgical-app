@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { useAppTranslation } from '../i18n/useAppTranslation';
 import { colors } from '../theme/tokens';
 
-const LEGEND = [
-  { label: 'Non-fasting', swatch: '#ffffff', border: true },
-  { label: 'Fasting', swatch: '#c4c1b8', border: false },
-  { label: 'Feast', swatch: '#f2a0ad', feastOutline: true },
-  { label: 'Today', swatch: '#ffffff', todayRing: true },
+const LEGEND_KEYS = [
+  { key: 'calendar.legendNonFasting', swatch: '#ffffff', border: true },
+  { key: 'calendar.legendFasting', swatch: '#c4c1b8', border: false },
+  { key: 'calendar.legendFeast', swatch: '#f2a0ad', feastOutline: true },
+  { key: 'calendar.legendToday', swatch: '#ffffff', todayRing: true },
 ] as const;
 
 type Props = {
@@ -14,23 +15,25 @@ type Props = {
 };
 
 export function CalendarColorLegend({ textColor }: Props) {
+  const { t } = useAppTranslation();
+
   return (
     <View style={styles.wrap}>
       <View style={styles.row}>
-      {LEGEND.map((item) => (
-        <View key={item.label} style={styles.item}>
-          <View
-            style={[
-              styles.swatch,
-              { backgroundColor: item.swatch },
-              'border' in item && item.border ? styles.swatchBorder : null,
-              'feastOutline' in item && item.feastOutline ? styles.swatchFeastOutline : null,
-              'todayRing' in item && item.todayRing ? styles.swatchTodayRing : null,
-            ]}
-          />
-          <Text style={[styles.label, { color: textColor }]}>{item.label}</Text>
-        </View>
-      ))}
+        {LEGEND_KEYS.map((item) => (
+          <View key={item.key} style={styles.item}>
+            <View
+              style={[
+                styles.swatch,
+                { backgroundColor: item.swatch },
+                'border' in item && item.border ? styles.swatchBorder : null,
+                'feastOutline' in item && item.feastOutline ? styles.swatchFeastOutline : null,
+                'todayRing' in item && item.todayRing ? styles.swatchTodayRing : null,
+              ]}
+            />
+            <Text style={[styles.label, { color: textColor }]}>{t(item.key)}</Text>
+          </View>
+        ))}
       </View>
     </View>
   );

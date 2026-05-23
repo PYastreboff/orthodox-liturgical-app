@@ -10,8 +10,10 @@ import {
 } from 'react';
 
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
+import type { UiLanguage } from '../i18n/types';
 
 export type TextLanguage = 'en' | 'chu';
+export type { UiLanguage };
 export type ColorSchemePreference = 'system' | 'light' | 'dark';
 export type { PrimaryCalendar };
 
@@ -22,6 +24,7 @@ type StoredPreferences = {
   defaultTextLang?: TextLanguage;
   colorSchemePreference?: ColorSchemePreference;
   showVestmentGradient?: boolean;
+  uiLanguage?: UiLanguage;
 };
 
 type Preferences = {
@@ -32,6 +35,7 @@ type Preferences = {
   colorSchemePreference: ColorSchemePreference;
   /** Subtle liturgical-colour gradient over the black Today background. */
   showVestmentGradient: boolean;
+  uiLanguage: UiLanguage;
   preferencesReady: boolean;
 };
 
@@ -41,6 +45,7 @@ type PreferencesContextValue = Preferences & {
   setDefaultTextLang: (value: TextLanguage) => void;
   setColorSchemePreference: (value: ColorSchemePreference) => void;
   setShowVestmentGradient: (value: boolean) => void;
+  setUiLanguage: (value: UiLanguage) => void;
 };
 
 const STORAGE_KEY = '@orthodaily/preferences/v1';
@@ -54,6 +59,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [colorSchemePreference, setColorSchemePreferenceState] =
     useState<ColorSchemePreference>('system');
   const [showVestmentGradient, setShowVestmentGradientState] = useState(false);
+  const [uiLanguage, setUiLanguageState] = useState<UiLanguage>('en');
   const [preferencesReady, setPreferencesReady] = useState(false);
 
   useEffect(() => {
@@ -83,6 +89,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
           }
           if (typeof parsed.showVestmentGradient === 'boolean') {
             setShowVestmentGradientState(parsed.showVestmentGradient);
+          }
+          if (parsed.uiLanguage === 'en' || parsed.uiLanguage === 'ru') {
+            setUiLanguageState(parsed.uiLanguage);
           }
         }
       } catch {
@@ -149,6 +158,14 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     [persist],
   );
 
+  const setUiLanguage = useCallback(
+    (value: UiLanguage) => {
+      setUiLanguageState(value);
+      void persist({ uiLanguage: value });
+    },
+    [persist],
+  );
+
   const value = useMemo(
     () => ({
       showAlternateCalendar,
@@ -156,12 +173,14 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       defaultTextLang,
       colorSchemePreference,
       showVestmentGradient,
+      uiLanguage,
       preferencesReady,
       setShowAlternateCalendar,
       setPrimaryCalendar,
       setDefaultTextLang,
       setColorSchemePreference,
       setShowVestmentGradient,
+      setUiLanguage,
     }),
     [
       colorSchemePreference,
@@ -173,8 +192,10 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setPrimaryCalendar,
       setShowAlternateCalendar,
       setShowVestmentGradient,
+      setUiLanguage,
       showAlternateCalendar,
       showVestmentGradient,
+      uiLanguage,
     ],
   );
 

@@ -1,15 +1,10 @@
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
+import { useAppTranslation } from '../../i18n/useAppTranslation';
 import type { ColorSchemePreference } from '../../state/PreferencesContext';
 
 import { AnimatedSegmentIcon } from './AnimatedSegmentIcon';
 import { SegmentedPicker, type SegmentedOption } from './SegmentedPicker';
-
-const OPTIONS: SegmentedOption<ColorSchemePreference>[] = [
-  { id: 'system', label: 'System' },
-  { id: 'light', label: 'Light' },
-  { id: 'dark', label: 'Dark' },
-];
 
 type Props = {
   value: ColorSchemePreference;
@@ -18,9 +13,16 @@ type Props = {
 };
 
 export function ThemeModePicker({ value, onChange, isDark }: Props) {
+  const { t } = useAppTranslation();
+  const options: SegmentedOption<ColorSchemePreference>[] = [
+    { id: 'system', label: t('settings.themeSystem') },
+    { id: 'light', label: t('settings.themeLight') },
+    { id: 'dark', label: t('settings.themeDark') },
+  ];
+
   return (
     <SegmentedPicker
-      options={OPTIONS}
+      options={options}
       value={value}
       onChange={onChange}
       isDark={isDark}
@@ -48,6 +50,7 @@ function ThemeOptionIcon({
   progress: import('react-native-reanimated').SharedValue<number>;
   inactiveColor: string;
 }) {
+  const { t } = useAppTranslation();
   const size = 18;
 
   if (optionId === 'system') {
@@ -57,7 +60,7 @@ function ThemeOptionIcon({
         progress={progress}
         inactiveColor={inactiveColor}
         size={size}
-        accessibilityLabel="Match system light or dark appearance"
+        accessibilityLabel={t('settings.themeSystem')}
         renderIcon={(color) => (
           <MaterialCommunityIcons name="theme-light-dark" size={size} color={color} />
         )}
@@ -72,7 +75,7 @@ function ThemeOptionIcon({
         progress={progress}
         inactiveColor={inactiveColor}
         size={size}
-        accessibilityLabel="Light appearance"
+        accessibilityLabel={t('settings.themeLight')}
         renderIcon={(color) => <Feather name="sun" size={size} color={color} />}
       />
     );
@@ -84,7 +87,7 @@ function ThemeOptionIcon({
       progress={progress}
       inactiveColor={inactiveColor}
       size={size}
-      accessibilityLabel="Dark appearance"
+      accessibilityLabel={t('settings.themeDark')}
       renderIcon={(color) => <Feather name="moon" size={size} color={color} />}
     />
   );

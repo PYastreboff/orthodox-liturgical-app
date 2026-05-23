@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
+import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { TextLanguage } from '../state/PreferencesContext';
 import { colors } from '../theme/tokens';
 
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
+  const { t } = useAppTranslation();
   const trackBg = isDark ? '#2a2724' : '#ebe6de';
   const inactiveText = isDark ? '#a39e98' : colors.muted;
   const selectedIndex = value === 'en' ? 0 : 2;
@@ -59,6 +61,8 @@ export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
   }));
 
   const toggleLanguage = () => onChange(value === 'en' ? 'chu' : 'en');
+  const switchToSlavonic = t('readings.langSlavonic');
+  const switchToEnglish = t('readings.langEnglish');
 
   return (
     <View
@@ -74,7 +78,7 @@ export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
         onPress={() => onChange('en')}
         accessibilityRole="button"
         accessibilityState={{ selected: value === 'en' }}
-        {...hoverAccessibilityProps('English readings', { role: 'button' })}
+        {...hoverAccessibilityProps(switchToEnglish, { role: 'button' })}
       >
         <Animated.Text style={[styles.segmentLabel, enLabelStyle]}>EN</Animated.Text>
       </Pressable>
@@ -83,9 +87,9 @@ export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
         style={styles.segment}
         onPress={toggleLanguage}
         accessibilityRole="button"
-        accessibilityLabel={`Switch to ${value === 'en' ? 'Church Slavonic' : 'English'}`}
+        accessibilityLabel={t('readings.toggleReadings')}
         {...hoverAccessibilityProps(
-          value === 'en' ? 'Switch to Church Slavonic' : 'Switch to English',
+          value === 'en' ? switchToSlavonic : switchToEnglish,
           { role: 'button' },
         )}
       >
@@ -97,7 +101,7 @@ export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
         onPress={() => onChange('chu')}
         accessibilityRole="button"
         accessibilityState={{ selected: value === 'chu' }}
-        {...hoverAccessibilityProps('Church Slavonic readings', { role: 'button' })}
+        {...hoverAccessibilityProps(switchToSlavonic, { role: 'button' })}
       >
         <Animated.Text style={[styles.segmentLabel, csLabelStyle]}>ЧС</Animated.Text>
       </Pressable>

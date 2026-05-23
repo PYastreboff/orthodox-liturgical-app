@@ -1,6 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
+import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { CommemorationEntry } from '../lib/liturgical/commemorations';
+import { CollapsibleChevron } from './CollapsibleChevron';
 
 type Props = {
   entry: CommemorationEntry;
@@ -10,25 +14,54 @@ type Props = {
   borderColor: string;
 };
 
+function hasLifeAccount(entry: CommemorationEntry): boolean {
+  return Boolean(entry.body?.trim());
+}
+
 export function CommemorationCard({ entry, textColor, mutedColor, cardBg, borderColor }: Props) {
-  const kindLabel = entry.kind === 'feast' ? 'Feast' : 'Saint';
+  const { t } = useAppTranslation();
+  const [expanded, setExpanded] = useState(false);
+  const collapsible = hasLifeAccount(entry);
+
+  const headerRow = (
+    <View style={styles.headerRow}>
+      <Text style={[styles.name, { color: textColor }]}>{entry.name}</Text>
+      {collapsible ? <CollapsibleChevron expanded={expanded} color={mutedColor} size={16} /> : null}
+    </View>
+  );
 
   return (
     <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-      <View style={styles.headerRow}>
-        <Text style={[styles.name, { color: textColor }]}>{entry.name}</Text>
-        <Text style={[styles.kindPill, { color: mutedColor, borderColor }]}>{kindLabel}</Text>
-      </View>
-      {entry.storyTitle && entry.storyTitle !== entry.name ? (
-        <Text style={[styles.storyTitle, { color: mutedColor }]}>{entry.storyTitle}</Text>
-      ) : null}
-      {entry.body ? (
-        <Text style={[styles.body, { color: textColor }]}>{entry.body}</Text>
+      {collapsible ? (
+        <Pressable
+          onPress={() => setExpanded((prev) => !prev)}
+          style={({ pressed }) => [styles.headerPressable, pressed && styles.headerPressed]}
+          {...hoverAccessibilityProps(
+            expanded ? t('commemorations.collapse', { name: entry.name }) : t('commemorations.expand', { name: entry.name }),
+            { role: 'button' },
+          )}
+          accessibilityState={{ expanded }}
+        >
+          {headerRow}
+        </Pressable>
       ) : (
-        <Text style={[styles.placeholder, { color: mutedColor }]}>
-          No life account on orthocal.info for this commemoration.
-        </Text>
+        <View style={styles.headerPressable}>{headerRow}</View>
       )}
+      {collapsible && expanded ? (
+        <View style={styles.bodyWrap}>
+          {entry.storyTitle && entry.storyTitle !== entry.name ? (
+            <Text style={[styles.storyTitle, { color: mutedColor }]}>{entry.storyTitle}</Text>
+          ) : null}
+          <Text style={[styles.body, { color: textColor }]}>{entry.body}</Text>
+        </View>
+      ) : null}
+      {!collapsible ? (
+        <View style={styles.bodyWrap}>
+          <Text style={[styles.placeholder, { color: mutedColor }]}>
+            {t('commemorations.noLife')}
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -37,15 +70,21 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
-    padding: 14,
     marginBottom: 12,
+    overflow: 'hidden',
+  },
+  headerPressable: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  headerPressed: {
+    opacity: 0.88,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     gap: 10,
-    marginBottom: 6,
   },
   name: {
     flex: 1,
@@ -53,15 +92,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 22,
   },
-  kindPill: {
-    fontSize: 11,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+  bodyWrap: {
+    paddingHorizontal: 14,
+    paddingBottom: 14,
+    paddingTop: 0,
   },
   storyTitle: {
     fontSize: 13,

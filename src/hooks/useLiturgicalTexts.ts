@@ -7,7 +7,8 @@ import {
   type LiturgicalTextCategory,
   type LiturgicalTextSection,
 } from '../lib/liturgical/liturgicalTexts';
-import type { TextLanguage } from '../state/PreferencesContext';
+import { translate } from '../i18n/translate';
+import type { TextLanguage, UiLanguage } from '../state/PreferencesContext';
 
 const SCRIPTURE_CATEGORIES = new Set<LiturgicalTextCategory>([
   'epistle',
@@ -17,16 +18,18 @@ const SCRIPTURE_CATEGORIES = new Set<LiturgicalTextCategory>([
   'communion',
 ]);
 
-function annotateNonScriptureForSlavonic(sections: LiturgicalTextSection[]): LiturgicalTextSection[] {
+function annotateNonScriptureForSlavonic(
+  sections: LiturgicalTextSection[],
+  lang: UiLanguage,
+): LiturgicalTextSection[] {
+  const note = translate(lang, 'vestments.slavonicNoText');
   return sections.map((section) => {
     if (SCRIPTURE_CATEGORIES.has(section.id) || !section.items.length) return section;
     return {
       ...section,
       items: section.items.map((item) => ({
         ...item,
-        detail: item.detail
-          ? `${item.detail} · English (no Slavonic on orthocal)`
-          : 'English (no Slavonic on orthocal)',
+        detail: item.detail ? `${item.detail} · ${note}` : note,
       })),
     };
   });
@@ -44,8 +47,15 @@ function englishPassagesByCitation(day: OrthocalDay | null): Map<string, Orthoca
   return map;
 }
 
-export function useLiturgicalTexts(day: OrthocalDay | null, textLang: TextLanguage) {
-  const baseSections = useMemo(() => buildLiturgicalTextSections(day), [day]);
+export function useLiturgicalTexts(
+  day: OrthocalDay | null,
+  textLang: TextLanguage,
+  uiLanguage: UiLanguage = 'en',
+) {
+  const baseSections = useMemo(
+    () => buildLiturgicalTextSections(day, uiLanguage),
+    [day, uiLanguage],
+  );
   const passageMap = useMemo(() => englishPassagesByCitation(day), [day]);
 
   const [sections, setSections] = useState<LiturgicalTextSection[]>(baseSections);
@@ -66,7 +76,7 @@ export function useLiturgicalTexts(day: OrthocalDay | null, textLang: TextLangua
 
     applyChurchSlavonicToSections(baseSections, passageMap).then((next) => {
       if (!cancelled) {
-        setSections(annotateNonScriptureForSlavonic(next));
+        setSections(annotateNonScriptureForSlavonic(next, uiLanguage));
         setLoadingSlavonic(false);
       }
     });
@@ -74,7 +84,7 @@ export function useLiturgicalTexts(day: OrthocalDay | null, textLang: TextLangua
     return () => {
       cancelled = true;
     };
-  }, [baseSections, day, passageMap, textLang]);
+  }, [baseSections, day, passageMap, textLang, uiLanguage]);
 
   return { sections, loadingSlavonic };
 }

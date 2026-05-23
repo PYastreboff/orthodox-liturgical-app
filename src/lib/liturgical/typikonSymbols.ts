@@ -1,3 +1,5 @@
+import { colors } from '../../theme/tokens';
+
 /**
  * Orthodox Typikon rank symbols — drawn as SVG (see TypikonGlyphIcon).
  * Maps orthocal.info feast_level integers — see calendarium/datetools.py FeastLevels.
@@ -26,18 +28,50 @@ export type FeastRankDisplay = {
 const RED = '#8b2e3c';
 const BLACK = '#2b2623';
 
+const RED_RANK_GLYPHS = new Set<TypikonGlyph>([
+  'doxology',
+  'polyeleos',
+  'vigil',
+  'great_feast',
+]);
+
+/** Background the typikon icon sits on — adjusts stroke for contrast. */
+export type TypikonIconSurface = 'light' | 'dark' | 'muted';
+
+/** Stroke colour for typikon SVG marks (calendar grey cells, dark cards, hero chips). */
+export function typikonIconColor(
+  rank: FeastRankDisplay,
+  surface: TypikonIconSurface = 'light',
+): string {
+  const redRank = RED_RANK_GLYPHS.has(rank.glyph);
+
+  switch (surface) {
+    case 'dark':
+      if (redRank) return '#f08a9a';
+      if (rank.glyph === 'presanctified') return '#d4b896';
+      return colors.darkInk;
+    case 'muted':
+      if (redRank) return colors.feastBorder;
+      if (rank.glyph === 'presanctified') return '#3d2218';
+      return colors.ink;
+    default:
+      if (redRank) return rank.tint ?? RED;
+      return rank.tint ?? colors.ink;
+  }
+}
+
 /** orthocal FeastLevels keys → display */
 export const FEAST_RANK_BY_LEVEL: Record<number, FeastRankDisplay> = {
   [-1]: { glyph: 'no_liturgy', shortName: 'No Liturgy', tint: BLACK },
-  [0]: { glyph: 'liturgy', shortName: 'Liturgy', tint: BLACK },
-  [1]: { glyph: 'presanctified', shortName: 'Presanctified', tint: '#5c3b2e' },
-  [2]: { glyph: 'six_stichera', shortName: 'Six stichera', tint: BLACK },
-  [3]: { glyph: 'doxology', shortName: 'Doxology', tint: RED },
-  [4]: { glyph: 'polyeleos', shortName: 'Polyeleos', tint: RED },
-  [5]: { glyph: 'vigil', shortName: 'Vigil', tint: RED },
-  [6]: { glyph: 'great_feast', shortName: 'Great Feast', tint: RED },
-  [7]: { glyph: 'great_feast', shortName: 'Major feast (Theotokos)', tint: RED },
-  [8]: { glyph: 'great_feast', shortName: 'Major feast (Lord)', tint: RED },
+  [0]: { glyph: 'liturgy', shortName: 'Liturgy (unranked)', tint: BLACK },
+  [1]: { glyph: 'presanctified', shortName: 'Presanctified Liturgy ranked service', tint: '#5c3b2e' },
+  [2]: { glyph: 'six_stichera', shortName: 'Six stichera ranked service', tint: BLACK },
+  [3]: { glyph: 'doxology', shortName: 'Doxology ranked service', tint: RED },
+  [4]: { glyph: 'polyeleos', shortName: 'Polyeleos ranked service', tint: RED },
+  [5]: { glyph: 'vigil', shortName: 'Vigil ranked service', tint: RED },
+  [6]: { glyph: 'great_feast', shortName: 'Great Feast ranked service', tint: RED },
+  [7]: { glyph: 'great_feast', shortName: 'Major feast (Theotokos) ranked service', tint: RED },
+  [8]: { glyph: 'great_feast', shortName: 'Major Feast', tint: RED },
 };
 
 /** Exact orthocal API feast_level_description strings. */
@@ -73,32 +107,6 @@ function fromDescription(description: string): FeastRankDisplay | null {
   if (d.includes('major feast lord')) return FEAST_RANK_BY_LEVEL[8];
   if (d === 'liturgy') return FEAST_RANK_BY_LEVEL[0];
   return null;
-}
-
-/** Screen reader and web hover text for typikon rank icons. */
-export function feastRankAccessibilityLabel(rank: FeastRankDisplay): string {
-  switch (rank.glyph) {
-    case 'no_liturgy':
-      return 'No liturgy';
-    case 'liturgy':
-      return 'Liturgy, unranked service';
-    case 'presanctified':
-      return 'Presanctified Liturgy ranked service';
-    case 'six_stichera':
-      return 'Six stichera ranked service';
-    case 'doxology':
-      return 'Doxology ranked service';
-    case 'polyeleos':
-      return 'Polyeleos ranked service';
-    case 'vigil':
-      return 'Vigil ranked service';
-    case 'great_feast':
-      return `${rank.shortName} ranked service`;
-    case 'ordinary':
-      return 'Ordinary day';
-    default:
-      return rank.shortName;
-  }
 }
 
 export function getFeastRankDisplay(

@@ -94,3 +94,16 @@ export function buildCommemorationEntries(day: OrthocalDay | null): Commemoratio
 
   return entries;
 }
+
+export function partitionCommemorations(entries: CommemorationEntry[]): {
+  feasts: CommemorationEntry[];
+  saints: CommemorationEntry[];
+} {
+  const feasts: CommemorationEntry[] = [];
+  const saints: CommemorationEntry[] = [];
+  for (const entry of entries) {
+    if (entry.kind === 'feast') feasts.push(entry);
+    else saints.push(entry);
+  }
+  return { feasts, saints };
+}

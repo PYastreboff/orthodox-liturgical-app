@@ -66,6 +66,3 @@ export function tabBarIconOptions(name: TabName) {
     tabBarAccessibilityLabel: TAB_LABELS[name],
   };
 }
-
-/** Active tab accent when screens need a static reference. */
-export const tabActiveColor = colors.tabActiveLight;

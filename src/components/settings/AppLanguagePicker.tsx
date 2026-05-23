@@ -1,22 +1,22 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import type { UiLanguage } from '../../i18n/types';
 import { useAppTranslation } from '../../i18n/useAppTranslation';
-import type { PrimaryCalendar } from '../../lib/calendar/dateDisplay';
 
 import { AnimatedSegmentIcon } from './AnimatedSegmentIcon';
 import { SegmentedPicker, type SegmentedOption } from './SegmentedPicker';
 
 type Props = {
-  value: PrimaryCalendar;
-  onChange: (value: PrimaryCalendar) => void;
+  value: UiLanguage;
+  onChange: (value: UiLanguage) => void;
   isDark: boolean;
 };
 
-export function CalendarModePicker({ value, onChange, isDark }: Props) {
+export function AppLanguagePicker({ value, onChange, isDark }: Props) {
   const { t } = useAppTranslation();
-  const options: SegmentedOption<PrimaryCalendar>[] = [
-    { id: 'julian', label: t('settings.calendarJulian') },
-    { id: 'gregorian', label: t('settings.calendarGregorian') },
+  const options: SegmentedOption<UiLanguage>[] = [
+    { id: 'en', label: t('settings.languageEnglish') },
+    { id: 'ru', label: t('settings.languageRussian') },
   ];
 
   return (
@@ -31,12 +31,10 @@ export function CalendarModePicker({ value, onChange, isDark }: Props) {
           index={index}
           progress={progress}
           inactiveColor={inactiveColor}
-          accessibilityLabel={
-            option.id === 'julian' ? t('a11y.calendarJulian') : t('a11y.calendarGregorian')
-          }
+          accessibilityLabel={option.id === 'en' ? 'English' : 'Русский'}
           renderIcon={(color) => (
             <MaterialCommunityIcons
-              name={option.id === 'julian' ? 'calendar-month' : 'calendar'}
+              name={option.id === 'en' ? 'alphabet-latin' : 'alphabet-cyrillic'}
               size={18}
               color={color}
             />
