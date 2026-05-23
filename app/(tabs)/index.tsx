@@ -63,6 +63,34 @@ function roleLabel(t: (path: string) => string, id: ClergyRole): string {
   return t(keys[id]);
 }
 
+function FastingFoodBulletList({
+  heading,
+  items,
+  textColor,
+  bodyType,
+}: {
+  heading: string;
+  items: string[];
+  textColor: string;
+  bodyType: { fontSize: number; lineHeight: number };
+}) {
+  if (items.length === 0) return null;
+  return (
+    <View style={styles.fastListBlock}>
+      <Text style={[styles.fastListHeading, bodyType, { color: textColor }]}>{heading}</Text>
+      {items.map((item) => (
+        <Text
+          key={`${heading}-${item}`}
+          style={[styles.fastListItem, bodyType, { color: textColor }]}
+        >
+          {'\u2022 '}
+          {item}
+        </Text>
+      ))}
+    </View>
+  );
+}
+
 function addDays(d: Date, days: number) {
   const next = new Date(d);
   next.setDate(next.getDate() + days);
@@ -371,36 +399,18 @@ export default function TodayScreen() {
                 {t('today.fastRule', { rule: dashboard.fastingFoods.ruleLabel })}
               </Text>
             ) : null}
-            {dashboard.fastingFoods.allowed.length > 0 ? (
-              <View style={styles.fastListBlock}>
-                <Text style={[styles.fastListHeading, type.body, { color: theme.colors.text }]}>
-                  {t('today.allowedHeading')}
-                </Text>
-                {dashboard.fastingFoods.allowed.map((item) => (
-                  <Text
-                    key={`allowed-${item}`}
-                    style={[styles.fastListItem, type.body, { color: theme.colors.text }]}
-                  >
-                    {item}
-                  </Text>
-                ))}
-              </View>
-            ) : null}
-            {dashboard.fastingFoods.notAllowed.length > 0 ? (
-              <View style={styles.fastListBlock}>
-                <Text style={[styles.fastListHeading, type.body, { color: theme.colors.text }]}>
-                  {t('today.notAllowedHeading')}
-                </Text>
-                {dashboard.fastingFoods.notAllowed.map((item) => (
-                  <Text
-                    key={`not-${item}`}
-                    style={[styles.fastListItem, type.body, { color: theme.colors.text }]}
-                  >
-                    {item}
-                  </Text>
-                ))}
-              </View>
-            ) : null}
+            <FastingFoodBulletList
+              heading={t('today.allowedHeading')}
+              items={dashboard.fastingFoods.allowed}
+              textColor={theme.colors.text}
+              bodyType={type.body}
+            />
+            <FastingFoodBulletList
+              heading={t('today.notAllowedHeading')}
+              items={dashboard.fastingFoods.notAllowed}
+              textColor={theme.colors.text}
+              bodyType={type.body}
+            />
             {dashboard.fastingFoods.exceptionNote ? (
               <Text style={[styles.fastException, type.hint, { color: theme.colors.text }]}>
                 {t('today.fastException', { note: dashboard.fastingFoods.exceptionNote })}
@@ -408,19 +418,9 @@ export default function TodayScreen() {
             ) : null}
           </>
         ) : (
-          <View style={styles.fastListBlock}>
-            <Text style={[styles.fastListHeading, type.body, { color: theme.colors.text }]}>
-              {t('today.allowedHeading')}
-            </Text>
-            {dashboard.fastingFoods.allowed.map((item) => (
-              <Text
-                key={`allowed-${item}`}
-                style={[styles.fastListItem, type.body, { color: theme.colors.text }]}
-              >
-                {item}
-              </Text>
-            ))}
-          </View>
+          <Text style={[styles.fastAllAllowed, type.body, { color: theme.colors.text }]}>
+            {t('fasting.foodsAllAllowed')}
+          </Text>
         )}
         <Text style={[styles.cardHint, type.hint]}>{dashboard.fastingNote}</Text>
       </CollapsibleSection>
@@ -637,8 +637,12 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   fastListItem: {
-    paddingLeft: 4,
+    paddingLeft: 12,
     opacity: 0.9,
+  },
+  fastAllAllowed: {
+    marginTop: 10,
+    opacity: 0.92,
   },
   fastException: {
     marginTop: 10,
