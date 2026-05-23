@@ -2,23 +2,22 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useCallback, useMemo, useState } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 
-import { CalendarKindBadge } from '../../src/components/CalendarKindBadge';
 import { CollapsibleSection } from '../../src/components/CollapsibleSection';
 import { SectionTitleRow } from '../../src/components/SectionTitleRow';
 import { DayHero } from '../../src/components/DayHero';
 import { TypikonSymbol } from '../../src/components/TypikonSymbol';
 import { VestmentIcon } from '../../src/components/VestmentIcon';
 import { useOrthocalDay } from '../../src/hooks/useOrthocalDay';
-import { dateToJulianPlainDate } from '../../src/lib/calendar/julianGregorian';
-import { formatGregorianReadableFromDate, formatJulianReadable } from '../../src/lib/calendar/formatDate';
+import { formatGregorianReadableFromDate } from '../../src/lib/calendar/formatDate';
 import { getLiturgicalAppearanceForLocalDate } from '../../src/lib/calendar/dayAppearance';
-import { startOfLocalDay } from '../../src/lib/calendar/localDate';
 import {
-  getDateDisplayFlags,
-  numericDateHint,
-  orderedDateLines,
-} from '../../src/lib/calendar/dateDisplay';
+  civilPlainDateFromLocal,
+  liturgicalCalendarDescription,
+} from '../../src/lib/calendar/liturgicalCalendar';
+import { startOfLocalDay } from '../../src/lib/calendar/localDate';
+import { CommemorationCard } from '../../src/components/CommemorationCard';
 import { LiturgicalTextSectionBlock } from '../../src/components/LiturgicalPassageBlock';
+import { buildCommemorationEntries } from '../../src/lib/liturgical/commemorations';
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
 import { useLiturgicalTexts } from '../../src/hooks/useLiturgicalTexts';
@@ -29,22 +28,13 @@ import { usePreferences } from '../../src/state/PreferencesContext';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 
-function pad2(n: number) {
-  return n < 10 ? `0${n}` : `${n}`;
-}
-
-function formatDateParts(y: number, m: number, d: number) {
-  return `${y}-${pad2(m)}-${pad2(d)}`;
-}
-
 type ClergyRole = 'layperson' | 'altar_server' | 'deacon' | 'priest' | 'bishop';
 type CollapsibleKey =
   | 'date'
   | 'commemorations'
   | 'fasting'
   | 'vestments'
-  | 'readings'
-  | 'pipeline';
+  | 'readings';
 
 const ROLE_OPTIONS: { id: ClergyRole; label: string }[] = [
   { id: 'layperson', label: 'Layperson' },
@@ -64,17 +54,16 @@ export default function TodayScreen() {
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
   const verseNumberColor = isDark ? '#a39e98' : colors.muted;
-  const { consumePendingDay } = useDayNavigation();
-  const { primaryCalendar, showAlternateCalendar, showVestmentGradient, defaultTextLang, setDefaultTextLang } =
+  const { selectedDate, setSelectedDate, consumePendingDay } = useDayNavigation();
+  const { primaryCalendar, showVestmentGradient, defaultTextLang, setDefaultTextLang } =
     usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
-  const [selectedDate, setSelectedDate] = useState(today);
 
   useFocusEffect(
     useCallback(() => {
       const day = consumePendingDay();
       if (day) setSelectedDate(day);
-    }, [consumePendingDay]),
+    }, [consumePendingDay, setSelectedDate]),
   );
   const [role, setRole] = useState<ClergyRole>('priest');
   const [collapsed, setCollapsed] = useState<Record<CollapsibleKey, boolean>>({
@@ -83,72 +72,38 @@ export default function TodayScreen() {
     fasting: false,
     vestments: false,
     readings: false,
-    pipeline: true,
   });
 
-  const civil = useMemo(
-    () => ({
-      y: selectedDate.getFullYear(),
-      m: selectedDate.getMonth() + 1,
-      d: selectedDate.getDate(),
-    }),
-    [selectedDate],
-  );
-
-  const gregorianLine = useMemo(
-    () => formatDateParts(civil.y, civil.m, civil.d),
-    [civil.d, civil.m, civil.y],
-  );
-  const liturgicalJulian = useMemo(() => dateToJulianPlainDate(selectedDate), [selectedDate]);
-  const gregorianCivil = useMemo(
-    () => ({
-      year: selectedDate.getFullYear(),
-      month: selectedDate.getMonth() + 1,
-      day: selectedDate.getDate(),
-    }),
-    [selectedDate],
-  );
-  const appearance = useMemo(() => getLiturgicalAppearanceForLocalDate(selectedDate), [selectedDate]);
-  const { julianDay, gregorianDay, loading, error } = useOrthocalDay(liturgicalJulian, gregorianCivil);
-  const dashboard = useMemo(
-    () => buildDayDashboard(julianDay, gregorianDay, appearance),
-    [appearance, gregorianDay, julianDay],
-  );
-  const { sections: liturgicalTextSections, loadingSlavonic } = useLiturgicalTexts(
-    julianDay,
-    defaultTextLang,
-  );
-
-  const julianDateLabel = useMemo(() => formatJulianReadable(liturgicalJulian, true), [liturgicalJulian]);
   const gregorianDateLabel = useMemo(
     () => formatGregorianReadableFromDate(selectedDate),
     [selectedDate],
+  );
+  const appearance = useMemo(
+    () => getLiturgicalAppearanceForLocalDate(selectedDate, primaryCalendar),
+    [primaryCalendar, selectedDate],
+  );
+  const { liturgicalDay, loading, error } = useOrthocalDay(selectedDate, primaryCalendar);
+  const civilPlain = useMemo(() => civilPlainDateFromLocal(selectedDate), [selectedDate]);
+  const dashboard = useMemo(
+    () => buildDayDashboard(liturgicalDay, appearance, primaryCalendar, civilPlain),
+    [appearance, civilPlain, liturgicalDay, primaryCalendar],
+  );
+  const { sections: liturgicalTextSections, loadingSlavonic } = useLiturgicalTexts(
+    liturgicalDay,
+    defaultTextLang,
+  );
+  const commemorations = useMemo(
+    () => buildCommemorationEntries(liturgicalDay),
+    [liturgicalDay],
   );
   const vestmentLines = useMemo(
     () => vestmentGuidanceForRole(role, appearance),
     [role, appearance],
   );
 
-  const dateDisplay = useMemo(
-    () => getDateDisplayFlags({ primaryCalendar, showAlternateCalendar }),
-    [primaryCalendar, showAlternateCalendar],
-  );
-  const heroDateLines = useMemo(
-    () => orderedDateLines(dateDisplay, julianDateLabel, gregorianDateLabel),
-    [dateDisplay, gregorianDateLabel, julianDateLabel],
-  );
-  const primaryFastLabel =
-    primaryCalendar === 'julian' ? dashboard.julianFastLabel : dashboard.gregorianFastLabel;
-  const alternateFastLabel =
-    primaryCalendar === 'julian' ? dashboard.gregorianFastLabel : dashboard.julianFastLabel;
-  const numericHint = useMemo(
-    () =>
-      numericDateHint(
-        dateDisplay,
-        formatDateParts(liturgicalJulian.year, liturgicalJulian.month, liturgicalJulian.day),
-        gregorianLine,
-      ),
-    [dateDisplay, gregorianLine, liturgicalJulian.day, liturgicalJulian.month, liturgicalJulian.year],
+  const liturgicalCalendarHint = useMemo(
+    () => liturgicalCalendarDescription(primaryCalendar),
+    [primaryCalendar],
   );
 
   const canGoToToday = selectedDate.getTime() !== today.getTime();
@@ -165,13 +120,13 @@ export default function TodayScreen() {
       <DayHero
         appearance={appearance}
         dayTitle={dashboard.dayTitle}
-        dateLines={heroDateLines}
+        dateLabel={gregorianDateLabel}
         toneLabel={dashboard.toneLabel}
         feastRank={dashboard.feastRank}
-        fastLabel={primaryFastLabel}
+        fastLabel={dashboard.fastLabel}
         canGoToToday={canGoToToday}
-        onPrevious={() => setSelectedDate((d) => addDays(d, -1))}
-        onNext={() => setSelectedDate((d) => addDays(d, 1))}
+        onPrevious={() => setSelectedDate(addDays(selectedDate, -1))}
+        onNext={() => setSelectedDate(addDays(selectedDate, 1))}
         onToday={() => setSelectedDate(today)}
       />
       {loading ? (
@@ -220,55 +175,25 @@ export default function TodayScreen() {
         onToggle={() => toggleSection('date')}
         themeColors={theme.colors}
       >
-        {heroDateLines.map((line, index) => (
-          <View
-            key={line.kind}
-            style={[styles.rowBetween, index > 0 ? styles.dateRowGap : null]}
-          >
-            <View style={styles.dateTextWrap}>
-              <CalendarKindBadge kind={line.kind} variant="date" align="left" isDark={isDark} />
-              <Text style={[styles.dateLineValue, { color: theme.colors.text }]}>
-                {line.label}
-              </Text>
-            </View>
-            <Text style={[styles.pill, styles.dateFastPill]}>
-              {index === 0 ? primaryFastLabel : alternateFastLabel}
-            </Text>
-          </View>
-        ))}
+        <View style={styles.rowBetween}>
+          <Text style={[styles.dateLineValue, { color: theme.colors.text }]}>
+            {gregorianDateLabel}
+          </Text>
+          <Text style={[styles.pill, styles.dateFastPill]}>{dashboard.fastLabel}</Text>
+        </View>
         <View style={styles.serviceRankRow}>
           <TypikonSymbol feastRank={dashboard.feastRank} variant="chip" />
           <Text style={[styles.serviceRankLabel, { color: theme.colors.text }]}>
             {dashboard.feastRank.shortName}
           </Text>
         </View>
-        <Text style={styles.cardHint}>{numericHint}</Text>
-      </CollapsibleSection>
-
-      <CollapsibleSection
-        title="Commemorations & Feasts"
-        icon="commemorations"
-        expanded={!collapsed.commemorations}
-        onToggle={() => toggleSection('commemorations')}
-        themeColors={theme.colors}
-      >
-        <View style={styles.feastRankRow}>
-          <TypikonSymbol feastRank={dashboard.feastRank} variant="large" />
-          <Text style={[styles.sectionHeading, styles.feastRankHeading, { color: theme.colors.text }]}>
-            {dashboard.dayTitle}
-          </Text>
-        </View>
-        {dashboard.feasts.length > 0 ? (
-          <Text style={[styles.body, { color: theme.colors.text }]}>
-            Feasts: {dashboard.feasts.join(' • ')}
-          </Text>
-        ) : null}
-        <Text style={[styles.body, { color: theme.colors.text, marginTop: 8 }]}>
-          Saints: {dashboard.saints.join(' • ')}
+        <Text style={styles.cardHint}>
+          {dashboard.orthocalQueryLabel}
+          {dashboard.orthocalChurchDateLabel
+            ? ` · Church date: ${dashboard.orthocalChurchDateLabel}`
+            : ''}
         </Text>
-        {dashboard.titles.length > 1 ? (
-          <Text style={styles.cardHint}>Also: {dashboard.titles.slice(1).join(' · ')}</Text>
-        ) : null}
+        <Text style={styles.cardHint}>{liturgicalCalendarHint}</Text>
       </CollapsibleSection>
 
       <CollapsibleSection
@@ -351,18 +276,32 @@ export default function TodayScreen() {
       </CollapsibleSection>
 
       <CollapsibleSection
-        title="Data pipeline"
-        icon="pipeline"
-        expanded={!collapsed.pipeline}
-        onToggle={() => toggleSection('pipeline')}
+        title="Commemorations"
+        icon="commemorations"
+        expanded={!collapsed.commemorations}
+        onToggle={() => toggleSection('commemorations')}
         themeColors={theme.colors}
       >
-        <Text style={[styles.body, { color: theme.colors.text }]}>
-          Liturgical day, saints, fasting, and readings load from orthocal.info (OCA rubrics, KJV scripture).
-          Troparia and kontakia appear when the API includes them or when noted in a saint’s life; otherwise
-          sections show “None for this day.” Vestment colours still use the local Pascha-based script until
-          your typikon pack is added.
-        </Text>
+        {loading ? (
+          <Text style={[styles.cardHint, { color: isDark ? '#a39e98' : colors.muted }]}>
+            Loading commemorations…
+          </Text>
+        ) : commemorations.length > 0 ? (
+          commemorations.map((entry) => (
+            <CommemorationCard
+              key={entry.id}
+              entry={entry}
+              textColor={theme.colors.text}
+              mutedColor={isDark ? '#a39e98' : colors.muted}
+              cardBg={isDark ? colors.darkSurface : colors.card}
+              borderColor={theme.colors.border}
+            />
+          ))
+        ) : (
+          <Text style={[styles.body, { color: theme.colors.text }]}>
+            No commemorations listed for this day.
+          </Text>
+        )}
       </CollapsibleSection>
     </ScrollView>
     </VestmentPageBackground>

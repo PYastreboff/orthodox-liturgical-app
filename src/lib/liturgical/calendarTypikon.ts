@@ -1,3 +1,5 @@
+import type { OrthocalDay } from '../api/orthocal';
+import { isInflatedOrthocalRankGlyph, shouldUseOrthocalFeastRank } from './lectionaryDay';
 import type { FeastRankDisplay, TypikonGlyph } from './typikonSymbols';
 import { getFeastRankDisplay } from './typikonSymbols';
 
@@ -38,9 +40,13 @@ export function feastRankFallbackFromAppearance(appearanceKey: string): FeastRan
 export function feastRankForLiturgicalDay(
   appearanceKey: string,
   apiRank: FeastRankDisplay | null,
+  orthocalDay?: OrthocalDay | null,
 ): FeastRankDisplay | null {
   const rank = apiRank ?? feastRankFallbackFromAppearance(appearanceKey);
   if (appearanceKey === 'bright_week' && rank?.glyph === 'great_feast') {
+    return null;
+  }
+  if (!shouldUseOrthocalFeastRank(orthocalDay, appearanceKey) && isInflatedOrthocalRankGlyph(rank?.glyph)) {
     return null;
   }
   return rank;

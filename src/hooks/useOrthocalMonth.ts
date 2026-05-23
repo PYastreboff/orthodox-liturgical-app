@@ -1,14 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { fetchOrthocalDay } from '../lib/api/orthocal';
-import { dateToJulianPlainDate } from '../lib/calendar/julianGregorian';
+import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
+import { civilPlainDateFromLocal, orthocalQueryDate } from '../lib/calendar/liturgicalCalendar';
 import { toDayIso } from '../lib/calendar/localDate';
+import { getLiturgicalAppearanceForLocalDate } from '../lib/calendar/dayAppearance';
+import {
+  buildCalendarDayInfo,
+  type CalendarDayInfo,
+} from '../lib/liturgical/calendarDayInfo';
 import {
   feastRankForLiturgicalDay,
   shouldShowCalendarTypikon,
 } from '../lib/liturgical/calendarTypikon';
-import { getLiturgicalAppearanceForLocalDate } from '../lib/calendar/dayAppearance';
-import { getFeastRankDisplay, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import { getFeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 
 function daysInMonth(visibleMonth: Date): Date[] {
   const y = visibleMonth.getFullYear();
@@ -21,9 +26,9 @@ function daysInMonth(visibleMonth: Date): Date[] {
   return days;
 }
 
-export function useOrthocalMonth(visibleMonth: Date) {
+export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: PrimaryCalendar) {
   const monthKey = `${visibleMonth.getFullYear()}-${visibleMonth.getMonth()}`;
-  const [apiRanks, setApiRanks] = useState<Record<string, FeastRankDisplay>>({});
+  const [dayByIso, setDayByIso] = useState<Record<string, CalendarDayInfo>>({});
 
   useEffect(() => {
     let cancelled = false;
@@ -33,41 +38,62 @@ export function useOrthocalMonth(visibleMonth: Date) {
       const entries = await Promise.all(
         days.map(async (date) => {
           const iso = toDayIso(date);
-          const julian = dateToJulianPlainDate(date);
+          const civil = civilPlainDateFromLocal(date);
+          const queryDate = orthocalQueryDate(civil);
+          const appearance = getLiturgicalAppearanceForLocalDate(date, liturgicalCalendar);
+
           try {
-            const day = await fetchOrthocalDay('julian', julian);
-            const rank = getFeastRankDisplay(day.feast_level, day.feast_level_description);
-            return [iso, rank] as const;
+            const orthocalDay = await fetchOrthocalDay(liturgicalCalendar, queryDate);
+            const apiRank = getFeastRankDisplay(
+              orthocalDay.feast_level,
+              orthocalDay.feast_level_description,
+            );
+            const feastRank = feastRankForLiturgicalDay(appearance.key, apiRank, orthocalDay);
+            const info = buildCalendarDayInfo(
+              orthocalDay,
+              appearance.key,
+              appearance.label,
+              feastRank,
+            );
+            return [iso, info] as const;
           } catch {
-            return [iso, null] as const;
+            const info = buildCalendarDayInfo(null, appearance.key, appearance.label, null);
+            return [iso, info] as const;
           }
         }),
       );
 
       if (!cancelled) {
-        const next: Record<string, FeastRankDisplay> = {};
-        for (const [iso, rank] of entries) {
-          if (rank) next[iso] = rank;
+        const next: Record<string, CalendarDayInfo> = {};
+        for (const [iso, info] of entries) {
+          next[iso] = info;
         }
-        setApiRanks(next);
+        setDayByIso(next);
       }
     }
 
-    setApiRanks({});
+    setDayByIso({});
     load();
     return () => {
       cancelled = true;
     };
-  }, [monthKey, visibleMonth]);
+  }, [liturgicalCalendar, monthKey, visibleMonth]);
+
+  const dayInfoForDate = useMemo(
+    () =>
+      (date: Date): CalendarDayInfo => {
+        const iso = toDayIso(date);
+        const cached = dayByIso[iso];
+        if (cached) return cached;
+        const appearance = getLiturgicalAppearanceForLocalDate(date, liturgicalCalendar);
+        return buildCalendarDayInfo(null, appearance.key, appearance.label, null);
+      },
+    [dayByIso, liturgicalCalendar],
+  );
 
   const feastRankForDate = useMemo(
-    () => (date: Date) => {
-      const iso = toDayIso(date);
-      const fromApi = apiRanks[iso] ?? null;
-      const appearance = getLiturgicalAppearanceForLocalDate(date);
-      return feastRankForLiturgicalDay(appearance.key, fromApi);
-    },
-    [apiRanks],
+    () => (date: Date) => dayInfoForDate(date).feastRank,
+    [dayInfoForDate],
   );
 
   const showTypikonForDate = useMemo(
@@ -78,5 +104,5 @@ export function useOrthocalMonth(visibleMonth: Date) {
     [feastRankForDate],
   );
 
-  return { feastRankForDate, showTypikonForDate };
+  return { dayInfoForDate, feastRankForDate, showTypikonForDate };
 }

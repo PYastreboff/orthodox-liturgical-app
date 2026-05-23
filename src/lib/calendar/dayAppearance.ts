@@ -4,7 +4,9 @@ import {
   julianCalendarToGregorian,
   julianCalendarToJulianDayNumber,
 } from './julianGregorian';
+import type { PrimaryCalendar } from './dateDisplay';
 import { formatGregorianReadable, formatJulianReadable } from './formatDate';
+import { appearanceLiturgicalPlainDate, civilPlainDateFromLocal } from './liturgicalCalendar';
 import { orthodoxPaschaJdn } from './pascha';
 import { isWeeklyFastDay } from './weeklyFast';
 
@@ -27,13 +29,12 @@ function jdnForJulian(y: number, m: number, d: number): number {
   return julianCalendarToJulianDayNumber(y, m, d);
 }
 
-/** Weekday from Julian date: 0 = Sunday … 6 = Saturday (local civil calendar bridge). */
-function weekdayFromJulian(j: PlainDate): number {
-  const g = julianCalendarToGregorian(j.year, j.month, j.day);
-  return new Date(g.year, g.month - 1, g.day).getDay();
+/** Weekday for a liturgical plain date: 0 = Sunday … 6 = Saturday. */
+function weekdayFromPlain(p: PlainDate): number {
+  return new Date(p.year, p.month - 1, p.day).getDay();
 }
 
-function sameJulian(a: PlainDate, b: PlainDate): boolean {
+function sameLiturgicalDate(a: PlainDate, b: PlainDate): boolean {
   return a.year === b.year && a.month === b.month && a.day === b.day;
 }
 
@@ -41,8 +42,8 @@ function sameJulian(a: PlainDate, b: PlainDate): boolean {
  * Approximate liturgical colours for the Russian Orthodox **Julian** calendar,
  * relative to Pascha and a few fixed feasts. Replace with SQLite pack data when available.
  */
-export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): LiturgicalDayAppearance {
-  const y = julian.year;
+export function getLiturgicalDayAppearance(liturgical: PlainDate, jdn: number): LiturgicalDayAppearance {
+  const y = liturgical.year;
   const pascha = orthodoxPaschaJdn(y);
   const cleanMonday = pascha - 48;
   const palmSunday = pascha - 7;
@@ -53,7 +54,7 @@ export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): Litu
   const apostlesFastMonday = pascha + 57;
   const stPeter = jdnForJulian(y, 6, 29);
 
-  const wd = weekdayFromJulian(julian);
+  const wd = weekdayFromPlain(liturgical);
 
   const inHolyWeek = jdn >= palmSunday && jdn <= holySaturday;
   const inBrightWeek = jdn >= pascha && jdn <= brightEnd;
@@ -75,8 +76,8 @@ export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): Litu
   const dormition = { year: y, month: 8, day: 15 } satisfies PlainDate;
   const elevationCross = { year: y, month: 9, day: 14 } satisfies PlainDate;
 
-  const g = julianCalendarToGregorian(julian.year, julian.month, julian.day);
-  const subtitle = formatJulianReadable(julian, true);
+  const g = julianCalendarToGregorian(liturgical.year, liturgical.month, liturgical.day);
+  const subtitle = formatJulianReadable(liturgical, true);
   const gregorianSubtitle = formatGregorianReadable(g, true);
 
   const baseSunday: LiturgicalDayAppearance = {
@@ -161,7 +162,7 @@ export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): Litu
     };
   }
 
-  if (sameJulian(julian, nativity)) {
+  if (sameLiturgicalDate(liturgical, nativity)) {
     return {
       key: 'nativity',
       gradient: ['#fff9f0', '#d8b892'],
@@ -172,7 +173,7 @@ export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): Litu
     };
   }
 
-  if (sameJulian(julian, theophany)) {
+  if (sameLiturgicalDate(liturgical, theophany)) {
     return {
       key: 'theophany',
       gradient: ['#3d5a80', '#1a2a40'],
@@ -183,7 +184,7 @@ export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): Litu
     };
   }
 
-  if (sameJulian(julian, annunciation)) {
+  if (sameLiturgicalDate(liturgical, annunciation)) {
     return {
       key: 'annunciation',
       gradient: ['#355a8a', '#1c2f4a'],
@@ -194,7 +195,7 @@ export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): Litu
     };
   }
 
-  if (sameJulian(julian, transfiguration)) {
+  if (sameLiturgicalDate(liturgical, transfiguration)) {
     return {
       key: 'transfiguration',
       gradient: ['#f6f0e4', '#d4b56a'],
@@ -205,7 +206,7 @@ export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): Litu
     };
   }
 
-  if (sameJulian(julian, dormition)) {
+  if (sameLiturgicalDate(liturgical, dormition)) {
     return {
       key: 'dormition',
       gradient: ['#3a5680', '#1a2538'],
@@ -216,7 +217,7 @@ export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): Litu
     };
   }
 
-  if (sameJulian(julian, elevationCross)) {
+  if (sameLiturgicalDate(liturgical, elevationCross)) {
     return {
       key: 'elevation_cross',
       gradient: ['#4a2a58', '#1a0f24'],
@@ -307,10 +308,20 @@ export function getLiturgicalDayAppearance(julian: PlainDate, jdn: number): Litu
   return baseWeekday;
 }
 
-/** Convenience: civil `Date` (local) → appearance from its Julian liturgical date. */
-export function getLiturgicalAppearanceForLocalDate(d: Date): LiturgicalDayAppearance {
-  const g: PlainDate = { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
-  const julian = gregorianPlainToJulianPlain(g);
+/** Civil date + church calendar → local vestment / season appearance. */
+export function getLiturgicalAppearanceForLocalDate(
+  d: Date,
+  liturgicalCalendar: PrimaryCalendar = 'julian',
+): LiturgicalDayAppearance {
+  const civil = civilPlainDateFromLocal(d);
+  const liturgical = appearanceLiturgicalPlainDate(civil, liturgicalCalendar);
+  const julian = gregorianPlainToJulianPlain(civil);
   const jdn = julianCalendarToJulianDayNumber(julian.year, julian.month, julian.day);
-  return getLiturgicalDayAppearance(julian, jdn);
+  const appearance = getLiturgicalDayAppearance(liturgical, jdn);
+  const civilReadable = formatGregorianReadable(civil, true);
+  return {
+    ...appearance,
+    subtitle: civilReadable,
+    gregorianSubtitle: civilReadable,
+  };
 }

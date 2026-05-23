@@ -8,8 +8,7 @@ export type SectionIconName =
   | 'commemorations'
   | 'fasting'
   | 'vestments'
-  | 'readings'
-  | 'pipeline';
+  | 'readings';
 
 export const SECTION_ICON_LABELS: Record<SectionIconName, string> = {
   'serving-role': 'Serving role',
@@ -18,7 +17,6 @@ export const SECTION_ICON_LABELS: Record<SectionIconName, string> = {
   fasting: 'Fasting information',
   vestments: 'Vestments',
   readings: 'Liturgical texts',
-  pipeline: 'Data pipeline',
 };
 
 const ICON_SIZE = 22;
@@ -51,8 +49,6 @@ export function SectionIcon({ name, color }: Props) {
             color={color}
           />
         );
-      case 'pipeline':
-        return <Feather name="database" size={ICON_SIZE} color={color} />;
       default:
         return <Feather name="circle" size={ICON_SIZE} color={color} />;
     }

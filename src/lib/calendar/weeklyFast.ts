@@ -1,3 +1,4 @@
+import { julianCalendarToJulianDayNumber } from './julianGregorian';
 import { orthodoxPaschaJdn } from './pascha';
 
 export const WEEKLY_FAST_APPEARANCE_KEYS = new Set(['wednesday_fast', 'friday_fast']);
@@ -8,6 +9,21 @@ export function isInBrightWeek(jdn: number, julianYear: number): boolean {
   return jdn >= pascha && jdn <= pascha + 7;
 }
 
+/** Pentecost Sunday through the following Saturday — Wed/Fri fast is suspended. */
+export function isInPentecostWeek(jdn: number, julianYear: number): boolean {
+  const pascha = orthodoxPaschaJdn(julianYear);
+  const pentecost = pascha + 49;
+  return jdn >= pentecost && jdn <= pentecost + 7;
+}
+
+/** Nativity (25 Dec Julian) through the following Saturday — Wed/Fri fast is suspended. */
+export function isInNativityWeek(jdn: number, julianYear: number): boolean {
+  const nativity = julianCalendarToJulianDayNumber(julianYear, 12, 25);
+  if (jdn >= nativity && jdn <= nativity + 7) return true;
+  const prevNativity = julianCalendarToJulianDayNumber(julianYear - 1, 12, 25);
+  return jdn >= prevNativity && jdn <= prevNativity + 7;
+}
+
 export function isWednesdayOrFriday(weekday: number): boolean {
   return weekday === 3 || weekday === 5;
 }
@@ -15,6 +31,8 @@ export function isWednesdayOrFriday(weekday: number): boolean {
 export function isWeeklyFastDay(jdn: number, weekday: number, julianYear: number): boolean {
   if (!isWednesdayOrFriday(weekday)) return false;
   if (isInBrightWeek(jdn, julianYear)) return false;
+  if (isInPentecostWeek(jdn, julianYear)) return false;
+  if (isInNativityWeek(jdn, julianYear)) return false;
   return true;
 }
 

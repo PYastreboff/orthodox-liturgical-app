@@ -6,18 +6,8 @@ export type CalendarCellStyle = {
   foreground: string;
 };
 
-/** Great feasts — reddish pink cell + red border on month grid. Bright Week (except Pascha) uses ordinary cells. */
-export const MAJOR_FEAST_APPEARANCE_KEYS = new Set([
-  'pascha',
-  'pentecost',
-  'all_saints',
-  'nativity',
-  'theophany',
-  'annunciation',
-  'transfiguration',
-  'dormition',
-  'elevation_cross',
-]);
+/** Fixed great feasts that always use pink cell + red border on the month grid. */
+export const FEAST_CELL_APPEARANCE_KEYS = new Set(['pascha', 'pentecost', 'transfiguration']);
 
 /** Fasting seasons — very light grey cell. */
 const FASTING_KEYS = new Set([
@@ -36,15 +26,18 @@ const CELL_WHITE = '#ffffff';
 const CELL_FASTING = '#c4c1b8';
 const CELL_FEAST = '#f2a0ad';
 
-/**
- * Calendar month cells: white · light grey (fast) · reddish pink (feast).
- */
-export function isMajorFeastAppearance(appearanceKey: string): boolean {
-  return MAJOR_FEAST_APPEARANCE_KEYS.has(appearanceKey);
+export function isFeastCellAppearance(appearanceKey: string): boolean {
+  return FEAST_CELL_APPEARANCE_KEYS.has(appearanceKey);
 }
 
-export function getCalendarCellStyle(appearanceKey: string): CalendarCellStyle {
-  if (MAJOR_FEAST_APPEARANCE_KEYS.has(appearanceKey)) {
+/**
+ * Calendar month cells: white · light grey (fast) · reddish pink (selected great feasts only).
+ */
+export function getCalendarCellStyle(
+  appearanceKey: string,
+  options?: { feastCell?: boolean },
+): CalendarCellStyle {
+  if (options?.feastCell) {
     return { backgroundColor: CELL_FEAST, foreground: colors.ink };
   }
 

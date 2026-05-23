@@ -33,7 +33,7 @@ export type OrthocalDay = {
   summary_title: string;
   feast_level: number;
   feast_level_description: string;
-  feasts: string[];
+  feasts: string[] | null;
   fast_level: number;
   fast_level_desc: string;
   fast_exception: number;

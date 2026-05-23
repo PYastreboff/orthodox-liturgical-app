@@ -12,11 +12,7 @@ import { colors } from '../../src/theme/tokens';
 export default function CalendarScreen() {
   const theme = useTheme();
   const { requestOpenDay } = useDayNavigation();
-  const { primaryCalendar, showAlternateCalendar } = usePreferences();
-  const dateDisplayOptions = useMemo(
-    () => ({ primaryCalendar, showAlternateCalendar }),
-    [primaryCalendar, showAlternateCalendar],
-  );
+  const { primaryCalendar } = usePreferences();
   const [cursor, setCursor] = useState(() => {
     const n = new Date();
     return new Date(n.getFullYear(), n.getMonth(), 1);
@@ -36,7 +32,7 @@ export default function CalendarScreen() {
 
   const subtitle = useMemo(
     () =>
-      'Each cell uses the Julian liturgical date for that civil day. Colours follow Pascha, major feasts, fasting seasons, and Wednesday & Friday fasts (except Bright Week).',
+      'Day numbers are civil (Gregorian). Cell labels and colours follow your liturgical calendar setting (Settings).',
     [],
   );
 
@@ -55,7 +51,7 @@ export default function CalendarScreen() {
         visibleMonth={cursor}
         onChangeMonth={onChangeMonth}
         onDayPress={onDayPress}
-        dateDisplayOptions={dateDisplayOptions}
+        liturgicalCalendar={primaryCalendar}
       />
     </ScrollView>
   );

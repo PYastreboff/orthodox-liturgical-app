@@ -3,15 +3,13 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
-import type { OrderedDateLine } from '../lib/calendar/dateDisplay';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
-import { CalendarKindBadge } from './CalendarKindBadge';
 import { TypikonSymbol } from './TypikonSymbol';
 
 type Props = {
   appearance: LiturgicalDayAppearance;
   dayTitle: string;
-  dateLines: OrderedDateLine[];
+  dateLabel: string;
   toneLabel: string;
   feastRank: FeastRankDisplay;
   fastLabel: string;
@@ -24,7 +22,7 @@ type Props = {
 export function DayHero({
   appearance,
   dayTitle,
-  dateLines,
+  dateLabel,
   toneLabel,
   feastRank,
   fastLabel,
@@ -56,22 +54,7 @@ export function DayHero({
         </Pressable>
 
         <View style={styles.dateBlock}>
-          {dateLines.map((line, index) => (
-            <View
-              key={line.kind}
-              style={[styles.dateLine, index > 0 ? styles.dateLineSecondary : null]}
-            >
-              <CalendarKindBadge kind={line.kind} variant="hero" />
-              <Text
-                style={[
-                  index === 0 ? styles.primaryDate : styles.secondaryDate,
-                  { color: fg },
-                ]}
-              >
-                {line.label}
-              </Text>
-            </View>
-          ))}
+          <Text style={[styles.primaryDate, { color: fg }]}>{dateLabel}</Text>
         </View>
 
         <Pressable
@@ -158,25 +141,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
   },
-  dateLine: {
-    alignItems: 'center',
-    width: '100%',
-  },
-  dateLineSecondary: {
-    marginTop: 8,
-  },
   primaryDate: {
     fontSize: 17,
     fontWeight: '600',
     textAlign: 'center',
     lineHeight: 22,
-  },
-  secondaryDate: {
-    fontSize: 13,
-    textAlign: 'center',
-    marginTop: 4,
-    opacity: 0.88,
-    lineHeight: 18,
   },
   chipRow: {
     flexDirection: 'row',

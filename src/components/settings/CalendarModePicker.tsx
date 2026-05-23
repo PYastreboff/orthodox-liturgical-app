@@ -30,7 +30,7 @@ export function CalendarModePicker({ value, onChange, isDark }: Props) {
           progress={progress}
           inactiveColor={inactiveColor}
           accessibilityLabel={
-            option.id === 'julian' ? 'Julian church calendar' : 'Gregorian civil calendar'
+            option.id === 'julian' ? 'Julian church calendar' : 'Gregorian church calendar'
           }
           renderIcon={(color) => (
             <MaterialCommunityIcons

@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -9,17 +10,14 @@ import {
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 
-import { CalendarKindBadge } from './CalendarKindBadge';
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';
 import { useOrthocalMonth } from '../hooks/useOrthocalMonth';
-import { getCalendarCellStyle, isMajorFeastAppearance } from '../lib/calendar/calendarCellStyle';
-import { getLiturgicalAppearanceForLocalDate } from '../lib/calendar/dayAppearance';
-import {
-  getDateDisplayFlags,
-  orderedDateLines,
-  type DateDisplayOptions,
-} from '../lib/calendar/dateDisplay';
-import { feastRankAccessibilityLabel, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import type { CalendarDayInfo } from '../lib/liturgical/calendarDayInfo';
+import { getCalendarCellStyle } from '../lib/calendar/calendarCellStyle';
+import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
+import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
+import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import { feastRankAccessibilityLabel } from '../lib/liturgical/typikonSymbols';
 import { HoverAccessible } from './HoverAccessible';
 import { colors } from '../theme/tokens';
 
@@ -52,28 +50,50 @@ function isSameLocalDay(a: Date, b: Date): boolean {
   );
 }
 
+function calendarDayHoverLabel(
+  date: Date,
+  dayInfo: CalendarDayInfo,
+  feastRank: FeastRankDisplay | null,
+  showTypikon: boolean,
+  isToday: boolean,
+): string {
+  return [
+    new Intl.DateTimeFormat(undefined, {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+    }).format(date),
+    isToday ? 'Today' : null,
+    dayInfo.dayTitle,
+    dayInfo.saintsPreview,
+    feastRank && showTypikon ? feastRank.shortName : null,
+    'Click to open',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+}
+
 type Props = {
   visibleMonth: Date;
   onChangeMonth: (delta: -1 | 1) => void;
   onDayPress?: (date: Date) => void;
-  dateDisplayOptions: DateDisplayOptions;
+  liturgicalCalendar: PrimaryCalendar;
 };
 
 export function LiturgicalMonthGrid({
   visibleMonth,
   onChangeMonth,
   onDayPress,
-  dateDisplayOptions,
+  liturgicalCalendar,
 }: Props) {
-  const dateDisplay = useMemo(
-    () => getDateDisplayFlags(dateDisplayOptions),
-    [dateDisplayOptions.primaryCalendar, dateDisplayOptions.showAlternateCalendar],
-  );
   const theme = useTheme();
   const { width } = useWindowDimensions();
   const today = useMemo(() => new Date(), []);
   const rows = useMemo(() => buildMonthCells(visibleMonth), [visibleMonth]);
-  const { feastRankForDate, showTypikonForDate } = useOrthocalMonth(visibleMonth);
+  const { dayInfoForDate, feastRankForDate, showTypikonForDate } = useOrthocalMonth(
+    visibleMonth,
+    liturgicalCalendar,
+  );
 
   const title = new Intl.DateTimeFormat(undefined, {
     month: 'long',
@@ -130,8 +150,7 @@ export function LiturgicalMonthGrid({
                   today={today}
                   typikonSize={typikonSize}
                   onPress={onDayPress}
-                  dateDisplay={dateDisplay}
-                  feastRankForDate={feastRankForDate}
+                  dayInfo={dayInfoForDate(date)}
                   showTypikonForDate={showTypikonForDate}
                 />
               ) : null}
@@ -144,7 +163,7 @@ export function LiturgicalMonthGrid({
 }
 
 /** Fixed height so every day in a week row aligns on phone. */
-const CELL_HEIGHT = 96;
+const CELL_HEIGHT = 108;
 const CELL_BORDER_RADIUS = 10;
 
 function DayCell({
@@ -152,60 +171,69 @@ function DayCell({
   today,
   typikonSize,
   onPress,
-  dateDisplay,
-  feastRankForDate,
+  dayInfo,
   showTypikonForDate,
 }: {
   date: Date;
   today: Date;
   typikonSize: number;
   onPress?: (date: Date) => void;
-  dateDisplay: ReturnType<typeof getDateDisplayFlags>;
-  feastRankForDate: (date: Date) => FeastRankDisplay | null;
+  dayInfo: CalendarDayInfo;
   showTypikonForDate: (date: Date) => boolean;
 }) {
   const scheme = useColorScheme();
-  const appearance = getLiturgicalAppearanceForLocalDate(date);
-  const cellStyle = getCalendarCellStyle(appearance.key);
-  const feastRank = feastRankForDate(date);
+  const isWeb = Platform.OS === 'web';
+  const [hovered, setHovered] = useState(false);
+  const cellStyle = getCalendarCellStyle(dayInfo.appearanceKey, {
+    feastCell: dayInfo.isFeastCell,
+  });
+  const feastRank = dayInfo.feastRank;
   const showTypikon = showTypikonForDate(date);
-  const subtitleLines = orderedDateLines(
-    dateDisplay,
-    appearance.subtitle,
-    appearance.gregorianSubtitle,
-  );
   const isToday = isSameLocalDay(date, today);
-  const hasFeastBackground = isMajorFeastAppearance(appearance.key);
+  const hasFeastBorder = dayInfo.isFeastCell;
   const isDark = scheme === 'dark';
   const defaultBorder = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)';
-  const borderWidth = hasFeastBackground ? 3 : isToday ? 2 : StyleSheet.hairlineWidth;
-  const borderColor = hasFeastBackground
+  const borderWidth = hasFeastBorder ? 3 : isToday ? 2 : StyleSheet.hairlineWidth;
+  const borderColor = hasFeastBorder
     ? colors.feastBorder
     : isToday
       ? colors.accentGold
       : defaultBorder;
+  const titleColor = dayInfo.isFeastTitleRed ? colors.feastBorder : cellStyle.foreground;
+  const subColor = dayInfo.isFeastTitleRed ? colors.feastBorder : cellStyle.foreground;
+  const dayNumColor = dayInfo.isFeastCell ? colors.feastBorder : cellStyle.foreground;
+  const hoverLabel = calendarDayHoverLabel(date, dayInfo, feastRank, showTypikon, isToday);
 
   return (
     <Pressable
       onPress={() => onPress?.(date)}
-      accessibilityRole="button"
-      accessibilityLabel={`Open liturgical day for ${[
-        isToday ? 'today' : null,
-        feastRank && showTypikon ? feastRank.shortName : null,
-        date.toLocaleDateString(),
-      ]
-        .filter(Boolean)
-        .join(', ')}`}
+      onHoverIn={isWeb ? () => setHovered(true) : undefined}
+      onHoverOut={isWeb ? () => setHovered(false) : undefined}
+      {...hoverAccessibilityProps(hoverLabel, {
+        hint: 'Opens this day on Today',
+        role: 'button',
+      })}
       style={({ pressed }) => [
         styles.cellWrap,
+        isWeb ? styles.cellWrapWeb : null,
         {
           opacity: pressed ? 0.92 : 1,
           backgroundColor: cellStyle.backgroundColor,
           borderWidth,
-          borderColor,
+          borderColor: isWeb && hovered ? colors.accentGold : borderColor,
         },
+        isWeb && hovered ? (isDark ? styles.cellHoveredDark : styles.cellHoveredLight) : null,
       ]}
     >
+      {isWeb && hovered ? (
+        <View
+          pointerEvents="none"
+          style={[
+            styles.hoverOverlay,
+            { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' },
+          ]}
+        />
+      ) : null}
       <View style={styles.cellBody}>
         {showTypikon && feastRank ? (
           <HoverAccessible
@@ -231,33 +259,21 @@ function DayCell({
           <Text
             style={[
               styles.dayNum,
-              { color: cellStyle.foreground },
+              { color: dayNumColor },
               isToday ? styles.dayNumToday : null,
             ]}
           >
             {date.getDate()}
           </Text>
         </View>
-        <Text
-          style={[styles.dayLabel, { color: cellStyle.foreground }]}
-          numberOfLines={2}
-        >
-          {appearance.label}
+        <Text style={[styles.dayLabel, { color: titleColor }]} numberOfLines={3}>
+          {dayInfo.dayTitle}
         </Text>
-        {subtitleLines.map((line, index) => (
-          <View key={line.kind}>
-            <CalendarKindBadge kind={line.kind} variant="compact" />
-            <Text
-              style={[
-                index === 0 ? styles.daySub : styles.daySubGregorian,
-                { color: cellStyle.foreground },
-              ]}
-              numberOfLines={2}
-            >
-              {line.label}
-            </Text>
-          </View>
-        ))}
+        {dayInfo.saintsPreview ? (
+          <Text style={[styles.daySaints, { color: subColor }]} numberOfLines={2}>
+            {dayInfo.saintsPreview}
+          </Text>
+        ) : null}
       </View>
     </Pressable>
   );
@@ -354,23 +370,17 @@ const styles = StyleSheet.create({
   },
   dayLabel: {
     marginTop: 2,
-    fontSize: 9,
-    fontWeight: '600',
-    textAlign: 'center',
-    lineHeight: 11,
-    opacity: 0.95,
-  },
-  daySub: {
-    marginTop: 2,
     fontSize: 8,
+    fontWeight: '700',
     textAlign: 'center',
-    opacity: 0.9,
     lineHeight: 10,
   },
-  daySubGregorian: {
-    marginTop: 1,
-    fontSize: 6,
+  daySaints: {
+    marginTop: 2,
+    fontSize: 7,
+    fontWeight: '500',
     textAlign: 'center',
-    opacity: 0.72,
+    lineHeight: 9,
+    opacity: 0.92,
   },
 });

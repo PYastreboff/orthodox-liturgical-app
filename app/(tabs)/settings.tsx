@@ -18,8 +18,6 @@ export default function SettingsScreen() {
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
   const {
-    showAlternateCalendar,
-    setShowAlternateCalendar,
     primaryCalendar,
     setPrimaryCalendar,
     colorSchemePreference,
@@ -29,8 +27,6 @@ export default function SettingsScreen() {
   } = usePreferences();
 
   const version = Constants.expoConfig?.version ?? '0.1.0';
-  const alternateLabel =
-    primaryCalendar === 'julian' ? 'Show Gregorian alongside' : 'Show Julian alongside';
 
   return (
     <ScrollView
@@ -71,31 +67,14 @@ export default function SettingsScreen() {
       </SettingsSection>
 
       <SettingsSection
-        title="Calendar"
-        description="Primary church calendar and optional second date line."
+        title="Liturgical calendar"
+        description="Dates shown are always civil (Gregorian). Choose which church calendar supplies feasts, fasting, and readings."
         isDark={isDark}
       >
-        <Text style={[styles.fieldLabel, { color: isDark ? '#a39e98' : colors.muted }]}>
-          Primary calendar
-        </Text>
         <CalendarModePicker
           value={primaryCalendar}
           onChange={setPrimaryCalendar}
           isDark={isDark}
-        />
-        <SettingsRow
-          label={alternateLabel}
-          hint="Display the other calendar on Today and the month grid."
-          isDark={isDark}
-          showDivider={false}
-          trailing={
-            <SettingsSwitch
-              value={showAlternateCalendar}
-              onValueChange={setShowAlternateCalendar}
-              isDark={isDark}
-              accessibilityLabel={alternateLabel}
-            />
-          }
         />
       </SettingsSection>
 
