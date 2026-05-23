@@ -57,7 +57,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [primaryCalendar, setPrimaryCalendarState] = useState<PrimaryCalendar>('julian');
   const [defaultTextLang, setDefaultTextLangState] = useState<TextLanguage>('en');
   const [colorSchemePreference, setColorSchemePreferenceState] =
-    useState<ColorSchemePreference>('system');
+    useState<ColorSchemePreference>('dark');
   const [showVestmentGradient, setShowVestmentGradientState] = useState(false);
   const [uiLanguage, setUiLanguageState] = useState<UiLanguage>('en');
   const [preferencesReady, setPreferencesReady] = useState(false);

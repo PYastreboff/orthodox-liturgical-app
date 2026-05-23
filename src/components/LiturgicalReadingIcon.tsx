@@ -1,18 +1,18 @@
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-
 import type { LiturgicalTextCategory } from '../lib/liturgical/liturgicalTexts';
+import { useAppTranslation } from '../i18n/useAppTranslation';
 import { HoverAccessible } from './HoverAccessible';
+import { LiturgicalReadingGlyphIcon } from './LiturgicalReadingGlyphIcon';
 
 const ICON_SIZE = 20;
 
-const READING_ICON_LABELS: Record<LiturgicalTextCategory, string> = {
-  troparion: 'Troparion',
-  kontakion: 'Kontakion',
-  prokeimenon: 'Prokeimenon',
-  alleluia: 'Alleluia',
-  epistle: 'Epistle reading',
-  gospel: 'Gospel reading',
-  communion: 'Communion verse',
+const A11Y_KEYS: Record<LiturgicalTextCategory, string> = {
+  troparion: 'readings.troparion',
+  kontakion: 'readings.kontakion',
+  prokeimenon: 'readings.prokeimenon',
+  alleluia: 'readings.alleluia',
+  epistle: 'readings.epistle',
+  gospel: 'readings.gospel',
+  communion: 'readings.communion',
 };
 
 type Props = {
@@ -22,32 +22,11 @@ type Props = {
 };
 
 export function LiturgicalReadingIcon({ category, color, size = ICON_SIZE }: Props) {
-  const icon = (() => {
-    switch (category) {
-      case 'troparion':
-        return <MaterialCommunityIcons name="music-note-outline" size={size} color={color} />;
-      case 'kontakion':
-        return <MaterialCommunityIcons name="music-circle-outline" size={size} color={color} />;
-      case 'prokeimenon':
-        return <MaterialCommunityIcons name="format-quote-open" size={size} color={color} />;
-      case 'alleluia':
-        return <MaterialCommunityIcons name="format-quote-close" size={size} color={color} />;
-      case 'epistle':
-        return (
-          <MaterialCommunityIcons name="book-open-page-variant-outline" size={size} color={color} />
-        );
-      case 'gospel':
-        return <MaterialCommunityIcons name="book-cross" size={size} color={color} />;
-      case 'communion':
-        return <MaterialCommunityIcons name="cup-water" size={size} color={color} />;
-      default:
-        return <Feather name="book-open" size={size} color={color} />;
-    }
-  })();
+  const { t } = useAppTranslation();
 
   return (
-    <HoverAccessible label={READING_ICON_LABELS[category]} accessibilityRole="image">
-      {icon}
+    <HoverAccessible label={t(A11Y_KEYS[category])} accessibilityRole="image">
+      <LiturgicalReadingGlyphIcon category={category} size={size} color={color} />
     </HoverAccessible>
   );
 }

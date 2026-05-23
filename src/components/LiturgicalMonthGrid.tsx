@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
+  ActivityIndicator,
   Platform,
   Pressable,
   StyleSheet,
@@ -104,11 +105,13 @@ export function LiturgicalMonthGrid({
   liturgicalCalendar,
 }: Props) {
   const theme = useTheme();
+  const scheme = useColorScheme();
+  const isDark = scheme === 'dark';
   const { t } = useAppTranslation();
   const { width } = useWindowDimensions();
   const today = useMemo(() => new Date(), []);
   const rows = useMemo(() => buildMonthCells(visibleMonth), [visibleMonth]);
-  const { dayInfoForDate, feastRankForDate, showTypikonForDate } = useOrthocalMonth(
+  const { dayInfoForDate, feastRankForDate, showTypikonForDate, loading } = useOrthocalMonth(
     visibleMonth,
     liturgicalCalendar,
   );
@@ -144,38 +147,60 @@ export function LiturgicalMonthGrid({
         </Pressable>
       </View>
 
-      <View style={[styles.weekHeaderRow, { width: contentWidth, gap }]}>
-        {WEEKDAY_KEYS.map((key) => (
-          <Text
-            key={key}
-            style={[
-              styles.weekHeaderCell,
-              { width: cellWidth, color: theme.colors.text },
-            ]}
-          >
-            {t(key)}
-          </Text>
-        ))}
-      </View>
+      <View style={styles.gridArea}>
+        <View style={[styles.weekHeaderRow, { width: contentWidth, gap }]}>
+          {WEEKDAY_KEYS.map((key) => (
+            <Text
+              key={key}
+              style={[
+                styles.weekHeaderCell,
+                { width: cellWidth, color: theme.colors.text },
+              ]}
+            >
+              {t(key)}
+            </Text>
+          ))}
+        </View>
 
-      {rows.map((week, wi) => (
-        <View key={wi} style={[styles.weekRow, { width: contentWidth, gap }]}>
-          {week.map((date, di) => (
-            <View key={di} style={[styles.cellSlot, { width: cellWidth, height: CELL_HEIGHT }]}>
-              {date ? (
-                <DayCell
-                  date={date}
-                  today={today}
-                  typikonSize={typikonSize}
-                  onPress={onDayPress}
-                  dayInfo={dayInfoForDate(date)}
-                  showTypikonForDate={showTypikonForDate}
-                />
-              ) : null}
+        <View style={loading ? styles.gridLoading : null}>
+          {rows.map((week, wi) => (
+            <View key={wi} style={[styles.weekRow, { width: contentWidth, gap }]}>
+              {week.map((date, di) => (
+                <View key={di} style={[styles.cellSlot, { width: cellWidth, height: CELL_HEIGHT }]}>
+                  {date ? (
+                    <DayCell
+                      date={date}
+                      today={today}
+                      typikonSize={typikonSize}
+                      onPress={onDayPress}
+                      dayInfo={dayInfoForDate(date)}
+                      showTypikonForDate={showTypikonForDate}
+                    />
+                  ) : null}
+                </View>
+              ))}
             </View>
           ))}
         </View>
-      ))}
+
+        {loading ? (
+          <View
+            style={[
+              styles.loadingOverlay,
+              {
+                backgroundColor: isDark ? 'rgba(18,16,14,0.72)' : 'rgba(232,227,216,0.82)',
+              },
+            ]}
+            accessibilityLiveRegion="polite"
+            accessibilityLabel={t('calendar.loading')}
+          >
+            <ActivityIndicator size="small" color={colors.accentWine} />
+            <Text style={[styles.loadingText, { color: isDark ? colors.darkInk : colors.ink }]}>
+              {t('calendar.loading')}
+            </Text>
+          </View>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -232,6 +257,14 @@ function DayCell({
     ? typikonIconColor(feastRank, typikonOnMutedCell ? 'muted' : 'light')
     : cellStyle.foreground;
   const hoverLabel = calendarDayHoverLabel(date, dayInfo, feastRank, showTypikon, isToday, t, lang);
+  const hoverBorderColor =
+    isWeb && hovered
+      ? hasFeastBorder
+        ? isDark
+          ? colors.feastHoverBorderDark
+          : colors.feastHoverBorder
+        : colors.accentGold
+      : borderColor;
 
   return (
     <Pressable
@@ -249,7 +282,7 @@ function DayCell({
           opacity: pressed ? 0.92 : 1,
           backgroundColor: cellStyle.backgroundColor,
           borderWidth,
-          borderColor: isWeb && hovered ? colors.accentGold : borderColor,
+          borderColor: hoverBorderColor,
         },
         isWeb && hovered ? (isDark ? styles.cellHoveredDark : styles.cellHoveredLight) : null,
       ]}
@@ -341,6 +374,25 @@ const styles = StyleSheet.create({
   navBtnText: {
     fontSize: 28,
     fontWeight: '300',
+  },
+  gridArea: {
+    position: 'relative',
+    minHeight: 120,
+  },
+  gridLoading: {
+    opacity: 0.45,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingHorizontal: 24,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   weekHeaderRow: {
     flexDirection: 'row',

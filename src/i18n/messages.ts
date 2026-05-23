@@ -33,6 +33,7 @@ const en = {
   },
   calendar: {
     title: 'Liturgical calendar',
+    loading: 'Loading calendar days…',
     subtitle:
       'Day numbers are civil (Gregorian). Cell labels and colours follow your liturgical calendar setting (Settings).',
     legendNonFasting: 'Non-fasting',
@@ -156,7 +157,6 @@ const en = {
     toggleReadings: 'Toggle scripture language',
   },
   commemorations: {
-    noLife: 'No life account on orthocal.info for this commemoration.',
     expand: 'Expand {name}',
     collapse: 'Collapse {name}',
   },
@@ -203,6 +203,7 @@ const ru = {
   },
   calendar: {
     title: 'Церковный календарь',
+    loading: 'Загрузка дней календаря…',
     subtitle:
       'Числа месяца — гражданские (григорианские). Подписи и цвета ячеек — по выбранному церковному календарю (Настройки).',
     legendNonFasting: 'Без поста',
@@ -326,7 +327,6 @@ const ru = {
     toggleReadings: 'Язык писания',
   },
   commemorations: {
-    noLife: 'На orthocal.info нет жития для этой памяти.',
     expand: 'Развернуть: {name}',
     collapse: 'Свернуть: {name}',
   },

@@ -29,10 +29,13 @@ function daysInMonth(visibleMonth: Date): Date[] {
 export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: PrimaryCalendar) {
   const monthKey = `${visibleMonth.getFullYear()}-${visibleMonth.getMonth()}`;
   const [dayByIso, setDayByIso] = useState<Record<string, CalendarDayInfo>>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     const days = daysInMonth(visibleMonth);
+    setLoading(true);
+    setDayByIso({});
 
     async function load() {
       const entries = await Promise.all(
@@ -69,10 +72,10 @@ export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: Primary
           next[iso] = info;
         }
         setDayByIso(next);
+        setLoading(false);
       }
     }
 
-    setDayByIso({});
     load();
     return () => {
       cancelled = true;
@@ -104,5 +107,5 @@ export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: Primary
     [feastRankForDate],
   );
 
-  return { dayInfoForDate, feastRankForDate, showTypikonForDate };
+  return { dayInfoForDate, feastRankForDate, showTypikonForDate, loading };
 }

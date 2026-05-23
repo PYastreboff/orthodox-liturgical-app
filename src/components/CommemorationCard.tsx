@@ -55,13 +55,6 @@ export function CommemorationCard({ entry, textColor, mutedColor, cardBg, border
           <Text style={[styles.body, { color: textColor }]}>{entry.body}</Text>
         </View>
       ) : null}
-      {!collapsible ? (
-        <View style={styles.bodyWrap}>
-          <Text style={[styles.placeholder, { color: mutedColor }]}>
-            {t('commemorations.noLife')}
-          </Text>
-        </View>
-      ) : null}
     </View>
   );
 }
@@ -106,10 +99,5 @@ const styles = StyleSheet.create({
   body: {
     fontSize: 14,
     lineHeight: 21,
-  },
-  placeholder: {
-    fontSize: 13,
-    lineHeight: 19,
-    fontStyle: 'italic',
   },
 });

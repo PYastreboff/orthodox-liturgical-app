@@ -7,23 +7,19 @@ import { LiturgicalReadingIcon } from './LiturgicalReadingIcon';
 
 type Props = {
   item: LiturgicalTextItem;
-  category: LiturgicalTextCategory;
   textColor: string;
   verseNumberColor: string;
 };
 
-export function LiturgicalPassageBlock({ item, category, textColor, verseNumberColor }: Props) {
+export function LiturgicalPassageBlock({ item, textColor, verseNumberColor }: Props) {
   const hasText = item.paragraphs.some((p) => p.some((line) => line.text.trim()));
 
   return (
     <View style={styles.block}>
-      <View style={styles.headerRow}>
-        <LiturgicalReadingIcon category={category} color={textColor} size={18} />
-        <Text style={[styles.header, { color: textColor }]}>
-          {item.citation}
-          {item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : ''}
-        </Text>
-      </View>
+      <Text style={[styles.header, { color: textColor }]}>
+        {item.citation}
+        {item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : ''}
+      </Text>
       {hasText ? (
         <View style={styles.passage}>
           {item.paragraphs.map((paragraph, pi) => (
@@ -85,7 +81,6 @@ export function LiturgicalTextSectionBlock({
           <LiturgicalPassageBlock
             key={`${item.citation}-${item.source ?? ''}-${index}`}
             item={item}
-            category={category}
             textColor={textColor}
             verseNumberColor={verseNumberColor}
           />
@@ -117,17 +112,11 @@ const styles = StyleSheet.create({
   block: {
     marginBottom: 20,
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
-    marginBottom: 4,
-  },
   header: {
-    flex: 1,
     fontSize: 14,
     fontWeight: '700',
     lineHeight: 20,
+    marginBottom: 4,
   },
   passage: {
     marginTop: 4,
