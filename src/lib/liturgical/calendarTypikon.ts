@@ -1,5 +1,5 @@
 import type { OrthocalDay } from '../api/orthocal';
-import { isOrthocalGreatFeastLevel } from './calendarDayInfo';
+import { isOrthocalGreatFeastLevel } from './liturgicalDayTitle';
 import { isInflatedOrthocalRankGlyph, shouldUseOrthocalFeastRank } from './lectionaryDay';
 import type { FeastRankDisplay, TypikonGlyph } from './typikonSymbols';
 import { getFeastRankDisplay } from './typikonSymbols';

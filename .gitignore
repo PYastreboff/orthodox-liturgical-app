@@ -69,5 +69,6 @@ Desktop.ini
 .cursor/
 
 # Misc caches
+node_modules/.cache/
 .eslintcache
 *.hprof

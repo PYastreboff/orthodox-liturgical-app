@@ -375,38 +375,14 @@ export default function TodayScreen() {
           onToggle={() => toggleSection('vestments')}
           themeColors={theme.colors}
         >
-          {vestmentLines.map((item, index) =>
-            item.lineType === 'colorSet' ? (
+          {vestmentLines.map((item, index) => {
+            const prev = vestmentLines[index - 1];
+            const whiteSetStart = prev && prev.pillBg !== item.pillBg;
+            return (
               <View
-                key={`${item.colorSet}-set`}
-                style={[
-                  styles.vestmentColorSetRow,
-                  index > 0 ? styles.vestmentColorSetRowSpaced : null,
-                ]}
+                key={`${item.kind}-${item.pillBg}`}
+                style={[styles.rowBetween, whiteSetStart ? styles.vestmentWhiteSetStart : null]}
               >
-                <Text
-                  style={[
-                    styles.vestmentColorSetTitle,
-                    type.body,
-                    { color: theme.colors.text },
-                  ]}
-                >
-                  {item.title}
-                </Text>
-                <Text
-                  style={[
-                    styles.pill,
-                    type.pill,
-                    { backgroundColor: item.pillBg, color: item.pillText },
-                  ]}
-                >
-                  {item.colorSet === 'black'
-                    ? t('vestments.colorBlack')
-                    : t('vestments.colorWhite')}
-                </Text>
-              </View>
-            ) : (
-              <View key={`${item.kind}-${item.pillBg}`} style={styles.rowBetween}>
                 <View style={styles.vestmentLabelRow}>
                   <VestmentIcon kind={item.kind} color={theme.colors.text} />
                   <Text style={[styles.body, type.body, { color: theme.colors.text }]}>
@@ -423,8 +399,8 @@ export default function TodayScreen() {
                   {item.value}
                 </Text>
               </View>
-            ),
-          )}
+            );
+          })}
           <Text style={[styles.cardHint, type.hint]}>{t('today.vestmentsHint')}</Text>
         </CollapsibleSection>
       ) : null}
@@ -632,22 +608,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingRight: 8,
   },
-  vestmentColorSetRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-    gap: 8,
-  },
-  vestmentColorSetRowSpaced: {
+  vestmentWhiteSetStart: {
     marginTop: 10,
     paddingTop: 10,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: 'rgba(128,128,128,0.25)',
-  },
-  vestmentColorSetTitle: {
-    flex: 1,
-    fontWeight: '700',
   },
   pill: {
     fontWeight: '700',

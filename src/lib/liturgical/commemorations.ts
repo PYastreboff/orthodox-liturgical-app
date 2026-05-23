@@ -1,5 +1,10 @@
 import type { OrthocalDay } from '../api/orthocal';
 import { stripHtml } from '../api/orthocal';
+import {
+  annunciationFeastNameFromOrthocal,
+  liturgicalDayTitle,
+  transferredGreatFeastOnHolyWeekDay,
+} from './liturgicalDayTitle';
 import { sanitizeTypikonProse } from './typikonSymbols';
 
 const PALM_SUNDAY_PATTERN = /\bpalm sunday\b/i;
@@ -84,7 +89,34 @@ function liturgicalFeastFallbackName(
     );
   }
 
+  if (appearanceKey === 'annunciation') {
+    return annunciationFeastNameFromOrthocal(day) ?? sanitizeTypikonProse(appearanceLabel.trim());
+  }
+
   return null;
+}
+
+function hasFeastNamed(entries: CommemorationEntry[], name: string): boolean {
+  const key = name.trim().toLowerCase();
+  return entries.some((e) => e.kind === 'feast' && e.name.trim().toLowerCase() === key);
+}
+
+function prependFeastIfMissing(
+  entries: CommemorationEntry[],
+  name: string,
+  stories: NonNullable<OrthocalDay['stories']>,
+  usedStoryTitles: Set<string>,
+): void {
+  if (!name.trim() || hasFeastNamed(entries, name)) return;
+  const story = findStoryForName(name, stories);
+  if (story?.title) usedStoryTitles.add(story.title);
+  entries.unshift({
+    id: `feast:${name}`,
+    name,
+    kind: 'feast',
+    storyTitle: story?.title,
+    body: story ? stripHtml(story.story) : undefined,
+  });
 }
 
 export function buildCommemorationEntries(
@@ -149,6 +181,27 @@ export function buildCommemorationEntries(
         body: story ? stripHtml(story.story) : undefined,
       });
     }
+  }
+
+  const extraFeasts: string[] = [];
+  const annunciation = annunciationFeastNameFromOrthocal(day);
+  if (annunciation) extraFeasts.push(annunciation);
+  if (liturgical) {
+    const dayTitle = liturgicalDayTitle(
+      day,
+      liturgical.appearanceKey,
+      liturgical.appearanceLabel,
+      null,
+    );
+    const transferred = transferredGreatFeastOnHolyWeekDay(
+      day,
+      liturgical.appearanceKey,
+      dayTitle,
+    );
+    if (transferred) extraFeasts.push(transferred);
+  }
+  for (let i = extraFeasts.length - 1; i >= 0; i--) {
+    prependFeastIfMissing(entries, extraFeasts[i], stories, usedStoryTitles);
   }
 
   return entries;

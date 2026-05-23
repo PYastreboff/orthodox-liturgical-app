@@ -11,25 +11,13 @@ export type VestmentSwatch = {
   pillText: string;
 };
 
-export type VestmentGarmentLine = {
-  lineType: 'garment';
+export type VestmentLine = {
   kind: VestmentKind;
   label: string;
   value: string;
   pillBg: string;
   pillText: string;
 };
-
-/** Holy Saturday — marks a full black or white vestment set before each list. */
-export type VestmentColorSetLine = {
-  lineType: 'colorSet';
-  colorSet: 'black' | 'white';
-  title: string;
-  pillBg: string;
-  pillText: string;
-};
-
-export type VestmentLine = VestmentGarmentLine | VestmentColorSetLine;
 
 const SWATCH_COLOR_KEYS = {
   gold: 'vestments.colorGold',
@@ -123,22 +111,6 @@ function bishopOmophorion(
   return liturgical;
 }
 
-function colorSetLine(
-  colorSet: 'black' | 'white',
-  swatch: VestmentSwatch,
-  lang: UiLanguage,
-): VestmentColorSetLine {
-  const titleKey =
-    colorSet === 'black' ? 'vestments.holySaturdayBlackSet' : 'vestments.holySaturdayWhiteSet';
-  return {
-    lineType: 'colorSet',
-    colorSet,
-    title: translate(lang, titleKey),
-    pillBg: swatch.pillBg,
-    pillText: swatch.pillText,
-  };
-}
-
 function holySaturdayVestmentLines(role: ClergyRole, lang: UiLanguage): VestmentLine[] | null {
   const kinds = vestmentKindsForRole(role);
   if (!kinds.length) return null;
@@ -147,12 +119,9 @@ function holySaturdayVestmentLines(role: ClergyRole, lang: UiLanguage): Vestment
   const white = localizedSwatch('white', lang);
   const lines: VestmentLine[] = [];
 
-  lines.push(colorSetLine('black', black, lang));
   for (const kind of kinds) {
     lines.push(garmentLine(kind, black, lang));
   }
-
-  lines.push(colorSetLine('white', white, lang));
   for (const kind of kinds) {
     lines.push(garmentLine(kind, white, lang));
   }
@@ -160,9 +129,8 @@ function holySaturdayVestmentLines(role: ClergyRole, lang: UiLanguage): Vestment
   return lines;
 }
 
-function garmentLine(kind: VestmentKind, swatch: VestmentSwatch, lang: UiLanguage): VestmentGarmentLine {
+function garmentLine(kind: VestmentKind, swatch: VestmentSwatch, lang: UiLanguage): VestmentLine {
   return {
-    lineType: 'garment',
     kind,
     label: vestmentDisplayLabel(kind, lang),
     value: swatch.name,

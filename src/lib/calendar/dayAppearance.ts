@@ -40,7 +40,7 @@ function sameLiturgicalDate(a: PlainDate, b: PlainDate): boolean {
 
 /**
  * Approximate liturgical colours for the Russian Orthodox **Julian** calendar,
- * relative to Pascha and a few fixed feasts. Replace with SQLite pack data when available.
+ * relative to Pascha and a few fixed feasts.
  */
 export function getLiturgicalDayAppearance(
   liturgical: PlainDate,

@@ -3,14 +3,12 @@ import { isFeastCellAppearance } from '../calendar/calendarCellStyle';
 import { isGreatFridayDay, shouldUseOrthocalFeastRank } from './lectionaryDay';
 import {
   calendarFeastsForDay,
-  isHolyWeekWeekdayHeadline,
   isOrthocalGreatFeastForCalendar,
   liturgicalDayTitle,
+  transferredGreatFeastOnHolyWeekDay,
 } from './liturgicalDayTitle';
 import type { FeastRankDisplay } from './typikonSymbols';
 import { sanitizeTypikonProse } from './typikonSymbols';
-
-export { isOrthocalGreatFeastLevel, ORTHOCAL_GREAT_FEAST_LEVEL_MIN } from './liturgicalDayTitle';
 
 /** Polyeleos and above (orthocal FeastLevels ≥ 4). */
 const ORTHOCAL_POLYELEOS_LEVEL_MIN = 4;
@@ -46,12 +44,10 @@ export function isCalendarFeastCell(
   dayTitle: string,
 ): boolean {
   if (isFeastCellAppearance(appearanceKey)) return true;
+  if (transferredGreatFeastOnHolyWeekDay(day, appearanceKey, dayTitle)) return true;
   if (isOrthocalGreatFeastForCalendar(day, appearanceKey, dayTitle)) return true;
   if (!useOrthocalFeastRank(day, appearanceKey)) return false;
-  if (feastRank?.glyph === 'great_feast') {
-    return !isHolyWeekWeekdayHeadline(day, appearanceKey, dayTitle);
-  }
-  return false;
+  return feastRank?.glyph === 'great_feast';
 }
 
 /** Red text: polyeleos-ranked services and above (includes great-feast cells). */
@@ -62,11 +58,10 @@ export function isCalendarFeastTitleRed(
   dayTitle: string,
 ): boolean {
   if (isCalendarFeastCell(day, appearanceKey, feastRank, dayTitle)) return true;
-  if (isOrthocalGreatFeastForCalendar(day, appearanceKey, dayTitle)) return true;
   if (!useOrthocalFeastRank(day, appearanceKey)) return false;
   if (feastRank?.glyph === 'polyeleos' || feastRank?.glyph === 'vigil') return true;
   if ((day?.feast_level ?? 0) >= ORTHOCAL_POLYELEOS_LEVEL_MIN) {
-    return !isHolyWeekWeekdayHeadline(day, appearanceKey, dayTitle);
+    return Boolean(transferredGreatFeastOnHolyWeekDay(day, appearanceKey, dayTitle));
   }
   return false;
 }
