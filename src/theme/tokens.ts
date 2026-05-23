@@ -10,12 +10,18 @@ export const colors = {
   accentWine: '#6b2d3c',
   /** Major feast outline on the month grid — brighter than accentWine. */
   feastBorder: '#d63a52',
+  /** Softer feast red for calendar weekday labels (e.g. Sunday). */
+  feastTextSoft: '#e87888',
+  feastTextSoftDark: '#f0a8b2',
   /** Feast cell border on hover (darker than feastBorder). */
   feastHoverBorder: '#8f2435',
   feastHoverBorderDark: '#a33245',
   /** Great and Holy Friday outline on the month grid. */
   greatFridayBorder: '#3d1218',
   greatFridayBorderDark: '#6b2832',
+  /** Great Friday cell border on hover — deep wine, not gold. */
+  greatFridayHoverBorder: '#5a1a24',
+  greatFridayHoverBorderDark: '#8f3d4a',
   accentGold: '#b08d57',
   accentTheotokos: '#2f4a6f',
   /** Tab bar active — high contrast on parchment / dark surfaces */

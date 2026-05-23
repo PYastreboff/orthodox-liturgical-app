@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { useFontScale } from '../hooks/useFontScale';
 import type { LiturgicalTextCategory, LiturgicalTextItem } from '../lib/liturgical/liturgicalTexts';
 import { noneForDayLabel } from '../lib/liturgical/liturgicalTexts';
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -12,11 +13,15 @@ type Props = {
 };
 
 export function LiturgicalPassageBlock({ item, textColor, verseNumberColor }: Props) {
+  const { text } = useFontScale();
+  const headerType = text(14, 20);
+  const paragraphType = text(13, 19);
+  const verseType = text(11, 13);
   const hasText = item.paragraphs.some((p) => p.some((line) => line.text.trim()));
 
   return (
     <View style={styles.block}>
-      <Text style={[styles.header, { color: textColor }]}>
+      <Text style={[styles.header, headerType, { color: textColor }]}>
         {item.citation}
         {item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : ''}
       </Text>
@@ -25,14 +30,19 @@ export function LiturgicalPassageBlock({ item, textColor, verseNumberColor }: Pr
           {item.paragraphs.map((paragraph, pi) => (
             <Text
               key={pi}
-              style={[styles.paragraph, { color: textColor }, pi > 0 ? styles.paragraphGap : null]}
+              style={[
+                styles.paragraph,
+                paragraphType,
+                { color: textColor },
+                pi > 0 ? styles.paragraphGap : null,
+              ]}
             >
               {paragraph.map((line, li) =>
                 item.plainText || line.verse === 0 ? (
                   <Text key={li}>{line.text}</Text>
                 ) : (
                   <Text key={`${line.verse}-${li}`}>
-                    <Text style={[styles.verseNumber, { color: verseNumberColor }]}>
+                    <Text style={[styles.verseNumber, verseType, { color: verseNumberColor }]}>
                       {line.verse}{' '}
                     </Text>
                     <Text>
@@ -70,11 +80,16 @@ export function LiturgicalTextSectionBlock({
   topGap,
 }: SectionProps) {
   const { lang } = useAppTranslation();
+  const { text } = useFontScale();
+  const headingType = text(16, 22);
+  const placeholderType = text(14, 20);
   return (
     <View style={topGap ? styles.sectionGap : null}>
       <View style={styles.sectionHeadingRow}>
         <LiturgicalReadingIcon category={category} color={headingColor} size={22} />
-        <Text style={[styles.sectionHeading, { color: headingColor }]}>{title}</Text>
+        <Text style={[styles.sectionHeading, headingType, { color: headingColor }]}>
+          {title}
+        </Text>
       </View>
       {items.length > 0 ? (
         items.map((item, index) => (
@@ -86,7 +101,9 @@ export function LiturgicalTextSectionBlock({
           />
         ))
       ) : (
-        <Text style={[styles.placeholder, { color: textColor }]}>{noneForDayLabel(lang)}</Text>
+        <Text style={[styles.placeholder, placeholderType, { color: textColor }]}>
+          {noneForDayLabel(lang)}
+        </Text>
       )}
     </View>
   );
@@ -105,38 +122,27 @@ const styles = StyleSheet.create({
   },
   sectionHeading: {
     flex: 1,
-    fontSize: 16,
     fontWeight: '700',
-    lineHeight: 22,
   },
   block: {
     marginBottom: 20,
   },
   header: {
-    fontSize: 14,
     fontWeight: '700',
-    lineHeight: 20,
     marginBottom: 4,
   },
   passage: {
     marginTop: 4,
   },
-  paragraph: {
-    fontSize: 13,
-    lineHeight: 19,
-  },
+  paragraph: {},
   paragraphGap: {
     marginTop: 6,
   },
   verseNumber: {
-    fontSize: 11,
     fontWeight: '600',
-    lineHeight: 13,
     transform: [{ translateY: -3 }],
   },
   placeholder: {
-    fontSize: 14,
-    lineHeight: 20,
     fontStyle: 'italic',
     opacity: 0.75,
     marginBottom: 8,

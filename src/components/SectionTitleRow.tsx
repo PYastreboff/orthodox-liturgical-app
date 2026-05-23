@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { useFontScale } from '../hooks/useFontScale';
 import { SectionIcon, type SectionIconName } from './SectionIcon';
 
 type Props = {
@@ -11,10 +12,12 @@ type Props = {
 };
 
 export function SectionTitleRow({ title, icon, color, marginBottom }: Props) {
+  const { text } = useFontScale();
+  const titleType = text(20, 26);
   return (
     <View style={[styles.row, marginBottom != null ? { marginBottom } : null]}>
       <SectionIcon name={icon} color={color} />
-      <Text style={[styles.title, { color }]} numberOfLines={2}>
+      <Text style={[styles.title, titleType, { color }]} numberOfLines={2}>
         {title}
       </Text>
     </View>
@@ -31,7 +34,6 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: 20,
     letterSpacing: 0.2,
     fontWeight: '700',
   },

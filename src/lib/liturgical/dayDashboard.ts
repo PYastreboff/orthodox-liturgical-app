@@ -7,16 +7,14 @@ import { localizedToneLabel } from '../../i18n/feastRank';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
 import type { PlainDate } from '../calendar/julianGregorian';
-import type { PrimaryCalendar } from '../calendar/dateDisplay';
-import {
-  formatOrthocalLiturgicalDate,
-  liturgicalCalendarShortLabel,
-  orthocalApiPath,
-} from '../calendar/liturgicalCalendar';
 import type { LiturgicalDayAppearance } from '../calendar/dayAppearance';
 import { civilWeekday, shouldApplyWeeklyFastOverride } from '../calendar/weeklyFast';
 import { feastRankForLiturgicalDay } from './calendarTypikon';
-import { liturgicalDayTitle, shouldUseMajorFeastDayTitle } from './liturgicalDayTitle';
+import {
+  liturgicalDayTitle,
+  primaryFeastTitleForFeastsSection,
+  shouldUseMajorFeastDayTitle,
+} from './liturgicalDayTitle';
 import {
   getFeastRankDisplay,
   sanitizeTypikonProse,
@@ -26,6 +24,8 @@ import {
 export type DayDashboardData = {
   /** Primary feast name on great feasts; otherwise orthocal title. */
   dayTitle: string;
+  /** Feast to highlight in the Feasts section (may differ from dayTitle on Holy Tuesday, etc.). */
+  feastsHighlightTitle: string;
   /** orthocal great feast / fixed major feast — highlight in Date & Liturgical Day. */
   isMajorFeastDay: boolean;
   toneLabel: string;
@@ -34,8 +34,6 @@ export type DayDashboardData = {
   fastingLevel: string;
   fastingFoods: string;
   fastingNote: string;
-  orthocalQueryLabel: string;
-  orthocalChurchDateLabel: string | null;
 };
 
 function buildFastingNote(day: OrthocalDay | null, appearanceKey: string, lang: UiLanguage): string {
@@ -54,7 +52,6 @@ function buildFastingNote(day: OrthocalDay | null, appearanceKey: string, lang: 
 export function buildDayDashboard(
   liturgicalDay: OrthocalDay | null,
   appearance: LiturgicalDayAppearance,
-  liturgicalCalendar: PrimaryCalendar,
   civil: PlainDate,
   lang: UiLanguage = 'en',
 ): DayDashboardData {
@@ -93,19 +90,17 @@ export function buildDayDashboard(
       ? localizedFastingFoodsForLevel(liturgicalDay.fast_level, appearanceKey, lang)
       : localizedFastingFoodsForLevel(0, appearanceKey, lang);
 
-  const orthocalChurchDateLabel = liturgicalDay
-    ? formatOrthocalLiturgicalDate(liturgicalDay, liturgicalCalendar, lang)
-    : null;
-
   const isMajorFeastDay = shouldUseMajorFeastDayTitle(liturgicalDay, appearanceKey, feastRank);
+  const dayTitle = liturgicalDayTitle(
+    liturgicalDay,
+    appearanceKey,
+    localFallbackTitle,
+    feastRank,
+  );
 
   return {
-    dayTitle: liturgicalDayTitle(
-      liturgicalDay,
-      appearanceKey,
-      localFallbackTitle,
-      feastRank,
-    ),
+    dayTitle,
+    feastsHighlightTitle: primaryFeastTitleForFeastsSection(liturgicalDay, dayTitle),
     isMajorFeastDay,
     toneLabel,
     feastRank,
@@ -113,7 +108,5 @@ export function buildDayDashboard(
     fastingLevel,
     fastingFoods,
     fastingNote: buildFastingNote(liturgicalDay, appearanceKey, lang),
-    orthocalQueryLabel: `orthocal.info${orthocalApiPath(liturgicalCalendar, civil)} (${liturgicalCalendarShortLabel(liturgicalCalendar)} rubrics)`,
-    orthocalChurchDateLabel,
   };
 }

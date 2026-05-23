@@ -17,10 +17,19 @@ const ORDINARY_WEEKDAY_OF_SEASON =
 const HOLY_TUESDAY_TITLE =
   /\b(?:great\s+(?:and\s+)?holy\s+tuesday|holy\s+tuesday)\b/i;
 
+const HOLY_WEDNESDAY_TITLE =
+  /\b(?:great\s+(?:and\s+)?holy\s+wednesday|holy\s+wednesday)\b/i;
+
+const HOLY_THURSDAY_TITLE =
+  /\b(?:great\s+(?:and\s+)?holy\s+thursday|holy\s+thursday|maundy\s+thursday)\b/i;
+
 const GREAT_FRIDAY_TITLE =
   /\b(?:great\s+(?:and\s+)?holy\s+friday|holy\s+friday|good\s+friday)\b/i;
 
-function dayTitleStrings(day: OrthocalDay | null | undefined): string[] {
+const HOLY_SATURDAY_TITLE =
+  /\b(?:great\s+(?:and\s+)?holy\s+saturday|holy\s+saturday)\b/i;
+
+export function dayTitleStrings(day: OrthocalDay | null | undefined): string[] {
   if (!day) return [];
   const parts = [day.titles?.[0], day.summary_title, ...(day.titles ?? [])];
   return parts.map((s) => s?.trim()).filter(Boolean) as string[];
@@ -40,9 +49,29 @@ export function isHolyTuesdayDay(day: OrthocalDay | null | undefined): boolean {
   return dayTitleStrings(day).some((title) => HOLY_TUESDAY_TITLE.test(title));
 }
 
+export function isHolyWednesdayDay(day: OrthocalDay | null | undefined): boolean {
+  return dayTitleStrings(day).some((title) => HOLY_WEDNESDAY_TITLE.test(title));
+}
+
+export function isHolyThursdayDay(day: OrthocalDay | null | undefined): boolean {
+  return dayTitleStrings(day).some((title) => HOLY_THURSDAY_TITLE.test(title));
+}
+
 export function isGreatFridayDay(day: OrthocalDay | null | undefined): boolean {
   return dayTitleStrings(day).some((title) => GREAT_FRIDAY_TITLE.test(title));
 }
+
+export function isHolySaturdayDay(day: OrthocalDay | null | undefined): boolean {
+  return dayTitleStrings(day).some((title) => HOLY_SATURDAY_TITLE.test(title));
+}
+
+export {
+  GREAT_FRIDAY_TITLE,
+  HOLY_THURSDAY_TITLE,
+  HOLY_TUESDAY_TITLE,
+  HOLY_WEDNESDAY_TITLE,
+  HOLY_SATURDAY_TITLE,
+};
 
 /** Orthocal ranks that must not drive calendar feast styling on non-feast days. */
 export const INFLATED_ORTHOCAL_RANK_GLYPHS = new Set<TypikonGlyph>([

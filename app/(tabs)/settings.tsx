@@ -1,12 +1,14 @@
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import Constants from 'expo-constants';
+import Head from 'expo-router/head';
 
 import { AppLanguagePicker } from '../../src/components/settings/AppLanguagePicker';
 import { CalendarModePicker } from '../../src/components/settings/CalendarModePicker';
 import { SettingsRow } from '../../src/components/settings/SettingsRow';
 import { SettingsSection } from '../../src/components/settings/SettingsSection';
 import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
+import { FontScalePicker } from '../../src/components/settings/FontScalePicker';
 import { ThemeModePicker } from '../../src/components/settings/ThemeModePicker';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { usePreferences } from '../../src/state/PreferencesContext';
@@ -29,12 +31,18 @@ export default function SettingsScreen() {
     setShowVestmentGradient,
     uiLanguage,
     setUiLanguage,
+    fontScale,
+    setFontScale,
   } = usePreferences();
 
   const version = Constants.expoConfig?.version ?? '0.1.0';
 
   return (
-    <ScrollView
+    <>
+      <Head>
+        <title>{t('tabs.browserTitleSettings')}</title>
+      </Head>
+      <ScrollView
       style={{ backgroundColor: theme.colors.background }}
       contentContainerStyle={styles.container}
     >
@@ -59,7 +67,6 @@ export default function SettingsScreen() {
           label={t('settings.backgroundColour')}
           hint={t('settings.backgroundColourHint')}
           isDark={isDark}
-          showDivider={false}
           trailing={
             <SettingsSwitch
               value={showVestmentGradient}
@@ -69,6 +76,14 @@ export default function SettingsScreen() {
             />
           }
         />
+      </SettingsSection>
+
+      <SettingsSection
+        title={t('settings.textSize')}
+        description={t('settings.textSizeHint')}
+        isDark={isDark}
+      >
+        <FontScalePicker value={fontScale} onChange={setFontScale} isDark={isDark} />
       </SettingsSection>
 
       <SettingsSection
@@ -124,6 +139,7 @@ export default function SettingsScreen() {
         </Text>
       </View>
     </ScrollView>
+    </>
   );
 }
 

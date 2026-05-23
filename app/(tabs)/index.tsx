@@ -16,7 +16,6 @@ import { gregorianPlainToJulianPlain } from '../../src/lib/calendar/julianGregor
 import { getLiturgicalAppearanceForLocalDate } from '../../src/lib/calendar/dayAppearance';
 import {
   civilPlainDateFromLocal,
-  liturgicalCalendarDescription,
 } from '../../src/lib/calendar/liturgicalCalendar';
 import { startOfLocalDay } from '../../src/lib/calendar/localDate';
 import { CommemorationCard } from '../../src/components/CommemorationCard';
@@ -28,6 +27,7 @@ import {
 } from '../../src/lib/liturgical/commemorations';
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
+import { useFontScale } from '../../src/hooks/useFontScale';
 import { useLiturgicalTexts } from '../../src/hooks/useLiturgicalTexts';
 import {
   feastRankServiceLabel,
@@ -69,6 +69,18 @@ function addDays(d: Date, days: number) {
   return startOfLocalDay(next);
 }
 
+function isPrimaryGreatFeastEntry(
+  entry: CommemorationEntry,
+  isMajorFeastDay: boolean,
+  primaryFeastTitle: string,
+): boolean {
+  return (
+    isMajorFeastDay &&
+    entry.kind === 'feast' &&
+    entry.name.trim() === primaryFeastTitle.trim()
+  );
+}
+
 function CommemorationEntryList({
   entries,
   emptyMessage,
@@ -76,6 +88,10 @@ function CommemorationEntryList({
   mutedColor,
   cardBg,
   borderColor,
+  bodyType,
+  isMajorFeastDay = false,
+  primaryFeastTitle = '',
+  isDark = false,
 }: {
   entries: CommemorationEntry[];
   emptyMessage: string;
@@ -83,9 +99,13 @@ function CommemorationEntryList({
   mutedColor: string;
   cardBg: string;
   borderColor: string;
+  bodyType: { fontSize: number; lineHeight: number };
+  isMajorFeastDay?: boolean;
+  primaryFeastTitle?: string;
+  isDark?: boolean;
 }) {
   if (!entries.length) {
-    return <Text style={[styles.body, { color: textColor }]}>{emptyMessage}</Text>;
+    return <Text style={[styles.body, bodyType, { color: textColor }]}>{emptyMessage}</Text>;
   }
   return (
     <>
@@ -97,6 +117,12 @@ function CommemorationEntryList({
           mutedColor={mutedColor}
           cardBg={cardBg}
           borderColor={borderColor}
+          isPrimaryGreatFeast={isPrimaryGreatFeastEntry(
+            entry,
+            isMajorFeastDay,
+            primaryFeastTitle,
+          )}
+          isDark={isDark}
         />
       ))}
     </>
@@ -146,8 +172,8 @@ export default function TodayScreen() {
   );
   const { liturgicalDay, loading, error } = useOrthocalDay(selectedDate, primaryCalendar);
   const dashboard = useMemo(
-    () => buildDayDashboard(liturgicalDay, appearance, primaryCalendar, civilPlain, uiLanguage),
-    [appearance, civilPlain, liturgicalDay, primaryCalendar, uiLanguage],
+    () => buildDayDashboard(liturgicalDay, appearance, civilPlain, uiLanguage),
+    [appearance, civilPlain, liturgicalDay, uiLanguage],
   );
   const { sections: liturgicalTextSections, loadingSlavonic } = useLiturgicalTexts(
     liturgicalDay,
@@ -163,12 +189,20 @@ export default function TodayScreen() {
     [role, appearance, uiLanguage],
   );
 
-  const liturgicalCalendarHint = useMemo(
-    () => liturgicalCalendarDescription(primaryCalendar, uiLanguage),
-    [primaryCalendar, uiLanguage],
-  );
-
   const canGoToToday = selectedDate.getTime() !== today.getTime();
+  const { text } = useFontScale();
+  const type = {
+    body: text(14, 20),
+    hint: text(13, 20),
+    status: text(13, 18),
+    roleButton: text(13, 18),
+    serviceRank: text(13, 18),
+    dateLine: text(17, 22),
+    pill: text(12, 16),
+    majorFeastBadge: text(11, 14),
+    majorFeastDash: text(16, 22),
+    majorFeastName: text(16, 22),
+  };
   const toggleSection = (key: CollapsibleKey) => {
     setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }));
   };
@@ -193,10 +227,12 @@ export default function TodayScreen() {
         onToday={() => setSelectedDate(today)}
       />
       {loading ? (
-        <Text style={[styles.statusLine, { color: colors.muted }]}>{t('today.loading')}</Text>
+        <Text style={[styles.statusLine, type.status, { color: colors.muted }]}>
+          {t('today.loading')}
+        </Text>
       ) : null}
       {error ? (
-        <Text style={[styles.statusLine, styles.statusError]}>
+        <Text style={[styles.statusLine, type.status, styles.statusError]}>
           {t('today.offline', { error })}
         </Text>
       ) : null}
@@ -222,7 +258,13 @@ export default function TodayScreen() {
                 ]}
                 onPress={() => setRole(id)}
               >
-                <Text style={[styles.roleButtonText, { color: active ? '#fff' : theme.colors.text }]}>
+                <Text
+                  style={[
+                    styles.roleButtonText,
+                    type.roleButton,
+                    { color: active ? '#fff' : theme.colors.text },
+                  ]}
+                >
                   {roleLabel(t, id)}
                 </Text>
               </Pressable>
@@ -239,10 +281,10 @@ export default function TodayScreen() {
         themeColors={theme.colors}
       >
         <View style={styles.rowBetween}>
-          <Text style={[styles.dateLineValue, { color: theme.colors.text }]}>
+          <Text style={[styles.dateLineValue, type.dateLine, { color: theme.colors.text }]}>
             {gregorianDateLabel}
           </Text>
-          <Text style={[styles.pill, styles.dateFastPill]}>{dashboard.fastLabel}</Text>
+          <Text style={[styles.pill, type.pill, styles.dateFastPill]}>{dashboard.fastLabel}</Text>
         </View>
         {dashboard.isMajorFeastDay ? (
           <View
@@ -258,14 +300,17 @@ export default function TodayScreen() {
               <Text
                 style={[
                   styles.majorFeastBadge,
+                  type.majorFeastBadge,
                   { color: '#fff', backgroundColor: colors.feastBorder },
                 ]}
               >
                 {t('today.majorFeastBadge')}
               </Text>
-              <Text style={[styles.majorFeastDash, { color: colors.feastBorder }]}>—</Text>
+              <Text style={[styles.majorFeastDash, type.majorFeastDash, { color: colors.feastBorder }]}>
+                —
+              </Text>
               <Text
-                style={[styles.majorFeastName, { color: colors.feastBorder }]}
+                style={[styles.majorFeastName, type.majorFeastName, { color: colors.feastBorder }]}
                 numberOfLines={3}
               >
                 {dashboard.dayTitle}
@@ -282,6 +327,7 @@ export default function TodayScreen() {
           <Text
             style={[
               styles.serviceRankLabel,
+              type.serviceRank,
               { color: dashboard.isMajorFeastDay ? colors.feastBorder : theme.colors.text },
             ]}
           >
@@ -294,13 +340,6 @@ export default function TodayScreen() {
               : feastRankServiceLabel(dashboard.feastRank, lang)}
           </Text>
         </View>
-        <Text style={styles.cardHint}>
-          {dashboard.orthocalQueryLabel}
-          {dashboard.orthocalChurchDateLabel
-            ? t('today.churchDate', { date: dashboard.orthocalChurchDateLabel })
-            : ''}
-        </Text>
-        <Text style={styles.cardHint}>{liturgicalCalendarHint}</Text>
       </CollapsibleSection>
 
       <CollapsibleSection
@@ -311,13 +350,15 @@ export default function TodayScreen() {
         themeColors={theme.colors}
       >
         <View style={styles.rowBetween}>
-          <Text style={[styles.body, { color: theme.colors.text }]}>{t('today.level')}</Text>
-          <Text style={[styles.pill, { backgroundColor: '#5c3b2e', color: '#fff' }]}>{dashboard.fastingLevel}</Text>
+          <Text style={[styles.body, type.body, { color: theme.colors.text }]}>{t('today.level')}</Text>
+          <Text style={[styles.pill, type.pill, { backgroundColor: '#5c3b2e', color: '#fff' }]}>
+            {dashboard.fastingLevel}
+          </Text>
         </View>
-        <Text style={[styles.body, { color: theme.colors.text }]}>
+        <Text style={[styles.body, type.body, { color: theme.colors.text }]}>
           {t('today.allowedFoods', { foods: dashboard.fastingFoods })}
         </Text>
-        <Text style={styles.cardHint}>{dashboard.fastingNote}</Text>
+        <Text style={[styles.cardHint, type.hint]}>{dashboard.fastingNote}</Text>
       </CollapsibleSection>
 
       {vestmentLines ? (
@@ -332,11 +373,14 @@ export default function TodayScreen() {
             <View key={item.kind} style={styles.rowBetween}>
               <View style={styles.vestmentLabelRow}>
                 <VestmentIcon kind={item.kind} color={theme.colors.text} />
-                <Text style={[styles.body, { color: theme.colors.text }]}>{item.label}</Text>
+                <Text style={[styles.body, type.body, { color: theme.colors.text }]}>
+                  {item.label}
+                </Text>
               </View>
               <Text
                 style={[
                   styles.pill,
+                  type.pill,
                   { backgroundColor: item.pillBg, color: item.pillText },
                 ]}
               >
@@ -344,7 +388,7 @@ export default function TodayScreen() {
               </Text>
             </View>
           ))}
-          <Text style={styles.cardHint}>{t('today.vestmentsHint')}</Text>
+          <Text style={[styles.cardHint, type.hint]}>{t('today.vestmentsHint')}</Text>
         </CollapsibleSection>
       ) : null}
 
@@ -363,7 +407,7 @@ export default function TodayScreen() {
         }
       >
         {defaultTextLang === 'chu' ? (
-          <Text style={[styles.cardHint, { color: isDark ? '#a39e98' : colors.muted }]}>
+          <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
             {loadingSlavonic ? t('today.slavonicLoading') : t('today.slavonicHint')}
           </Text>
         ) : null}
@@ -391,7 +435,7 @@ export default function TodayScreen() {
         themeColors={theme.colors}
       >
         {loading ? (
-          <Text style={[styles.cardHint, { color: isDark ? '#a39e98' : colors.muted }]}>
+          <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
             {t('today.loadingFeasts')}
           </Text>
         ) : (
@@ -402,6 +446,10 @@ export default function TodayScreen() {
             mutedColor={isDark ? '#a39e98' : colors.muted}
             cardBg={isDark ? colors.darkSurface : colors.card}
             borderColor={theme.colors.border}
+            bodyType={type.body}
+            isMajorFeastDay={dashboard.isMajorFeastDay}
+            primaryFeastTitle={dashboard.feastsHighlightTitle}
+            isDark={isDark}
           />
         )}
       </CollapsibleSection>
@@ -414,7 +462,7 @@ export default function TodayScreen() {
         themeColors={theme.colors}
       >
         {loading ? (
-          <Text style={[styles.cardHint, { color: isDark ? '#a39e98' : colors.muted }]}>
+          <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
             {t('today.loadingSaints')}
           </Text>
         ) : (
@@ -425,6 +473,7 @@ export default function TodayScreen() {
             mutedColor={isDark ? '#a39e98' : colors.muted}
             cardBg={isDark ? colors.darkSurface : colors.card}
             borderColor={theme.colors.border}
+            bodyType={type.body}
           />
         )}
       </CollapsibleSection>
@@ -444,14 +493,12 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   statusLine: {
-    fontSize: 13,
     textAlign: 'center',
     marginBottom: 10,
     marginTop: -6,
   },
   statusError: {
     color: colors.accentWine,
-    lineHeight: 18,
   },
   card: {
     borderRadius: 12,
@@ -472,7 +519,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   roleButtonText: {
-    fontSize: 13,
     fontWeight: '700',
   },
   serviceRankRow: {
@@ -485,15 +531,11 @@ const styles = StyleSheet.create({
   serviceRankLabel: {
     flex: 1,
     flexShrink: 1,
-    fontSize: 13,
     fontWeight: '600',
-    lineHeight: 18,
     opacity: 0.85,
   },
   dateLineValue: {
-    fontSize: 17,
     fontWeight: '600',
-    lineHeight: 22,
     marginTop: 2,
   },
   dateFastPill: {
@@ -516,7 +558,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   majorFeastBadge: {
-    fontSize: 11,
     fontWeight: '800',
     letterSpacing: 0.4,
     textTransform: 'uppercase',
@@ -526,23 +567,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   majorFeastDash: {
-    fontSize: 16,
     fontWeight: '600',
-    lineHeight: 22,
   },
   majorFeastName: {
     flex: 1,
     flexShrink: 1,
     minWidth: 120,
-    fontSize: 16,
     fontWeight: '700',
-    lineHeight: 22,
   },
   cardHint: {
     marginTop: 8,
-    fontSize: 13,
     color: colors.muted,
-    lineHeight: 20,
     opacity: 0.9,
   },
   rowBetween: {
@@ -560,15 +595,12 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   pill: {
-    fontSize: 12,
     fontWeight: '700',
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 999,
   },
   body: {
-    fontSize: 14,
-    lineHeight: 20,
     opacity: 0.9,
   },
 });

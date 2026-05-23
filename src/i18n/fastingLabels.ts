@@ -4,7 +4,7 @@ import type { UiLanguage } from './types';
 
 const FAST_LEVEL_KEYS: Record<number, string> = {
   0: 'fasting.noFast',
-  1: 'fasting.levelFastFree',
+  1: 'fasting.noFast',
   2: 'fasting.levelWineOil',
   3: 'fasting.levelFish',
   4: 'fasting.levelDairy',
@@ -13,7 +13,7 @@ const FAST_LEVEL_KEYS: Record<number, string> = {
 
 const FAST_FOODS_LEVEL_KEYS: Record<number, string> = {
   0: 'fasting.foodsAllAllowed',
-  1: 'fasting.foodsFastFree',
+  1: 'fasting.foodsAllAllowed',
   2: 'fasting.foodsWineOil',
   3: 'fasting.foodsFish',
   4: 'fasting.foodsDairy',
@@ -31,8 +31,8 @@ function normalizeFastText(value: string): string {
 /** orthocal `fast_level_desc` phrases when level mapping is missing. */
 const FAST_DESC_KEYS: Record<string, string> = {
   'no fast': 'fasting.noFast',
-  'fast free': 'fasting.levelFastFree',
-  'fast free day': 'fasting.levelFastFree',
+  'fast free': 'fasting.noFast',
+  'fast free day': 'fasting.noFast',
   'wine and oil': 'fasting.levelWineOil',
   'wine oil': 'fasting.levelWineOil',
   'fish allowed': 'fasting.levelFish',
@@ -50,9 +50,10 @@ const FAST_EXCEPTION_KEYS: Record<string, string> = {
   'dairy allowed': 'fasting.exceptionDairy',
   'meat allowed': 'fasting.exceptionMeat',
   'meat permitted': 'fasting.exceptionMeat',
-  'fast free': 'fasting.levelFastFree',
   'no fast': 'fasting.noFast',
 };
+
+const REDUNDANT_FAST_EXCEPTIONS = new Set(['fast free', 'fast free day', 'no fast']);
 
 function fastLevelLabel(day: OrthocalDay, lang: UiLanguage): string {
   const byLevel = FAST_LEVEL_KEYS[day.fast_level];
@@ -70,6 +71,8 @@ function fastLevelLabel(day: OrthocalDay, lang: UiLanguage): string {
 function fastExceptionLabel(day: OrthocalDay, lang: UiLanguage): string | null {
   const exception = day.fast_exception_desc?.trim();
   if (!exception) return null;
+  const normalized = normalizeFastText(exception);
+  if (REDUNDANT_FAST_EXCEPTIONS.has(normalized)) return null;
   const key = FAST_EXCEPTION_KEYS[normalizeFastText(exception)];
   return key ? translate(lang, key) : exception;
 }
@@ -78,7 +81,8 @@ function fastExceptionLabel(day: OrthocalDay, lang: UiLanguage): string | null {
 export function localizedOrthocalFastLabel(day: OrthocalDay, lang: UiLanguage): string {
   const label = fastLevelLabel(day, lang);
   const exception = fastExceptionLabel(day, lang);
-  return exception ? `${label} · ${exception}` : label;
+  if (!exception || exception === label) return label;
+  return `${label} · ${exception}`;
 }
 
 export function localizedFastingFoodsForLevel(

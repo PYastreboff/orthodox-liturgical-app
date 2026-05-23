@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text, useWindowDimensions } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
+import Head from 'expo-router/head';
 
 import { CalendarColorLegend } from '../../src/components/CalendarColorLegend';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
@@ -9,6 +10,8 @@ import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
 import { colors } from '../../src/theme/tokens';
+
+const CALENDAR_COMPACT_BREAKPOINT = 600;
 
 export default function CalendarScreen() {
   const theme = useTheme();
@@ -42,15 +45,23 @@ export default function CalendarScreen() {
   );
 
   const calendarBg = theme.dark ? colors.darkBg : '#e8e3d8';
+  const { width } = useWindowDimensions();
+  const isCompact = width < CALENDAR_COMPACT_BREAKPOINT;
 
   return (
-    <ScrollView
+    <>
+      <Head>
+        <title>{t('tabs.browserTitleCalendar')}</title>
+      </Head>
+      <ScrollView
       style={[styles.scroll, { backgroundColor: calendarBg }]}
       contentContainerStyle={styles.scrollContent}
     >
       <Text style={[styles.title, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
-      <Text style={[styles.lede, { color: colors.muted }]}>{t('calendar.subtitle')}</Text>
-      <CalendarColorLegend textColor={theme.colors.text} />
+      <Text style={[styles.lede, isCompact ? styles.ledeCompact : null, { color: colors.muted }]}>
+        {t(isCompact ? 'calendar.subtitleShort' : 'calendar.subtitle')}
+      </Text>
+      <CalendarColorLegend textColor={theme.colors.text} compact={isCompact} />
 
       <LiturgicalMonthGrid
         visibleMonth={cursor}
@@ -61,6 +72,7 @@ export default function CalendarScreen() {
         liturgicalCalendar={primaryCalendar}
       />
     </ScrollView>
+    </>
   );
 }
 
@@ -83,5 +95,10 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     paddingHorizontal: 16,
     marginBottom: 0,
+  },
+  ledeCompact: {
+    fontSize: 12,
+    lineHeight: 16,
+    marginBottom: 4,
   },
 });

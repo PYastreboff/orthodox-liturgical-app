@@ -88,7 +88,7 @@ export function formatOrthocalFastLabel(day: OrthocalDay): string {
 
 const FAST_FOODS_BY_LEVEL: Record<number, string> = {
   0: 'All standard foods are allowed.',
-  1: 'Fast-free day — all foods allowed.',
+  1: 'All standard foods are allowed.',
   2: 'Wine and oil permitted; follow your typikon for other foods.',
   3: 'Fish, wine, and oil are generally permitted; no meat or dairy.',
   4: 'Dairy, eggs, fish, wine, and oil may be permitted; no meat.',

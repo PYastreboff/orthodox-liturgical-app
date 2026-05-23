@@ -38,6 +38,33 @@ const WEEKDAY_KEYS = [
   'weekdays.sat',
 ] as const;
 
+/** Match a Sunday for Intl weekday labels (index 0 = Sun … 6 = Sat). */
+const WEEKDAY_SUNDAY_ANCHOR = new Date(2024, 0, 7);
+
+const CALENDAR_FULL_WEEKDAY_MIN_WIDTH = 768;
+const CALENDAR_COMPACT_BREAKPOINT = 600;
+
+function fullWeekdayLabel(dowIndex: number, intlLocale: string): string {
+  const date = new Date(WEEKDAY_SUNDAY_ANCHOR);
+  date.setDate(WEEKDAY_SUNDAY_ANCHOR.getDate() + dowIndex);
+  return new Intl.DateTimeFormat(intlLocale, { weekday: 'long' }).format(date);
+}
+
+function narrowWeekdayLabel(dowIndex: number, intlLocale: string): string {
+  const date = new Date(WEEKDAY_SUNDAY_ANCHOR);
+  date.setDate(WEEKDAY_SUNDAY_ANCHOR.getDate() + dowIndex);
+  return new Intl.DateTimeFormat(intlLocale, { weekday: 'narrow' }).format(date);
+}
+
+function isAgendaDay(info: CalendarDayInfo): boolean {
+  return (
+    info.feasts.length > 0 ||
+    info.saints.length > 0 ||
+    info.isFeastCell ||
+    info.feastRank !== null
+  );
+}
+
 function buildMonthCells(visibleMonth: Date): (Date | null)[][] {
   const y = visibleMonth.getFullYear();
   const m = visibleMonth.getMonth();
@@ -129,29 +156,52 @@ export function LiturgicalMonthGrid({
     year: 'numeric',
   }).format(visibleMonth);
 
-  const horizontalPad = 12;
-  const gap = 5;
+  const isCompact = width < CALENDAR_COMPACT_BREAKPOINT;
+  const horizontalPad = isCompact ? 8 : 12;
+  const gap = isCompact ? 3 : 5;
   const contentWidth = width - horizontalPad * 2;
   const cellWidth = (contentWidth - gap * 6) / 7;
-  const typikonSize = width < 430 ? 14 : 20;
+  const cellHeight = isCompact ? CELL_HEIGHT_COMPACT : CELL_HEIGHT;
+  const typikonSize = isCompact ? 12 : width < 430 ? 14 : 20;
+  const useFullWeekdayNames = !isCompact && width >= CALENDAR_FULL_WEEKDAY_MIN_WIDTH;
+  const monthDates = useMemo(
+    () => rows.flat().filter((d): d is Date => d !== null),
+    [rows],
+  );
 
   return (
-    <View style={styles.outer}>
-      <View style={styles.monthNav}>
+    <View style={[styles.outer, isCompact ? styles.outerCompact : null]}>
+      <View style={[styles.monthNav, isCompact ? styles.monthNavCompact : null]}>
         <Pressable
           onPress={() => onChangeMonth(-1)}
-          style={({ pressed }) => [styles.navBtn, { opacity: pressed ? 0.6 : 1 }]}
+          style={({ pressed }) => [
+            styles.navBtn,
+            isCompact ? styles.navBtnCompact : null,
+            { opacity: pressed ? 0.6 : 1 },
+          ]}
           hitSlop={12}
+          accessibilityLabel={t('today.prevDay')}
         >
-          <Text style={[styles.navBtnText, { color: theme.colors.text }]}>‹</Text>
+          <Text style={[styles.navBtnText, isCompact ? styles.navBtnTextCompact : null, { color: theme.colors.text }]}>
+            ‹
+          </Text>
         </Pressable>
-        <Text style={[styles.monthTitle, { color: theme.colors.text }]}>{title}</Text>
+        <Text style={[styles.monthTitle, isCompact ? styles.monthTitleCompact : null, { color: theme.colors.text }]}>
+          {title}
+        </Text>
         <Pressable
           onPress={() => onChangeMonth(1)}
-          style={({ pressed }) => [styles.navBtn, { opacity: pressed ? 0.6 : 1 }]}
+          style={({ pressed }) => [
+            styles.navBtn,
+            isCompact ? styles.navBtnCompact : null,
+            { opacity: pressed ? 0.6 : 1 },
+          ]}
           hitSlop={12}
+          accessibilityLabel={t('today.nextDay')}
         >
-          <Text style={[styles.navBtnText, { color: theme.colors.text }]}>›</Text>
+          <Text style={[styles.navBtnText, isCompact ? styles.navBtnTextCompact : null, { color: theme.colors.text }]}>
+            ›
+          </Text>
         </Pressable>
       </View>
 
@@ -176,15 +226,32 @@ export function LiturgicalMonthGrid({
 
       <View style={styles.gridArea}>
         <View style={[styles.weekHeaderRow, { width: contentWidth, gap }]}>
-          {WEEKDAY_KEYS.map((key) => (
+          {WEEKDAY_KEYS.map((key, index) => (
             <Text
               key={key}
               style={[
                 styles.weekHeaderCell,
-                { width: cellWidth, color: theme.colors.text },
+                useFullWeekdayNames ? styles.weekHeaderCellFull : null,
+                isCompact ? styles.weekHeaderCellCompact : null,
+                {
+                  width: cellWidth,
+                  color:
+                    key === 'weekdays.sun'
+                      ? isDark
+                        ? colors.feastTextSoftDark
+                        : colors.feastTextSoft
+                      : theme.colors.text,
+                },
               ]}
+              numberOfLines={1}
+              adjustsFontSizeToFit={useFullWeekdayNames}
+              minimumFontScale={0.75}
             >
-              {t(key)}
+              {useFullWeekdayNames
+                ? fullWeekdayLabel(index, intlLocale)
+                : isCompact
+                  ? narrowWeekdayLabel(index, intlLocale)
+                  : t(key)}
             </Text>
           ))}
         </View>
@@ -193,12 +260,13 @@ export function LiturgicalMonthGrid({
           {rows.map((week, wi) => (
             <View key={wi} style={[styles.weekRow, { width: contentWidth, gap }]}>
               {week.map((date, di) => (
-                <View key={di} style={[styles.cellSlot, { width: cellWidth, height: CELL_HEIGHT }]}>
+                <View key={di} style={[styles.cellSlot, { width: cellWidth, height: cellHeight }]}>
                   {date ? (
                     <DayCell
                       date={date}
                       today={today}
                       typikonSize={typikonSize}
+                      compact={isCompact}
                       onPress={onDayPress}
                       dayInfo={dayInfoForDate(date)}
                       showTypikonForDate={showTypikonForDate}
@@ -228,20 +296,43 @@ export function LiturgicalMonthGrid({
           </View>
         ) : null}
       </View>
+
+      {isCompact && onDayPress ? (
+        <CalendarMonthAgenda
+          dates={monthDates}
+          today={today}
+          dayInfoForDate={dayInfoForDate}
+          showTypikonForDate={showTypikonForDate}
+          onDayPress={onDayPress}
+          intlLocale={intlLocale}
+          textColor={theme.colors.text}
+          mutedColor={isDark ? '#a39e98' : colors.muted}
+          cardBg={isDark ? colors.darkSurface : colors.card}
+          borderColor={theme.colors.border}
+        />
+      ) : null}
     </View>
   );
 }
 
-/** Fixed height so every day in a week row aligns on phone. */
+/** Fixed height so every day in a week row aligns. */
 const CELL_HEIGHT = 120;
-const MAX_CELL_FEASTS = 2;
-const MAX_CELL_SAINTS = 3;
+const CELL_HEIGHT_COMPACT = 52;
 const CELL_BORDER_RADIUS = 10;
+const COMM_FONT_SIZE = 7.5;
+const COMM_LINE_HEIGHT = 11;
+const COMM_ROW_GAP = 2;
+type CommLine = { kind: 'feast' | 'saint'; name: string };
+
+function titleLinesForCell(commCount: number): number {
+  return commCount >= 3 ? 1 : 2;
+}
 
 function DayCell({
   date,
   today,
   typikonSize,
+  compact,
   onPress,
   dayInfo,
   showTypikonForDate,
@@ -249,6 +340,7 @@ function DayCell({
   date: Date;
   today: Date;
   typikonSize: number;
+  compact: boolean;
   onPress?: (date: Date) => void;
   dayInfo: CalendarDayInfo;
   showTypikonForDate: (date: Date) => boolean;
@@ -297,12 +389,25 @@ function DayCell({
   );
   const hoverBorderColor =
     isWeb && hovered
-      ? hasFeastBorder
+      ? hasGreatFridayBorder
         ? isDark
-          ? colors.feastHoverBorderDark
-          : colors.feastHoverBorder
-        : colors.accentGold
+          ? colors.greatFridayHoverBorderDark
+          : colors.greatFridayHoverBorder
+        : hasFeastBorder
+          ? isDark
+            ? colors.feastHoverBorderDark
+            : colors.feastHoverBorder
+          : colors.accentGold
       : borderColor;
+
+  const commLines: CommLine[] = [
+    ...dayInfo.feasts.map((name) => ({ kind: 'feast' as const, name })),
+    ...dayInfo.saints.map((name) => ({ kind: 'saint' as const, name })),
+  ];
+  const dayTitleLines = titleLinesForCell(commLines.length);
+  const feastCount = dayInfo.feasts.length;
+  const saintCount = dayInfo.saints.length;
+  const markerCount = feastCount + saintCount;
 
   return (
     <Pressable
@@ -334,20 +439,24 @@ function DayCell({
           ]}
         />
       ) : null}
-      <View style={styles.cellBody}>
+      <View style={[styles.cellBody, compact ? styles.cellBodyCompact : null]}>
         {showTypikon && feastRank ? (
           <HoverAccessible
             label={feastRankAccessibilityLabel(feastRank, lang)}
             hint={t('calendarHover.typikonRankHint')}
-            style={styles.typikonCorner}
+            style={[styles.typikonCorner, compact ? styles.typikonCornerCompact : null]}
           >
             <TypikonGlyphIcon glyph={feastRank.glyph} size={typikonSize} color={typikonColor} />
           </HoverAccessible>
         ) : null}
-        <View style={styles.dayNumWrap}>
+        <View style={[styles.dayNumWrap, compact ? styles.dayNumWrapCompact : null]}>
           {isToday ? (
             <View
-              style={[styles.todayRing, { borderColor: colors.accentGold }]}
+              style={[
+                styles.todayRing,
+                compact ? styles.todayRingCompact : null,
+                { borderColor: colors.accentGold },
+              ]}
               accessibilityElementsHidden
               importantForAccessibility="no-hide-descendants"
             />
@@ -355,6 +464,7 @@ function DayCell({
           <Text
             style={[
               styles.dayNum,
+              compact ? styles.dayNumCompact : null,
               { color: dayNumColor },
               isToday ? styles.dayNumToday : null,
             ]}
@@ -362,49 +472,178 @@ function DayCell({
             {date.getDate()}
           </Text>
         </View>
-        <Text style={[styles.dayLabel, { color: titleColor }]} numberOfLines={2}>
-          {dayInfo.dayTitle}
-        </Text>
-        {dayInfo.feasts.length > 0 ? (
-          <View style={styles.commList}>
-            {dayInfo.feasts.slice(0, MAX_CELL_FEASTS).map((name, index) => (
-              <View key={`f-${index}-${name}`} style={styles.commRow}>
-                <View
-                  style={[styles.feastBullet, { backgroundColor: titleColor }]}
-                  accessibilityElementsHidden
-                  importantForAccessibility="no-hide-descendants"
-                />
-                <Text
-                  style={[styles.dayFeast, { color: titleColor }]}
-                  numberOfLines={1}
-                >
-                  {name}
-                </Text>
+        {compact ? (
+          markerCount > 0 ? (
+            <View style={styles.compactMarkers} accessibilityElementsHidden>
+              {feastCount > 0 ? (
+                <View style={[styles.compactDot, { backgroundColor: titleColor }]} />
+              ) : null}
+              {saintCount > 0 ? (
+                <View style={[styles.compactDot, styles.compactDotSaint, { backgroundColor: subColor }]} />
+              ) : null}
+              {markerCount > 2 ? (
+                <Text style={[styles.compactMore, { color: subColor }]}>+{markerCount - 2}</Text>
+              ) : null}
+            </View>
+          ) : null
+        ) : (
+          <>
+            <Text
+              style={[styles.dayLabel, { color: titleColor }]}
+              numberOfLines={dayTitleLines}
+            >
+              {dayInfo.dayTitle}
+            </Text>
+            {commLines.length > 0 ? (
+              <View style={styles.commArea}>
+                {commLines.map((line, index) => {
+                  const isFeast = line.kind === 'feast';
+                  const color = isFeast ? titleColor : subColor;
+                  return (
+                    <View
+                      key={`${line.kind}-${index}-${line.name}`}
+                      style={styles.commRow}
+                    >
+                      <View
+                        style={[
+                          isFeast ? styles.feastBullet : styles.saintBullet,
+                          { backgroundColor: color },
+                        ]}
+                        accessibilityElementsHidden
+                        importantForAccessibility="no-hide-descendants"
+                      />
+                      <Text style={[isFeast ? styles.dayFeast : styles.daySaint, { color }]}>
+                        {line.name}
+                      </Text>
+                    </View>
+                  );
+                })}
               </View>
-            ))}
-          </View>
-        ) : null}
-        {dayInfo.saints.length > 0 ? (
-          <View style={styles.commList}>
-            {dayInfo.saints.slice(0, MAX_CELL_SAINTS).map((name, index) => (
-              <View key={`s-${index}-${name}`} style={styles.commRow}>
-                <View
-                  style={[styles.saintBullet, { backgroundColor: subColor }]}
-                  accessibilityElementsHidden
-                  importantForAccessibility="no-hide-descendants"
-                />
-                <Text
-                  style={[styles.daySaint, { color: subColor }]}
-                  numberOfLines={1}
-                >
-                  {name}
-                </Text>
-              </View>
-            ))}
-          </View>
-        ) : null}
+            ) : null}
+          </>
+        )}
       </View>
     </Pressable>
+  );
+}
+
+function CalendarMonthAgenda({
+  dates,
+  today,
+  dayInfoForDate,
+  showTypikonForDate,
+  onDayPress,
+  intlLocale,
+  textColor,
+  mutedColor,
+  cardBg,
+  borderColor,
+}: {
+  dates: Date[];
+  today: Date;
+  dayInfoForDate: (date: Date) => CalendarDayInfo;
+  showTypikonForDate: (date: Date) => boolean;
+  onDayPress: (date: Date) => void;
+  intlLocale: string;
+  textColor: string;
+  mutedColor: string;
+  cardBg: string;
+  borderColor: string;
+}) {
+  const { t, lang } = useAppTranslation();
+  const agendaDates = dates.filter((date) => isAgendaDay(dayInfoForDate(date)));
+
+  return (
+    <View style={styles.agenda}>
+      <Text style={[styles.agendaTitle, { color: textColor }]}>{t('calendar.agendaTitle')}</Text>
+      <Text style={[styles.agendaHint, { color: mutedColor }]}>{t('calendar.tapHint')}</Text>
+      {agendaDates.map((date) => {
+        const info = dayInfoForDate(date);
+        const feastRank = info.feastRank;
+        const showTypikon = showTypikonForDate(date);
+        const isToday = isSameLocalDay(date, today);
+        const weekday = new Intl.DateTimeFormat(intlLocale, { weekday: 'short' }).format(date);
+        const lines = [
+          ...info.feasts.map((name) => ({ kind: 'feast' as const, name })),
+          ...info.saints.map((name) => ({ kind: 'saint' as const, name })),
+        ];
+
+        return (
+          <Pressable
+            key={date.toISOString()}
+            onPress={() => onDayPress(date)}
+            style={({ pressed }) => [
+              styles.agendaRow,
+              {
+                backgroundColor: cardBg,
+                borderColor,
+                opacity: pressed ? 0.88 : 1,
+              },
+              isToday ? styles.agendaRowToday : null,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={calendarDayHoverLabel(
+              date,
+              info,
+              feastRank,
+              showTypikon,
+              isToday,
+              t,
+              lang,
+              intlLocale,
+            )}
+          >
+            <View style={styles.agendaDateCol}>
+              <Text
+                style={[
+                  styles.agendaDayNum,
+                  { color: info.isFeastTitleRed ? colors.feastBorder : textColor },
+                ]}
+              >
+                {date.getDate()}
+              </Text>
+              <Text style={[styles.agendaWeekday, { color: mutedColor }]}>{weekday}</Text>
+            </View>
+            <View style={styles.agendaBody}>
+              <Text
+                style={[
+                  styles.agendaDayTitle,
+                  { color: info.isFeastTitleRed ? colors.feastBorder : textColor },
+                ]}
+                numberOfLines={2}
+              >
+                {info.dayTitle}
+              </Text>
+              {lines.slice(0, 4).map((line, index) => (
+                <Text
+                  key={`${line.kind}-${index}`}
+                  style={[
+                    styles.agendaLine,
+                    { color: line.kind === 'feast' ? colors.feastBorder : mutedColor },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {line.kind === 'feast' ? '• ' : '– '}
+                  {line.name}
+                </Text>
+              ))}
+              {lines.length > 4 ? (
+                <Text style={[styles.agendaMore, { color: mutedColor }]}>
+                  +{lines.length - 4}
+                </Text>
+              ) : null}
+            </View>
+            {showTypikon && feastRank ? (
+              <TypikonGlyphIcon
+                glyph={feastRank.glyph}
+                size={18}
+                color={typikonIconColor(feastRank, 'light')}
+              />
+            ) : null}
+          </Pressable>
+        );
+      })}
+    </View>
   );
 }
 
@@ -413,11 +652,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingBottom: 24,
   },
+  outerCompact: {
+    paddingHorizontal: 8,
+  },
   monthNav: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 8,
+  },
+  monthNavCompact: {
+    marginBottom: 6,
+  },
+  monthTitleCompact: {
+    fontSize: 17,
+  },
+  navBtnCompact: {
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navBtnTextCompact: {
+    fontSize: 32,
   },
   thisMonthBtn: {
     alignSelf: 'center',
@@ -473,6 +730,14 @@ const styles = StyleSheet.create({
     opacity: 0.65,
     letterSpacing: 0.3,
   },
+  weekHeaderCellCompact: {
+    fontSize: 10,
+    letterSpacing: 0,
+  },
+  weekHeaderCellFull: {
+    fontSize: 12,
+    letterSpacing: 0.1,
+  },
   weekRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
@@ -504,11 +769,129 @@ const styles = StyleSheet.create({
   cellBody: {
     flex: 1,
     width: '100%',
+    minHeight: 0,
     paddingHorizontal: 4,
     paddingTop: 6,
     paddingBottom: 6,
     justifyContent: 'flex-start',
     position: 'relative',
+  },
+  cellBodyCompact: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingHorizontal: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dayNumWrapCompact: {
+    marginBottom: 0,
+  },
+  dayNumCompact: {
+    fontSize: 15,
+    lineHeight: 17,
+  },
+  todayRingCompact: {
+    top: -2,
+    left: -5,
+    right: -5,
+    bottom: -2,
+    borderWidth: 1.5,
+  },
+  typikonCornerCompact: {
+    top: 1,
+    left: 1,
+  },
+  compactMarkers: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 3,
+    marginTop: 1,
+    minHeight: 8,
+  },
+  compactDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+  },
+  compactDotSaint: {
+    opacity: 0.75,
+  },
+  compactMore: {
+    fontSize: 7,
+    fontWeight: '700',
+    lineHeight: 8,
+  },
+  agenda: {
+    marginTop: 16,
+    gap: 8,
+  },
+  agendaTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  agendaHint: {
+    fontSize: 12,
+    lineHeight: 16,
+    marginBottom: 4,
+  },
+  agendaRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  agendaRowToday: {
+    borderWidth: 2,
+    borderColor: colors.accentGold,
+  },
+  agendaDateCol: {
+    width: 36,
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+  agendaDayNum: {
+    fontSize: 18,
+    fontWeight: '800',
+    lineHeight: 20,
+  },
+  agendaWeekday: {
+    fontSize: 10,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  agendaBody: {
+    flex: 1,
+    minWidth: 0,
+    gap: 2,
+  },
+  agendaDayTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    lineHeight: 18,
+    marginBottom: 2,
+  },
+  agendaLine: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500',
+  },
+  agendaMore: {
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  commArea: {
+    flex: 1,
+    minHeight: 0,
+    marginTop: 2,
+    alignSelf: 'stretch',
+    gap: COMM_ROW_GAP,
+    overflow: 'hidden',
   },
   typikonCorner: {
     position: 'absolute',
@@ -545,27 +928,23 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: '700',
     textAlign: 'center',
-    lineHeight: 10,
-  },
-  commList: {
-    marginTop: 2,
-    alignSelf: 'stretch',
-    gap: 1,
+    lineHeight: 11,
   },
   commRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     width: '100%',
+    minWidth: 0,
     paddingRight: 1,
     gap: 4,
   },
   feastBullet: {
+    flexShrink: 0,
     width: 3,
     height: 3,
     borderRadius: 2,
     marginTop: 3,
     opacity: 0.9,
-    flexShrink: 0,
   },
   saintBullet: {
     width: 3,
@@ -577,19 +956,29 @@ const styles = StyleSheet.create({
   },
   dayFeast: {
     flex: 1,
-    fontSize: 7.5,
+    flexBasis: 0,
+    flexShrink: 1,
+    minWidth: 0,
+    fontSize: COMM_FONT_SIZE,
     fontWeight: '700',
     textAlign: 'left',
-    lineHeight: 10,
+    lineHeight: COMM_LINE_HEIGHT,
     letterSpacing: 0.1,
+    ...(Platform.OS === 'web' ? ({ wordBreak: 'break-word' } as const) : null),
+    ...(Platform.OS === 'android' ? { includeFontPadding: false } : null),
   },
   daySaint: {
     flex: 1,
-    fontSize: 7.5,
+    flexBasis: 0,
+    flexShrink: 1,
+    minWidth: 0,
+    fontSize: COMM_FONT_SIZE,
     fontWeight: '500',
     textAlign: 'left',
-    lineHeight: 10,
+    lineHeight: COMM_LINE_HEIGHT,
     letterSpacing: 0.15,
     opacity: 0.95,
+    ...(Platform.OS === 'web' ? ({ wordBreak: 'break-word' } as const) : null),
+    ...(Platform.OS === 'android' ? { includeFontPadding: false } : null),
   },
 });

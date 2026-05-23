@@ -24,7 +24,7 @@ export function VestmentPageBackground({
 }: Props) {
   const gradient = useMemo(
     () => vestmentPageGradient(appearance, gradientEnabled),
-    [appearance.key, gradientEnabled],
+    [appearance.key, appearance.label, gradientEnabled],
   );
 
   return (

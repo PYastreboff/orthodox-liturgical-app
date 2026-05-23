@@ -55,6 +55,8 @@ export function liturgicalVestmentColor(
   const label = appearance.label.toLowerCase();
 
   if (key === 'theophany' || label.includes('theophany')) return localizedSwatch('blue', lang);
+  if (key === 'annunciation') return localizedSwatch('blue', lang);
+  if (key === 'dormition') return localizedSwatch('blue', lang);
   if (key === 'pascha' || label.includes('pascha')) return localizedSwatch('white', lang);
   if (key === 'bright_week') return localizedSwatch('white', lang);
   if (key === 'pentecost' || label.includes('pentecost')) return localizedSwatch('green', lang);
@@ -63,9 +65,7 @@ export function liturgicalVestmentColor(
   if (key.includes('fast')) return localizedSwatch('dark', lang);
   if (
     key === 'nativity' ||
-    key === 'annunciation' ||
     key === 'transfiguration' ||
-    key === 'dormition' ||
     key === 'all_saints' ||
     key === 'sunday'
   ) {

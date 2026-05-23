@@ -68,7 +68,7 @@ function TabsLayoutContent() {
       <Tabs.Screen
         name="calendar"
         options={{
-          title: 'OrthoDaily',
+          title: t('tabs.browserTitleCalendar'),
           headerTitle: t('tabs.calendarHeader'),
           tabBarLabel: t('tabs.calendar'),
           ...tabBarIconOptions('calendar'),
@@ -77,7 +77,7 @@ function TabsLayoutContent() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'OrthoDaily',
+          title: t('tabs.browserTitleSettings'),
           headerTitle: t('tabs.settings'),
           tabBarLabel: t('tabs.settings'),
           ...tabBarIconOptions('settings'),

@@ -12,14 +12,15 @@ const LEGEND_KEYS = [
 
 type Props = {
   textColor: string;
+  compact?: boolean;
 };
 
-export function CalendarColorLegend({ textColor }: Props) {
+export function CalendarColorLegend({ textColor, compact = false }: Props) {
   const { t } = useAppTranslation();
 
   return (
-    <View style={styles.wrap}>
-      <View style={styles.row}>
+    <View style={[styles.wrap, compact ? styles.wrapCompact : null]}>
+      <View style={[styles.row, compact ? styles.rowCompact : null]}>
         {LEGEND_KEYS.map((item) => (
           <View key={item.key} style={styles.item}>
             <View
@@ -31,7 +32,9 @@ export function CalendarColorLegend({ textColor }: Props) {
                 'todayRing' in item && item.todayRing ? styles.swatchTodayRing : null,
               ]}
             />
-            <Text style={[styles.label, { color: textColor }]}>{t(item.key)}</Text>
+            <Text style={[styles.label, compact ? styles.labelCompact : null, { color: textColor }]}>
+              {t(item.key)}
+            </Text>
           </View>
         ))}
       </View>
@@ -46,6 +49,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     alignItems: 'center',
   },
+  wrapCompact: {
+    paddingVertical: 6,
+    marginBottom: 8,
+  },
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -53,6 +60,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 14,
     rowGap: 8,
+  },
+  rowCompact: {
+    gap: 10,
+    rowGap: 6,
   },
   item: {
     flexDirection: 'row',
@@ -80,5 +91,8 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     fontWeight: '500',
+  },
+  labelCompact: {
+    fontSize: 11,
   },
 });

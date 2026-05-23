@@ -1,9 +1,12 @@
 import { Feather } from '@expo/vector-icons';
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { useFontScale } from '../hooks/useFontScale';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
+import { vestmentHeroGradient } from '../lib/liturgical/vestmentGradient';
 import { typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { TypikonSymbol } from './TypikonSymbol';
 
@@ -35,16 +38,26 @@ export function DayHero({
   onToday,
 }: Props) {
   const { t } = useAppTranslation();
-  const fg = appearance.foreground;
+  const { text } = useFontScale();
+  const heroStyle = useMemo(
+    () => vestmentHeroGradient(appearance),
+    [appearance.key, appearance.label],
+  );
+  const fg = heroStyle.foreground;
+  const dayTitleType = text(28, 34);
+  const primaryDateType = text(17, 22);
+  const julianDateType = text(12, 16);
+  const chipType = text(12, 16);
+  const todayBtnType = text(13, 18);
 
   return (
     <LinearGradient
-      colors={appearance.gradient}
+      colors={[...heroStyle.gradient]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.hero}
     >
-      <Text style={[styles.dayTitle, { color: fg }]} numberOfLines={3}>
+      <Text style={[styles.dayTitle, dayTitleType, { color: fg }]} numberOfLines={3}>
         {dayTitle}
       </Text>
 
@@ -58,9 +71,11 @@ export function DayHero({
         </Pressable>
 
         <View style={styles.dateBlock}>
-          <Text style={[styles.primaryDate, { color: fg }]}>{dateLabel}</Text>
+          <Text style={[styles.primaryDate, primaryDateType, { color: fg }]}>{dateLabel}</Text>
           {julianDateLabel ? (
-            <Text style={[styles.julianDate, { color: fg }]}>{julianDateLabel}</Text>
+            <Text style={[styles.julianDate, julianDateType, { color: fg }]}>
+              {julianDateLabel}
+            </Text>
           ) : null}
         </View>
 
@@ -75,7 +90,7 @@ export function DayHero({
 
       <View style={styles.chipRow}>
         <View style={styles.chip}>
-          <Text style={styles.chipText}>{toneLabel}</Text>
+          <Text style={[styles.chipText, chipType]}>{toneLabel}</Text>
         </View>
         <View style={styles.chip}>
           <TypikonSymbol
@@ -86,13 +101,13 @@ export function DayHero({
           />
         </View>
         <View style={styles.chip}>
-          <Text style={styles.chipText}>{fastLabel}</Text>
+          <Text style={[styles.chipText, chipType]}>{fastLabel}</Text>
         </View>
       </View>
 
       {canGoToToday ? (
         <Pressable style={styles.todayBtn} onPress={onToday}>
-          <Text style={styles.todayBtnText}>{t('today.jumpToToday')}</Text>
+          <Text style={[styles.todayBtnText, todayBtnType]}>{t('today.jumpToToday')}</Text>
         </Pressable>
       ) : null}
     </LinearGradient>
@@ -113,10 +128,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   dayTitle: {
-    fontSize: 28,
     fontWeight: '800',
     textAlign: 'center',
-    lineHeight: 34,
     letterSpacing: 0.2,
     marginBottom: 12,
     width: '100%',
@@ -149,17 +162,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   primaryDate: {
-    fontSize: 17,
     fontWeight: '600',
     textAlign: 'center',
-    lineHeight: 22,
   },
   julianDate: {
     marginTop: 4,
-    fontSize: 12,
     fontWeight: '500',
     textAlign: 'center',
-    lineHeight: 16,
     opacity: 0.88,
   },
   chipRow: {
@@ -178,10 +187,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   chipText: {
-    fontSize: 12,
     fontWeight: '600',
     color: '#2b2623',
-    lineHeight: 16,
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
@@ -197,7 +204,6 @@ const styles = StyleSheet.create({
   },
   todayBtnText: {
     color: '#fff',
-    fontSize: 13,
     fontWeight: '600',
   },
 });

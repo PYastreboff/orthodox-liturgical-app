@@ -11,6 +11,7 @@ import {
 
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
 import type { UiLanguage } from '../i18n/types';
+import type { FontScalePreference } from '../theme/fontScale';
 
 export type TextLanguage = 'en' | 'chu';
 export type { UiLanguage };
@@ -25,6 +26,7 @@ type StoredPreferences = {
   colorSchemePreference?: ColorSchemePreference;
   showVestmentGradient?: boolean;
   uiLanguage?: UiLanguage;
+  fontScale?: FontScalePreference;
 };
 
 type Preferences = {
@@ -36,6 +38,8 @@ type Preferences = {
   /** Subtle liturgical-colour gradient over the black Today background. */
   showVestmentGradient: boolean;
   uiLanguage: UiLanguage;
+  /** Reading text size on Today (scripture, feasts, saints). */
+  fontScale: FontScalePreference;
   preferencesReady: boolean;
 };
 
@@ -46,6 +50,7 @@ type PreferencesContextValue = Preferences & {
   setColorSchemePreference: (value: ColorSchemePreference) => void;
   setShowVestmentGradient: (value: boolean) => void;
   setUiLanguage: (value: UiLanguage) => void;
+  setFontScale: (value: FontScalePreference) => void;
 };
 
 const STORAGE_KEY = '@orthodaily/preferences/v1';
@@ -60,6 +65,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     useState<ColorSchemePreference>('dark');
   const [showVestmentGradient, setShowVestmentGradientState] = useState(false);
   const [uiLanguage, setUiLanguageState] = useState<UiLanguage>('en');
+  const [fontScale, setFontScaleState] = useState<FontScalePreference>('default');
   const [preferencesReady, setPreferencesReady] = useState(false);
 
   useEffect(() => {
@@ -92,6 +98,15 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
           }
           if (parsed.uiLanguage === 'en' || parsed.uiLanguage === 'ru') {
             setUiLanguageState(parsed.uiLanguage);
+          }
+          if (
+            parsed.fontScale === 'small' ||
+            parsed.fontScale === 'default' ||
+            parsed.fontScale === 'large'
+          ) {
+            setFontScaleState(parsed.fontScale);
+          } else if (parsed.fontScale === 'extraLarge') {
+            setFontScaleState('large');
           }
         }
       } catch {
@@ -166,6 +181,14 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     [persist],
   );
 
+  const setFontScale = useCallback(
+    (value: FontScalePreference) => {
+      setFontScaleState(value);
+      void persist({ fontScale: value });
+    },
+    [persist],
+  );
+
   const value = useMemo(
     () => ({
       showAlternateCalendar,
@@ -174,6 +197,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       colorSchemePreference,
       showVestmentGradient,
       uiLanguage,
+      fontScale,
       preferencesReady,
       setShowAlternateCalendar,
       setPrimaryCalendar,
@@ -181,14 +205,17 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setColorSchemePreference,
       setShowVestmentGradient,
       setUiLanguage,
+      setFontScale,
     }),
     [
       colorSchemePreference,
       defaultTextLang,
+      fontScale,
       preferencesReady,
       primaryCalendar,
       setColorSchemePreference,
       setDefaultTextLang,
+      setFontScale,
       setPrimaryCalendar,
       setShowAlternateCalendar,
       setShowVestmentGradient,
