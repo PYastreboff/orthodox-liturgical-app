@@ -50,11 +50,12 @@ type CollapsibleKey =
   | 'vestments'
   | 'readings';
 
-const ROLE_IDS: ClergyRole[] = ['layperson', 'altar_server', 'deacon', 'priest', 'bishop'];
+const ROLE_IDS: ClergyRole[] = ['layperson', 'reader', 'altar_server', 'deacon', 'priest', 'bishop'];
 
 function roleLabel(t: (path: string) => string, id: ClergyRole): string {
   const keys: Record<ClergyRole, string> = {
     layperson: 'today.roleLayperson',
+    reader: 'today.roleReader',
     altar_server: 'today.roleAltarServer',
     deacon: 'today.roleDeacon',
     priest: 'today.rolePriest',

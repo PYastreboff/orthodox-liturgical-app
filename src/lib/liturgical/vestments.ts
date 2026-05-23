@@ -82,6 +82,9 @@ export function liturgicalVestmentColor(
 
 function vestmentKindsForRole(role: ClergyRole): VestmentKind[] {
   switch (role) {
+    case 'reader':
+      // Sticharion only for now; add more reader vestments here when needed.
+      return ['sticharion'];
     case 'altar_server':
       return ['sticharion'];
     case 'deacon':
@@ -154,6 +157,8 @@ export function vestmentGuidanceForRole(
   const liturgical = liturgicalVestmentColor(appearance, lang);
 
   switch (role) {
+    case 'reader':
+      return [garmentLine('sticharion', liturgical, lang)];
     case 'altar_server':
       return [garmentLine('sticharion', liturgical, lang)];
     case 'deacon':
