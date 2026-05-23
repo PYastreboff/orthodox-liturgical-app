@@ -12,8 +12,8 @@ import { civilWeekday, shouldApplyWeeklyFastOverride } from '../calendar/weeklyF
 import { feastRankForLiturgicalDay } from './calendarTypikon';
 import {
   greatFeastDisplayTitle,
+  isMajorFeastDayForDateBlock,
   liturgicalDayTitle,
-  shouldUseMajorFeastDayTitle,
 } from './liturgicalDayTitle';
 import {
   getFeastRankDisplay,
@@ -103,7 +103,12 @@ export function buildDayDashboard(
     feastRank,
     dayTitle,
   );
-  const isMajorFeastDay = shouldUseMajorFeastDayTitle(liturgicalDay, appearanceKey, feastRank);
+  const isMajorFeastDay = isMajorFeastDayForDateBlock(
+    liturgicalDay,
+    appearanceKey,
+    feastRank,
+    dayTitle,
+  );
 
   return {
     dayTitle,

@@ -25,6 +25,7 @@ import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { typikonIconColor } from '../lib/liturgical/typikonSymbols';
+import { CommemorationListMarker } from './CommemorationListMarker';
 import { HoverAccessible } from './HoverAccessible';
 import { colors } from '../theme/tokens';
 
@@ -321,6 +322,7 @@ const CELL_HEIGHT_COMPACT = 52;
 const CELL_BORDER_RADIUS = 10;
 const COMM_FONT_SIZE = 7.5;
 const COMM_LINE_HEIGHT = 11;
+const COMM_MARKER_SIZE = 10;
 const COMM_ROW_GAP = 2;
 type CommLine = { kind: 'feast' | 'saint'; name: string };
 
@@ -504,13 +506,11 @@ function DayCell({
                       key={`${line.kind}-${index}-${line.name}`}
                       style={styles.commRow}
                     >
-                      <View
-                        style={[
-                          isFeast ? styles.feastBullet : styles.saintBullet,
-                          { backgroundColor: color },
-                        ]}
-                        accessibilityElementsHidden
-                        importantForAccessibility="no-hide-descendants"
+                      <CommemorationListMarker
+                        kind={line.kind}
+                        color={color}
+                        size={COMM_MARKER_SIZE}
+                        lineHeight={COMM_LINE_HEIGHT}
                       />
                       <Text style={[isFeast ? styles.dayFeast : styles.daySaint, { color }]}>
                         {line.name}
@@ -614,19 +614,25 @@ function CalendarMonthAgenda({
               >
                 {info.dayTitle}
               </Text>
-              {lines.slice(0, 4).map((line, index) => (
-                <Text
-                  key={`${line.kind}-${index}`}
-                  style={[
-                    styles.agendaLine,
-                    { color: line.kind === 'feast' ? colors.feastBorder : mutedColor },
-                  ]}
-                  numberOfLines={1}
-                >
-                  {line.kind === 'feast' ? '• ' : '– '}
-                  {line.name}
-                </Text>
-              ))}
+              {lines.slice(0, 4).map((line, index) => {
+                const lineColor = line.kind === 'feast' ? colors.feastBorder : mutedColor;
+                return (
+                  <View key={`${line.kind}-${index}`} style={styles.agendaCommRow}>
+                    <CommemorationListMarker
+                      kind={line.kind}
+                      color={lineColor}
+                      size={13}
+                      lineHeight={16}
+                    />
+                    <Text
+                      style={[styles.agendaLine, { color: lineColor }]}
+                      numberOfLines={1}
+                    >
+                      {line.name}
+                    </Text>
+                  </View>
+                );
+              })}
               {lines.length > 4 ? (
                 <Text style={[styles.agendaMore, { color: mutedColor }]}>
                   +{lines.length - 4}
@@ -876,6 +882,8 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   agendaLine: {
+    flex: 1,
+    minWidth: 0,
     fontSize: 12,
     lineHeight: 16,
     fontWeight: '500',
@@ -932,27 +940,17 @@ const styles = StyleSheet.create({
   },
   commRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     width: '100%',
     minWidth: 0,
     paddingRight: 1,
+    gap: 3,
+  },
+  agendaCommRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
-  },
-  feastBullet: {
-    flexShrink: 0,
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    marginTop: 3,
-    opacity: 0.9,
-  },
-  saintBullet: {
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    marginTop: 3,
-    opacity: 0.75,
-    flexShrink: 0,
+    minWidth: 0,
   },
   dayFeast: {
     flex: 1,

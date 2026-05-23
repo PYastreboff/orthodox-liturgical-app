@@ -11,13 +11,25 @@ export type VestmentSwatch = {
   pillText: string;
 };
 
-export type VestmentLine = {
+export type VestmentGarmentLine = {
+  lineType: 'garment';
   kind: VestmentKind;
   label: string;
   value: string;
   pillBg: string;
   pillText: string;
 };
+
+/** Holy Saturday — marks a full black or white vestment set before each list. */
+export type VestmentColorSetLine = {
+  lineType: 'colorSet';
+  colorSet: 'black' | 'white';
+  title: string;
+  pillBg: string;
+  pillText: string;
+};
+
+export type VestmentLine = VestmentGarmentLine | VestmentColorSetLine;
 
 const SWATCH_COLOR_KEYS = {
   gold: 'vestments.colorGold',
@@ -26,6 +38,7 @@ const SWATCH_COLOR_KEYS = {
   red: 'vestments.colorRed',
   green: 'vestments.colorGreen',
   dark: 'vestments.colorDark',
+  black: 'vestments.colorBlack',
   purple: 'vestments.colorPurple',
 } as const;
 
@@ -38,6 +51,7 @@ const SWATCH = {
   red: { pillBg: '#8b2e3c', pillText: '#ffffff' },
   green: { pillBg: '#2d5a3e', pillText: '#ffffff' },
   dark: { pillBg: '#1f2433', pillText: '#ffffff' },
+  black: { pillBg: '#121010', pillText: '#ffffff' },
   purple: { pillBg: '#5c3d6e', pillText: '#ffffff' },
 } as const satisfies Record<SwatchKey, Omit<VestmentSwatch, 'name'>>;
 
@@ -59,8 +73,11 @@ export function liturgicalVestmentColor(
   if (key === 'dormition') return localizedSwatch('blue', lang);
   if (key === 'pascha' || label.includes('pascha')) return localizedSwatch('white', lang);
   if (key === 'bright_week') return localizedSwatch('white', lang);
+  if (key === 'palm_sunday' || label.includes('palm')) return localizedSwatch('green', lang);
   if (key === 'pentecost' || label.includes('pentecost')) return localizedSwatch('green', lang);
   if (key === 'elevation_cross' || label.includes('cross')) return localizedSwatch('red', lang);
+  if (key === 'great_friday' || label.includes('holy friday')) return localizedSwatch('black', lang);
+  if (key === 'holy_saturday') return localizedSwatch('white', lang);
   if (key === 'holy_week' || key === 'great_lent' || key.includes('lent')) return localizedSwatch('purple', lang);
   if (key.includes('fast')) return localizedSwatch('dark', lang);
   if (
@@ -73,6 +90,21 @@ export function liturgicalVestmentColor(
   }
 
   return localizedSwatch('gold', lang);
+}
+
+function vestmentKindsForRole(role: ClergyRole): VestmentKind[] {
+  switch (role) {
+    case 'altar_server':
+      return ['sticharion'];
+    case 'deacon':
+      return ['sticharion', 'orarion'];
+    case 'priest':
+      return ['sticharion', 'epitrachelion', 'phelonion'];
+    case 'bishop':
+      return ['sticharion', 'epitrachelion', 'phelonion', 'omophorion'];
+    default:
+      return [];
+  }
 }
 
 function bishopOmophorion(
@@ -91,8 +123,46 @@ function bishopOmophorion(
   return liturgical;
 }
 
-function line(kind: VestmentKind, swatch: VestmentSwatch, lang: UiLanguage): VestmentLine {
+function colorSetLine(
+  colorSet: 'black' | 'white',
+  swatch: VestmentSwatch,
+  lang: UiLanguage,
+): VestmentColorSetLine {
+  const titleKey =
+    colorSet === 'black' ? 'vestments.holySaturdayBlackSet' : 'vestments.holySaturdayWhiteSet';
   return {
+    lineType: 'colorSet',
+    colorSet,
+    title: translate(lang, titleKey),
+    pillBg: swatch.pillBg,
+    pillText: swatch.pillText,
+  };
+}
+
+function holySaturdayVestmentLines(role: ClergyRole, lang: UiLanguage): VestmentLine[] | null {
+  const kinds = vestmentKindsForRole(role);
+  if (!kinds.length) return null;
+
+  const black = localizedSwatch('black', lang);
+  const white = localizedSwatch('white', lang);
+  const lines: VestmentLine[] = [];
+
+  lines.push(colorSetLine('black', black, lang));
+  for (const kind of kinds) {
+    lines.push(garmentLine(kind, black, lang));
+  }
+
+  lines.push(colorSetLine('white', white, lang));
+  for (const kind of kinds) {
+    lines.push(garmentLine(kind, white, lang));
+  }
+
+  return lines;
+}
+
+function garmentLine(kind: VestmentKind, swatch: VestmentSwatch, lang: UiLanguage): VestmentGarmentLine {
+  return {
+    lineType: 'garment',
     kind,
     label: vestmentDisplayLabel(kind, lang),
     value: swatch.name,
@@ -109,26 +179,30 @@ export function vestmentGuidanceForRole(
 ): VestmentLine[] | null {
   if (role === 'layperson') return null;
 
+  if (appearance.key === 'holy_saturday') {
+    return holySaturdayVestmentLines(role, lang);
+  }
+
   const liturgical = liturgicalVestmentColor(appearance, lang);
 
   switch (role) {
     case 'altar_server':
-      return [line('sticharion', liturgical, lang)];
+      return [garmentLine('sticharion', liturgical, lang)];
     case 'deacon':
-      return [line('sticharion', liturgical, lang), line('orarion', liturgical, lang)];
+      return [garmentLine('sticharion', liturgical, lang), garmentLine('orarion', liturgical, lang)];
     case 'priest':
       return [
-        line('sticharion', liturgical, lang),
-        line('epitrachelion', liturgical, lang),
-        line('phelonion', liturgical, lang),
+        garmentLine('sticharion', liturgical, lang),
+        garmentLine('epitrachelion', liturgical, lang),
+        garmentLine('phelonion', liturgical, lang),
       ];
     case 'bishop': {
       const omophorion = bishopOmophorion(appearance, liturgical, lang);
       return [
-        line('sticharion', liturgical, lang),
-        line('epitrachelion', liturgical, lang),
-        line('phelonion', liturgical, lang),
-        line('omophorion', omophorion, lang),
+        garmentLine('sticharion', liturgical, lang),
+        garmentLine('epitrachelion', liturgical, lang),
+        garmentLine('phelonion', liturgical, lang),
+        garmentLine('omophorion', omophorion, lang),
       ];
     }
     default:

@@ -35,15 +35,18 @@ export function dayTitleStrings(day: OrthocalDay | null | undefined): string[] {
   return parts.map((s) => s?.trim()).filter(Boolean) as string[];
 }
 
-function isOrdinarySeasonLectionaryTitle(title: string): boolean {
+export function isOrdinarySeasonLectionaryTitle(title: string): boolean {
   const t = title.trim();
   if (!t) return false;
   if (/^pascha$/i.test(t) || /^pentecost$/i.test(t)) return false;
+  if (ASCENSION_TITLE.test(t)) return false;
   if (ORDINARY_WEEKDAY_OF_SEASON.test(t)) return true;
   if (ORDINARY_SEASON_WEEK_OR_SUNDAY.test(t)) return true;
   if (ORDINARY_SEASON_AFTER_PASCHA.test(t)) return true;
   return false;
 }
+
+const ASCENSION_TITLE = /\bascension\b/i;
 
 export function isHolyTuesdayDay(day: OrthocalDay | null | undefined): boolean {
   return dayTitleStrings(day).some((title) => HOLY_TUESDAY_TITLE.test(title));

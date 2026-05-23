@@ -16,6 +16,7 @@ const CALENDAR_GLYPHS = new Set<TypikonGlyph>([
 
 /** Local appearance keys → orthocal feast_level when API is unavailable. */
 const APPEARANCE_FEAST_LEVEL: Record<string, number> = {
+  palm_sunday: 6,
   pascha: 6,
   pentecost: 6,
   all_saints: 6,

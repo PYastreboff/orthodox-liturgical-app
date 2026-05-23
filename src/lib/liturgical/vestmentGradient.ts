@@ -23,6 +23,7 @@ const HERO_GRADIENT_BY_PILL_BG: Record<string, VestmentHeroStyle> = {
   '#2f4a6f': { gradient: ['#4a6a94', '#1a2a40'], foreground: '#ffffff' },
   '#8b2e3c': { gradient: ['#b84a58', '#4a1520'], foreground: '#ffffff' },
   '#2d5a3e': { gradient: ['#4a8a62', '#1a3024'], foreground: '#ffffff' },
+  '#121010': { gradient: ['#2a2826', '#0a0a0a'], foreground: '#f2ebe2' },
   '#1f2433': { gradient: ['#3a4558', '#0f141f'], foreground: '#e8eef8' },
   '#5c3d6e': { gradient: ['#7a5a8c', '#2a1838'], foreground: '#f7eef8' },
 };
@@ -73,13 +74,23 @@ function gradientStrengthsForSwatch(pillBg: string): { mid: number; peak: number
     case '#8b2e3c':
     case '#2d5a3e':
       return { mid: 0.08, peak: 0.14, tail: 0.06 };
+    case '#121010':
+      return { mid: 0.07, peak: 0.12, tail: 0.06 };
     default:
       return { mid: 0.08, peak: 0.15, tail: 0.07 };
   }
 }
 
+const HERO_GRADIENT_BY_APPEARANCE_KEY: Partial<Record<string, VestmentHeroStyle>> = {
+  great_friday: { gradient: ['#2a2826', '#0a0a0a'], foreground: '#f2ebe2' },
+  holy_saturday: { gradient: ['#121010', '#f0ebe3'], foreground: '#1e1a16' },
+};
+
 /** DayHero card gradient — same vestment hue as pills / page glow. */
 export function vestmentHeroGradient(appearance: LiturgicalDayAppearance): VestmentHeroStyle {
+  const byKey = HERO_GRADIENT_BY_APPEARANCE_KEY[appearance.key];
+  if (byKey) return byKey;
+
   const { pillBg, pillText } = liturgicalVestmentColor(appearance);
   const preset = HERO_GRADIENT_BY_PILL_BG[pillBg];
   if (preset) return preset;
@@ -103,6 +114,37 @@ export function vestmentPageGradient(
   enabled: boolean,
 ): VestmentPageGradient | null {
   if (!enabled) return null;
+
+  if (appearance.key === 'great_friday') {
+    const black = parseHex('#121010') ?? { r: 18, g: 16, b: 16 };
+    return {
+      colors: [
+        PAGE_BACKGROUND_BLACK,
+        mixWithBlack(black, 0.07),
+        mixWithBlack(black, 0.13),
+        mixWithBlack(black, 0.06),
+      ] as const,
+      locations: [0, 0.38, 0.68, 1] as const,
+      start: { x: 0.05, y: 0 },
+      end: { x: 0.95, y: 1 },
+    };
+  }
+
+  if (appearance.key === 'holy_saturday') {
+    const black = parseHex('#121010') ?? { r: 18, g: 16, b: 16 };
+    const white = parseHex('#f0ebe3') ?? { r: 240, g: 235, b: 227 };
+    return {
+      colors: [
+        PAGE_BACKGROUND_BLACK,
+        mixWithBlack(black, 0.1),
+        mixWithBlack(white, 0.14),
+        mixWithBlack(white, 0.08),
+      ] as const,
+      locations: [0, 0.35, 0.65, 1] as const,
+      start: { x: 0.05, y: 0 },
+      end: { x: 0.95, y: 1 },
+    };
+  }
 
   const { pillBg } = liturgicalVestmentColor(appearance);
   const tint = parseHex(pillBg) ?? { r: 128, g: 128, b: 128 };

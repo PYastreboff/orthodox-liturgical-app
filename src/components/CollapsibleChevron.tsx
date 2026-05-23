@@ -17,11 +17,14 @@ type Props = {
   expanded: boolean;
   color: string;
   size?: number;
+  /** Touch target / centering box (defaults to size + 10). */
+  boxSize?: number;
   style?: StyleProp<ViewStyle>;
 };
 
 /** ▾ rotated: right (collapsed) → down (expanded). */
-export function CollapsibleChevron({ expanded, color, size = 24, style }: Props) {
+export function CollapsibleChevron({ expanded, color, size = 24, boxSize, style }: Props) {
+  const box = boxSize ?? size + 10;
   const progress = useSharedValue(expanded ? 1 : 0);
 
   useEffect(() => {
@@ -33,8 +36,8 @@ export function CollapsibleChevron({ expanded, color, size = 24, style }: Props)
   }));
 
   return (
-    <Animated.View style={[styles.wrap, style, animatedStyle]}>
-      <Text style={[styles.glyph, { color, fontSize: size, lineHeight: size + 2 }]}>▾</Text>
+    <Animated.View style={[styles.wrap, { width: box, height: box }, style, animatedStyle]}>
+      <Text style={[styles.glyph, { color, fontSize: size, lineHeight: size }]}>▾</Text>
     </Animated.View>
   );
 }

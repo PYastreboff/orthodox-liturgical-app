@@ -1,9 +1,10 @@
 import type { OrthocalDay } from '../api/orthocal';
 import { isFeastCellAppearance } from '../calendar/calendarCellStyle';
-import { isGreatFridayDay, isHolyTuesdayDay, shouldUseOrthocalFeastRank } from './lectionaryDay';
+import { isGreatFridayDay, shouldUseOrthocalFeastRank } from './lectionaryDay';
 import {
   calendarFeastsForDay,
-  isOrthocalGreatFeastLevel,
+  isHolyWeekWeekdayHeadline,
+  isOrthocalGreatFeastForCalendar,
   liturgicalDayTitle,
 } from './liturgicalDayTitle';
 import type { FeastRankDisplay } from './typikonSymbols';
@@ -42,12 +43,14 @@ export function isCalendarFeastCell(
   day: OrthocalDay | null,
   appearanceKey: string,
   feastRank: FeastRankDisplay | null,
+  dayTitle: string,
 ): boolean {
   if (isFeastCellAppearance(appearanceKey)) return true;
-  if (isHolyTuesdayDay(day)) return true;
-  if (isOrthocalGreatFeastLevel(day)) return true;
+  if (isOrthocalGreatFeastForCalendar(day, appearanceKey, dayTitle)) return true;
   if (!useOrthocalFeastRank(day, appearanceKey)) return false;
-  if (feastRank?.glyph === 'great_feast') return true;
+  if (feastRank?.glyph === 'great_feast') {
+    return !isHolyWeekWeekdayHeadline(day, appearanceKey, dayTitle);
+  }
   return false;
 }
 
@@ -56,12 +59,15 @@ export function isCalendarFeastTitleRed(
   day: OrthocalDay | null,
   appearanceKey: string,
   feastRank: FeastRankDisplay | null,
+  dayTitle: string,
 ): boolean {
-  if (isCalendarFeastCell(day, appearanceKey, feastRank)) return true;
-  if (isOrthocalGreatFeastLevel(day)) return true;
+  if (isCalendarFeastCell(day, appearanceKey, feastRank, dayTitle)) return true;
+  if (isOrthocalGreatFeastForCalendar(day, appearanceKey, dayTitle)) return true;
   if (!useOrthocalFeastRank(day, appearanceKey)) return false;
   if (feastRank?.glyph === 'polyeleos' || feastRank?.glyph === 'vigil') return true;
-  if ((day?.feast_level ?? 0) >= ORTHOCAL_POLYELEOS_LEVEL_MIN) return true;
+  if ((day?.feast_level ?? 0) >= ORTHOCAL_POLYELEOS_LEVEL_MIN) {
+    return !isHolyWeekWeekdayHeadline(day, appearanceKey, dayTitle);
+  }
   return false;
 }
 
@@ -71,9 +77,9 @@ export function buildCalendarDayInfo(
   appearanceLabel: string,
   feastRank: FeastRankDisplay | null,
 ): CalendarDayInfo {
-  const isFeastCell = isCalendarFeastCell(day, appearanceKey, feastRank);
-  const isFeastTitleRed = isCalendarFeastTitleRed(day, appearanceKey, feastRank);
   const dayTitle = liturgicalDayTitle(day, appearanceKey, appearanceLabel, feastRank);
+  const isFeastCell = isCalendarFeastCell(day, appearanceKey, feastRank, dayTitle);
+  const isFeastTitleRed = isCalendarFeastTitleRed(day, appearanceKey, feastRank, dayTitle);
   return {
     dayTitle,
     feasts: calendarFeastsForDay(day, dayTitle),

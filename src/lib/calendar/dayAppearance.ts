@@ -52,6 +52,7 @@ export function getLiturgicalDayAppearance(
   const pascha = orthodoxPaschaJdn(y);
   const cleanMonday = pascha - 48;
   const palmSunday = pascha - 7;
+  const greatFriday = pascha - 2;
   const holySaturday = pascha - 1;
   const brightEnd = pascha + 7;
   const pentecost = pascha + 49;
@@ -61,7 +62,7 @@ export function getLiturgicalDayAppearance(
 
   const wd = weekdayFromPlain(liturgical);
 
-  const inHolyWeek = jdn >= palmSunday && jdn <= holySaturday;
+  const inHolyWeek = jdn > palmSunday && jdn < greatFriday;
   const inBrightWeek = jdn >= pascha && jdn <= brightEnd;
   const inGreatLent = jdn >= cleanMonday && jdn < palmSunday;
   const inApostlesFast = jdn >= apostlesFastMonday && jdn < stPeter;
@@ -112,14 +113,47 @@ export function getLiturgicalDayAppearance(
     label: 'Weekday',
   };
 
+  if (jdn === palmSunday) {
+    return {
+      key: 'palm_sunday',
+      gradient: ['#e8f4e6', '#3d7350'],
+      foreground: '#1e1a16',
+      subtitle,
+      gregorianSubtitle,
+      label: 'Palm Sunday',
+    };
+  }
+
   if (inHolyWeek) {
     return {
       key: 'holy_week',
       gradient: ['#4a1520', '#120508'],
       foreground: '#fceff2',
       subtitle,
-    gregorianSubtitle,
+      gregorianSubtitle,
       label: 'Holy Week',
+    };
+  }
+
+  if (jdn === greatFriday) {
+    return {
+      key: 'great_friday',
+      gradient: ['#2a2826', '#0a0a0a'],
+      foreground: '#f2ebe2',
+      subtitle,
+      gregorianSubtitle,
+      label: 'Great and Holy Friday',
+    };
+  }
+
+  if (jdn === holySaturday) {
+    return {
+      key: 'holy_saturday',
+      gradient: ['#121010', '#f0ebe3'],
+      foreground: '#1e1a16',
+      subtitle,
+      gregorianSubtitle,
+      label: 'Great and Holy Saturday',
     };
   }
 

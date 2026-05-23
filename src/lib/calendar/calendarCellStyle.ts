@@ -12,6 +12,8 @@ export const FEAST_CELL_APPEARANCE_KEYS = new Set(['pascha', 'pentecost', 'trans
 /** Fasting seasons — very light grey cell. */
 const FASTING_KEYS = new Set([
   'holy_week',
+  'great_friday',
+  'holy_saturday',
   'great_lent',
   'lent_sunday',
   'lent_saturday',
@@ -25,6 +27,7 @@ const FASTING_KEYS = new Set([
 const CELL_WHITE = '#ffffff';
 const CELL_FASTING = '#c4c1b8';
 const CELL_FEAST = '#f2a0ad';
+const CELL_PALM_SUNDAY = '#c8dcc4';
 
 export function isFeastCellAppearance(appearanceKey: string): boolean {
   return FEAST_CELL_APPEARANCE_KEYS.has(appearanceKey);
@@ -43,6 +46,10 @@ export function getCalendarCellStyle(
 ): CalendarCellStyle {
   if (options?.feastCell) {
     return { backgroundColor: CELL_FEAST, foreground: colors.ink };
+  }
+
+  if (appearanceKey === 'palm_sunday') {
+    return { backgroundColor: CELL_PALM_SUNDAY, foreground: colors.ink };
   }
 
   if (FASTING_KEYS.has(appearanceKey)) {

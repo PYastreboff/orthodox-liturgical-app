@@ -1,5 +1,13 @@
 import type { OrthocalDay } from '../api/orthocal';
 import { stripHtml } from '../api/orthocal';
+import { sanitizeTypikonProse } from './typikonSymbols';
+
+const PALM_SUNDAY_PATTERN = /\bpalm sunday\b/i;
+
+export type LiturgicalFeastContext = {
+  appearanceKey: string;
+  appearanceLabel: string;
+};
 
 export type CommemorationKind = 'saint' | 'feast';
 
@@ -46,7 +54,43 @@ function findStoryForName(
   return best;
 }
 
-export function buildCommemorationEntries(day: OrthocalDay | null): CommemorationEntry[] {
+function nameFromOrthocalHeadlines(day: OrthocalDay | null, pattern: RegExp): string | null {
+  if (!day) return null;
+  const candidates = [
+    ...(day.titles ?? []),
+    day.summary_title ?? '',
+    day.feast_level_description ?? '',
+  ];
+  for (const raw of candidates) {
+    const name = sanitizeTypikonProse(String(raw).trim());
+    if (name && pattern.test(name)) return name;
+  }
+  return null;
+}
+
+/** When orthocal has no `feasts[]` entry but the local calendar marks a feast day. */
+function liturgicalFeastFallbackName(
+  day: OrthocalDay | null,
+  liturgical: LiturgicalFeastContext,
+): string | null {
+  if ((day?.feasts ?? []).some((f) => f.trim())) return null;
+
+  const { appearanceKey, appearanceLabel } = liturgical;
+
+  if (appearanceKey === 'palm_sunday' || day?.pascha_distance === -7) {
+    return (
+      nameFromOrthocalHeadlines(day, PALM_SUNDAY_PATTERN) ??
+      (sanitizeTypikonProse(appearanceLabel.trim()) || 'Palm Sunday')
+    );
+  }
+
+  return null;
+}
+
+export function buildCommemorationEntries(
+  day: OrthocalDay | null,
+  liturgical?: LiturgicalFeastContext,
+): CommemorationEntry[] {
   if (!day) return [];
 
   const stories = day.stories ?? [];
@@ -90,6 +134,21 @@ export function buildCommemorationEntries(day: OrthocalDay | null): Commemoratio
       storyTitle: story.title,
       body: stripHtml(story.story),
     });
+  }
+
+  if (liturgical && !entries.some((e) => e.kind === 'feast')) {
+    const fallbackName = liturgicalFeastFallbackName(day, liturgical);
+    if (fallbackName) {
+      const story = findStoryForName(fallbackName, stories);
+      if (story?.title) usedStoryTitles.add(story.title);
+      entries.unshift({
+        id: `feast:${fallbackName}`,
+        name: fallbackName,
+        kind: 'feast',
+        storyTitle: story?.title,
+        body: story ? stripHtml(story.story) : undefined,
+      });
+    }
   }
 
   return entries;

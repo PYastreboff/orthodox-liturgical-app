@@ -51,10 +51,20 @@ export function CommemorationCard({
   const storyType = text(13, 18);
   const bodyType = text(14, 21);
 
+  const chevronColor = isPrimaryGreatFeast ? colors.feastBorder : mutedColor;
+
   const headerRow = (
     <View style={styles.headerRow}>
       <Text style={[styles.name, nameType, { color: nameColor }]}>{entry.name}</Text>
-      {collapsible ? <CollapsibleChevron expanded={expanded} color={mutedColor} size={16} /> : null}
+      {collapsible ? (
+        <CollapsibleChevron
+          expanded={expanded}
+          color={chevronColor}
+          size={22}
+          boxSize={36}
+          style={styles.headerChevron}
+        />
+      ) : null}
     </View>
   );
 
@@ -114,9 +124,13 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'space-between',
     gap: 10,
+  },
+  headerChevron: {
+    flexShrink: 0,
+    marginRight: -4,
   },
   name: {
     flex: 1,
