@@ -1,18 +1,16 @@
 import { ScrollViewStyleReset } from 'expo-router/html';
 import type { PropsWithChildren } from 'react';
 
-import { colors } from '../src/theme/tokens';
-
 const WEB_ROOT_STYLES = `
 html {
   height: 100%;
-  background-color: ${colors.darkBg};
+  background: transparent;
 }
 body {
   height: 100%;
   margin: 0;
   overflow: hidden;
-  background-color: ${colors.darkBg};
+  background: transparent;
 }
 #root {
   display: flex;
@@ -20,11 +18,11 @@ body {
   flex: 1;
   min-height: 100%;
   min-height: 100dvh;
-  background-color: ${colors.darkBg};
+  background: transparent;
 }
 `;
 
-/** Web-only root HTML — viewport, safe areas, and theme-colored gutters for iPhone notch/home bar. */
+/** Web-only root HTML — edge-to-edge viewport; screens paint into safe areas. */
 export default function Root({ children }: PropsWithChildren) {
   return (
     <html lang="en">
@@ -36,7 +34,7 @@ export default function Root({ children }: PropsWithChildren) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
         />
         <meta name="description" content="OrthoDaily" />
-        <meta name="theme-color" content={colors.darkBg} />
+        <meta name="theme-color" content="transparent" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <title>OrthoDaily</title>

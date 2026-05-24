@@ -2,6 +2,7 @@ import { useMemo, type ReactNode } from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
 import {
   todayPageBackgroundColor,
@@ -25,10 +26,14 @@ export function VestmentPageBackground({
 }: Props) {
   const isDark = useResolvedColorScheme() === 'dark';
   const backgroundColor = todayPageBackgroundColor(isDark);
+  const insets = useLayoutSafeAreaInsets();
   const gradient = useMemo(
     () => vestmentPageGradient(appearance, gradientEnabled, isDark),
     [appearance.key, appearance.label, gradientEnabled, isDark],
   );
+
+  const bleedTop = insets.top;
+  const bleedBottom = insets.bottom;
 
   return (
     <View style={[styles.root, { backgroundColor }, style]}>
@@ -38,7 +43,13 @@ export function VestmentPageBackground({
           locations={[...gradient.locations]}
           start={gradient.start}
           end={gradient.end}
-          style={styles.gradientLayer}
+          style={[
+            styles.gradientLayer,
+            {
+              top: -bleedTop,
+              bottom: -bleedBottom,
+            },
+          ]}
           pointerEvents="none"
         />
       ) : null}
@@ -52,7 +63,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   gradientLayer: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    left: 0,
+    right: 0,
     zIndex: 0,
   },
   content: {

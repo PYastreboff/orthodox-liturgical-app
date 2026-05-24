@@ -30,6 +30,7 @@ import {
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
 import { useFontScale } from '../../src/hooks/useFontScale';
+import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useLiturgicalTexts } from '../../src/hooks/useLiturgicalTexts';
 import {
@@ -148,6 +149,7 @@ export default function TodayScreen() {
     toggleTodaySection,
   } = usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
+  const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
 
   useFocusEffect(
@@ -224,7 +226,15 @@ export default function TodayScreen() {
     <VestmentPageBackground appearance={appearance} gradientEnabled={showVestmentGradient}>
     <ScrollView
       style={styles.scroll}
-      contentContainerStyle={[styles.container, { paddingBottom: scrollBottomPadding }]}
+      contentContainerStyle={[
+        styles.container,
+        {
+          paddingTop: screenSafe.paddingTop + 20,
+          paddingLeft: screenSafe.paddingLeft + 20,
+          paddingRight: screenSafe.paddingRight + 20,
+          paddingBottom: scrollBottomPadding,
+        },
+      ]}
     >
       <DayHero
         appearance={appearance}
@@ -566,7 +576,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    padding: 20,
   },
   statusLine: {
     textAlign: 'center',

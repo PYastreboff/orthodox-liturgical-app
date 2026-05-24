@@ -10,6 +10,7 @@ import { SettingsSection } from '../../src/components/settings/SettingsSection';
 import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
 import { FontScalePicker } from '../../src/components/settings/FontScalePicker';
 import { ThemeModePicker } from '../../src/components/settings/ThemeModePicker';
+import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { usePreferences } from '../../src/state/PreferencesContext';
@@ -78,6 +79,7 @@ export default function SettingsScreen() {
   } = usePreferences();
 
   const version = Constants.expoConfig?.version ?? '0.1.0';
+  const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
 
   return (
@@ -87,7 +89,15 @@ export default function SettingsScreen() {
       </Head>
       <ScrollView
       style={{ backgroundColor: theme.colors.background }}
-      contentContainerStyle={[styles.container, { paddingBottom: scrollBottomPadding }]}
+      contentContainerStyle={[
+        styles.container,
+        {
+          paddingTop: screenSafe.paddingTop + 20,
+          paddingLeft: screenSafe.paddingLeft + 20,
+          paddingRight: screenSafe.paddingRight + 20,
+          paddingBottom: scrollBottomPadding,
+        },
+      ]}
     >
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.colors.text }]}>{t('settings.title')}</Text>
@@ -196,7 +206,7 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flexGrow: 1,
   },
   header: {
     marginBottom: 32,
