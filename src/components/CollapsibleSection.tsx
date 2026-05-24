@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
+import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { SectionTitleRow } from './SectionTitleRow';
@@ -42,6 +43,8 @@ export function CollapsibleSection({
   headerTrailing,
 }: Props) {
   const { t } = useAppTranslation();
+  const phoneLayout = usePhoneLayout();
+  const stackHeaderTrailing = phoneLayout && headerTrailing != null;
   const progress = useSharedValue(expanded ? 1 : 0);
 
   useEffect(() => {
@@ -54,33 +57,51 @@ export function CollapsibleSection({
     opacity: interpolate(progress.value, [0, 0.08, 1], [0, 1, 1]),
   }));
 
+  const headerRow = (
+    <View style={styles.sectionHeaderRow}>
+      <Pressable
+        style={styles.sectionHeaderMain}
+        onPress={onToggle}
+        {...hoverAccessibilityProps(
+          expanded ? `Collapse ${title}` : `Expand ${title}`,
+          { role: 'button' },
+        )}
+        accessibilityState={{ expanded }}
+      >
+        <SectionTitleRow
+          title={title}
+          icon={icon}
+          color={themeColors.text}
+          titleLines={phoneLayout ? 3 : 2}
+        />
+      </Pressable>
+      {!stackHeaderTrailing && headerTrailing ? (
+        <View style={styles.headerTrailing}>{headerTrailing}</View>
+      ) : null}
+      <Pressable
+        style={styles.sectionChevronWrap}
+        onPress={onToggle}
+        {...hoverAccessibilityProps(
+          expanded ? t('a11y.collapseSection') : t('a11y.expandSection'),
+          { role: 'button' },
+        )}
+        accessibilityState={{ expanded }}
+      >
+        <CollapsibleChevron expanded={expanded} color={themeColors.text} size={24} />
+      </Pressable>
+    </View>
+  );
+
   return (
     <View style={[styles.card, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
-      <View style={styles.sectionHeaderRow}>
-        <Pressable
-          style={styles.sectionHeaderMain}
-          onPress={onToggle}
-          {...hoverAccessibilityProps(
-            expanded ? `Collapse ${title}` : `Expand ${title}`,
-            { role: 'button' },
-          )}
-          accessibilityState={{ expanded }}
-        >
-          <SectionTitleRow title={title} icon={icon} color={themeColors.text} />
-        </Pressable>
-        {headerTrailing ? <View style={styles.headerTrailing}>{headerTrailing}</View> : null}
-        <Pressable
-          style={styles.sectionChevronWrap}
-          onPress={onToggle}
-          {...hoverAccessibilityProps(
-            expanded ? t('a11y.collapseSection') : t('a11y.expandSection'),
-            { role: 'button' },
-          )}
-          accessibilityState={{ expanded }}
-        >
-          <CollapsibleChevron expanded={expanded} color={themeColors.text} size={24} />
-        </Pressable>
-      </View>
+      {stackHeaderTrailing ? (
+        <View style={styles.sectionHeaderColumn}>
+          {headerRow}
+          <View style={styles.headerTrailingCompact}>{headerTrailing}</View>
+        </View>
+      ) : (
+        headerRow
+      )}
       <Animated.View style={[styles.sectionBody, bodyStyle]} pointerEvents={expanded ? 'auto' : 'none'}>
         {children}
       </Animated.View>
@@ -103,12 +124,21 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     gap: 6,
   },
+  sectionHeaderColumn: {
+    marginVertical: 4,
+  },
   sectionHeaderMain: {
     flex: 1,
     minWidth: 0,
   },
   headerTrailing: {
     flexShrink: 0,
+  },
+  headerTrailingCompact: {
+    alignSelf: 'flex-end',
+    marginTop: 2,
+    marginBottom: 2,
+    paddingRight: 38,
   },
   sectionChevronWrap: {
     width: 32,

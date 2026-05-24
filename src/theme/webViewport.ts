@@ -11,6 +11,11 @@ export function isIosWebStandalone(): boolean {
   return false;
 }
 
+export function isIosMobileWeb(): boolean {
+  if (Platform.OS !== 'web' || typeof navigator === 'undefined') return false;
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
 /** Reliable read of env(safe-area-inset-*) on iOS (height probe, not getComputedStyle on :root). */
 export function measureWebSafeAreaInset(
   edge: 'safe-area-inset-top' | 'safe-area-inset-bottom' | 'safe-area-inset-left' | 'safe-area-inset-right',
@@ -47,17 +52,31 @@ export function readWebSafeAreaInsets(): {
   };
 }
 
-function appHeightExpression(): string {
-  return isIosWebStandalone() ? '100vh' : '100dvh';
-}
-
 /**
- * iOS PWA: use 100vh + fixed shell (100dvh is short by ~safe-area-top on cold start).
- * Shell CSS lives in WEB_ROOT_CSS (+html); this sets --app-height at runtime.
+ * Pin the app shell to the visible viewport.
+ * - Standalone PWA: 100vh (100dvh lies on cold start).
+ * - Safari browser: visualViewport height + offset (eliminates letterbox bands).
  */
 export function applyWebViewportHeight(): void {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return;
-  document.documentElement.style.setProperty('--app-height', appHeightExpression());
+
+  const root = document.documentElement;
+
+  if (isIosWebStandalone()) {
+    root.style.setProperty('--app-height', '100vh');
+    root.style.setProperty('--viewport-offset-top', '0px');
+    return;
+  }
+
+  const vv = window.visualViewport;
+  if (vv && isIosMobileWeb()) {
+    root.style.setProperty('--app-height', `${Math.round(vv.height)}px`);
+    root.style.setProperty('--viewport-offset-top', `${Math.round(vv.offsetTop)}px`);
+    return;
+  }
+
+  root.style.setProperty('--app-height', '100dvh');
+  root.style.setProperty('--viewport-offset-top', '0px');
 }
 
 let installed = false;
@@ -68,7 +87,41 @@ export function installWebViewportShell(): void {
 
   applyWebViewportHeight();
 
-  const onResize = () => applyWebViewportHeight();
-  window.addEventListener('resize', onResize);
-  window.visualViewport?.addEventListener('resize', onResize);
+  const onGeometryChange = () => applyWebViewportHeight();
+  window.addEventListener('resize', onGeometryChange);
+  window.addEventListener('orientationchange', onGeometryChange);
+  window.visualViewport?.addEventListener('resize', onGeometryChange);
+  window.visualViewport?.addEventListener('scroll', onGeometryChange);
 }
+
+/** Inline boot script for +html (runs before React). */
+export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
+  function sync(){
+    try{
+      var d=document.documentElement;
+      var n=window.navigator;
+      var standalone=n.standalone===true||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches);
+      if(standalone){
+        d.style.setProperty('--app-height','100vh');
+        d.style.setProperty('--viewport-offset-top','0px');
+        return;
+      }
+      var vv=window.visualViewport;
+      var ios=/iPhone|iPad|iPod/i.test(n.userAgent||'');
+      if(vv&&ios){
+        d.style.setProperty('--app-height',Math.round(vv.height)+'px');
+        d.style.setProperty('--viewport-offset-top',Math.round(vv.offsetTop)+'px');
+        return;
+      }
+      d.style.setProperty('--app-height','100dvh');
+      d.style.setProperty('--viewport-offset-top','0px');
+    }catch(e){}
+  }
+  sync();
+  window.addEventListener('resize',sync);
+  window.addEventListener('orientationchange',sync);
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',sync);
+    window.visualViewport.addEventListener('scroll',sync);
+  }
+})();`;

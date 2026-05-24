@@ -1,42 +1,61 @@
 # OrthoDaily
 
-Cross-platform **iOS, Android, and web** liturgical daybook oriented toward Moscow Patriarchate practice. Built with **Expo SDK 54**, **TypeScript**, and **Expo Router** (three tabs: Today, Calendar, Settings).
+Cross-platform **iOS, Android, and web** liturgical daybook oriented toward **Moscow Patriarchate** practice. Built with **Expo SDK 54**, **TypeScript**, and **Expo Router** (three tabs: **Today**, **Calendar**, **Settings**).
 
-Day content (feasts, saints, fasting, readings) comes from [orthocal.info](https://orthocal.info/) (OCA rubrics). Vestment colours and calendar cell styling use a local Julian/Pascha engine when the API does not supply them.
+Day content (feasts, saints, fasting, readings) comes from [orthocal.info](https://orthocal.info/) (OCA rubrics). Vestment colours, calendar cell styling, and weekly fast rules use a local Julian/Pascha engine when the API does not supply them. Troparia, kontakia, and many prokeimena are supplemented from bundled menaion and lectionary data (see [Data sources](#data-sources)).
+
+**Live web app:** [https://pyastreboff.github.io/orthodox-liturgical-app/](https://pyastreboff.github.io/orthodox-liturgical-app/)
 
 ## Features
 
 ### Today
 
-- **Day hero** — liturgical title, civil date, tone, typikon rank symbol, fast label; previous/next day and jump to today.
-- **Serving role** — layperson, altar server, deacon, priest, bishop (vestment rows for clergy).
-- **Date & liturgical day** — fast pill, service rank, orthocal query hint, Julian or Gregorian church date (per Settings).
-- **Fasting** — level, allowed foods, notes (including Wednesday/Friday rules when orthocal reports no fast).
-- **Vestments** — role-specific colours for the day (local appearance engine).
-- **Liturgical texts** — troparia, kontakia, prokeimenon, epistle, gospel, communion, etc., grouped by type with one icon per section (not per reading). Toggle **English / Church Slavonic** for scripture via [getBible](https://getbible.net) (Elizabeth Bible, 1757); hymns stay in English when orthocal has no Slavonic.
-- **Feasts** and **Saints commemorated today** — collapsible cards when orthocal provides a life account; otherwise the name only (no empty-state message).
+- **Day hero** — liturgical title, civil date, tone, typikon rank symbol, fast label; previous/next day and jump to today. Vestment-coloured card (dark-mode variants blend with the charcoal theme).
+- **Serving role** — layperson (default), reader, altar server, deacon, priest, bishop — with role-specific vestment rows.
+- **Date & liturgical day** — fast pill, major-feast highlight, service rank, Julian or Gregorian church date (per Settings).
+- **Fasting** — level, allowed/not allowed foods, weekly fast suspensions (Bright Week, Pentecost week, etc.).
+- **Vestments** — role-specific colours for the day.
+- **Liturgical texts** — troparia, kontakia, prokeimenon, alleluia, epistle, gospel, communion, grouped by type with section icons. Language toggle: **English**, **Church Slavonic (ЧС)**, or **side by side** (scripture only; hymns follow the selected mode).
+- **Feasts** and **Saints commemorated today** — collapsible cards with life accounts when orthocal provides them.
 
-Sections start collapsed where content can be long (liturgical texts, feasts, saints).
+Long sections (liturgical texts, feasts, saints) start **collapsed**. Your expand/collapse choices, serving role, selected day, and calendar month are **remembered** across refresh (AsyncStorage on device; `localStorage` on web).
 
 ### Calendar
 
-- Month grid with civil (Gregorian) day numbers.
-- Cell colours: fasting, feasts, today; typikon symbols on ranked days.
-- Tap a day to open it on **Today** (Julian or Gregorian rubrics follow Settings).
+- Month grid with civil (Gregorian) day numbers and typikon symbols on ranked days.
+- Cell colours: fasting, feasts, Palm Sunday, today.
+- **Search** — find saints and feasts in the visible year; tap a result to open that day on Today.
+- Tap any day to open it on **Today** (Julian or Gregorian rubrics follow Settings).
 
 ### Settings
 
 - Light / dark / system theme.
-- Optional vestment-colour background glow on Today (dark theme).
+- Optional vestment-colour **background glow** on Today.
+- **Text size** — small, default, or large (Today readings and body text).
 - **Liturgical calendar** — Julian or Gregorian rubrics on orthocal (civil dates always Gregorian).
-- **App language** — **English** or **Русский** for all UI labels (orthocal content remains in the API language).
+- **App language** — **English** or **Русский** for UI labels (orthocal content remains largely in English).
 
-Preferences persist with AsyncStorage.
+### Web & mobile layout
+
+- **Phone / narrow web:** edge-to-edge layout, floating tab bar, no top tab header.
+- **Desktop web (≥768px):** tab header with app branding.
+- **iPhone:** for a full-screen experience without Safari’s URL bar, use **Share → Add to Home Screen** and open the PWA from the home screen icon.
+
+## Data sources
+
+| Source | Used for |
+|--------|----------|
+| [orthocal.info](https://orthocal.info/) | Daily feasts, saints, fasting, epistle/gospel when present |
+| [Mount-Skete typikon XML](https://github.com/Mount-Skete/orthodox-typikon-feasts-xml) | Church Slavonic troparia/kontakia; great-feast prokeimena |
+| [Royster / Ponomar](https://www.ponomar.net/) | Weekday and Sunday prokeimenon, alleluia, communion when orthocal omits them |
+| [getBible](https://getbible.net/v2/) | Church Slavonic scripture (Elizabeth Bible, 1757) for citations |
+
+English troparia/kontakia on major feasts come from a bundled English hymn set when Slavonic typikon text is not shown in EN mode.
 
 ## Prerequisites
 
-- Node.js LTS (if `expo start` warns on Node 25, use current LTS via `nvm use`).
-- Xcode (iOS) / Android Studio (Android) for simulators or devices.
+- **Node.js LTS** (if `expo start` warns on Node 25+, use current LTS via `nvm use`).
+- **Xcode** (iOS) / **Android Studio** (Android) for simulators or devices.
 
 ## Setup
 
@@ -46,67 +65,84 @@ npm install
 npm start
 ```
 
-If you upgrade Expo, run `npx expo install --fix` to realign native module versions.
+Then press `i` (iOS), `a` (Android), or `w` (web), or scan the QR code with **Expo Go**.
 
-Then press `i` (iOS), `a` (Android), or `w` (web), or scan the QR code with Expo Go.
+After upgrading Expo: `npx expo install --fix` to realign native module versions.
 
 ```bash
 npm run lint          # expo lint
 npm run build:web     # static export to dist/
 ```
 
+### Rebuild menaion typikon index (optional)
+
+If Mount-Skete XML changes, regenerate the bundled Julian-date index:
+
+```bash
+node scripts/build-typikon-index.mjs
+```
+
+Output: `src/lib/liturgical/menaion/data/typikonByJulianDate.json`
+
 ## Share online
 
 **Repository:** [github.com/PYastreboff/orthodox-liturgical-app](https://github.com/PYastreboff/orthodox-liturgical-app)
 
-**Live web demo (GitHub Pages):**
-
-**Option A — GitHub Actions**
+### GitHub Pages (recommended)
 
 1. GitHub → **Settings** → **Pages** → **Build and deployment** → **Source: GitHub Actions**.
-2. Push `main` and wait for **Deploy web to GitHub Pages** in [Actions](https://github.com/PYastreboff/orthodox-liturgical-app/actions).
-3. **https://pyastreboff.github.io/orthodox-liturgical-app/**
+2. Push to `main`; the **Deploy web to GitHub Pages** workflow builds and publishes automatically.
+3. Site: **https://pyastreboff.github.io/orthodox-liturgical-app/**
 
-**Option B — `gh-pages` branch**
+### Manual deploy
 
 ```bash
 npm run deploy:gh-pages
 ```
 
-Then **Settings → Pages** → **Deploy from branch** → **`gh-pages`** / **/(root)**.
+Then **Settings → Pages** → **Deploy from branch** → **`gh-pages`** / **(root)**.
 
-**If you only see this README on Pages:** the site is serving `main`, not the built app — switch the Pages source as above.
+**If Pages shows only this README:** the site is serving `main`, not the built app — switch the Pages source as above.
 
-The web build needs network for orthocal.info and Church Slavonic scripture. Preview locally: `npm run build:web` then `npx serve dist`.
+The web build needs network access for orthocal.info and Church Slavonic scripture. Preview locally:
 
-**Expo Go:** `npm start` (same Wi‑Fi) or `npx expo start --tunnel` for a temporary public URL.
+```bash
+npm run build:web
+npx serve dist
+```
+
+**Expo Go:** `npm start` on the same Wi‑Fi, or `npx expo start --tunnel` for a temporary public URL.
 
 ## Project layout
 
 | Path | Role |
 |------|------|
-| `app/_layout.tsx` | Root layout, theme, preferences, day navigation |
 | `app/(tabs)/index.tsx` | Today screen |
-| `app/(tabs)/calendar.tsx` | Liturgical month calendar |
-| `app/(tabs)/settings.tsx` | Appearance, calendar mode, app language |
-| `src/hooks/` | orthocal day/month fetch, liturgical texts + Slavonic overlay |
-| `src/i18n/` | `messages.ts`, `translate`, `useAppTranslation` |
-| `src/lib/api/orthocal.ts` | orthocal.info API types and helpers |
-| `src/lib/calendar/` | Julian/Gregorian, Pascha, appearances, weekly fast, cell styles |
-| `src/lib/liturgical/` | Dashboard, readings, typikon symbols, commemorations, vestments |
-| `src/state/PreferencesContext.tsx` | Persisted user preferences |
-| `src/components/` | UI (grid, hero, collapsible sections, passage blocks) |
+| `app/(tabs)/calendar.tsx` | Month grid + search |
+| `app/(tabs)/settings.tsx` | Theme, calendar mode, language, sources |
+| `app/+html.tsx` | Web viewport / PWA meta |
+| `src/hooks/` | orthocal fetch, liturgical texts, safe area, calendar search |
+| `src/i18n/` | English + Russian UI strings |
+| `src/lib/api/orthocal.ts` | orthocal.info API |
+| `src/lib/calendar/` | Julian/Gregorian, Pascha, appearances, cell styles |
+| `src/lib/liturgical/menaion/` | Typikon index, hymns, feast prokeimena |
+| `src/lib/liturgical/royster/` | Royster weekday/Sunday lectionary |
+| `src/lib/liturgical/` | Dashboard, readings, typikon symbols, vestments |
+| `src/lib/bible/` | Slavonic scripture fetch + citation parsing |
+| `src/state/PreferencesContext.tsx` | Persisted preferences (`@orthodaily/preferences/v1`) |
+| `src/components/` | Hero, grid, collapsible sections, passage blocks |
+| `scripts/build-typikon-index.mjs` | Fetch typikon XML → JSON index |
 
 ## Data notes
 
 - **Network:** first load per day hits orthocal; responses are cached in memory for the session.
 - **Rubrics:** orthocal uses OCA-style data; verify against your typikon where MP practice differs.
 - **UI vs content:** app language affects labels only; saint/feast names and most fast descriptions come from the API in English.
-- **Troparia/kontakia:** often missing from `readings[]`; the app may pull hymn text from saint life stories when quoted there.
+- **Persistence:** settings, serving role, Today section collapse state, selected day, and calendar month survive refresh; not synced across devices.
 
 ## Future direction
 
-- Versioned offline SQLite packs per jurisdiction for typikon and texts without network.
+- Versioned offline packs per jurisdiction for typikon and texts without network.
 - Deeper MP-specific fasting and rank rules merged with API rows.
 
 ## Assets

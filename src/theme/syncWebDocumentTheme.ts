@@ -39,10 +39,11 @@ export function syncWebDocumentTheme(isDark: boolean, chromeColor?: string): voi
   }
 }
 
-/** Initial paint + iOS PWA shell (100dvh default; JS sets 100vh in standalone). */
+/** Overrides expo ScrollViewStyleReset — must load after that reset in +html. */
 export const WEB_ROOT_CSS = `
 html {
   --app-height: 100dvh;
+  --viewport-offset-top: 0px;
   height: 100%;
   width: 100%;
   margin: 0;
@@ -58,12 +59,14 @@ html {
   }
 }
 body {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: var(--app-height, 100dvh);
-  margin: 0;
-  overflow: hidden;
+  position: fixed !important;
+  top: var(--viewport-offset-top, 0px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  height: var(--app-height, 100dvh) !important;
+  margin: 0 !important;
+  overflow: hidden !important;
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
   background-color: ${colors.parchment};
@@ -76,14 +79,17 @@ body {
   }
 }
 #root {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
-  overflow: hidden;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  overflow: hidden !important;
   background-color: ${colors.parchment};
   background-color: var(--orthodaily-page-bg, ${colors.parchment});
 }

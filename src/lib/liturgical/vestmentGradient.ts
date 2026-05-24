@@ -14,7 +14,7 @@ export type VestmentHeroStyle = {
   foreground: string;
 };
 
-/** Two-stop hero gradients keyed by vestment pill colour (matches Vestments section). */
+/** Two-stop hero gradients keyed by vestment pill colour (light mode). */
 const HERO_GRADIENT_BY_PILL_BG: Record<string, VestmentHeroStyle> = {
   '#b08d57': { gradient: ['#f7f1e4', '#d9c49a'], foreground: '#1e1a16' },
   '#f0ebe3': { gradient: ['#fffdf6', '#f2d58c'], foreground: '#1e1a16' },
@@ -24,6 +24,57 @@ const HERO_GRADIENT_BY_PILL_BG: Record<string, VestmentHeroStyle> = {
   '#121010': { gradient: ['#2a2826', '#0a0a0a'], foreground: '#f2ebe2' },
   '#1f2433': { gradient: ['#3a4558', '#0f141f'], foreground: '#e8eef8' },
   '#5c3d6e': { gradient: ['#7a5a8c', '#2a1838'], foreground: '#f7eef8' },
+};
+
+const LIGHT_HERO_FOREGROUNDS = new Set(['#1e1a16']);
+
+function isLightHeroStyle(style: VestmentHeroStyle): boolean {
+  return LIGHT_HERO_FOREGROUNDS.has(style.foreground.toLowerCase());
+}
+
+/** Dark-mode hero presets — same vestment character as light mode, not flat charcoal. */
+const DARK_HERO_GRADIENT_BY_PILL_BG: Record<string, VestmentHeroStyle> = {
+  '#b08d57': { gradient: ['#6d5838', '#3a2f1c'], foreground: colors.darkInk },
+  '#f0ebe3': { gradient: ['#5c542e', '#363018'], foreground: colors.darkInk },
+  '#2f4a6f': { gradient: ['#3d5270', '#182030'], foreground: '#e8eef8' },
+  '#8b2e3c': { gradient: ['#9a3a48', '#421820'], foreground: '#ffffff' },
+  '#2d5a3e': { gradient: ['#3d7254', '#1a3024'], foreground: '#ffffff' },
+  '#121010': { gradient: ['#2a2826', '#0a0a0a'], foreground: colors.darkInk },
+  '#1f2433': { gradient: ['#3a4558', '#0f141f'], foreground: '#e8eef8' },
+  '#5c3d6e': { gradient: ['#684878', '#2a1838'], foreground: '#f7eef8' },
+};
+
+/**
+ * Derive a visible two-stop dark hero from the light gradient + vestment pill colour.
+ */
+function darkModeHeroFromLight(lightStyle: VestmentHeroStyle, pillBg: string): VestmentHeroStyle {
+  const preset = DARK_HERO_GRADIENT_BY_PILL_BG[pillBg];
+  if (preset) return preset;
+
+  const base = parseHex(colors.darkBg) ?? { r: 18, g: 16, b: 14 };
+  const surface = parseHex(colors.darkSurface) ?? { r: 28, g: 24, b: 20 };
+  const tint = parseHex(pillBg) ?? { r: 128, g: 128, b: 128 };
+  const lightStart = parseHex(lightStyle.gradient[0]) ?? tint;
+  const lightEnd = parseHex(lightStyle.gradient[1]) ?? tint;
+
+  const top = mixColors(
+    parseHex(mixColors(surface, tint, 0.42)) ?? surface,
+    lightStart,
+    0.28,
+  );
+  const bottom = mixColors(
+    parseHex(mixColors(base, tint, 0.38)) ?? base,
+    lightEnd,
+    0.22,
+  );
+  const foreground = isLightHeroStyle(lightStyle) ? colors.darkInk : lightStyle.foreground;
+
+  return { gradient: [top, bottom] as const, foreground };
+}
+
+const DARK_HERO_GRADIENT_BY_APPEARANCE_KEY: Partial<Record<string, VestmentHeroStyle>> = {
+  great_friday: { gradient: ['#2a2826', '#0a0a0a'], foreground: colors.darkInk },
+  holy_saturday: { gradient: ['#4a4028', '#242018'], foreground: colors.darkInk },
 };
 
 function parseHex(hex: string): { r: number; g: number; b: number } | null {
@@ -97,20 +148,34 @@ const HERO_GRADIENT_BY_APPEARANCE_KEY: Partial<Record<string, VestmentHeroStyle>
   holy_saturday: { gradient: ['#121010', '#f0ebe3'], foreground: '#1e1a16' },
 };
 
-const PAGE_GRADIENT_LAYOUT = {
-  locations: [0, 0.38, 0.68, 1] as const,
-  start: { x: 0.05, y: 0 },
-  end: { x: 0.95, y: 1 },
-};
+function resolveHeroStyle(
+  lightStyle: VestmentHeroStyle,
+  pillBg: string,
+  isDark: boolean,
+): VestmentHeroStyle {
+  if (!isDark) return lightStyle;
+  return darkModeHeroFromLight(lightStyle, pillBg);
+}
 
-/** DayHero card gradient — same vestment hue as pills / page glow. */
-export function vestmentHeroGradient(appearance: LiturgicalDayAppearance): VestmentHeroStyle {
+/** DayHero card gradient — vestment hue; subdued charcoal tints in dark mode. */
+export function vestmentHeroGradient(
+  appearance: LiturgicalDayAppearance,
+  isDark: boolean,
+): VestmentHeroStyle {
+  if (isDark) {
+    const darkByKey = DARK_HERO_GRADIENT_BY_APPEARANCE_KEY[appearance.key];
+    if (darkByKey) return darkByKey;
+  }
+
   const byKey = HERO_GRADIENT_BY_APPEARANCE_KEY[appearance.key];
-  if (byKey) return byKey;
+  if (byKey) {
+    const { pillBg } = liturgicalVestmentColor(appearance);
+    return resolveHeroStyle(byKey, pillBg, isDark);
+  }
 
   const { pillBg, pillText } = liturgicalVestmentColor(appearance);
   const preset = HERO_GRADIENT_BY_PILL_BG[pillBg];
-  if (preset) return preset;
+  if (preset) return resolveHeroStyle(preset, pillBg, isDark);
 
   const tint = parseHex(pillBg) ?? { r: 128, g: 128, b: 128 };
   const light = toHex(
@@ -119,8 +184,14 @@ export function vestmentHeroGradient(appearance: LiturgicalDayAppearance): Vestm
     tint.b + (255 - tint.b) * 0.55,
   );
   const dark = toHex(tint.r * 0.55, tint.g * 0.55, tint.b * 0.55);
-  return { gradient: [light, dark], foreground: pillText };
+  return resolveHeroStyle({ gradient: [light, dark], foreground: pillText }, pillBg, isDark);
 }
+
+const PAGE_GRADIENT_LAYOUT = {
+  locations: [0, 0.38, 0.68, 1] as const,
+  start: { x: 0.05, y: 0 },
+  end: { x: 0.95, y: 1 },
+};
 
 function lightModePageGradient(appearance: LiturgicalDayAppearance): VestmentPageGradient {
   if (appearance.key === 'great_friday') {

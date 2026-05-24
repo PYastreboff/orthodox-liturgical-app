@@ -2,9 +2,10 @@ import { ScrollViewStyleReset } from 'expo-router/html';
 import type { PropsWithChildren } from 'react';
 
 import { WEB_ROOT_CSS } from '../src/theme/syncWebDocumentTheme';
+import { WEB_VIEWPORT_BOOT_SCRIPT } from '../src/theme/webViewport';
 import { colors } from '../src/theme/tokens';
 
-/** Web-only root HTML — viewport-fit=cover; shell CSS applied in WebViewportBootstrap. */
+/** Web-only root HTML — viewport-fit=cover; shell CSS must load after ScrollViewStyleReset. */
 export default function Root({ children }: PropsWithChildren) {
   return (
     <html lang="en">
@@ -20,13 +21,9 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <title>OrthoDaily</title>
-        <style dangerouslySetInnerHTML={{ __html: WEB_ROOT_CSS }} />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var n=window.navigator;var s=n.standalone===true||window.matchMedia('(display-mode: standalone)').matches;if(s){document.documentElement.style.setProperty('--app-height','100vh');}}catch(e){}})();`,
-          }}
-        />
         <ScrollViewStyleReset />
+        <style dangerouslySetInnerHTML={{ __html: WEB_ROOT_CSS }} />
+        <script dangerouslySetInnerHTML={{ __html: WEB_VIEWPORT_BOOT_SCRIPT }} />
       </head>
       <body>{children}</body>
     </html>

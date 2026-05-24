@@ -42,10 +42,21 @@ export function DayHero({
   const isDark = useResolvedColorScheme() === 'dark';
   const { text } = useFontScale();
   const heroStyle = useMemo(
-    () => vestmentHeroGradient(appearance),
-    [appearance.key, appearance.label],
+    () => vestmentHeroGradient(appearance, isDark),
+    [appearance.key, appearance.label, isDark],
   );
   const fg = heroStyle.foreground;
+  const lightHeroText =
+    fg.toLowerCase() === '#ffffff' ||
+    fg.toLowerCase() === '#f7eef8' ||
+    fg.toLowerCase() === '#e8eef8';
+  const chipBg = lightHeroText
+    ? 'rgba(255,255,255,0.14)'
+    : isDark
+      ? 'rgba(255,255,255,0.1)'
+      : 'rgba(255,255,255,0.65)';
+  const navBtnBg = lightHeroText ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.22)';
+  const todayBtnBg = lightHeroText ? 'rgba(255,255,255,0.16)' : 'rgba(30,26,22,0.55)';
   const dayTitleType = text(28, 34);
   const primaryDateType = text(17, 22);
   const julianDateType = text(12, 16);
@@ -57,7 +68,11 @@ export function DayHero({
       colors={[...heroStyle.gradient]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={[styles.hero, isDark ? styles.heroShadow : null]}
+      style={[
+        styles.hero,
+        isDark ? styles.heroDark : null,
+        isDark ? styles.heroShadow : null,
+      ]}
     >
       <Text style={[styles.dayTitle, dayTitleType, { color: fg }]} numberOfLines={3}>
         {dayTitle}
@@ -65,7 +80,11 @@ export function DayHero({
 
       <View style={styles.navRow}>
         <Pressable
-          style={({ pressed }) => [styles.navBtn, pressed && styles.navBtnPressed]}
+          style={({ pressed }) => [
+            styles.navBtn,
+            { backgroundColor: navBtnBg },
+            pressed && styles.navBtnPressed,
+          ]}
           onPress={onPrevious}
           accessibilityLabel={t('today.prevDay')}
         >
@@ -82,7 +101,11 @@ export function DayHero({
         </View>
 
         <Pressable
-          style={({ pressed }) => [styles.navBtn, pressed && styles.navBtnPressed]}
+          style={({ pressed }) => [
+            styles.navBtn,
+            { backgroundColor: navBtnBg },
+            pressed && styles.navBtnPressed,
+          ]}
           onPress={onNext}
           accessibilityLabel={t('today.nextDay')}
         >
@@ -91,25 +114,25 @@ export function DayHero({
       </View>
 
       <View style={styles.chipRow}>
-        <View style={styles.chip}>
-          <Text style={[styles.chipText, chipType]}>{toneLabel}</Text>
+        <View style={[styles.chip, { backgroundColor: chipBg }]}>
+          <Text style={[styles.chipText, chipType, { color: fg }]}>{toneLabel}</Text>
         </View>
-        <View style={styles.chip}>
+        <View style={[styles.chip, { backgroundColor: chipBg }]}>
           <TypikonSymbol
             feastRank={feastRank}
             variant="chip"
-            color={typikonIconColor(feastRank, 'light')}
+            color={typikonIconColor(feastRank, lightHeroText ? 'light' : isDark ? 'dark' : 'light')}
             style={styles.chipIcon}
           />
         </View>
-        <View style={styles.chip}>
-          <Text style={[styles.chipText, chipType]}>{fastLabel}</Text>
+        <View style={[styles.chip, { backgroundColor: chipBg }]}>
+          <Text style={[styles.chipText, chipType, { color: fg }]}>{fastLabel}</Text>
         </View>
       </View>
 
       {canGoToToday ? (
-        <Pressable style={styles.todayBtn} onPress={onToday}>
-          <Text style={[styles.todayBtnText, todayBtnType]}>{t('today.jumpToToday')}</Text>
+        <Pressable style={[styles.todayBtn, { backgroundColor: todayBtnBg }]} onPress={onToday}>
+          <Text style={[styles.todayBtnText, todayBtnType, { color: fg }]}>{t('today.jumpToToday')}</Text>
         </Pressable>
       ) : null}
     </LinearGradient>
@@ -123,6 +146,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 14,
     alignItems: 'center',
+  },
+  heroDark: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   heroShadow: {
     shadowColor: '#000',
@@ -149,7 +176,6 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(255,255,255,0.22)',
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
@@ -183,7 +209,6 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   chip: {
-    backgroundColor: 'rgba(255,255,255,0.65)',
     borderRadius: 999,
     paddingHorizontal: 12,
     minHeight: 34,
@@ -192,7 +217,6 @@ const styles = StyleSheet.create({
   },
   chipText: {
     fontWeight: '600',
-    color: '#2b2623',
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
@@ -204,10 +228,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 999,
-    backgroundColor: 'rgba(30,26,22,0.55)',
   },
   todayBtnText: {
-    color: '#fff',
     fontWeight: '600',
   },
 });
