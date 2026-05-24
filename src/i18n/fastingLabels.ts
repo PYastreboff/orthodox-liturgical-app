@@ -4,14 +4,6 @@ import { localizedWeeklyFastDayLabel } from '../lib/calendar/weeklyFast';
 import { translate } from './translate';
 import type { UiLanguage } from './types';
 
-export type FastingFoodsDetail = {
-  /** orthocal rule name, e.g. "Wine and oil" (not shown on the Fast / No fast pill). */
-  ruleLabel: string;
-  allowed: string[];
-  notAllowed: string[];
-  exceptionNote?: string;
-};
-
 const FOOD_KEYS = {
   all: 'fasting.foodAll',
   plant: 'fasting.foodPlant',
@@ -22,6 +14,23 @@ const FOOD_KEYS = {
   eggs: 'fasting.foodEggs',
   meat: 'fasting.foodMeat',
 } as const;
+
+export type FastingFoodKind = keyof typeof FOOD_KEYS;
+
+export type FastingFoodItem = {
+  kind: FastingFoodKind;
+  label: string;
+};
+
+export type FastingFoodsDetail = {
+  /** orthocal rule name, e.g. "Wine and oil" (not shown on the Fast / No fast pill). */
+  ruleLabel: string;
+  allowed: FastingFoodItem[];
+  notAllowed: FastingFoodItem[];
+  exceptionNote?: string;
+  /** Total fast — show a single no-eating message instead of food lists. */
+  totalAbstinence?: boolean;
+};
 
 const FAST_LEVEL_KEYS: Record<number, string> = {
   0: 'fasting.noFast',
@@ -74,12 +83,33 @@ function normalizeFastText(value: string): string {
     .trim();
 }
 
-function tFood(lang: UiLanguage, key: keyof typeof FOOD_KEYS): string {
+function tFood(lang: UiLanguage, key: FastingFoodKind): string {
   return translate(lang, FOOD_KEYS[key]);
+}
+
+function foodItem(lang: UiLanguage, kind: FastingFoodKind): FastingFoodItem {
+  return { kind, label: tFood(lang, kind) };
+}
+
+function foodItems(lang: UiLanguage, kinds: FastingFoodKind[]): FastingFoodItem[] {
+  return kinds.map((kind) => foodItem(lang, kind));
 }
 
 function isNoFastLevel(day: OrthocalDay): boolean {
   return day.fast_level <= 0;
+}
+
+export function isGreatAndHolyFriday(appearanceKey: string): boolean {
+  return appearanceKey === 'great_friday';
+}
+
+function detailForGoodFriday(lang: UiLanguage): FastingFoodsDetail {
+  return {
+    ruleLabel: translate(lang, 'fasting.levelNoEating'),
+    allowed: [],
+    notAllowed: [],
+    totalAbstinence: true,
+  };
 }
 
 export function isOrthocalFastDay(
@@ -87,6 +117,7 @@ export function isOrthocalFastDay(
   appearanceKey: string,
   weeklyFast: boolean,
 ): boolean {
+  if (isGreatAndHolyFriday(appearanceKey)) return true;
   if (weeklyFast) return true;
   if (day) return day.fast_level >= 1;
   return (
@@ -120,50 +151,41 @@ function fastExceptionNote(day: OrthocalDay, lang: UiLanguage): string | undefin
 }
 
 function detailForFastLevel(level: number, lang: UiLanguage): FastingFoodsDetail {
-  const plant = tFood(lang, 'plant');
-  const wine = tFood(lang, 'wine');
-  const oil = tFood(lang, 'oil');
-  const fish = tFood(lang, 'fish');
-  const dairy = tFood(lang, 'dairy');
-  const eggs = tFood(lang, 'eggs');
-  const meat = tFood(lang, 'meat');
-  const all = tFood(lang, 'all');
-
   switch (level) {
     case 1:
       return {
         ruleLabel: translate(lang, 'fasting.levelStrict'),
-        allowed: [plant],
-        notAllowed: [meat, dairy, eggs, fish, wine, oil],
+        allowed: foodItems(lang, ['plant']),
+        notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
       };
     case 2:
       return {
         ruleLabel: translate(lang, 'fasting.levelWineOil'),
-        allowed: [plant, wine, oil],
-        notAllowed: [meat, dairy, eggs, fish],
+        allowed: foodItems(lang, ['plant', 'wine', 'oil']),
+        notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs', 'fish']),
       };
     case 3:
       return {
         ruleLabel: translate(lang, 'fasting.levelFish'),
-        allowed: [plant, fish, wine, oil],
-        notAllowed: [meat, dairy, eggs],
+        allowed: foodItems(lang, ['plant', 'fish', 'wine', 'oil']),
+        notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs']),
       };
     case 4:
       return {
         ruleLabel: translate(lang, 'fasting.levelDairy'),
-        allowed: [plant, dairy, eggs, fish, wine, oil],
-        notAllowed: [meat],
+        allowed: foodItems(lang, ['plant', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
+        notAllowed: foodItems(lang, ['meat']),
       };
     case 5:
       return {
         ruleLabel: translate(lang, 'fasting.levelStrict'),
-        allowed: [plant],
-        notAllowed: [meat, dairy, eggs, fish, wine, oil],
+        allowed: foodItems(lang, ['plant']),
+        notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
       };
     default:
       return {
         ruleLabel: translate(lang, 'fasting.noFast'),
-        allowed: [all],
+        allowed: foodItems(lang, ['all']),
         notAllowed: [],
       };
   }
@@ -175,17 +197,18 @@ function applyException(detail: FastingFoodsDetail, day: OrthocalDay, lang: UiLa
   const normalized = normalizeFastText(exception);
   if (isNoFastLevel(day) && REDUNDANT_FAST_EXCEPTIONS.has(normalized)) return;
 
-  const addAllowed = (item: string) => {
-    if (!detail.allowed.includes(item)) detail.allowed.push(item);
-    detail.notAllowed = detail.notAllowed.filter((x) => x !== item);
+  const addAllowed = (kind: Exclude<FastingFoodKind, 'all'>) => {
+    const item = foodItem(lang, kind);
+    if (!detail.allowed.some((entry) => entry.kind === kind)) detail.allowed.push(item);
+    detail.notAllowed = detail.notAllowed.filter((entry) => entry.kind !== kind);
   };
 
-  if (normalized.includes('meat')) addAllowed(tFood(lang, 'meat'));
-  if (normalized.includes('dairy')) addAllowed(tFood(lang, 'dairy'));
-  if (normalized.includes('fish')) addAllowed(tFood(lang, 'fish'));
-  if (normalized.includes('wine')) addAllowed(tFood(lang, 'wine'));
-  if (normalized.includes('oil')) addAllowed(tFood(lang, 'oil'));
-  if (normalized.includes('egg')) addAllowed(tFood(lang, 'eggs'));
+  if (normalized.includes('meat')) addAllowed('meat');
+  if (normalized.includes('dairy')) addAllowed('dairy');
+  if (normalized.includes('fish')) addAllowed('fish');
+  if (normalized.includes('wine')) addAllowed('wine');
+  if (normalized.includes('oil')) addAllowed('oil');
+  if (normalized.includes('egg')) addAllowed('eggs');
 }
 
 /** Date row, hero chip, and Fasting section brown pill: "Fast" or "No fast" only. */
@@ -209,18 +232,15 @@ export function localizedFastingFoodsDetail(
   lang: UiLanguage,
   civil: PlainDate,
 ): FastingFoodsDetail {
+  if (isGreatAndHolyFriday(appearanceKey)) {
+    return detailForGoodFriday(lang);
+  }
+
   if (weeklyFast) {
     return {
       ruleLabel: localizedWeeklyFastDayLabel(civil, lang) ?? translate(lang, 'fasting.levelStrict'),
-      allowed: [tFood(lang, 'plant')],
-      notAllowed: [
-        tFood(lang, 'meat'),
-        tFood(lang, 'dairy'),
-        tFood(lang, 'eggs'),
-        tFood(lang, 'fish'),
-        tFood(lang, 'wine'),
-        tFood(lang, 'oil'),
-      ],
+      allowed: foodItems(lang, ['plant']),
+      notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
     };
   }
 

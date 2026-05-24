@@ -6,7 +6,7 @@ import { AppBrandHeader } from '../../src/components/AppBrandHeader';
 import { TAB_ICON_SIZE, tabBarIconOptions } from '../../src/components/TabBarIcon';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
-import { PAGE_BACKGROUND_BLACK } from '../../src/lib/liturgical/vestmentGradient';
+import { todayPageBackgroundColor } from '../../src/lib/liturgical/vestmentGradient';
 import { colors } from '../../src/theme/tokens';
 
 const TAB_BAR_CONTENT_HEIGHT = 52;
@@ -61,7 +61,7 @@ function TabsLayoutContent() {
           title: 'OrthoDaily',
           tabBarLabel: t('tabs.today'),
           headerTitle: () => <AppBrandHeader />,
-          sceneStyle: { backgroundColor: PAGE_BACKGROUND_BLACK },
+          sceneStyle: { backgroundColor: todayPageBackgroundColor(isDark) },
           ...tabBarIconOptions('today'),
         }}
       />

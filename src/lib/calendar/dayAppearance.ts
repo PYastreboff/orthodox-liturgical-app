@@ -331,7 +331,7 @@ export function getLiturgicalDayAppearance(
     };
   }
 
-  if (isWeeklyFastDay(jdn, civilWeekday, y)) {
+  if (isWeeklyFastDay(jdn, civilWeekday, liturgical)) {
     return {
       key: civilWeekday === 3 ? 'wednesday_fast' : 'friday_fast',
       gradient: ['#dfe3ec', '#9aa8bc'],

@@ -4,9 +4,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
 import {
-  PAGE_BACKGROUND_BLACK,
+  todayPageBackgroundColor,
   vestmentPageGradient,
 } from '../lib/liturgical/vestmentGradient';
+import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 
 type Props = {
   appearance: LiturgicalDayAppearance;
@@ -15,20 +16,22 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** Black page base with an optional, very subtle vestment-colour gradient. */
+/** Parchment (light) or charcoal (dark) base with an optional vestment-colour gradient. */
 export function VestmentPageBackground({
   appearance,
   gradientEnabled,
   children,
   style,
 }: Props) {
+  const isDark = useResolvedColorScheme() === 'dark';
+  const backgroundColor = todayPageBackgroundColor(isDark);
   const gradient = useMemo(
-    () => vestmentPageGradient(appearance, gradientEnabled),
-    [appearance.key, appearance.label, gradientEnabled],
+    () => vestmentPageGradient(appearance, gradientEnabled, isDark),
+    [appearance.key, appearance.label, gradientEnabled, isDark],
   );
 
   return (
-    <View style={[styles.root, style]}>
+    <View style={[styles.root, { backgroundColor }, style]}>
       {gradient ? (
         <LinearGradient
           colors={[...gradient.colors]}
@@ -47,7 +50,6 @@ export function VestmentPageBackground({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: PAGE_BACKGROUND_BLACK,
   },
   gradientLayer: {
     ...StyleSheet.absoluteFillObject,

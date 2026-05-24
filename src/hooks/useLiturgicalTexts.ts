@@ -68,6 +68,7 @@ export function useLiturgicalTexts(
   useEffect(() => {
     if (textLang !== 'chu' || !day) {
       setLoadingSlavonic(false);
+      setSections(baseSections);
       return;
     }
 

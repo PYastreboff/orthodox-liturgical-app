@@ -22,7 +22,7 @@ const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
   readings: 'today.sectionReadings',
 };
 
-const ICON_SIZE = 22;
+export const SECTION_ICON_SIZE = 22;
 
 type Props = {
   name: SectionIconName;
@@ -35,28 +35,28 @@ export function SectionIcon({ name, color }: Props) {
     switch (name) {
       case 'serving-role':
         return (
-          <MaterialCommunityIcons name="account-group-outline" size={ICON_SIZE} color={color} />
+          <MaterialCommunityIcons name="account-group-outline" size={SECTION_ICON_SIZE} color={color} />
         );
       case 'date':
-        return <Feather name="calendar" size={ICON_SIZE} color={color} />;
+        return <Feather name="calendar" size={SECTION_ICON_SIZE} color={color} />;
       case 'feasts':
-        return <MaterialCommunityIcons name="star-four-points-outline" size={ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="star-four-points-outline" size={SECTION_ICON_SIZE} color={color} />;
       case 'saints':
-        return <MaterialCommunityIcons name="account-outline" size={ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="account-outline" size={SECTION_ICON_SIZE} color={color} />;
       case 'fasting':
-        return <MaterialCommunityIcons name="baguette" size={ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="baguette" size={SECTION_ICON_SIZE} color={color} />;
       case 'vestments':
-        return <MaterialCommunityIcons name="hanger" size={ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="hanger" size={SECTION_ICON_SIZE} color={color} />;
       case 'readings':
         return (
           <MaterialCommunityIcons
             name="book-open-page-variant-outline"
-            size={ICON_SIZE}
+            size={SECTION_ICON_SIZE}
             color={color}
           />
         );
       default:
-        return <Feather name="circle" size={ICON_SIZE} color={color} />;
+        return <Feather name="circle" size={SECTION_ICON_SIZE} color={color} />;
     }
   })();
 

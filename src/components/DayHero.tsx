@@ -8,6 +8,7 @@ import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
 import { vestmentHeroGradient } from '../lib/liturgical/vestmentGradient';
 import { typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { TypikonSymbol } from './TypikonSymbol';
 
 type Props = {
@@ -38,6 +39,7 @@ export function DayHero({
   onToday,
 }: Props) {
   const { t } = useAppTranslation();
+  const isDark = useResolvedColorScheme() === 'dark';
   const { text } = useFontScale();
   const heroStyle = useMemo(
     () => vestmentHeroGradient(appearance),
@@ -55,7 +57,7 @@ export function DayHero({
       colors={[...heroStyle.gradient]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.hero}
+      style={[styles.hero, isDark ? styles.heroShadow : null]}
     >
       <Text style={[styles.dayTitle, dayTitleType, { color: fg }]} numberOfLines={3}>
         {dayTitle}
@@ -121,6 +123,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 14,
     alignItems: 'center',
+  },
+  heroShadow: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.18,

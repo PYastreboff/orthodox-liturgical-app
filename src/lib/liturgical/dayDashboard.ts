@@ -1,5 +1,6 @@
 import type { OrthocalDay } from '../api/orthocal';
 import {
+  isGreatAndHolyFriday,
   isOrthocalFastDay,
   localizedFastSummaryLabel,
   localizedFastingFoodsDetail,
@@ -13,7 +14,9 @@ import type { LiturgicalDayAppearance } from '../calendar/dayAppearance';
 import {
   isWeeklyFastForCivilDate,
   localizedWeeklyFastDayLabel,
+  localizedWeeklyFastSuspensionNote,
   shouldApplyWeeklyFastOverride,
+  weeklyFastSuspensionForCivilDate,
 } from '../calendar/weeklyFast';
 import { feastRankForLiturgicalDay } from './calendarTypikon';
 import {
@@ -55,6 +58,13 @@ function buildFastingNote(
   if (day?.service_notes?.length) {
     return sanitizeTypikonProse(day.service_notes.join(' '));
   }
+  if (isGreatAndHolyFriday(appearanceKey)) {
+    return translate(lang, 'fasting.noteGoodFriday');
+  }
+  const weeklySuspension = weeklyFastSuspensionForCivilDate(civil);
+  if (weeklySuspension) {
+    return localizedWeeklyFastSuspensionNote(weeklySuspension, lang);
+  }
   if (isWeeklyFastForCivilDate(civil)) {
     return translate(lang, 'fasting.noteWeekly');
   }
@@ -88,7 +98,9 @@ export function buildDayDashboard(
 
   const isFastDay = isOrthocalFastDay(liturgicalDay, appearanceKey, weeklyFast);
   const weeklyFastSectionLabel =
-    isFastDay && isWeeklyFastForCivilDate(civil)
+    isFastDay &&
+    !isGreatAndHolyFriday(appearanceKey) &&
+    isWeeklyFastForCivilDate(civil)
       ? localizedWeeklyFastDayLabel(civil, lang)
       : null;
   const fastSummaryLabel = localizedFastSummaryLabel(

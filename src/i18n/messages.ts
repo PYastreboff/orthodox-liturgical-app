@@ -18,7 +18,7 @@ const en = {
     themeLight: 'Light',
     themeDark: 'Dark',
     backgroundColour: 'Background Colour',
-    backgroundColourHint: 'Faint vestment-colour glow on black (Today only).',
+    backgroundColourHint: 'Vestment-colour gradient on the Today screen.',
     textSize: 'Text size',
     textSizeHint: 'Larger type for readings, feasts, and saints on the Today screen.',
     fontScaleSmall: 'Small',
@@ -102,12 +102,14 @@ const en = {
     levelFish: 'Fish allowed',
     levelDairy: 'Dairy allowed',
     levelStrict: 'Strict fast',
+    levelNoEating: 'No eating',
     exceptionWineOil: 'Wine and oil allowed',
     exceptionFishWineOil: 'Fish, wine, and oil allowed',
     exceptionFish: 'Fish allowed',
     exceptionDairy: 'Dairy allowed',
     exceptionMeat: 'Meat allowed',
     foodsAllAllowed: 'All standard foods are allowed.',
+    foodsNoEating: 'Abstain from all food and drink — no eating.',
     foodsWineOil: 'Wine and oil permitted; follow your typikon for other foods.',
     foodsFish: 'Fish, wine, and oil are generally permitted; no meat or dairy.',
     foodsDairy: 'Dairy, eggs, fish, wine, and oil may be permitted; no meat.',
@@ -123,8 +125,20 @@ const en = {
     foodEggs: 'Eggs',
     foodMeat: 'Meat',
     noteWeekly:
-      'Wednesday and Friday are fasting days in the Russian tradition, except during Bright Week, the week after Pentecost, and the week after Nativity. Feasts may relax the fast; confirm with your typikon.',
+      'Wednesday and Friday are fasting days in the Russian tradition. The only exceptions are Bright Week, the week after Pentecost, the Dodekahemeron (Nativity through Theophany), and the week of the Publican and the Pharisee.',
+    weeklySuspension: {
+      bright_week:
+        'Bright Week — the week immediately after Pascha. Wednesday and Friday fast is not observed.',
+      week_after_pentecost:
+        'The week after Pentecost — through the Saturday before the Fast of the Apostles. Wednesday and Friday fast is not observed.',
+      dodekahemeron:
+        'The Dodekahemeron — from Nativity (25 December) through Theophany (6 January). Wednesday and Friday fast is not observed.',
+      publican_pharisee:
+        'The week of the Publican and the Pharisee — the preparatory week before Great Lent. Wednesday and Friday fast is not observed.',
+    },
     noteLent: 'Lenten rules may differ on weekends and feasts; confirm with your typikon.',
+    noteGoodFriday:
+      'Great and Holy Friday is a day of total fast from food. Some receive Holy Communion at the service; follow your typikon.',
     noteDefault:
       'Data from orthocal.info (OCA rubrics). Verify against Moscow Patriarchate practice where they differ.',
   },
@@ -232,7 +246,7 @@ const ru = {
     themeLight: 'Светлая',
     themeDark: 'Тёмная',
     backgroundColour: 'Цвет фона',
-    backgroundColourHint: 'Лёгкое свечение цвета облачения на чёрном фоне (только «Сегодня»).',
+    backgroundColourHint: 'Градиент цвета облачения на экране «Сегодня».',
     textSize: 'Размер текста',
     textSizeHint: 'Крупнее для чтений, праздников и святых на экране «Сегодня».',
     fontScaleSmall: 'Мелкий',
@@ -318,12 +332,14 @@ const ru = {
     levelFish: 'Рыба разрешена',
     levelDairy: 'Молочное разрешено',
     levelStrict: 'Строгий пост',
+    levelNoEating: 'Без пищи',
     exceptionWineOil: 'Разрешены вино и масло',
     exceptionFishWineOil: 'Разрешены рыба, вино и масло',
     exceptionFish: 'Рыба разрешена',
     exceptionDairy: 'Молочное разрешено',
     exceptionMeat: 'Мясо разрешено',
     foodsAllAllowed: 'Разрешены обычные продукты.',
+    foodsNoEating: 'Воздержание от всякой пищи и питья — без еды.',
     foodsWineOil: 'Разрешены вино и масло; остальное — по своему типику.',
     foodsFish: 'Обычно разрешены рыба, вино и масло; без мяса и молочного.',
     foodsDairy: 'Могут быть разрешены молочное, яйца, рыба, вино и масло; без мяса.',
@@ -340,8 +356,20 @@ const ru = {
     foodEggs: 'Яйца',
     foodMeat: 'Мясо',
     noteWeekly:
-      'Среда и пятница — дни поста в русской традиции, кроме Светлой седмицы, седмицы после Пятидесятницы и седмицы после Рождества. Праздники могут ослаблять пост; уточняйте по своему типику.',
+      'Среда и пятница — дни поста в русской традиции. Исключения: Светлая седмица, седмица после Пятидесятницы, Двенадцатодневие (Рождество — Богоявление) и неделя мытаря и фарисея.',
+    weeklySuspension: {
+      bright_week:
+        'Светлая седмица — сразу после Пасхи. Пост в среду и пятницу не соблюдается.',
+      week_after_pentecost:
+        'Седмица после Пятидесятницы — до субботы перед Петровым постом. Пост в среду и пятницу не соблюдается.',
+      dodekahemeron:
+        'Двенадцатодневие — с Рождества (25 декабря) по Богоявление (6 января). Пост в среду и пятницу не соблюдается.',
+      publican_pharisee:
+        'Неделя мытаря и фарисея — подготовительная неделя перед Великим постом. Пост в среду и пятницу не соблюдается.',
+    },
     noteLent: 'В Великий пост правила в воскресенья и на праздники могут отличаться; уточняйте по типику.',
+    noteGoodFriday:
+      'В Великую и Святую Пятницу — полное воздержание от пищи. Некоторые причащаются на службе; следуйте своему типику.',
     noteDefault:
       'Данные orthocal.info (рубрики OCA). Сверяйте с практикой Московской Патриархии, где они расходятся.',
   },

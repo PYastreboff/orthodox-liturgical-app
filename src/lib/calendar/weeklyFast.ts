@@ -14,50 +14,95 @@ export function civilWeekday(plain: PlainDate): number {
 
 export const WEEKLY_FAST_APPEARANCE_KEYS = new Set(['wednesday_fast', 'friday_fast']);
 
-/** Pascha Sunday through the following Saturday — Wed/Fri fast is suspended. */
+/** Only these periods suspend Wed/Fri fasting in the Russian tradition. */
+export type WeeklyFastSuspension =
+  | 'bright_week'
+  | 'week_after_pentecost'
+  | 'dodekahemeron'
+  | 'publican_pharisee';
+
+function paschaForJulianYear(julianYear: number): number {
+  return orthodoxPaschaJdn(julianYear);
+}
+
+/** Pascha Sunday through the following Saturday — Bright Week. */
 function isInBrightWeek(jdn: number, julianYear: number): boolean {
-  const pascha = orthodoxPaschaJdn(julianYear);
+  const pascha = paschaForJulianYear(julianYear);
   return jdn >= pascha && jdn <= pascha + 7;
 }
 
-/** Pentecost Sunday through the following Saturday — Wed/Fri fast is suspended. */
-function isInPentecostWeek(jdn: number, julianYear: number): boolean {
-  const pascha = orthodoxPaschaJdn(julianYear);
+/** Pentecost Sunday through the following Saturday (before the Fast of the Apostles). */
+function isInWeekAfterPentecost(jdn: number, julianYear: number): boolean {
+  const pascha = paschaForJulianYear(julianYear);
   const pentecost = pascha + 49;
-  return jdn >= pentecost && jdn <= pentecost + 7;
+  return jdn >= pentecost && jdn <= pentecost + 6;
 }
 
-/** Nativity (25 Dec Julian) through the following Saturday — Wed/Fri fast is suspended. */
-function isInNativityWeek(jdn: number, julianYear: number): boolean {
-  const nativity = julianCalendarToJulianDayNumber(julianYear, 12, 25);
-  if (jdn >= nativity && jdn <= nativity + 7) return true;
-  const prevNativity = julianCalendarToJulianDayNumber(julianYear - 1, 12, 25);
-  return jdn >= prevNativity && jdn <= prevNativity + 7;
+/** Nativity (25 Dec Julian) through Theophany (6 Jan Julian) — the Dodekahemeron. */
+function isInDodekahemeron(jdn: number, julian: PlainDate): boolean {
+  const y = julian.year;
+  const nativity = julianCalendarToJulianDayNumber(y, 12, 25);
+  const theophanyAfterNativity = julianCalendarToJulianDayNumber(y + 1, 1, 6);
+  const nativityPrevYear = julianCalendarToJulianDayNumber(y - 1, 12, 25);
+  const theophanySameYear = julianCalendarToJulianDayNumber(y, 1, 6);
+
+  if (jdn >= nativity && jdn <= theophanyAfterNativity) return true;
+  if (jdn >= nativityPrevYear && jdn <= theophanySameYear) return true;
+  return false;
+}
+
+/** Sunday of the Publican and the Pharisee through the following Saturday. */
+function isInPublicanPhariseeWeek(jdn: number, julianYear: number): boolean {
+  const pascha = paschaForJulianYear(julianYear);
+  const publicanSunday = pascha - 63;
+  return jdn >= publicanSunday && jdn <= publicanSunday + 6;
 }
 
 function isWednesdayOrFriday(weekday: number): boolean {
   return weekday === 3 || weekday === 5;
 }
 
-export function isWeeklyFastDay(jdn: number, weekday: number, julianYear: number): boolean {
+export function weeklyFastSuspension(
+  jdn: number,
+  weekday: number,
+  julian: PlainDate,
+): WeeklyFastSuspension | null {
+  if (!isWednesdayOrFriday(weekday)) return null;
+  const y = julian.year;
+  if (isInBrightWeek(jdn, y)) return 'bright_week';
+  if (isInWeekAfterPentecost(jdn, y)) return 'week_after_pentecost';
+  if (isInDodekahemeron(jdn, julian)) return 'dodekahemeron';
+  if (isInPublicanPhariseeWeek(jdn, y)) return 'publican_pharisee';
+  return null;
+}
+
+export function weeklyFastSuspensionForCivilDate(civil: PlainDate): WeeklyFastSuspension | null {
+  const weekday = civilWeekday(civil);
+  const julian = gregorianPlainToJulianPlain(civil);
+  const jdn = julianCalendarToJulianDayNumber(julian.year, julian.month, julian.day);
+  return weeklyFastSuspension(jdn, weekday, julian);
+}
+
+export function isWeeklyFastDay(
+  jdn: number,
+  weekday: number,
+  julian: PlainDate,
+): boolean {
   if (!isWednesdayOrFriday(weekday)) return false;
-  if (isInBrightWeek(jdn, julianYear)) return false;
-  if (isInPentecostWeek(jdn, julianYear)) return false;
-  if (isInNativityWeek(jdn, julianYear)) return false;
-  return true;
+  return weeklyFastSuspension(jdn, weekday, julian) === null;
 }
 
 export function isWeeklyFastAppearanceKey(key: string): boolean {
   return WEEKLY_FAST_APPEARANCE_KEYS.has(key);
 }
 
-/** Russian tradition: Wed/Fri fast on the civil date being viewed (with Bright Week, etc. excluded). */
+/** Russian tradition: Wed/Fri fast unless one of the four suspension periods applies. */
 export function isWeeklyFastForCivilDate(civil: PlainDate): boolean {
   const weekday = civilWeekday(civil);
   if (!isWednesdayOrFriday(weekday)) return false;
   const julian = gregorianPlainToJulianPlain(civil);
   const jdn = julianCalendarToJulianDayNumber(julian.year, julian.month, julian.day);
-  return isWeeklyFastDay(jdn, weekday, julian.year);
+  return isWeeklyFastDay(jdn, weekday, julian);
 }
 
 function normalizeFastText(value: string): string {
@@ -93,15 +138,20 @@ function orthocalRelaxesWeeklyFast(day: {
   return /allow|permit/i.test(exception);
 }
 
-/**
- * Fallback Wed/Fri strict fast when orthocal reports level 0 without a feast relaxation.
- */
 /** "Wednesday fast" / "Friday fast" for the Fasting section when this civil day is a weekly fast day. */
 export function localizedWeeklyFastDayLabel(civil: PlainDate, lang: UiLanguage): string | null {
   if (!isWeeklyFastForCivilDate(civil)) return null;
   return translate(lang, civilWeekday(civil) === 3 ? 'fasting.wednesdayFast' : 'fasting.fridayFast');
 }
 
+export function localizedWeeklyFastSuspensionNote(
+  suspension: WeeklyFastSuspension,
+  lang: UiLanguage,
+): string {
+  return translate(lang, `fasting.weeklySuspension.${suspension}`);
+}
+
+/** Fallback Wed/Fri strict fast when orthocal reports level 0 without a feast relaxation. */
 export function shouldApplyWeeklyFastOverride(
   day: { fast_level: number; fast_exception_desc?: string } | null | undefined,
   civil: PlainDate,
@@ -112,4 +162,3 @@ export function shouldApplyWeeklyFastOverride(
   if (orthocalRelaxesWeeklyFast(day)) return false;
   return true;
 }
-

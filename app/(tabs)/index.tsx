@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 
 import { CollapsibleSection } from '../../src/components/CollapsibleSection';
+import { FastingFoodList } from '../../src/components/FastingFoodList';
 import { SectionTitleRow } from '../../src/components/SectionTitleRow';
 import { DayHero } from '../../src/components/DayHero';
 import { TypikonSymbol } from '../../src/components/TypikonSymbol';
@@ -62,34 +63,6 @@ function roleLabel(t: (path: string) => string, id: ClergyRole): string {
     bishop: 'today.roleBishop',
   };
   return t(keys[id]);
-}
-
-function FastingFoodBulletList({
-  heading,
-  items,
-  textColor,
-  bodyType,
-}: {
-  heading: string;
-  items: string[];
-  textColor: string;
-  bodyType: { fontSize: number; lineHeight: number };
-}) {
-  if (items.length === 0) return null;
-  return (
-    <View style={styles.fastListBlock}>
-      <Text style={[styles.fastListHeading, bodyType, { color: textColor }]}>{heading}</Text>
-      {items.map((item) => (
-        <Text
-          key={`${heading}-${item}`}
-          style={[styles.fastListItem, bodyType, { color: textColor }]}
-        >
-          {'\u2022 '}
-          {item}
-        </Text>
-      ))}
-    </View>
-  );
 }
 
 function addDays(d: Date, days: number) {
@@ -395,28 +368,38 @@ export default function TodayScreen() {
                 {dashboard.weeklyFastSectionLabel}
               </Text>
             ) : null}
-            {dashboard.fastingFoods.ruleLabel !== dashboard.weeklyFastSectionLabel ? (
-              <Text style={[styles.fastRule, type.body, { color: theme.colors.text }]}>
-                {t('today.fastRule', { rule: dashboard.fastingFoods.ruleLabel })}
+            {dashboard.fastingFoods.totalAbstinence ? (
+              <Text style={[styles.fastAllAllowed, type.body, { color: theme.colors.text }]}>
+                {t('fasting.foodsNoEating')}
               </Text>
-            ) : null}
-            <FastingFoodBulletList
-              heading={t('today.allowedHeading')}
-              items={dashboard.fastingFoods.allowed}
-              textColor={theme.colors.text}
-              bodyType={type.body}
-            />
-            <FastingFoodBulletList
-              heading={t('today.notAllowedHeading')}
-              items={dashboard.fastingFoods.notAllowed}
-              textColor={theme.colors.text}
-              bodyType={type.body}
-            />
-            {dashboard.fastingFoods.exceptionNote ? (
-              <Text style={[styles.fastException, type.hint, { color: theme.colors.text }]}>
-                {t('today.fastException', { note: dashboard.fastingFoods.exceptionNote })}
-              </Text>
-            ) : null}
+            ) : (
+              <>
+                {dashboard.fastingFoods.ruleLabel !== dashboard.weeklyFastSectionLabel ? (
+                  <Text style={[styles.fastRule, type.body, { color: theme.colors.text }]}>
+                    {t('today.fastRule', { rule: dashboard.fastingFoods.ruleLabel })}
+                  </Text>
+                ) : null}
+                <FastingFoodList
+                  heading={t('today.allowedHeading')}
+                  items={dashboard.fastingFoods.allowed}
+                  textColor={theme.colors.text}
+                  iconColor={colors.accentGold}
+                  bodyType={type.body}
+                />
+                <FastingFoodList
+                  heading={t('today.notAllowedHeading')}
+                  items={dashboard.fastingFoods.notAllowed}
+                  textColor={theme.colors.text}
+                  iconColor={colors.accentWine}
+                  bodyType={type.body}
+                />
+                {dashboard.fastingFoods.exceptionNote ? (
+                  <Text style={[styles.fastException, type.hint, { color: theme.colors.text }]}>
+                    {t('today.fastException', { note: dashboard.fastingFoods.exceptionNote })}
+                  </Text>
+                ) : null}
+              </>
+            )}
           </>
         ) : (
           <Text style={[styles.fastAllAllowed, type.body, { color: theme.colors.text }]}>
@@ -628,18 +611,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontWeight: '600',
     opacity: 0.92,
-  },
-  fastListBlock: {
-    marginTop: 10,
-    gap: 4,
-  },
-  fastListHeading: {
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  fastListItem: {
-    paddingLeft: 12,
-    opacity: 0.9,
   },
   fastAllAllowed: {
     marginTop: 10,

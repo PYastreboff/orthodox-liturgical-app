@@ -1,8 +1,6 @@
 import type { LiturgicalDayAppearance } from '../calendar/dayAppearance';
+import { colors } from '../../theme/tokens';
 import { liturgicalVestmentColor } from './vestments';
-
-/** Today page base — always solid black. */
-export const PAGE_BACKGROUND_BLACK = '#000000';
 
 export type VestmentPageGradient = {
   colors: readonly [string, string, string, string];
@@ -54,36 +52,55 @@ function toHex(r: number, g: number, b: number): string {
     .join('')}`;
 }
 
-/** Opaque mix of black + vestment hue (strength 0–1). RN gradients need opaque stops to read on black. */
-function mixWithBlack(tint: { r: number; g: number; b: number }, strength: number): string {
-  const t = Math.max(0, Math.min(1, strength));
-  return toHex(tint.r * t, tint.g * t, tint.b * t);
+/** Today tab page base — parchment in light mode, charcoal in dark mode. */
+export function todayPageBackgroundColor(isDark: boolean): string {
+  return isDark ? colors.darkBg : colors.parchment;
 }
 
-/** Same swatch as Today → Vestments pills; subtle tint on black. */
-function gradientStrengthsForSwatch(pillBg: string): { mid: number; peak: number; tail: number } {
-  switch (pillBg) {
-    case '#f0ebe3':
-      return { mid: 0.09, peak: 0.16, tail: 0.07 };
-    case '#1f2433':
-      return { mid: 0.07, peak: 0.12, tail: 0.06 };
-    case '#b08d57':
-      return { mid: 0.08, peak: 0.15, tail: 0.07 };
-    case '#2f4a6f':
-    case '#5c3d6e':
-    case '#8b2e3c':
-    case '#2d5a3e':
-      return { mid: 0.08, peak: 0.14, tail: 0.06 };
-    case '#121010':
-      return { mid: 0.07, peak: 0.12, tail: 0.06 };
-    default:
-      return { mid: 0.08, peak: 0.15, tail: 0.07 };
-  }
+function mixColors(
+  a: { r: number; g: number; b: number },
+  b: { r: number; g: number; b: number },
+  t: number,
+): string {
+  const u = Math.max(0, Math.min(1, t));
+  return toHex(a.r + (b.r - a.r) * u, a.g + (b.g - a.g) * u, a.b + (b.b - a.b) * u);
+}
+
+/** Light mode: vestment hue as a soft tint on parchment. */
+function lightModeVestmentGradientStops(pillBg: string): readonly [string, string, string, string] {
+  const base = parseHex(colors.parchment) ?? { r: 245, g: 240, b: 232 };
+  const baseLight = parseHex(colors.card) ?? { r: 255, g: 252, b: 247 };
+  const tint = parseHex(pillBg) ?? { r: 128, g: 128, b: 128 };
+  return [
+    mixColors(base, baseLight, 0.4),
+    mixColors(baseLight, tint, 0.1),
+    mixColors(baseLight, tint, 0.22),
+    mixColors(baseLight, tint, 0.14),
+  ] as const;
+}
+
+/** Dark mode: very subtle vestment hint on charcoal. */
+function darkModeVestmentGradientStops(pillBg: string): readonly [string, string, string, string] {
+  const base = parseHex(colors.darkBg) ?? { r: 18, g: 16, b: 14 };
+  const baseLight = parseHex(colors.darkSurface) ?? { r: 28, g: 24, b: 20 };
+  const tint = parseHex(pillBg) ?? { r: 128, g: 128, b: 128 };
+  return [
+    mixColors(base, baseLight, 0.18),
+    mixColors(baseLight, tint, 0.03),
+    mixColors(baseLight, tint, 0.08),
+    mixColors(baseLight, tint, 0.04),
+  ] as const;
 }
 
 const HERO_GRADIENT_BY_APPEARANCE_KEY: Partial<Record<string, VestmentHeroStyle>> = {
   great_friday: { gradient: ['#2a2826', '#0a0a0a'], foreground: '#f2ebe2' },
   holy_saturday: { gradient: ['#121010', '#f0ebe3'], foreground: '#1e1a16' },
+};
+
+const PAGE_GRADIENT_LAYOUT = {
+  locations: [0, 0.38, 0.68, 1] as const,
+  start: { x: 0.05, y: 0 },
+  end: { x: 0.95, y: 1 },
 };
 
 /** DayHero card gradient — same vestment hue as pills / page glow. */
@@ -105,60 +122,62 @@ export function vestmentHeroGradient(appearance: LiturgicalDayAppearance): Vestm
   return { gradient: [light, dark], foreground: pillText };
 }
 
-/**
- * Vestment-colour tint over black (opaque stops). Uses {@link liturgicalVestmentColor}
- * so the glow always matches the Vestments section for that day.
- */
-export function vestmentPageGradient(
-  appearance: LiturgicalDayAppearance,
-  enabled: boolean,
-): VestmentPageGradient | null {
-  if (!enabled) return null;
-
+function lightModePageGradient(appearance: LiturgicalDayAppearance): VestmentPageGradient {
   if (appearance.key === 'great_friday') {
-    const black = parseHex('#121010') ?? { r: 18, g: 16, b: 16 };
     return {
-      colors: [
-        PAGE_BACKGROUND_BLACK,
-        mixWithBlack(black, 0.07),
-        mixWithBlack(black, 0.13),
-        mixWithBlack(black, 0.06),
-      ] as const,
-      locations: [0, 0.38, 0.68, 1] as const,
-      start: { x: 0.05, y: 0 },
-      end: { x: 0.95, y: 1 },
+      colors: lightModeVestmentGradientStops('#121010'),
+      ...PAGE_GRADIENT_LAYOUT,
     };
   }
 
   if (appearance.key === 'holy_saturday') {
-    const black = parseHex('#121010') ?? { r: 18, g: 16, b: 16 };
-    const white = parseHex('#f0ebe3') ?? { r: 240, g: 235, b: 227 };
     return {
-      colors: [
-        PAGE_BACKGROUND_BLACK,
-        mixWithBlack(black, 0.1),
-        mixWithBlack(white, 0.14),
-        mixWithBlack(white, 0.08),
-      ] as const,
+      colors: lightModeVestmentGradientStops('#f0ebe3'),
       locations: [0, 0.35, 0.65, 1] as const,
-      start: { x: 0.05, y: 0 },
-      end: { x: 0.95, y: 1 },
+      start: PAGE_GRADIENT_LAYOUT.start,
+      end: PAGE_GRADIENT_LAYOUT.end,
     };
   }
 
   const { pillBg } = liturgicalVestmentColor(appearance);
-  const tint = parseHex(pillBg) ?? { r: 128, g: 128, b: 128 };
-  const { mid, peak, tail } = gradientStrengthsForSwatch(pillBg);
-
   return {
-    colors: [
-      PAGE_BACKGROUND_BLACK,
-      mixWithBlack(tint, mid),
-      mixWithBlack(tint, peak),
-      mixWithBlack(tint, tail),
-    ] as const,
-    locations: [0, 0.38, 0.68, 1] as const,
-    start: { x: 0.05, y: 0 },
-    end: { x: 0.95, y: 1 },
+    colors: lightModeVestmentGradientStops(pillBg),
+    ...PAGE_GRADIENT_LAYOUT,
   };
+}
+
+function darkModePageGradient(appearance: LiturgicalDayAppearance): VestmentPageGradient {
+  if (appearance.key === 'great_friday') {
+    return {
+      colors: darkModeVestmentGradientStops('#121010'),
+      ...PAGE_GRADIENT_LAYOUT,
+    };
+  }
+
+  if (appearance.key === 'holy_saturday') {
+    return {
+      colors: darkModeVestmentGradientStops('#f0ebe3'),
+      locations: [0, 0.35, 0.65, 1] as const,
+      start: PAGE_GRADIENT_LAYOUT.start,
+      end: PAGE_GRADIENT_LAYOUT.end,
+    };
+  }
+
+  const { pillBg } = liturgicalVestmentColor(appearance);
+  return {
+    colors: darkModeVestmentGradientStops(pillBg),
+    ...PAGE_GRADIENT_LAYOUT,
+  };
+}
+
+/**
+ * Vestment-colour page tint on parchment (light) or charcoal (dark).
+ */
+export function vestmentPageGradient(
+  appearance: LiturgicalDayAppearance,
+  enabled: boolean,
+  isDark: boolean,
+): VestmentPageGradient | null {
+  if (!enabled) return null;
+  return isDark ? darkModePageGradient(appearance) : lightModePageGradient(appearance);
 }

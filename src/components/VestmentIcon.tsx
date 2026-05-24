@@ -5,6 +5,10 @@ import { translate } from '../i18n/translate';
 import type { UiLanguage } from '../i18n/types';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { HoverAccessible } from './HoverAccessible';
+import { SECTION_ICON_SIZE } from './SectionIcon';
+
+/** Slightly smaller than the section title hanger icon. */
+const DEFAULT_VESTMENT_ICON_SIZE = SECTION_ICON_SIZE - 4;
 
 export type VestmentKind = 'sticharion' | 'orarion' | 'epitrachelion' | 'phelonion' | 'omophorion';
 
@@ -40,7 +44,7 @@ export function vestmentDisplayLabel(kind: VestmentKind, lang: UiLanguage = 'en'
   return translate(lang, DISPLAY_LABEL_KEYS[kind]);
 }
 
-export function VestmentIcon({ kind, color, size = 22 }: Props) {
+export function VestmentIcon({ kind, color, size = DEFAULT_VESTMENT_ICON_SIZE }: Props) {
   const { t } = useAppTranslation();
   const meta = VESTMENT_META[kind];
   return (

@@ -1,18 +1,18 @@
-import { StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { useTheme } from '@react-navigation/native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { colors } from '../theme/tokens';
 import { HoverAccessible } from './HoverAccessible';
 import { OrthoDailyLogo } from './OrthoDailyLogo';
 
 export function AppBrandHeader() {
-  const isDark = useColorScheme() === 'dark';
+  const theme = useTheme();
 
   return (
     <View style={styles.row}>
       <HoverAccessible label="OrthoDaily Home" accessibilityRole="image">
         <OrthoDailyLogo size={26} />
       </HoverAccessible>
-      <Text style={[styles.title, { color: isDark ? colors.darkInk : colors.ink }]}>OrthoDaily Home</Text>
+      <Text style={[styles.title, { color: theme.colors.text }]}>OrthoDaily Home</Text>
     </View>
   );
 }

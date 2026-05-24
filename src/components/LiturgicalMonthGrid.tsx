@@ -15,6 +15,7 @@ import { TypikonGlyphIcon } from './TypikonGlyphIcon';
 import { useOrthocalMonth } from '../hooks/useOrthocalMonth';
 import type { CalendarDayInfo } from '../lib/liturgical/calendarDayInfo';
 import {
+  calendarCellHoverBackground,
   getCalendarCellStyle,
   isCalendarFastingAppearance,
 } from '../lib/calendar/calendarCellStyle';
@@ -25,6 +26,7 @@ import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { typikonIconColor } from '../lib/liturgical/typikonSymbols';
+import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { CommemorationListMarker } from './CommemorationListMarker';
 import { HoverAccessible } from './HoverAccessible';
 import { colors } from '../theme/tokens';
@@ -140,8 +142,7 @@ export function LiturgicalMonthGrid({
   liturgicalCalendar,
 }: Props) {
   const theme = useTheme();
-  const scheme = useColorScheme();
-  const isDark = scheme === 'dark';
+  const isDark = useResolvedColorScheme() === 'dark';
   const { t, lang } = useAppTranslation();
   const intlLocale = intlLocaleForLanguage(lang);
   const { width } = useWindowDimensions();
@@ -234,13 +235,14 @@ export function LiturgicalMonthGrid({
                 styles.weekHeaderCell,
                 useFullWeekdayNames ? styles.weekHeaderCellFull : null,
                 isCompact ? styles.weekHeaderCellCompact : null,
+                key === 'weekdays.sun' ? styles.weekHeaderCellSunday : styles.weekHeaderCellMuted,
                 {
                   width: cellWidth,
                   color:
                     key === 'weekdays.sun'
                       ? isDark
                         ? colors.feastTextSoftDark
-                        : colors.feastTextSoft
+                        : colors.accentWine
                       : theme.colors.text,
                 },
               ]}
@@ -401,6 +403,11 @@ function DayCell({
             : colors.feastHoverBorder
           : colors.accentGold
       : borderColor;
+  const cellBackgroundColor = calendarCellHoverBackground(
+    cellStyle.backgroundColor,
+    isWeb && hovered,
+    isDark,
+  );
 
   const commLines: CommLine[] = [
     ...dayInfo.feasts.map((name) => ({ kind: 'feast' as const, name })),
@@ -425,22 +432,12 @@ function DayCell({
         isWeb ? styles.cellWrapWeb : null,
         {
           opacity: pressed ? 0.92 : 1,
-          backgroundColor: cellStyle.backgroundColor,
+          backgroundColor: cellBackgroundColor,
           borderWidth,
           borderColor: hoverBorderColor,
         },
-        isWeb && hovered ? (isDark ? styles.cellHoveredDark : styles.cellHoveredLight) : null,
       ]}
     >
-      {isWeb && hovered ? (
-        <View
-          pointerEvents="none"
-          style={[
-            styles.hoverOverlay,
-            { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' },
-          ]}
-        />
-      ) : null}
       <View style={[styles.cellBody, compact ? styles.cellBodyCompact : null]}>
         {showTypikon && feastRank ? (
           <HoverAccessible
@@ -733,8 +730,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     textAlign: 'center',
-    opacity: 0.65,
     letterSpacing: 0.3,
+  },
+  weekHeaderCellMuted: {
+    opacity: 0.65,
+  },
+  weekHeaderCellSunday: {
+    opacity: 1,
+    fontWeight: '700',
   },
   weekHeaderCellCompact: {
     fontSize: 10,
@@ -751,6 +754,7 @@ const styles = StyleSheet.create({
   },
   cellSlot: {
     overflow: 'hidden',
+    borderRadius: CELL_BORDER_RADIUS,
   },
   cellWrap: {
     flex: 1,
@@ -761,15 +765,8 @@ const styles = StyleSheet.create({
   },
   cellWrapWeb: {
     cursor: 'pointer',
-  },
-  cellHoveredLight: {
-    boxShadow: '0 3px 10px rgba(0, 0, 0, 0.14)',
-  },
-  cellHoveredDark: {
-    boxShadow: '0 3px 12px rgba(0, 0, 0, 0.45)',
-  },
-  hoverOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    // RN Web: clip hover tint to rounded corners on the same layer as backgroundColor.
+    overflow: 'hidden',
     borderRadius: CELL_BORDER_RADIUS,
   },
   cellBody: {

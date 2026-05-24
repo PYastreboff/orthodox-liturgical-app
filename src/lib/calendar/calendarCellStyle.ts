@@ -58,3 +58,42 @@ export function getCalendarCellStyle(
 
   return { backgroundColor: CELL_WHITE, foreground: colors.ink };
 }
+
+function parseHex(hex: string): { r: number; g: number; b: number } | null {
+  const raw = hex.replace('#', '').trim();
+  const full =
+    raw.length === 3
+      ? raw
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : raw.length === 6
+        ? raw
+        : null;
+  if (!full) return null;
+  return {
+    r: parseInt(full.slice(0, 2), 16),
+    g: parseInt(full.slice(2, 4), 16),
+    b: parseInt(full.slice(4, 6), 16),
+  };
+}
+
+function toHex(r: number, g: number, b: number): string {
+  const clamp = (n: number) => Math.max(0, Math.min(255, Math.round(n)));
+  return `#${[clamp(r), clamp(g), clamp(b)]
+    .map((n) => n.toString(16).padStart(2, '0'))
+    .join('')}`;
+}
+
+/** Slightly darken (light mode) or lighten (dark mode) — applied on the cell itself, not a square overlay. */
+export function calendarCellHoverBackground(
+  backgroundColor: string,
+  hovered: boolean,
+  isDark: boolean,
+): string {
+  if (!hovered) return backgroundColor;
+  const rgb = parseHex(backgroundColor);
+  if (!rgb) return backgroundColor;
+  const factor = isDark ? 1.07 : 0.93;
+  return toHex(rgb.r * factor, rgb.g * factor, rgb.b * factor);
+}

@@ -10,8 +10,8 @@ export const colors = {
   accentWine: '#6b2d3c',
   /** Major feast outline on the month grid — brighter than accentWine. */
   feastBorder: '#d63a52',
-  /** Softer feast red for calendar weekday labels (e.g. Sunday). */
-  feastTextSoft: '#e87888',
+  /** Calendar Sunday column header — light mode (readable on parchment). */
+  feastTextSoft: '#872532',
   feastTextSoftDark: '#f0a8b2',
   /** Feast cell border on hover (darker than feastBorder). */
   feastHoverBorder: '#8f2435',
