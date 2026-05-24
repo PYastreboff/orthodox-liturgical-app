@@ -1,10 +1,59 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { useFontScale } from '../hooks/useFontScale';
 import type { LiturgicalTextCategory, LiturgicalTextItem } from '../lib/liturgical/liturgicalTexts';
 import { noneForDayLabel } from '../lib/liturgical/liturgicalTexts';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { LiturgicalReadingIcon } from './LiturgicalReadingIcon';
+
+const SIDE_BY_SIDE_MIN_WIDTH = 560;
+
+type PassageBodyProps = {
+  item: LiturgicalTextItem;
+  textColor: string;
+  verseNumberColor: string;
+};
+
+function PassageBody({ item, textColor, verseNumberColor }: PassageBodyProps) {
+  const { text } = useFontScale();
+  const paragraphType = text(13, 19);
+  const verseType = text(11, 13);
+  const hasText = item.paragraphs.some((p) => p.some((line) => line.text.trim()));
+
+  if (!hasText) return null;
+
+  return (
+    <View style={styles.passage}>
+      {item.paragraphs.map((paragraph, pi) => (
+        <Text
+          key={pi}
+          style={[
+            styles.paragraph,
+            paragraphType,
+            { color: textColor },
+            pi > 0 ? styles.paragraphGap : null,
+          ]}
+        >
+          {paragraph.map((line, li) =>
+            item.plainText || line.verse === 0 ? (
+              <Text key={li}>{line.text}</Text>
+            ) : (
+              <Text key={`${line.verse}-${li}`}>
+                <Text style={[styles.verseNumber, verseType, { color: verseNumberColor }]}>
+                  {line.verse}{' '}
+                </Text>
+                <Text>
+                  {line.text}
+                  {li < paragraph.length - 1 ? ' ' : ''}
+                </Text>
+              </Text>
+            ),
+          )}
+        </Text>
+      ))}
+    </View>
+  );
+}
 
 type Props = {
   item: LiturgicalTextItem;
@@ -15,9 +64,6 @@ type Props = {
 export function LiturgicalPassageBlock({ item, textColor, verseNumberColor }: Props) {
   const { text } = useFontScale();
   const headerType = text(14, 20);
-  const paragraphType = text(13, 19);
-  const verseType = text(11, 13);
-  const hasText = item.paragraphs.some((p) => p.some((line) => line.text.trim()));
 
   return (
     <View style={styles.block}>
@@ -25,37 +71,84 @@ export function LiturgicalPassageBlock({ item, textColor, verseNumberColor }: Pr
         {item.citation}
         {item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : ''}
       </Text>
-      {hasText ? (
-        <View style={styles.passage}>
-          {item.paragraphs.map((paragraph, pi) => (
-            <Text
-              key={pi}
-              style={[
-                styles.paragraph,
-                paragraphType,
-                { color: textColor },
-                pi > 0 ? styles.paragraphGap : null,
-              ]}
-            >
-              {paragraph.map((line, li) =>
-                item.plainText || line.verse === 0 ? (
-                  <Text key={li}>{line.text}</Text>
-                ) : (
-                  <Text key={`${line.verse}-${li}`}>
-                    <Text style={[styles.verseNumber, verseType, { color: verseNumberColor }]}>
-                      {line.verse}{' '}
-                    </Text>
-                    <Text>
-                      {line.text}
-                      {li < paragraph.length - 1 ? ' ' : ''}
-                    </Text>
-                  </Text>
-                ),
-              )}
-            </Text>
-          ))}
+      <PassageBody item={item} textColor={textColor} verseNumberColor={verseNumberColor} />
+    </View>
+  );
+}
+
+type SideBySideProps = {
+  englishItem: LiturgicalTextItem;
+  slavonicItem?: LiturgicalTextItem;
+  slavonicLoading?: boolean;
+  textColor: string;
+  verseNumberColor: string;
+  mutedColor: string;
+};
+
+export function LiturgicalPassageBlockSideBySide({
+  englishItem,
+  slavonicItem,
+  slavonicLoading,
+  textColor,
+  verseNumberColor,
+  mutedColor,
+}: SideBySideProps) {
+  const { t } = useAppTranslation();
+  const { text } = useFontScale();
+  const { width } = useWindowDimensions();
+  const headerType = text(14, 20);
+  const labelType = text(11, 14);
+  const hintType = text(12, 16);
+  const horizontal = width >= SIDE_BY_SIDE_MIN_WIDTH;
+  const slavonic = slavonicItem ?? englishItem;
+
+  return (
+    <View style={styles.block}>
+      <Text style={[styles.header, headerType, { color: textColor }]}>
+        {englishItem.citation}
+        {englishItem.source ? ` (${englishItem.source})` : ''}
+      </Text>
+      <View style={horizontal ? styles.columnsRow : styles.columnsStack}>
+        <View style={[styles.column, horizontal ? styles.columnFlex : null]}>
+          <Text style={[styles.columnLabel, labelType, { color: mutedColor }]}>
+            {t('readings.langEnglish')}
+          </Text>
+          <PassageBody
+            item={englishItem}
+            textColor={textColor}
+            verseNumberColor={verseNumberColor}
+          />
         </View>
-      ) : null}
+        <View
+          style={[
+            horizontal ? styles.columnDivider : styles.columnDividerStack,
+            { backgroundColor: mutedColor },
+          ]}
+        />
+        <View style={[styles.column, horizontal ? styles.columnFlex : null]}>
+          <Text style={[styles.columnLabel, labelType, { color: mutedColor }]}>
+            {t('readings.langSlavonic')}
+          </Text>
+          {slavonicLoading && !slavonicItem ? (
+            <Text style={[styles.loadingHint, hintType, { color: mutedColor }]}>
+              {t('today.slavonicLoading')}
+            </Text>
+          ) : (
+            <>
+              {slavonic.detail ? (
+                <Text style={[styles.columnDetail, hintType, { color: mutedColor }]}>
+                  {slavonic.detail}
+                </Text>
+              ) : null}
+              <PassageBody
+                item={slavonic}
+                textColor={textColor}
+                verseNumberColor={verseNumberColor}
+              />
+            </>
+          )}
+        </View>
+      </View>
     </View>
   );
 }
@@ -68,6 +161,10 @@ type SectionProps = {
   verseNumberColor: string;
   headingColor: string;
   topGap?: boolean;
+  sideBySide?: boolean;
+  secondaryItems?: LiturgicalTextItem[];
+  slavonicLoading?: boolean;
+  mutedColor?: string;
 };
 
 export function LiturgicalTextSectionBlock({
@@ -78,11 +175,17 @@ export function LiturgicalTextSectionBlock({
   verseNumberColor,
   headingColor,
   topGap,
+  sideBySide,
+  secondaryItems,
+  slavonicLoading,
+  mutedColor,
 }: SectionProps) {
   const { lang } = useAppTranslation();
   const { text } = useFontScale();
   const headingType = text(16, 22);
   const placeholderType = text(14, 20);
+  const resolvedMuted = mutedColor ?? textColor;
+
   return (
     <View style={topGap ? styles.sectionGap : null}>
       <View style={styles.sectionHeadingRow}>
@@ -92,14 +195,26 @@ export function LiturgicalTextSectionBlock({
         </Text>
       </View>
       {items.length > 0 ? (
-        items.map((item, index) => (
-          <LiturgicalPassageBlock
-            key={`${item.citation}-${item.source ?? ''}-${index}`}
-            item={item}
-            textColor={textColor}
-            verseNumberColor={verseNumberColor}
-          />
-        ))
+        items.map((item, index) =>
+          sideBySide ? (
+            <LiturgicalPassageBlockSideBySide
+              key={`${item.citation}-${item.source ?? ''}-${index}`}
+              englishItem={item}
+              slavonicItem={secondaryItems?.[index]}
+              slavonicLoading={slavonicLoading}
+              textColor={textColor}
+              verseNumberColor={verseNumberColor}
+              mutedColor={resolvedMuted}
+            />
+          ) : (
+            <LiturgicalPassageBlock
+              key={`${item.citation}-${item.source ?? ''}-${index}`}
+              item={item}
+              textColor={textColor}
+              verseNumberColor={verseNumberColor}
+            />
+          ),
+        )
       ) : (
         <Text style={[styles.placeholder, placeholderType, { color: textColor }]}>
           {noneForDayLabel(lang)}
@@ -146,5 +261,44 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     opacity: 0.75,
     marginBottom: 8,
+  },
+  columnsRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    marginTop: 4,
+  },
+  columnsStack: {
+    marginTop: 4,
+    gap: 12,
+  },
+  column: {
+    minWidth: 0,
+  },
+  columnFlex: {
+    flex: 1,
+  },
+  columnLabel: {
+    fontWeight: '700',
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
+    marginBottom: 4,
+  },
+  columnDetail: {
+    marginBottom: 4,
+    fontStyle: 'italic',
+  },
+  loadingHint: {
+    fontStyle: 'italic',
+    marginTop: 4,
+  },
+  columnDivider: {
+    width: StyleSheet.hairlineWidth,
+    alignSelf: 'stretch',
+    opacity: 0.35,
+  },
+  columnDividerStack: {
+    height: StyleSheet.hairlineWidth,
+    opacity: 0.35,
   },
 });

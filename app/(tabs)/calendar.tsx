@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import Head from 'expo-router/head';
 
 import { CalendarColorLegend } from '../../src/components/CalendarColorLegend';
+import { CalendarSearch } from '../../src/components/CalendarSearch';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
@@ -44,6 +45,14 @@ export default function CalendarScreen() {
     [requestOpenDay],
   );
 
+  const onSearchSelectDate = useCallback(
+    (date: Date) => {
+      setCursor(new Date(date.getFullYear(), date.getMonth(), 1));
+      onDayPress(date);
+    },
+    [onDayPress],
+  );
+
   const calendarBg = theme.dark ? colors.darkBg : '#e8e3d8';
   const { width } = useWindowDimensions();
   const isCompact = width < CALENDAR_COMPACT_BREAKPOINT;
@@ -62,6 +71,17 @@ export default function CalendarScreen() {
         {t(isCompact ? 'calendar.subtitleShort' : 'calendar.subtitle')}
       </Text>
       <CalendarColorLegend textColor={theme.colors.text} compact={isCompact} />
+
+      <CalendarSearch
+        calendar={primaryCalendar}
+        year={cursor.getFullYear()}
+        textColor={theme.colors.text}
+        mutedColor={theme.dark ? '#a39e98' : colors.muted}
+        cardBg={theme.colors.card}
+        borderColor={theme.colors.border}
+        isDark={theme.dark}
+        onSelectDate={onSearchSelectDate}
+      />
 
       <LiturgicalMonthGrid
         visibleMonth={cursor}

@@ -108,3 +108,27 @@ export function prefetchAdjacentMonths(calendar: PrimaryCalendar, centerMonth: D
   void loadOrthocalMonth(calendar, adjacentMonth(centerMonth, -1));
   void loadOrthocalMonth(calendar, adjacentMonth(centerMonth, 1));
 }
+
+/** All civil days currently in the month cache for this church calendar. */
+export function getCachedDaysForCalendar(calendar: PrimaryCalendar): MonthDayMap {
+  const merged: MonthDayMap = {};
+  const prefix = `${calendar}:`;
+  for (const [key, map] of monthCache.entries()) {
+    if (key.startsWith(prefix)) {
+      Object.assign(merged, map);
+    }
+  }
+  return merged;
+}
+
+/** Load every month in a civil year (reuses cache / in-flight loads). */
+export function loadCalendarYear(
+  calendar: PrimaryCalendar,
+  year: number,
+): Promise<MonthDayMap> {
+  return Promise.all(
+    Array.from({ length: 12 }, (_, monthIndex) =>
+      loadOrthocalMonth(calendar, monthStart(year, monthIndex)),
+    ),
+  ).then((months) => Object.assign({}, ...months));
+}

@@ -24,11 +24,17 @@ type Props = {
   isDark: boolean;
 };
 
+function selectedIndexFor(value: TextLanguage): number {
+  if (value === 'en') return 0;
+  if (value === 'chu') return 1;
+  return 2;
+}
+
 export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
   const { t } = useAppTranslation();
   const trackBg = isDark ? '#2a2724' : '#ebe6de';
   const inactiveText = isDark ? '#a39e98' : colors.muted;
-  const selectedIndex = value === 'en' ? 0 : 2;
+  const selectedIndex = selectedIndexFor(value);
   const progress = useSharedValue(selectedIndex);
   const [trackWidth, setTrackWidth] = useState(0);
 
@@ -54,15 +60,15 @@ export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
 
   const csLabelStyle = useAnimatedStyle(() => ({
     color: interpolateColor(
-      Math.max(0, 1 - Math.min(1, Math.abs(progress.value - 2) * 1.4)),
+      Math.max(0, 1 - Math.min(1, Math.abs(progress.value - 1) * 1.4)),
       [0, 1],
       [inactiveText, '#ffffff'],
     ),
   }));
 
-  const toggleLanguage = () => onChange(value === 'en' ? 'chu' : 'en');
-  const switchToSlavonic = t('readings.langSlavonic');
   const switchToEnglish = t('readings.langEnglish');
+  const switchToSlavonic = t('readings.langSlavonic');
+  const sideBySide = t('readings.langSideBySide');
 
   return (
     <View
@@ -85,25 +91,22 @@ export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
 
       <Pressable
         style={styles.segment}
-        onPress={toggleLanguage}
-        accessibilityRole="button"
-        accessibilityLabel={t('readings.toggleReadings')}
-        {...hoverAccessibilityProps(
-          value === 'en' ? switchToSlavonic : switchToEnglish,
-          { role: 'button' },
-        )}
-      >
-        <Feather name="repeat" size={13} color={inactiveText} />
-      </Pressable>
-
-      <Pressable
-        style={styles.segment}
         onPress={() => onChange('chu')}
         accessibilityRole="button"
         accessibilityState={{ selected: value === 'chu' }}
         {...hoverAccessibilityProps(switchToSlavonic, { role: 'button' })}
       >
         <Animated.Text style={[styles.segmentLabel, csLabelStyle]}>ЧС</Animated.Text>
+      </Pressable>
+
+      <Pressable
+        style={styles.segment}
+        onPress={() => onChange('both')}
+        accessibilityRole="button"
+        accessibilityState={{ selected: value === 'both' }}
+        {...hoverAccessibilityProps(sideBySide, { role: 'button' })}
+      >
+        <Feather name="columns" size={13} color={value === 'both' ? '#ffffff' : inactiveText} />
       </Pressable>
     </View>
   );

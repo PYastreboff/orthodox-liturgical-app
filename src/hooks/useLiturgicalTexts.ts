@@ -52,32 +52,31 @@ export function useLiturgicalTexts(
   textLang: TextLanguage,
   uiLanguage: UiLanguage = 'en',
 ) {
-  const baseSections = useMemo(
+  const englishSections = useMemo(
     () => buildLiturgicalTextSections(day, uiLanguage),
     [day, uiLanguage],
   );
   const passageMap = useMemo(() => englishPassagesByCitation(day), [day]);
 
-  const [sections, setSections] = useState<LiturgicalTextSection[]>(baseSections);
+  const [slavonicSections, setSlavonicSections] = useState<LiturgicalTextSection[] | null>(null);
   const [loadingSlavonic, setLoadingSlavonic] = useState(false);
 
   useEffect(() => {
-    setSections(baseSections);
-  }, [baseSections]);
+    setSlavonicSections(null);
+  }, [englishSections]);
 
   useEffect(() => {
-    if (textLang !== 'chu' || !day) {
+    if (textLang === 'en' || !day) {
       setLoadingSlavonic(false);
-      setSections(baseSections);
       return;
     }
 
     let cancelled = false;
     setLoadingSlavonic(true);
 
-    applyChurchSlavonicToSections(baseSections, passageMap).then((next) => {
+    applyChurchSlavonicToSections(englishSections, passageMap).then((next) => {
       if (!cancelled) {
-        setSections(annotateNonScriptureForSlavonic(next, uiLanguage));
+        setSlavonicSections(annotateNonScriptureForSlavonic(next, uiLanguage));
         setLoadingSlavonic(false);
       }
     });
@@ -85,7 +84,20 @@ export function useLiturgicalTexts(
     return () => {
       cancelled = true;
     };
-  }, [baseSections, day, passageMap, textLang, uiLanguage]);
+  }, [day, englishSections, passageMap, textLang, uiLanguage]);
 
-  return { sections, loadingSlavonic };
+  const displaySections = useMemo(() => {
+    if (textLang === 'chu') {
+      return slavonicSections ?? englishSections;
+    }
+    return englishSections;
+  }, [englishSections, slavonicSections, textLang]);
+
+  return {
+    englishSections,
+    slavonicSections,
+    displaySections,
+    loadingSlavonic,
+    sideBySide: textLang === 'both',
+  };
 }

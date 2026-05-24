@@ -180,11 +180,13 @@ export default function TodayScreen() {
     () => buildDayDashboard(liturgicalDay, appearance, civilPlain, uiLanguage),
     [appearance, civilPlain, liturgicalDay, uiLanguage],
   );
-  const { sections: liturgicalTextSections, loadingSlavonic } = useLiturgicalTexts(
-    liturgicalDay,
-    defaultTextLang,
-    uiLanguage,
-  );
+  const {
+    englishSections,
+    slavonicSections,
+    displaySections,
+    loadingSlavonic,
+    sideBySide,
+  } = useLiturgicalTexts(liturgicalDay, defaultTextLang, uiLanguage);
   const { feasts, saints } = useMemo(() => {
     const entries = buildCommemorationEntries(liturgicalDay, {
       appearanceKey: appearance.key,
@@ -461,12 +463,12 @@ export default function TodayScreen() {
           />
         }
       >
-        {defaultTextLang === 'chu' ? (
+        {(defaultTextLang === 'chu' || defaultTextLang === 'both') && !sideBySide ? (
           <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
             {loadingSlavonic ? t('today.slavonicLoading') : t('today.slavonicHint')}
           </Text>
         ) : null}
-        {liturgicalTextSections
+        {(sideBySide ? englishSections : displaySections)
           .filter((section) => section.items.length > 0)
           .map((section, index) => (
             <LiturgicalTextSectionBlock
@@ -478,6 +480,14 @@ export default function TodayScreen() {
               verseNumberColor={verseNumberColor}
               headingColor={theme.colors.text}
               topGap={index > 0}
+              sideBySide={sideBySide}
+              secondaryItems={
+                sideBySide
+                  ? slavonicSections?.find((s) => s.id === section.id)?.items
+                  : undefined
+              }
+              slavonicLoading={sideBySide ? loadingSlavonic : undefined}
+              mutedColor={isDark ? '#a39e98' : colors.muted}
             />
           ))}
       </CollapsibleSection>

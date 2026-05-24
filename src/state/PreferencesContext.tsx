@@ -13,7 +13,7 @@ import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
 import type { UiLanguage } from '../i18n/types';
 import type { FontScalePreference } from '../theme/fontScale';
 
-export type TextLanguage = 'en' | 'chu';
+export type TextLanguage = 'en' | 'chu' | 'both';
 export type { UiLanguage };
 export type ColorSchemePreference = 'system' | 'light' | 'dark';
 export type { PrimaryCalendar };
@@ -83,7 +83,11 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
           if (parsed.primaryCalendar === 'julian' || parsed.primaryCalendar === 'gregorian') {
             setPrimaryCalendarState(parsed.primaryCalendar);
           }
-          if (parsed.defaultTextLang === 'en' || parsed.defaultTextLang === 'chu') {
+          if (
+            parsed.defaultTextLang === 'en' ||
+            parsed.defaultTextLang === 'chu' ||
+            parsed.defaultTextLang === 'both'
+          ) {
             setDefaultTextLangState(parsed.defaultTextLang);
           }
           if (

@@ -3,6 +3,7 @@ import { isFeastCellAppearance } from '../calendar/calendarCellStyle';
 import { isGreatFridayDay, shouldUseOrthocalFeastRank } from './lectionaryDay';
 import {
   calendarFeastsForDay,
+  isHolyWeekWeekdayHeadline,
   isOrthocalGreatFeastForCalendar,
   liturgicalDayTitle,
   transferredGreatFeastOnHolyWeekDay,
@@ -25,6 +26,8 @@ export type CalendarDayInfo = {
   /** Great and Holy Friday — thick black border on the month grid. */
   isGreatFridayBorder: boolean;
   appearanceKey: string;
+  /** Feast names that use great-feast red styling (search, lists). */
+  greatFeastNames: string[];
 };
 
 export function saintsFromOrthocalDay(day: OrthocalDay | null): string[] {
@@ -66,6 +69,27 @@ export function isCalendarFeastTitleRed(
   return false;
 }
 
+/** Names that qualify as great feasts for red highlighting (matches pink calendar cells). */
+export function greatFeastNamesForCalendarDay(
+  day: OrthocalDay | null,
+  appearanceKey: string,
+  feastRank: FeastRankDisplay | null,
+  dayTitle: string,
+): string[] {
+  const names = new Set<string>();
+
+  const transferred = transferredGreatFeastOnHolyWeekDay(day, appearanceKey, dayTitle);
+  if (transferred) names.add(transferred);
+
+  if (isCalendarFeastCell(day, appearanceKey, feastRank, dayTitle)) {
+    if (dayTitle && !isHolyWeekWeekdayHeadline(day, appearanceKey, dayTitle)) {
+      names.add(dayTitle);
+    }
+  }
+
+  return [...names];
+}
+
 export function buildCalendarDayInfo(
   day: OrthocalDay | null,
   appearanceKey: string,
@@ -75,6 +99,7 @@ export function buildCalendarDayInfo(
   const dayTitle = liturgicalDayTitle(day, appearanceKey, appearanceLabel, feastRank);
   const isFeastCell = isCalendarFeastCell(day, appearanceKey, feastRank, dayTitle);
   const isFeastTitleRed = isCalendarFeastTitleRed(day, appearanceKey, feastRank, dayTitle);
+  const greatFeastNames = greatFeastNamesForCalendarDay(day, appearanceKey, feastRank, dayTitle);
   return {
     dayTitle,
     feasts: calendarFeastsForDay(day, dayTitle),
@@ -84,5 +109,6 @@ export function buildCalendarDayInfo(
     isFeastCell,
     isGreatFridayBorder: isGreatFridayDay(day),
     appearanceKey,
+    greatFeastNames,
   };
 }
