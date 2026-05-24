@@ -1,28 +1,10 @@
 import { ScrollViewStyleReset } from 'expo-router/html';
 import type { PropsWithChildren } from 'react';
 
-const WEB_ROOT_STYLES = `
-html {
-  height: 100%;
-  background: transparent;
-}
-body {
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
-  background: transparent;
-}
-#root {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 100%;
-  min-height: 100dvh;
-  background: transparent;
-}
-`;
+import { WEB_ROOT_CSS } from '../src/theme/syncWebDocumentTheme';
+import { colors } from '../src/theme/tokens';
 
-/** Web-only root HTML — edge-to-edge viewport; screens paint into safe areas. */
+/** Web-only root HTML — viewport-fit=cover + themed chrome (no transparent gutters). */
 export default function Root({ children }: PropsWithChildren) {
   return (
     <html lang="en">
@@ -34,11 +16,11 @@ export default function Root({ children }: PropsWithChildren) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
         />
         <meta name="description" content="OrthoDaily" />
-        <meta name="theme-color" content="transparent" />
+        <meta name="theme-color" content={colors.parchment} />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <title>OrthoDaily</title>
-        <style dangerouslySetInnerHTML={{ __html: WEB_ROOT_STYLES }} />
+        <style dangerouslySetInnerHTML={{ __html: WEB_ROOT_CSS }} />
         <ScrollViewStyleReset />
       </head>
       <body>{children}</body>

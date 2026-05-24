@@ -1,4 +1,5 @@
 import { Tabs } from 'expo-router';
+import { useTheme } from '@react-navigation/native';
 import { Platform, StyleSheet } from 'react-native';
 
 import { AppBrandHeader } from '../../src/components/AppBrandHeader';
@@ -18,7 +19,9 @@ function tabBarBackground(isDark: boolean): string {
 }
 
 function TabsLayoutContent() {
+  const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
+  const sceneBackground = theme.colors.background;
   const insets = useLayoutSafeAreaInsets();
   const { t } = useAppTranslation();
   const showTabHeader = useTabHeaderShown();
@@ -33,7 +36,7 @@ function TabsLayoutContent() {
         headerTintColor: isDark ? colors.darkInk : colors.ink,
         headerTitleStyle: { fontWeight: '600' },
         sceneStyle: {
-          backgroundColor: 'transparent',
+          backgroundColor: sceneBackground,
         },
         tabBarStyle: {
           position: 'absolute',
@@ -78,7 +81,7 @@ function TabsLayoutContent() {
           title: 'OrthoDaily',
           tabBarLabel: t('tabs.today'),
           headerTitle: () => <AppBrandHeader />,
-          sceneStyle: { backgroundColor: 'transparent' },
+          sceneStyle: { backgroundColor: sceneBackground },
           ...tabBarIconOptions('today'),
         }}
       />
@@ -88,7 +91,7 @@ function TabsLayoutContent() {
           title: t('tabs.browserTitleCalendar'),
           headerTitle: t('tabs.calendarHeader'),
           tabBarLabel: t('tabs.calendar'),
-          sceneStyle: { backgroundColor: 'transparent' },
+          sceneStyle: { backgroundColor: sceneBackground },
           ...tabBarIconOptions('calendar'),
         }}
       />
@@ -98,7 +101,7 @@ function TabsLayoutContent() {
           title: t('tabs.browserTitleSettings'),
           headerTitle: t('tabs.settings'),
           tabBarLabel: t('tabs.settings'),
-          sceneStyle: { backgroundColor: 'transparent' },
+          sceneStyle: { backgroundColor: sceneBackground },
           ...tabBarIconOptions('settings'),
         }}
       />

@@ -1,5 +1,11 @@
-import { useMemo, type ReactNode } from 'react';
-import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { useEffect, useMemo, type ReactNode } from 'react';
+import {
+  Platform,
+  StyleSheet,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
@@ -8,6 +14,7 @@ import {
   todayPageBackgroundColor,
   vestmentPageGradient,
 } from '../lib/liturgical/vestmentGradient';
+import { syncWebDocumentTheme } from '../theme/syncWebDocumentTheme';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 
 type Props = {
@@ -34,9 +41,29 @@ export function VestmentPageBackground({
 
   const bleedTop = insets.top;
   const bleedBottom = insets.bottom;
+  const chromeColor =
+    gradient && gradient.colors.length > 0 ? gradient.colors[0] : backgroundColor;
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    syncWebDocumentTheme(isDark, chromeColor);
+    return () => syncWebDocumentTheme(isDark);
+  }, [isDark, chromeColor]);
 
   return (
-    <View style={[styles.root, { backgroundColor }, style]}>
+    <View
+      style={[
+        styles.root,
+        { backgroundColor },
+        bleedTop > 0 || bleedBottom > 0
+          ? {
+              marginTop: -bleedTop,
+              marginBottom: -bleedBottom,
+            }
+          : null,
+        style,
+      ]}
+    >
       {gradient ? (
         <LinearGradient
           colors={[...gradient.colors]}

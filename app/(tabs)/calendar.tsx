@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, Text, useWindowDimensions } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
 import Head from 'expo-router/head';
 
@@ -17,12 +24,15 @@ import {
   readStoredPreferences,
   usePreferences,
 } from '../../src/state/PreferencesContext';
+import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { colors } from '../../src/theme/tokens';
+import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 
 const CALENDAR_COMPACT_BREAKPOINT = 600;
 
 export default function CalendarScreen() {
   const theme = useTheme();
+  const isDark = useResolvedColorScheme() === 'dark';
   const { t } = useAppTranslation();
   const { requestOpenDay } = useDayNavigation();
   const { primaryCalendar } = usePreferences();
@@ -94,13 +104,22 @@ export default function CalendarScreen() {
   const { width } = useWindowDimensions();
   const isCompact = width < CALENDAR_COMPACT_BREAKPOINT;
 
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== 'web') return;
+      syncWebDocumentTheme(isDark, calendarBg);
+      return () => syncWebDocumentTheme(isDark);
+    }, [calendarBg, isDark]),
+  );
+
   return (
     <>
       <Head>
         <title>{t('tabs.browserTitleCalendar')}</title>
       </Head>
+      <View style={[styles.page, { backgroundColor: calendarBg }]}>
       <ScrollView
-      style={[styles.scroll, { backgroundColor: calendarBg }]}
+      style={styles.scroll}
       contentContainerStyle={[
         styles.scrollContent,
         {
@@ -137,11 +156,15 @@ export default function CalendarScreen() {
         liturgicalCalendar={primaryCalendar}
       />
     </ScrollView>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+  },
   scroll: {
     flex: 1,
   },

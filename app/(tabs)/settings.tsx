@@ -1,5 +1,14 @@
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useCallback } from 'react';
+import {
+  Linking,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { useFocusEffect, useTheme } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import Head from 'expo-router/head';
 
@@ -14,6 +23,7 @@ import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { usePreferences } from '../../src/state/PreferencesContext';
+import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { colors } from '../../src/theme/tokens';
 
@@ -81,14 +91,24 @@ export default function SettingsScreen() {
   const version = Constants.expoConfig?.version ?? '0.1.0';
   const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
+  const pageBg = theme.colors.background;
+
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== 'web') return;
+      syncWebDocumentTheme(isDark, pageBg);
+      return () => syncWebDocumentTheme(isDark);
+    }, [isDark, pageBg]),
+  );
 
   return (
     <>
       <Head>
         <title>{t('tabs.browserTitleSettings')}</title>
       </Head>
+      <View style={[styles.page, { backgroundColor: pageBg }]}>
       <ScrollView
-      style={{ backgroundColor: theme.colors.background }}
+      style={styles.scroll}
       contentContainerStyle={[
         styles.container,
         {
@@ -200,11 +220,18 @@ export default function SettingsScreen() {
         </View>
       </View>
     </ScrollView>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
   container: {
     flexGrow: 1,
   },

@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import Head from 'expo-router/head';
+import { useTheme } from '@react-navigation/native';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -8,9 +9,15 @@ import { DayNavigationProvider } from '../src/state/DayNavigationContext';
 import { PreferencesProvider } from '../src/state/PreferencesContext';
 
 function RootStack() {
+  const theme = useTheme();
   return (
-    <View style={styles.root}>
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }} />
+    <View style={[styles.root, { backgroundColor: theme.colors.background }]}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: theme.colors.background },
+        }}
+      />
     </View>
   );
 }
