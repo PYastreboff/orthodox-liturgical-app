@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -9,6 +10,11 @@ import {
 } from 'react';
 
 import { fromDayIso, startOfLocalDay, toDayIso } from '../lib/calendar/localDate';
+import {
+  parseStoredSelectedDay,
+  persistSelectedDay,
+  readStoredPreferences,
+} from './PreferencesContext';
 
 type DayNavigationContextValue = {
   /** Civil date shared by Today, Commemorations, and calendar navigation. */
@@ -18,6 +24,7 @@ type DayNavigationContextValue = {
   pendingDayIso: string | null;
   requestOpenDay: (date: Date) => void;
   consumePendingDay: () => Date | null;
+  navigationReady: boolean;
 };
 
 const DayNavigationContext = createContext<DayNavigationContextValue | null>(null);
@@ -25,22 +32,45 @@ const DayNavigationContext = createContext<DayNavigationContextValue | null>(nul
 export function DayNavigationProvider({ children }: { children: ReactNode }) {
   const [selectedDate, setSelectedDateState] = useState(() => startOfLocalDay(new Date()));
   const [pendingDayIso, setPendingDayIso] = useState<string | null>(null);
+  const [navigationReady, setNavigationReady] = useState(false);
   const pendingRef = useRef<string | null>(null);
+  const hydratedRef = useRef(false);
 
-  const setSelectedDate = useCallback((date: Date) => {
-    setSelectedDateState(startOfLocalDay(date));
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const stored = await readStoredPreferences();
+      if (cancelled) return;
+      const restored = parseStoredSelectedDay(stored.selectedDayIso);
+      if (restored) {
+        setSelectedDateState(restored);
+      }
+      hydratedRef.current = true;
+      setNavigationReady(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const requestOpenDay = useCallback(
-    (date: Date) => {
-      const day = startOfLocalDay(date);
-      setSelectedDateState(day);
-      const iso = toDayIso(day);
-      pendingRef.current = iso;
-      setPendingDayIso(iso);
-    },
-    [],
-  );
+  const setSelectedDate = useCallback((date: Date) => {
+    const day = startOfLocalDay(date);
+    setSelectedDateState(day);
+    if (hydratedRef.current) {
+      void persistSelectedDay(day);
+    }
+  }, []);
+
+  const requestOpenDay = useCallback((date: Date) => {
+    const day = startOfLocalDay(date);
+    setSelectedDateState(day);
+    const iso = toDayIso(day);
+    pendingRef.current = iso;
+    setPendingDayIso(iso);
+    if (hydratedRef.current) {
+      void persistSelectedDay(day);
+    }
+  }, []);
 
   const consumePendingDay = useCallback(() => {
     const iso = pendingRef.current;
@@ -49,8 +79,12 @@ export function DayNavigationProvider({ children }: { children: ReactNode }) {
     if (!iso) return null;
     const day = fromDayIso(iso);
     if (!day) return null;
-    setSelectedDateState(day);
-    return day;
+    const normalized = startOfLocalDay(day);
+    setSelectedDateState(normalized);
+    if (hydratedRef.current) {
+      void persistSelectedDay(normalized);
+    }
+    return normalized;
   }, []);
 
   const value = useMemo(
@@ -60,8 +94,16 @@ export function DayNavigationProvider({ children }: { children: ReactNode }) {
       pendingDayIso,
       requestOpenDay,
       consumePendingDay,
+      navigationReady,
     }),
-    [consumePendingDay, pendingDayIso, requestOpenDay, selectedDate, setSelectedDate],
+    [
+      consumePendingDay,
+      navigationReady,
+      pendingDayIso,
+      requestOpenDay,
+      selectedDate,
+      setSelectedDate,
+    ],
   );
 
   return (

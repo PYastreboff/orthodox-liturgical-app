@@ -1,5 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 
 import { CollapsibleSection } from '../../src/components/CollapsibleSection';
@@ -44,13 +44,7 @@ import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 
 import type { ClergyRole } from '../../src/types/liturgical';
-type CollapsibleKey =
-  | 'date'
-  | 'feasts'
-  | 'saints'
-  | 'fasting'
-  | 'vestments'
-  | 'readings';
+import type { TodayCollapsibleKey } from '../../src/state/todayUiState';
 
 const ROLE_IDS: ClergyRole[] = ['layperson', 'reader', 'altar_server', 'deacon', 'priest', 'bishop'];
 
@@ -141,8 +135,17 @@ export default function TodayScreen() {
   const { t, lang } = useAppTranslation();
   const verseNumberColor = isDark ? '#a39e98' : colors.muted;
   const { selectedDate, setSelectedDate, consumePendingDay } = useDayNavigation();
-  const { primaryCalendar, showVestmentGradient, defaultTextLang, setDefaultTextLang, uiLanguage } =
-    usePreferences();
+  const {
+    primaryCalendar,
+    showVestmentGradient,
+    defaultTextLang,
+    setDefaultTextLang,
+    uiLanguage,
+    servingRole,
+    setServingRole,
+    todayCollapsed,
+    toggleTodaySection,
+  } = usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
 
   useFocusEffect(
@@ -151,16 +154,6 @@ export default function TodayScreen() {
       if (day) setSelectedDate(day);
     }, [consumePendingDay, setSelectedDate]),
   );
-  const [role, setRole] = useState<ClergyRole>('priest');
-  const [collapsed, setCollapsed] = useState<Record<CollapsibleKey, boolean>>({
-    date: false,
-    feasts: true,
-    saints: true,
-    fasting: false,
-    vestments: false,
-    readings: true,
-  });
-
   const civilPlain = useMemo(() => civilPlainDateFromLocal(selectedDate), [selectedDate]);
   const gregorianDateLabel = useMemo(
     () => formatGregorianReadableFromDate(selectedDate, true, uiLanguage),
@@ -203,8 +196,8 @@ export default function TodayScreen() {
     return partitionCommemorations(entries);
   }, [appearance.key, appearance.label, liturgicalDay]);
   const vestmentLines = useMemo(
-    () => vestmentGuidanceForRole(role, appearance, uiLanguage),
-    [role, appearance, uiLanguage],
+    () => vestmentGuidanceForRole(servingRole, appearance, uiLanguage),
+    [servingRole, appearance, uiLanguage],
   );
 
   const canGoToToday = selectedDate.getTime() !== today.getTime();
@@ -221,8 +214,8 @@ export default function TodayScreen() {
     majorFeastDash: text(16, 22),
     majorFeastName: text(16, 22),
   };
-  const toggleSection = (key: CollapsibleKey) => {
-    setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }));
+  const toggleSection = (key: TodayCollapsibleKey) => {
+    toggleTodaySection(key);
   };
 
   return (
@@ -264,7 +257,7 @@ export default function TodayScreen() {
         />
         <View style={styles.roleRow}>
           {ROLE_IDS.map((id) => {
-            const active = id === role;
+            const active = id === servingRole;
             return (
               <Pressable
                 key={id}
@@ -274,7 +267,7 @@ export default function TodayScreen() {
                     ? { backgroundColor: colors.accentWine, borderColor: colors.accentWine }
                     : { backgroundColor: 'transparent', borderColor: theme.colors.border },
                 ]}
-                onPress={() => setRole(id)}
+                onPress={() => setServingRole(id)}
               >
                 <Text
                   style={[
@@ -294,7 +287,7 @@ export default function TodayScreen() {
       <CollapsibleSection
         title={t('today.sectionDate')}
         icon="date"
-        expanded={!collapsed.date}
+        expanded={!todayCollapsed.date}
         onToggle={() => toggleSection('date')}
         themeColors={theme.colors}
       >
@@ -367,7 +360,7 @@ export default function TodayScreen() {
       <CollapsibleSection
         title={t('today.sectionFasting')}
         icon="fasting"
-        expanded={!collapsed.fasting}
+        expanded={!todayCollapsed.fasting}
         onToggle={() => toggleSection('fasting')}
         themeColors={theme.colors}
       >
@@ -431,7 +424,7 @@ export default function TodayScreen() {
         <CollapsibleSection
           title={t('today.sectionVestments')}
           icon="vestments"
-          expanded={!collapsed.vestments}
+          expanded={!todayCollapsed.vestments}
           onToggle={() => toggleSection('vestments')}
           themeColors={theme.colors}
         >
@@ -468,7 +461,7 @@ export default function TodayScreen() {
       <CollapsibleSection
         title={t('today.sectionReadings')}
         icon="readings"
-        expanded={!collapsed.readings}
+        expanded={!todayCollapsed.readings}
         onToggle={() => toggleSection('readings')}
         themeColors={theme.colors}
         headerTrailing={
@@ -511,7 +504,7 @@ export default function TodayScreen() {
       <CollapsibleSection
         title={t('today.sectionFeasts')}
         icon="feasts"
-        expanded={!collapsed.feasts}
+        expanded={!todayCollapsed.feasts}
         onToggle={() => toggleSection('feasts')}
         themeColors={theme.colors}
       >
@@ -539,7 +532,7 @@ export default function TodayScreen() {
       <CollapsibleSection
         title={t('today.sectionSaints')}
         icon="saints"
-        expanded={!collapsed.saints}
+        expanded={!todayCollapsed.saints}
         onToggle={() => toggleSection('saints')}
         themeColors={theme.colors}
       >

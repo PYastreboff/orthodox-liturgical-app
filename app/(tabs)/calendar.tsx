@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, useWindowDimensions } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
@@ -9,7 +9,12 @@ import { CalendarSearch } from '../../src/components/CalendarSearch';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
-import { usePreferences } from '../../src/state/PreferencesContext';
+import {
+  parseStoredCalendarMonth,
+  persistCalendarMonth,
+  readStoredPreferences,
+  usePreferences,
+} from '../../src/state/PreferencesContext';
 import { colors } from '../../src/theme/tokens';
 
 const CALENDAR_COMPACT_BREAKPOINT = 600;
@@ -25,17 +30,45 @@ export default function CalendarScreen() {
   }, []);
 
   const [cursor, setCursor] = useState(thisMonth);
+  const hydratedRef = useRef(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const stored = await readStoredPreferences();
+      if (cancelled) return;
+      const restored = parseStoredCalendarMonth(stored.calendarMonth);
+      if (restored) {
+        setCursor(restored);
+      }
+      hydratedRef.current = true;
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const setCursorMonth = useCallback((date: Date) => {
+    const month = new Date(date.getFullYear(), date.getMonth(), 1);
+    setCursor(month);
+    if (hydratedRef.current) {
+      void persistCalendarMonth(month);
+    }
+  }, []);
 
   const canGoToThisMonth =
     cursor.getFullYear() !== thisMonth.getFullYear() || cursor.getMonth() !== thisMonth.getMonth();
 
-  const onChangeMonth = useCallback((delta: -1 | 1) => {
-    setCursor((prev) => new Date(prev.getFullYear(), prev.getMonth() + delta, 1));
-  }, []);
+  const onChangeMonth = useCallback(
+    (delta: -1 | 1) => {
+      setCursorMonth(new Date(cursor.getFullYear(), cursor.getMonth() + delta, 1));
+    },
+    [cursor, setCursorMonth],
+  );
 
   const onGoToThisMonth = useCallback(() => {
-    setCursor(thisMonth);
-  }, [thisMonth]);
+    setCursorMonth(thisMonth);
+  }, [setCursorMonth, thisMonth]);
 
   const onDayPress = useCallback(
     (date: Date) => {
@@ -47,10 +80,10 @@ export default function CalendarScreen() {
 
   const onSearchSelectDate = useCallback(
     (date: Date) => {
-      setCursor(new Date(date.getFullYear(), date.getMonth(), 1));
+      setCursorMonth(new Date(date.getFullYear(), date.getMonth(), 1));
       onDayPress(date);
     },
-    [onDayPress],
+    [onDayPress, setCursorMonth],
   );
 
   const calendarBg = theme.dark ? colors.darkBg : '#e8e3d8';
