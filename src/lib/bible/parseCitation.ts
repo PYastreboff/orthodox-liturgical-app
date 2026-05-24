@@ -59,8 +59,32 @@ export function parseScriptureCitation(citation: string): ScriptureRef[] | null 
       if (bookNum === null) return null;
       const chapter = Number(withBook[2]);
       const startVerse = Number(withBook[3]);
-      const endVerse = Number(withBook[4] ?? withBook[3]);
-      refs.push({ bookNum, chapter, startVerse, endVerse });
+      const endPart = withBook[4];
+      if (endPart !== undefined) {
+        const endVerse = Number(endPart);
+        // Royster sticheron citations: Ps 27.9-1 → v. 9 then v. 1 (not v. 9–1).
+        if (endVerse < startVerse) {
+          refs.push({ bookNum, chapter, startVerse, endVerse: startVerse });
+          refs.push({ bookNum, chapter, startVerse: endVerse, endVerse });
+          continue;
+        }
+        refs.push({ bookNum, chapter, startVerse, endVerse });
+        continue;
+      }
+      refs.push({ bookNum, chapter, startVerse, endVerse: startVerse });
+      continue;
+    }
+
+    const verseOnly = part.match(/^(\d+)$/);
+    if (verseOnly && bookNum !== null && refs.length > 0) {
+      const last = refs[refs.length - 1]!;
+      const verse = Number(verseOnly[1]);
+      refs.push({
+        bookNum: last.bookNum,
+        chapter: last.chapter,
+        startVerse: verse,
+        endVerse: verse,
+      });
       continue;
     }
 
@@ -68,8 +92,18 @@ export function parseScriptureCitation(citation: string): ScriptureRef[] | null 
     if (continuation && bookNum !== null) {
       const chapter = Number(continuation[1]);
       const startVerse = Number(continuation[2]);
-      const endVerse = Number(continuation[3] ?? continuation[2]);
-      refs.push({ bookNum, chapter, startVerse, endVerse });
+      const endPart = continuation[3];
+      if (endPart !== undefined) {
+        const endVerse = Number(endPart);
+        if (endVerse < startVerse) {
+          refs.push({ bookNum, chapter, startVerse, endVerse: startVerse });
+          refs.push({ bookNum, chapter, startVerse: endVerse, endVerse });
+          continue;
+        }
+        refs.push({ bookNum, chapter, startVerse, endVerse });
+        continue;
+      }
+      refs.push({ bookNum, chapter, startVerse, endVerse: startVerse });
       continue;
     }
 

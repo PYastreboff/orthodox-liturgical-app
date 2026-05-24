@@ -172,6 +172,10 @@ export default function TodayScreen() {
       date: formatJulianReadable(julian, true, uiLanguage),
     });
   }, [civilPlain, t, uiLanguage]);
+  const julianMonthDay = useMemo(() => {
+    const julian = gregorianPlainToJulianPlain(civilPlain);
+    return `${String(julian.month).padStart(2, '0')}-${String(julian.day).padStart(2, '0')}`;
+  }, [civilPlain]);
   const appearance = useMemo(
     () => getLiturgicalAppearanceForLocalDate(selectedDate, primaryCalendar),
     [primaryCalendar, selectedDate],
@@ -187,7 +191,10 @@ export default function TodayScreen() {
     displaySections,
     loadingSlavonic,
     sideBySide,
-  } = useLiturgicalTexts(liturgicalDay, defaultTextLang, uiLanguage);
+  } = useLiturgicalTexts(liturgicalDay, defaultTextLang, uiLanguage, {
+    julianMonthDay,
+    appearanceKey: appearance.key,
+  });
   const { feasts, saints } = useMemo(() => {
     const entries = buildCommemorationEntries(liturgicalDay, {
       appearanceKey: appearance.key,

@@ -17,6 +17,47 @@ import { colors } from '../../src/theme/tokens';
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/peter-yastreboff-6a9664313/';
 const ORTHOCAL_URL = 'https://orthocal.info/';
+const TYPIKON_XML_URL =
+  'https://github.com/Mount-Skete/orthodox-typikon-feasts-xml';
+const PONOMAR_URL = 'https://www.ponomar.net/';
+const GETBIBLE_URL = 'https://getbible.net/v2/';
+
+type DataSource = {
+  url: string;
+  linkKey:
+    | 'settings.sourceOrthocalLink'
+    | 'settings.sourceTypikonLink'
+    | 'settings.sourceRoysterLink'
+    | 'settings.sourceGetBibleLink';
+  hintKey:
+    | 'settings.sourceOrthocalHint'
+    | 'settings.sourceTypikonHint'
+    | 'settings.sourceRoysterHint'
+    | 'settings.sourceGetBibleHint';
+};
+
+const LITURGICAL_DATA_SOURCES: DataSource[] = [
+  {
+    url: ORTHOCAL_URL,
+    linkKey: 'settings.sourceOrthocalLink',
+    hintKey: 'settings.sourceOrthocalHint',
+  },
+  {
+    url: TYPIKON_XML_URL,
+    linkKey: 'settings.sourceTypikonLink',
+    hintKey: 'settings.sourceTypikonHint',
+  },
+  {
+    url: PONOMAR_URL,
+    linkKey: 'settings.sourceRoysterLink',
+    hintKey: 'settings.sourceRoysterHint',
+  },
+  {
+    url: GETBIBLE_URL,
+    linkKey: 'settings.sourceGetBibleLink',
+    hintKey: 'settings.sourceGetBibleHint',
+  },
+];
 
 export default function SettingsScreen() {
   const theme = useTheme();
@@ -123,20 +164,28 @@ export default function SettingsScreen() {
             <Text style={styles.footerLink}>Peter Y.</Text>
           </Pressable>
         </View>
-        <Text
-          style={[styles.footerCredit, styles.attributionBlock, { color: isDark ? '#a39e98' : colors.muted }]}
-        >
-          {t('settings.dataFrom')}
-          <Text
-            style={styles.footerLink}
-            onPress={() => Linking.openURL(ORTHOCAL_URL)}
-            accessibilityRole="link"
-          >
-            Orthocal.info
+        <View style={styles.sourcesBlock}>
+          <Text style={[styles.sourcesTitle, { color: theme.colors.text }]}>
+            {t('settings.dataSourcesTitle')}
           </Text>
-          {' '}
-          {t('settings.ocaRubrics')}
-        </Text>
+          {LITURGICAL_DATA_SOURCES.map((source) => (
+            <View key={source.url} style={styles.sourceRow}>
+              <Pressable
+                onPress={() => Linking.openURL(source.url)}
+                accessibilityRole="link"
+                accessibilityLabel={t(source.linkKey)}
+              >
+                <Text style={styles.footerLink}>{t(source.linkKey)}</Text>
+              </Pressable>
+              <Text style={[styles.sourceHint, { color: isDark ? '#a39e98' : colors.muted }]}>
+                {t(source.hintKey)}
+              </Text>
+            </View>
+          ))}
+          <Text style={[styles.footerCredit, styles.sourcesNote, { color: isDark ? '#a39e98' : colors.muted }]}>
+            {t('settings.dataSourcesNote')}
+          </Text>
+        </View>
       </View>
     </ScrollView>
     </>
@@ -188,10 +237,34 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 17,
   },
-  attributionBlock: {
+  sourcesBlock: {
+    marginTop: 28,
+    paddingHorizontal: 8,
+    width: '100%',
+    maxWidth: 420,
+    alignSelf: 'center',
+  },
+  sourcesTitle: {
+    fontSize: 12,
+    fontWeight: '600',
     textAlign: 'center',
-    marginTop: 8,
-    paddingHorizontal: 12,
+    marginBottom: 8,
+  },
+  sourceRow: {
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  sourceHint: {
+    fontSize: 11,
+    lineHeight: 15,
+    textAlign: 'center',
+    marginTop: 2,
+    paddingHorizontal: 4,
+  },
+  sourcesNote: {
+    textAlign: 'center',
+    marginTop: 4,
+    paddingHorizontal: 4,
   },
   footerLink: {
     fontSize: 12,

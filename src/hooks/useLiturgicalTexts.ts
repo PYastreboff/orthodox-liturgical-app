@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 
 import type { OrthocalDay, OrthocalVerse } from '../lib/api/orthocal';
 import { applyChurchSlavonicToSections } from '../lib/bible/churchSlavonicScripture';
+import { overlayTypikonSlavonicHymns } from '../lib/liturgical/menaion/overlayTypikonSlavonicHymns';
 import {
   buildLiturgicalTextSections,
+  type BuildLiturgicalTextsOptions,
   type LiturgicalTextCategory,
   type LiturgicalTextSection,
 } from '../lib/liturgical/liturgicalTexts';
@@ -29,7 +31,7 @@ function annotateNonScriptureForSlavonic(
       ...section,
       items: section.items.map((item) => ({
         ...item,
-        detail: item.detail ? `${item.detail} · ${note}` : note,
+        detail: item.menaionSlavonic ? item.detail : item.detail ? `${item.detail} · ${note}` : note,
       })),
     };
   });
@@ -52,10 +54,23 @@ export function useLiturgicalTexts(
   day: OrthocalDay | null,
   textLang: TextLanguage,
   uiLanguage: UiLanguage = 'en',
+  options: BuildLiturgicalTextsOptions = {},
 ) {
+  const julianMonthDay = options.julianMonthDay;
+  const appearanceKey = options.appearanceKey;
+
+  const buildOptions = useMemo(
+    (): BuildLiturgicalTextsOptions => ({
+      julianMonthDay,
+      appearanceKey,
+      textLang,
+    }),
+    [julianMonthDay, appearanceKey, textLang],
+  );
+
   const englishSections = useMemo(
-    () => buildLiturgicalTextSections(day, uiLanguage),
-    [day, uiLanguage],
+    () => buildLiturgicalTextSections(day, uiLanguage, buildOptions),
+    [day, uiLanguage, buildOptions],
   );
   const passageMap = useMemo(() => englishPassagesByCitation(day), [day]);
 
@@ -63,11 +78,8 @@ export function useLiturgicalTexts(
   const [loadingSlavonic, setLoadingSlavonic] = useState(false);
 
   useEffect(() => {
-    setSlavonicSections(null);
-  }, [englishSections]);
-
-  useEffect(() => {
     if (textLang === 'en' || !day) {
+      setSlavonicSections(null);
       setLoadingSlavonic(false);
       return;
     }
@@ -75,17 +87,23 @@ export function useLiturgicalTexts(
     let cancelled = false;
     setLoadingSlavonic(true);
 
-    applyChurchSlavonicToSections(englishSections, passageMap).then((next) => {
-      if (!cancelled) {
-        setSlavonicSections(annotateNonScriptureForSlavonic(next, uiLanguage));
-        setLoadingSlavonic(false);
-      }
+    applyChurchSlavonicToSections(englishSections, passageMap).then((scriptureSlavonic) => {
+      if (cancelled) return;
+
+      const withHymns = overlayTypikonSlavonicHymns(
+        scriptureSlavonic,
+        day,
+        { julianMonthDay, appearanceKey },
+        uiLanguage,
+      );
+      setSlavonicSections(annotateNonScriptureForSlavonic(withHymns, uiLanguage));
+      setLoadingSlavonic(false);
     });
 
     return () => {
       cancelled = true;
     };
-  }, [day, englishSections, passageMap, textLang, uiLanguage]);
+  }, [day, englishSections, passageMap, textLang, uiLanguage, julianMonthDay, appearanceKey]);
 
   const displaySections = useMemo(() => {
     if (textLang === 'chu') {

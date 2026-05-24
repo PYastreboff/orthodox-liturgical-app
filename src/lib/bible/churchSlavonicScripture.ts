@@ -148,14 +148,20 @@ export async function applyChurchSlavonicToSections(
 
     const items: LiturgicalTextItem[] = [];
     for (const item of section.items) {
+      if (item.plainText && !item.scriptureCitation) {
+        items.push(item);
+        continue;
+      }
+
       const template = englishPassageByCitation.get(item.citation);
-      const paragraphs = await slavonicParagraphsForCitation(item.citation, template);
+      const lookupCitation = item.scriptureCitation ?? item.citation;
+      const paragraphs = await slavonicParagraphsForCitation(lookupCitation, template);
 
       if (paragraphs) {
         items.push({
           ...item,
           paragraphs,
-          detail: SLAVONIC_DETAIL,
+          detail: item.detail ? `${item.detail} · ${SLAVONIC_DETAIL}` : SLAVONIC_DETAIL,
           plainText: false,
         });
       } else {

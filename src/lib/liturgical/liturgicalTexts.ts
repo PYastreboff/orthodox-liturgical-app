@@ -1,7 +1,10 @@
 import type { LiturgicalReadingView, OrthocalDay, OrthocalReading } from '../api/orthocal';
 import { passageToParagraphs, stripHtml } from '../api/orthocal';
+import { appendMenaionLiturgy } from './menaion/appendMenaionLiturgy';
+import { appendRoysterLiturgy } from './royster/appendRoysterLiturgy';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
+import type { TextLanguage } from '../../state/PreferencesContext';
 
 export function noneForDayLabel(lang: UiLanguage): string {
   return translate(lang, 'readings.noneForDay');
@@ -21,6 +24,10 @@ export type LiturgicalTextItem = LiturgicalReadingView & {
   detail?: string;
   /** Hymn-style text without scripture verse numbers. */
   plainText?: boolean;
+  /** getBible citation for Slavonic psalm lookup (may differ from display `citation`). */
+  scriptureCitation?: string;
+  /** Text is Church Slavonic from menaion/typikon — not “English only” in Slavonic mode. */
+  menaionSlavonic?: boolean;
 };
 
 export type LiturgicalTextSection = {
@@ -197,9 +204,19 @@ function sectionTitle(id: LiturgicalTextCategory, count: number, lang: UiLanguag
   return translate(lang, count === 1 ? keys.one : keys.many);
 }
 
+export type BuildLiturgicalTextsOptions = {
+  /** Julian month-day key (`MM-DD`) for menaion/typikon lookup. */
+  julianMonthDay?: string;
+  /** Liturgical appearance key (e.g. `pascha`, `nativity`). */
+  appearanceKey?: string;
+  /** Scripture/hymn language for readings (troparia use Slavonic only in `chu`). */
+  textLang?: TextLanguage;
+};
+
 export function buildLiturgicalTextSections(
   day: OrthocalDay | null,
   lang: UiLanguage = 'en',
+  options: BuildLiturgicalTextsOptions = {},
 ): LiturgicalTextSection[] {
   const buckets: Record<LiturgicalTextCategory, LiturgicalTextItem[]> = {
     troparion: [],
@@ -220,6 +237,9 @@ export function buildLiturgicalTextSections(
   }
 
   if (day) {
+    appendMenaionLiturgy(buckets, day, lang, options);
+    appendRoysterLiturgy(buckets, day, lang, options);
+
     if (!buckets.troparion.length) {
       const fromStory = extractHymnFromStories(day, 'troparion');
       if (fromStory) buckets.troparion.push(fromStory);

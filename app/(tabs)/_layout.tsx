@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppBrandHeader } from '../../src/components/AppBrandHeader';
 import { TAB_ICON_SIZE, tabBarIconOptions } from '../../src/components/TabBarIcon';
+import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { todayPageBackgroundColor } from '../../src/lib/liturgical/vestmentGradient';
@@ -15,15 +16,19 @@ function TabsLayoutContent() {
   const isDark = useResolvedColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
   const { t } = useAppTranslation();
+  const showTabHeader = useTabHeaderShown();
   const bottomInset = insets.bottom;
   const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + bottomInset;
+  const sceneTopPadding = showTabHeader ? 0 : insets.top;
 
   return (
     <Tabs
       screenOptions={{
+        headerShown: showTabHeader,
         headerStyle: { backgroundColor: isDark ? colors.darkSurface : colors.parchment },
         headerTintColor: isDark ? colors.darkInk : colors.ink,
         headerTitleStyle: { fontWeight: '600' },
+        sceneStyle: { paddingTop: sceneTopPadding },
         tabBarStyle: {
           backgroundColor: isDark ? colors.darkSurface : colors.parchment,
           borderTopColor: isDark ? colors.darkBorder : colors.border,
@@ -61,7 +66,10 @@ function TabsLayoutContent() {
           title: 'OrthoDaily',
           tabBarLabel: t('tabs.today'),
           headerTitle: () => <AppBrandHeader />,
-          sceneStyle: { backgroundColor: todayPageBackgroundColor(isDark) },
+          sceneStyle: {
+            backgroundColor: todayPageBackgroundColor(isDark),
+            paddingTop: sceneTopPadding,
+          },
           ...tabBarIconOptions('today'),
         }}
       />
