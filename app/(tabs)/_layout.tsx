@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Platform } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLayoutSafeAreaInsets } from '../../src/hooks/useLayoutSafeAreaInsets';
 
 import { AppBrandHeader } from '../../src/components/AppBrandHeader';
 import { TAB_ICON_SIZE, tabBarIconOptions } from '../../src/components/TabBarIcon';
@@ -8,13 +8,12 @@ import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { todayPageBackgroundColor } from '../../src/lib/liturgical/vestmentGradient';
+import { TAB_BAR_CONTENT_HEIGHT } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
-
-const TAB_BAR_CONTENT_HEIGHT = 52;
 
 function TabsLayoutContent() {
   const isDark = useResolvedColorScheme() === 'dark';
-  const insets = useSafeAreaInsets();
+  const insets = useLayoutSafeAreaInsets();
   const { t } = useAppTranslation();
   const showTabHeader = useTabHeaderShown();
   const bottomInset = insets.bottom;

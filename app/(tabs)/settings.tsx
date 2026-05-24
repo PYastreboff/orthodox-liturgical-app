@@ -10,6 +10,7 @@ import { SettingsSection } from '../../src/components/settings/SettingsSection';
 import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
 import { FontScalePicker } from '../../src/components/settings/FontScalePicker';
 import { ThemeModePicker } from '../../src/components/settings/ThemeModePicker';
+import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { usePreferences } from '../../src/state/PreferencesContext';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
@@ -77,6 +78,7 @@ export default function SettingsScreen() {
   } = usePreferences();
 
   const version = Constants.expoConfig?.version ?? '0.1.0';
+  const scrollBottomPadding = useTabBarBottomPadding();
 
   return (
     <>
@@ -85,7 +87,7 @@ export default function SettingsScreen() {
       </Head>
       <ScrollView
       style={{ backgroundColor: theme.colors.background }}
-      contentContainerStyle={styles.container}
+      contentContainerStyle={[styles.container, { paddingBottom: scrollBottomPadding }]}
     >
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.colors.text }]}>{t('settings.title')}</Text>
@@ -195,7 +197,6 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    paddingBottom: 40,
   },
   header: {
     marginBottom: 32,

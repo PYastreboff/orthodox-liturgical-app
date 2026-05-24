@@ -30,6 +30,7 @@ import {
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
 import { useFontScale } from '../../src/hooks/useFontScale';
+import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useLiturgicalTexts } from '../../src/hooks/useLiturgicalTexts';
 import {
   feastRankServiceLabel,
@@ -147,6 +148,7 @@ export default function TodayScreen() {
     toggleTodaySection,
   } = usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
+  const scrollBottomPadding = useTabBarBottomPadding();
 
   useFocusEffect(
     useCallback(() => {
@@ -222,7 +224,7 @@ export default function TodayScreen() {
     <VestmentPageBackground appearance={appearance} gradientEnabled={showVestmentGradient}>
     <ScrollView
       style={styles.scroll}
-      contentContainerStyle={styles.container}
+      contentContainerStyle={[styles.container, { paddingBottom: scrollBottomPadding }]}
     >
       <DayHero
         appearance={appearance}
@@ -565,7 +567,6 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    paddingBottom: 40,
   },
   statusLine: {
     textAlign: 'center',

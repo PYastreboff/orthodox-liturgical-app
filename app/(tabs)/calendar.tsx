@@ -7,6 +7,7 @@ import Head from 'expo-router/head';
 import { CalendarColorLegend } from '../../src/components/CalendarColorLegend';
 import { CalendarSearch } from '../../src/components/CalendarSearch';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
+import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import {
@@ -29,6 +30,7 @@ export default function CalendarScreen() {
     return new Date(n.getFullYear(), n.getMonth(), 1);
   }, []);
 
+  const scrollBottomPadding = useTabBarBottomPadding();
   const [cursor, setCursor] = useState(thisMonth);
   const hydratedRef = useRef(false);
 
@@ -97,7 +99,7 @@ export default function CalendarScreen() {
       </Head>
       <ScrollView
       style={[styles.scroll, { backgroundColor: calendarBg }]}
-      contentContainerStyle={styles.scrollContent}
+      contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollBottomPadding }]}
     >
       <Text style={[styles.title, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
       <Text style={[styles.lede, isCompact ? styles.ledeCompact : null, { color: colors.muted }]}>
