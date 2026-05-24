@@ -11,7 +11,13 @@ import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { TAB_BAR_CONTENT_HEIGHT } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
 
-function tabBarBackground(isDark: boolean): string {
+function tabBarBackground(isDark: boolean, phoneLayout: boolean): string {
+  if (phoneLayout) {
+    if (isDark) {
+      return 'rgba(28, 24, 20, 0.96)';
+    }
+    return 'rgba(245, 240, 232, 0.97)';
+  }
   if (isDark) {
     return 'rgba(28, 24, 20, 0.82)';
   }
@@ -25,6 +31,7 @@ function TabsLayoutContent() {
   const insets = useLayoutSafeAreaInsets();
   const { t } = useAppTranslation();
   const showTabHeader = useTabHeaderShown();
+  const phoneLayout = Platform.OS !== 'web' || !showTabHeader;
   const bottomInset = insets.bottom;
   const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + bottomInset;
 
@@ -36,6 +43,7 @@ function TabsLayoutContent() {
         headerTintColor: isDark ? colors.darkInk : colors.ink,
         headerTitleStyle: { fontWeight: '600' },
         sceneStyle: {
+          flex: 1,
           backgroundColor: sceneBackground,
         },
         tabBarStyle: {
@@ -43,8 +51,15 @@ function TabsLayoutContent() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: tabBarBackground(isDark),
-          borderTopColor: isDark ? 'rgba(46, 40, 34, 0.65)' : 'rgba(226, 216, 202, 0.75)',
+          width: '100%',
+          backgroundColor: tabBarBackground(isDark, phoneLayout),
+          borderTopColor: phoneLayout
+            ? isDark
+              ? 'rgba(46, 40, 34, 0.9)'
+              : 'rgba(226, 216, 202, 0.95)'
+            : isDark
+              ? 'rgba(46, 40, 34, 0.65)'
+              : 'rgba(226, 216, 202, 0.75)',
           borderTopWidth: StyleSheet.hairlineWidth,
           height: tabBarHeight,
           paddingTop: 0,
@@ -81,7 +96,7 @@ function TabsLayoutContent() {
           title: 'OrthoDaily',
           tabBarLabel: t('tabs.today'),
           headerTitle: () => <AppBrandHeader />,
-          sceneStyle: { backgroundColor: sceneBackground },
+          sceneStyle: { flex: 1, backgroundColor: 'transparent' },
           ...tabBarIconOptions('today'),
         }}
       />

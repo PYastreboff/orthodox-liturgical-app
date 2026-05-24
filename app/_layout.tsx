@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppThemeProvider } from '../src/components/AppThemeProvider';
+import { WebViewportBootstrap } from '../src/components/WebViewportBootstrap';
 import { DayNavigationProvider } from '../src/state/DayNavigationContext';
 import { PreferencesProvider } from '../src/state/PreferencesContext';
 
@@ -29,6 +30,7 @@ export default function RootLayout() {
         <title>OrthoDaily</title>
       </Head>
       <SafeAreaProvider>
+        <WebViewportBootstrap />
         <PreferencesProvider>
           <AppThemeProvider>
             <DayNavigationProvider>

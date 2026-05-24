@@ -2,56 +2,31 @@ import { Platform } from 'react-native';
 
 import { todayPageBackgroundColor } from '../lib/liturgical/vestmentGradient';
 import { colors } from './tokens';
-
-const BACKDROP_ID = 'orthodaily-safe-area-backdrop';
+import { applyWebViewportHeight } from './webViewport';
 
 function pageBackground(isDark: boolean): string {
   return todayPageBackgroundColor(isDark);
 }
 
-function ensureSafeAreaBackdrop(): HTMLElement {
-  if (typeof document === 'undefined') {
-    throw new Error('document unavailable');
-  }
-  let backdrop = document.getElementById(BACKDROP_ID);
-  if (!backdrop) {
-    backdrop = document.createElement('div');
-    backdrop.id = BACKDROP_ID;
-    backdrop.setAttribute('aria-hidden', 'true');
-    const style = backdrop.style;
-    style.position = 'fixed';
-    style.left = '0';
-    style.right = '0';
-    style.top = 'calc(-1 * env(safe-area-inset-top, 0px))';
-    style.bottom = 'calc(-1 * env(safe-area-inset-bottom, 0px))';
-    style.zIndex = '-1';
-    style.pointerEvents = 'none';
-    document.body.insertBefore(backdrop, document.body.firstChild);
-  }
-  return backdrop;
-}
-
 /**
- * Paint Safari / PWA chrome (notch, home bar, overscroll) with app colors.
- * Never use transparent — iOS shows white behind translucent UI.
+ * Match Safari / PWA chrome to the app (same color on html, body, #root).
+ * Layout height is handled by installWebViewportShell (--app-height).
  */
 export function syncWebDocumentTheme(isDark: boolean, chromeColor?: string): void {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+
+  applyWebViewportHeight();
 
   const bg = chromeColor ?? pageBackground(isDark);
 
   document.documentElement.style.backgroundColor = bg;
   document.body.style.backgroundColor = bg;
-  document.body.style.margin = '0';
+  document.documentElement.style.setProperty('--orthodaily-page-bg', bg);
 
   const root = document.getElementById('root');
   if (root) {
     root.style.backgroundColor = bg;
-    root.style.minHeight = '100dvh';
   }
-
-  const backdrop = ensureSafeAreaBackdrop();
-  backdrop.style.backgroundColor = bg;
 
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   if (themeMeta) {
@@ -62,14 +37,17 @@ export function syncWebDocumentTheme(isDark: boolean, chromeColor?: string): voi
   if (appleStatus) {
     appleStatus.setAttribute('content', 'black-translucent');
   }
-
-  document.documentElement.style.setProperty('--orthodaily-page-bg', bg);
 }
 
-/** Initial paint in +html before React hydrates (matches tokens). */
+/** Initial paint + iOS PWA shell (100dvh default; JS sets 100vh in standalone). */
 export const WEB_ROOT_CSS = `
 html {
+  --app-height: 100dvh;
   height: 100%;
+  width: 100%;
+  margin: 0;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   background-color: ${colors.parchment};
   background-color: var(--orthodaily-page-bg, ${colors.parchment});
 }
@@ -80,9 +58,14 @@ html {
   }
 }
 body {
-  height: 100%;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: var(--app-height, 100dvh);
   margin: 0;
   overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
   background-color: ${colors.parchment};
   background-color: var(--orthodaily-page-bg, ${colors.parchment});
 }
@@ -93,11 +76,14 @@ body {
   }
 }
 #root {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  width: 100%;
+  height: 100%;
   min-height: 100%;
-  min-height: 100dvh;
+  overflow: hidden;
   background-color: ${colors.parchment};
   background-color: var(--orthodaily-page-bg, ${colors.parchment});
 }

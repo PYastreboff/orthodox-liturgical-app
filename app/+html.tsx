@@ -4,7 +4,7 @@ import type { PropsWithChildren } from 'react';
 import { WEB_ROOT_CSS } from '../src/theme/syncWebDocumentTheme';
 import { colors } from '../src/theme/tokens';
 
-/** Web-only root HTML — viewport-fit=cover + themed chrome (no transparent gutters). */
+/** Web-only root HTML — viewport-fit=cover; shell CSS applied in WebViewportBootstrap. */
 export default function Root({ children }: PropsWithChildren) {
   return (
     <html lang="en">
@@ -13,7 +13,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
+          content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
         />
         <meta name="description" content="OrthoDaily" />
         <meta name="theme-color" content={colors.parchment} />
@@ -21,6 +21,11 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <title>OrthoDaily</title>
         <style dangerouslySetInnerHTML={{ __html: WEB_ROOT_CSS }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var n=window.navigator;var s=n.standalone===true||window.matchMedia('(display-mode: standalone)').matches;if(s){document.documentElement.style.setProperty('--app-height','100vh');}}catch(e){}})();`,
+          }}
+        />
         <ScrollViewStyleReset />
       </head>
       <body>{children}</body>

@@ -1,14 +1,7 @@
 import { useEffect, useMemo, type ReactNode } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  View,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import { Platform, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
 import {
   todayPageBackgroundColor,
@@ -24,7 +17,7 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** Parchment (light) or charcoal (dark) base with an optional vestment-colour gradient. */
+/** Full-screen parchment / charcoal with optional vestment gradient (edge-to-edge). */
 export function VestmentPageBackground({
   appearance,
   gradientEnabled,
@@ -33,50 +26,26 @@ export function VestmentPageBackground({
 }: Props) {
   const isDark = useResolvedColorScheme() === 'dark';
   const backgroundColor = todayPageBackgroundColor(isDark);
-  const insets = useLayoutSafeAreaInsets();
   const gradient = useMemo(
     () => vestmentPageGradient(appearance, gradientEnabled, isDark),
     [appearance.key, appearance.label, gradientEnabled, isDark],
   );
 
-  const bleedTop = insets.top;
-  const bleedBottom = insets.bottom;
-  const chromeColor =
-    gradient && gradient.colors.length > 0 ? gradient.colors[0] : backgroundColor;
-
   useEffect(() => {
     if (Platform.OS !== 'web') return;
-    syncWebDocumentTheme(isDark, chromeColor);
+    syncWebDocumentTheme(isDark, backgroundColor);
     return () => syncWebDocumentTheme(isDark);
-  }, [isDark, chromeColor]);
+  }, [isDark, backgroundColor]);
 
   return (
-    <View
-      style={[
-        styles.root,
-        { backgroundColor },
-        bleedTop > 0 || bleedBottom > 0
-          ? {
-              marginTop: -bleedTop,
-              marginBottom: -bleedBottom,
-            }
-          : null,
-        style,
-      ]}
-    >
+    <View style={[styles.root, { backgroundColor }, style]}>
       {gradient ? (
         <LinearGradient
           colors={[...gradient.colors]}
           locations={[...gradient.locations]}
           start={gradient.start}
           end={gradient.end}
-          style={[
-            styles.gradientLayer,
-            {
-              top: -bleedTop,
-              bottom: -bleedBottom,
-            },
-          ]}
+          style={styles.gradientLayer}
           pointerEvents="none"
         />
       ) : null}
@@ -88,11 +57,11 @@ export function VestmentPageBackground({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    width: '100%',
+    height: '100%',
   },
   gradientLayer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
+    ...StyleSheet.absoluteFillObject,
     zIndex: 0,
   },
   content: {
