@@ -32,6 +32,15 @@ export type FastingFoodsDetail = {
   totalAbstinence?: boolean;
 };
 
+/** Drives pill colour for Fast / No fast chips. */
+export type FastSummaryKind =
+  | 'no_fast'
+  | 'strict'
+  | 'wine_oil'
+  | 'fish'
+  | 'dairy'
+  | 'total_abstinence';
+
 const FAST_LEVEL_KEYS: Record<number, string> = {
   0: 'fasting.noFast',
   1: 'fasting.levelStrict',
@@ -222,6 +231,23 @@ export function localizedFastSummaryLabel(
     lang,
     isOrthocalFastDay(day, appearanceKey, weeklyFast) ? 'fasting.summaryFast' : 'fasting.summaryNoFast',
   );
+}
+
+/** Pill background colour from the resolved fasting rule. */
+export function fastSummaryKindFromDetail(
+  detail: FastingFoodsDetail,
+  isFastDay: boolean,
+): FastSummaryKind {
+  if (detail.totalAbstinence) return 'total_abstinence';
+  if (!isFastDay || detail.allowed.some((item) => item.kind === 'all')) {
+    return 'no_fast';
+  }
+
+  const allowed = new Set(detail.allowed.map((item) => item.kind));
+  if (allowed.has('dairy') || allowed.has('eggs')) return 'dairy';
+  if (allowed.has('fish')) return 'fish';
+  if (allowed.has('wine') && allowed.has('oil')) return 'wine_oil';
+  return 'strict';
 }
 
 /** Allowed / not allowed lists and orthocal rule name for the Fasting section body. */

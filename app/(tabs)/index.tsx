@@ -4,6 +4,7 @@ import { useFocusEffect, useTheme } from '@react-navigation/native';
 
 import { CollapsibleSection } from '../../src/components/CollapsibleSection';
 import { FastingFoodList } from '../../src/components/FastingFoodList';
+import { FastSummaryPill } from '../../src/components/FastSummaryPill';
 import { SectionTitleRow } from '../../src/components/SectionTitleRow';
 import { DayHero } from '../../src/components/DayHero';
 import { TypikonSymbol } from '../../src/components/TypikonSymbol';
@@ -294,7 +295,11 @@ export default function TodayScreen() {
           <Text style={[styles.dateLineValue, type.dateLine, { color: theme.colors.text }]}>
             {gregorianDateLabel}
           </Text>
-          <Text style={[styles.pill, type.pill, styles.dateFastPill]}>{dashboard.fastSummaryLabel}</Text>
+          <FastSummaryPill
+            label={dashboard.fastSummaryLabel}
+            kind={dashboard.fastSummaryKind}
+            textStyle={type.pill}
+          />
         </View>
         {dashboard.isMajorFeastDay ? (
           <View
@@ -361,7 +366,11 @@ export default function TodayScreen() {
       >
         <View style={styles.rowBetween}>
           <Text style={[styles.body, type.body, { color: theme.colors.text }]}>{t('today.level')}</Text>
-          <Text style={[styles.pill, type.pill, styles.dateFastPill]}>{dashboard.fastSummaryLabel}</Text>
+          <FastSummaryPill
+            label={dashboard.fastSummaryLabel}
+            kind={dashboard.fastSummaryKind}
+            textStyle={type.pill}
+          />
         </View>
         {dashboard.isFastDay ? (
           <>
@@ -603,15 +612,6 @@ const styles = StyleSheet.create({
   dateLineValue: {
     fontWeight: '600',
     marginTop: 2,
-  },
-  dateFastPill: {
-    backgroundColor: '#5c3b2e',
-    color: '#fff',
-    alignSelf: 'center',
-    minWidth: 76,
-    textAlign: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 14,
   },
   fastWeeklyTitle: {
     marginTop: 10,

@@ -2,8 +2,10 @@ import type { OrthocalDay } from '../api/orthocal';
 import {
   isGreatAndHolyFriday,
   isOrthocalFastDay,
+  fastSummaryKindFromDetail,
   localizedFastSummaryLabel,
   localizedFastingFoodsDetail,
+  type FastSummaryKind,
   type FastingFoodsDetail,
 } from '../../i18n/fastingLabels';
 import { localizedToneLabel } from '../../i18n/feastRank';
@@ -41,6 +43,8 @@ export type DayDashboardData = {
   feastRank: FeastRankDisplay;
   /** Short pill: "Fast" / "No fast" (date row, hero, Fasting section). */
   fastSummaryLabel: string;
+  /** Pill colour: strict, wine & oil, fish, dairy, no fast, total abstinence. */
+  fastSummaryKind: FastSummaryKind;
   isFastDay: boolean;
   /** "Wednesday fast" / "Friday fast" in the Fasting section (null on other days). */
   weeklyFastSectionLabel: string | null;
@@ -117,6 +121,7 @@ export function buildDayDashboard(
     lang,
     civil,
   );
+  const fastSummaryKind = fastSummaryKindFromDetail(fastingFoods, isFastDay);
 
   const dayTitle = liturgicalDayTitle(
     liturgicalDay,
@@ -145,6 +150,7 @@ export function buildDayDashboard(
     toneLabel,
     feastRank,
     fastSummaryLabel,
+    fastSummaryKind,
     isFastDay,
     weeklyFastSectionLabel,
     fastingFoods,

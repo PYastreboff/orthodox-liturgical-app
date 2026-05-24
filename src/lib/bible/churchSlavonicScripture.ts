@@ -4,10 +4,11 @@ import type {
   LiturgicalTextItem,
   LiturgicalTextSection,
 } from '../liturgical/liturgicalTexts';
-import { parseScriptureCitation } from './parseCitation';
+import { resolveScriptureRefs, type ScriptureRef } from './parseCitation';
 
-const GETBIBLE_TRANSLATION = 'csielizabeth';
+const GETBIBLE_TRANSLATIONS = ['csielizabeth'] as const;
 const GETBIBLE_BASE = 'https://api.getbible.net/v2';
+const SLAVONIC_DETAIL = 'Church Slavonic (Elizabeth Bible, 1757)';
 
 const SCRIPTURE_CATEGORIES = new Set<LiturgicalTextCategory>([
   'epistle',
@@ -25,13 +26,17 @@ type GetBibleVerse = {
 
 const chapterCache = new Map<string, GetBibleVerse[]>();
 
-async function fetchChapter(bookNum: number, chapter: number): Promise<GetBibleVerse[] | null> {
-  const key = `${bookNum}:${chapter}`;
+async function fetchChapter(
+  translation: string,
+  bookNum: number,
+  chapter: number,
+): Promise<GetBibleVerse[] | null> {
+  const key = `${translation}:${bookNum}:${chapter}`;
   const cached = chapterCache.get(key);
   if (cached) return cached;
 
   try {
-    const res = await fetch(`${GETBIBLE_BASE}/${GETBIBLE_TRANSLATION}/${bookNum}/${chapter}.json`);
+    const res = await fetch(`${GETBIBLE_BASE}/${translation}/${bookNum}/${chapter}.json`);
     if (!res.ok) return null;
     const data = (await res.json()) as { verses?: GetBibleVerse[] };
     const verses = data.verses ?? [];
@@ -40,6 +45,32 @@ async function fetchChapter(bookNum: number, chapter: number): Promise<GetBibleV
   } catch {
     return null;
   }
+}
+
+async function slavonicLinesForRefs(refs: ScriptureRef[]): Promise<LiturgicalVerseLine[] | null> {
+  const lines: LiturgicalVerseLine[] = [];
+
+  for (const translation of GETBIBLE_TRANSLATIONS) {
+    lines.length = 0;
+
+    for (const ref of refs) {
+      const chapterVerses = await fetchChapter(translation, ref.bookNum, ref.chapter);
+      if (!chapterVerses) {
+        lines.length = 0;
+        break;
+      }
+      const slice = versesInRange(chapterVerses, ref.startVerse, ref.endVerse);
+      if (!slice.length) {
+        lines.length = 0;
+        break;
+      }
+      lines.push(...slice);
+    }
+
+    if (lines.length) return lines;
+  }
+
+  return null;
 }
 
 function versesInRange(
@@ -58,6 +89,21 @@ function groupParagraphs(
 ): LiturgicalVerseLine[][] {
   if (!lines.length) return [];
   if (!template?.length) return [lines];
+
+  if (lines.length === template.length) {
+    const paragraphs: LiturgicalVerseLine[][] = [];
+    let current: LiturgicalVerseLine[] = [];
+    for (let i = 0; i < lines.length; i += 1) {
+      if (template[i].paragraph_start && current.length > 0) {
+        paragraphs.push(current);
+        current = [lines[i]];
+      } else {
+        current.push(lines[i]);
+      }
+    }
+    if (current.length > 0) paragraphs.push(current);
+    return paragraphs.length ? paragraphs : [lines];
+  }
 
   const paragraphs: LiturgicalVerseLine[][] = [];
   let current: LiturgicalVerseLine[] = [];
@@ -80,18 +126,11 @@ export async function slavonicParagraphsForCitation(
   citation: string,
   englishTemplate?: OrthocalVerse[] | null,
 ): Promise<LiturgicalVerseLine[][] | null> {
-  const refs = parseScriptureCitation(citation);
+  const refs = resolveScriptureRefs(citation, englishTemplate);
   if (!refs) return null;
 
-  const lines: LiturgicalVerseLine[] = [];
-
-  for (const ref of refs) {
-    const chapterVerses = await fetchChapter(ref.bookNum, ref.chapter);
-    if (!chapterVerses) return null;
-    lines.push(...versesInRange(chapterVerses, ref.startVerse, ref.endVerse));
-  }
-
-  if (!lines.length) return null;
+  const lines = await slavonicLinesForRefs(refs);
+  if (!lines?.length) return null;
   return groupParagraphs(lines, englishTemplate ?? undefined);
 }
 
@@ -116,7 +155,7 @@ export async function applyChurchSlavonicToSections(
         items.push({
           ...item,
           paragraphs,
-          detail: 'Church Slavonic (Elizabeth Bible, 1757)',
+          detail: SLAVONIC_DETAIL,
           plainText: false,
         });
       } else {

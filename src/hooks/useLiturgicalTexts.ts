@@ -39,9 +39,10 @@ function englishPassagesByCitation(day: OrthocalDay | null): Map<string, Orthoca
   const map = new Map<string, OrthocalVerse[] | undefined>();
   if (!day?.readings) return map;
   for (const reading of day.readings) {
-    const key = reading.display || reading.short_display;
-    if (key && reading.passage?.length) {
-      map.set(key, reading.passage);
+    if (!reading.passage?.length) continue;
+    for (const key of [reading.display, reading.short_display]) {
+      const trimmed = key?.trim();
+      if (trimmed) map.set(trimmed, reading.passage);
     }
   }
   return map;

@@ -171,8 +171,12 @@ function normalizeAlias(name: string): string {
 }
 
 export function getBibleBookNumber(bookName: string): number | null {
+  const usfm = bookName.replace(/\./g, '').replace(/\s+/g, '').trim().toUpperCase();
+  const byUsfm = USFM_TO_NR[usfm];
+  if (byUsfm !== undefined) return byUsfm;
+
   const cleaned = normalizeAlias(bookName);
-  const usfm = ALIAS_TO_USFM[cleaned];
-  if (!usfm) return null;
-  return USFM_TO_NR[usfm] ?? null;
+  const mapped = ALIAS_TO_USFM[cleaned];
+  if (!mapped) return null;
+  return USFM_TO_NR[mapped] ?? null;
 }
