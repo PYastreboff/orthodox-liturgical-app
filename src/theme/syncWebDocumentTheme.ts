@@ -50,35 +50,14 @@ html {
   }
 }
 html.${IOS_WEB_CLASS},
-html.${IOS_WEB_CLASS} body {
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-height: 100lvh !important;
-  min-height: 100dvh !important;
-  height: var(--app-cover-height-px, 100%) !important;
-  max-height: none !important;
-  box-sizing: border-box;
-}
+html.${IOS_WEB_CLASS} body,
 html.${IOS_WEB_CLASS} #root {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: auto !important;
-  width: 100% !important;
-  max-width: 100% !important;
   height: var(--app-height-px, 100%) !important;
   min-height: var(--app-height-px, 100%) !important;
   max-height: var(--app-height-px, 100%) !important;
+  width: 100% !important;
+  max-width: 100% !important;
   box-sizing: border-box;
-}
-#orthodaily-viewport-backdrop {
-  position: fixed !important;
-  inset: 0 !important;
-  min-height: 100lvh !important;
-  min-height: 100dvh !important;
 }
 html:not(.${IOS_WEB_CLASS}) {
   min-height: 100dvh;
