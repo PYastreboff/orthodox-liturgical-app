@@ -1,20 +1,25 @@
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 type Props = {
   color: string;
-  /** Extra fill below the tab bar to hide sub-pixel seams (iOS Safari / phone). */
+  /** Extra fill below the tab bar layout box. */
   bleedPx: number;
 };
 
-/** Solid tab bar backdrop that extends slightly past the layout box. */
+/**
+ * Solid backdrop for the tab bar. Extends past the bottom edge on phone/web so RN does not
+ * leave a 1px unpainted strip above Safari’s toolbar or the home indicator.
+ */
 export function TabBarBleedBackground({ color, bleedPx }: Props) {
+  const extend = Math.max(bleedPx, Platform.OS === 'web' ? 4 : 2);
+
   return (
     <View
       style={[
         styles.fill,
         {
           backgroundColor: color,
-          bottom: bleedPx > 0 ? -bleedPx : 0,
+          bottom: -extend,
         },
       ]}
     />
@@ -23,7 +28,7 @@ export function TabBarBleedBackground({ color, bleedPx }: Props) {
 
 const styles = StyleSheet.create({
   fill: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,

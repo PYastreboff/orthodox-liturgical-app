@@ -40,19 +40,20 @@ function TabsLayoutContent() {
   const bottomInset = insets.bottom;
   const safariChrome = useSafariBottomChromeInset();
   const useSafariDockedBar = Platform.OS === 'web' && isIosSafariBrowser() && safariChrome > 0;
-  const safariTabBarBleed = useSafariDockedBar;
-  const nativePhoneBleed = phoneLayout && Platform.OS === 'ios' && !safariTabBarBleed;
+  const phoneBottomOverlap =
+    phoneLayout && (useSafariDockedBar || Platform.OS === 'ios') ? 3 : 0;
+  const safariTabBarBleed = useSafariDockedBar || phoneBottomOverlap > 0;
+  const nativePhoneBleed = phoneLayout && Platform.OS === 'ios' && !useSafariDockedBar;
   const tabBarBleedHeight = safariTabBarBleed
     ? SAFARI_TAB_BAR_BLEED_PX
     : nativePhoneBleed
       ? 2
       : 0;
-  /** Dock to physical bottom; pad content above Safari toolbar (no floating gap). */
-  const tabBarBottom = useSafariDockedBar ? 0 : safariChrome;
+  const tabBarBottom = useSafariDockedBar ? -phoneBottomOverlap : safariChrome;
   const tabBarBottomPad = useSafariDockedBar
     ? safariChrome + bottomInset + tabBarBleedHeight
     : bottomInset + tabBarBleedHeight + (Platform.OS === 'android' && bottomInset === 0 ? 8 : 0);
-  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + tabBarBottomPad;
+  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + tabBarBottomPad + phoneBottomOverlap;
   const tabBarBg = tabBarBackground(isDark, phoneLayout);
 
   return (
@@ -88,7 +89,10 @@ function TabsLayoutContent() {
             : null),
         },
         tabBarBackground: () => (
-          <TabBarBleedBackground color={tabBarBg} bleedPx={tabBarBleedHeight} />
+          <TabBarBleedBackground
+            color={tabBarBg}
+            bleedPx={tabBarBleedHeight + phoneBottomOverlap}
+          />
         ),
         tabBarItemStyle: {
           height: TAB_BAR_CONTENT_HEIGHT,
