@@ -35,6 +35,7 @@ html {
   --safari-bottom-chrome: 0px;
   --orthodaily-page-bg: ${colors.parchment};
   width: 100%;
+  max-width: 100%;
   margin: 0;
   padding: 0;
   -webkit-text-size-adjust: 100%;
@@ -54,6 +55,9 @@ html.${IOS_WEB_CLASS} #root {
   height: var(--app-height-px, 100%) !important;
   min-height: var(--app-height-px, 100%) !important;
   max-height: var(--app-height-px, 100%) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
 }
 html:not(.${IOS_WEB_CLASS}) {
   min-height: 100dvh;

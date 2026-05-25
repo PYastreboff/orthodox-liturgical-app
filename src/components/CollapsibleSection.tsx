@@ -1,8 +1,8 @@
 import { useEffect, type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
+import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { SectionTitleRow } from './SectionTitleRow';
@@ -30,8 +30,8 @@ type Props = {
   onToggle: () => void;
   children: ReactNode;
   themeColors: { card: string; border: string; text: string };
-  /** Shown in the section header (e.g. compact controls); does not trigger collapse. */
-  headerTrailing?: ReactNode;
+  /** Top of expandable body, right-aligned (e.g. readings language toggle). */
+  bodyTopTrailing?: ReactNode;
 };
 
 export function CollapsibleSection({
@@ -41,12 +41,11 @@ export function CollapsibleSection({
   onToggle,
   children,
   themeColors,
-  headerTrailing,
+  bodyTopTrailing,
 }: Props) {
   const { t } = useAppTranslation();
   const phoneLayout = usePhoneLayout();
   const cardPadding = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
-  const stackHeaderTrailing = phoneLayout && headerTrailing != null;
   const progress = useSharedValue(expanded ? 1 : 0);
 
   useEffect(() => {
@@ -77,9 +76,6 @@ export function CollapsibleSection({
           titleLines={phoneLayout ? 3 : 2}
         />
       </Pressable>
-      {!stackHeaderTrailing && headerTrailing ? (
-        <View style={styles.headerTrailing}>{headerTrailing}</View>
-      ) : null}
       <Pressable
         style={styles.sectionChevronWrap}
         onPress={onToggle}
@@ -101,15 +97,9 @@ export function CollapsibleSection({
         { backgroundColor: themeColors.card, borderColor: themeColors.border, padding: cardPadding },
       ]}
     >
-      {stackHeaderTrailing ? (
-        <View style={styles.sectionHeaderColumn}>
-          {headerRow}
-          <View style={styles.headerTrailingCompact}>{headerTrailing}</View>
-        </View>
-      ) : (
-        headerRow
-      )}
+      {headerRow}
       <Animated.View style={[styles.sectionBody, bodyStyle]} pointerEvents={expanded ? 'auto' : 'none'}>
+        {bodyTopTrailing ? <View style={styles.bodyTopTrailing}>{bodyTopTrailing}</View> : null}
         {children}
       </Animated.View>
     </View>
@@ -130,21 +120,15 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     gap: 6,
   },
-  sectionHeaderColumn: {
-    marginVertical: 4,
-  },
   sectionHeaderMain: {
     flex: 1,
     minWidth: 0,
   },
-  headerTrailing: {
-    flexShrink: 0,
-  },
-  headerTrailingCompact: {
-    alignSelf: 'flex-end',
-    marginTop: 2,
-    marginBottom: 2,
-    paddingRight: 38,
+  bodyTopTrailing: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 4,
   },
   sectionChevronWrap: {
     width: 32,

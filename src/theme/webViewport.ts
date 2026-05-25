@@ -88,18 +88,19 @@ export function measureWebSafeAreaInset(
 ): number {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return 0;
 
+  const horizontal = edge === 'safe-area-inset-left' || edge === 'safe-area-inset-right';
   const el = document.createElement('div');
   el.style.cssText = [
     'position:fixed',
     'top:0',
     'left:0',
-    'width:0',
-    `height:env(${edge}, 0px)`,
+    horizontal ? `width:env(${edge}, 0px)` : 'width:0',
+    horizontal ? 'height:0' : `height:env(${edge}, 0px)`,
     'visibility:hidden',
     'pointer-events:none',
   ].join(';');
   document.body.appendChild(el);
-  const value = el.offsetHeight;
+  const value = horizontal ? el.offsetWidth : el.offsetHeight;
   document.body.removeChild(el);
   return value;
 }
@@ -313,6 +314,23 @@ export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
   function ios(){return /iPhone|iPad|iPod/i.test(navigator.userAgent||'');}
   function layoutH(){return Math.round(window.innerHeight);}
   function layoutVh(){var h=layoutH();return h>0?h/100:0;}
+  function syncPageBackground(){
+    var d=document.documentElement,b=document.body;
+    if(!b)return;
+    var bg=(d.style.getPropertyValue('--orthodaily-page-bg')||'').trim();
+    if(!bg){
+      var cs=getComputedStyle(d);
+      bg=(cs.getPropertyValue('--orthodaily-page-bg')||cs.backgroundColor||'').trim();
+    }
+    if(bg){
+      d.style.backgroundColor=bg;
+      b.style.backgroundColor=bg;
+      var bd=document.getElementById('orthodaily-viewport-backdrop');
+      if(bd)bd.style.backgroundColor=bg;
+      var r=document.getElementById('root');
+      if(r)r.style.backgroundColor=bg;
+    }
+  }
   function patchVv(){
     if(!ios()||!window.visualViewport||window.__orthodailyVvPatch)return;
     var native=window.visualViewport;
@@ -353,9 +371,15 @@ export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
     if(r){r.style.cssText='position:fixed;top:0;left:0;right:0;'+shell+';display:flex;flex-direction:column;box-sizing:border-box;z-index:1';}
   }
   function sync(){
-    try{patchVv();if(ios()){applyIos();}}catch(e){}
+    try{
+      patchVv();
+      syncPageBackground();
+      if(ios()){applyIos();}
+      syncPageBackground();
+    }catch(e){}
   }
-  sync();
+  if(document.body){sync();}
+  else{document.addEventListener('DOMContentLoaded',sync,{once:true});}
   window.addEventListener('resize',sync);
   window.addEventListener('orientationchange',sync);
   var nv=window.__orthodailyNativeVv;

@@ -23,9 +23,12 @@ export default function Root({ children }: PropsWithChildren) {
         <title>OrthoDaily</title>
         <ScrollViewStyleReset />
         <style dangerouslySetInnerHTML={{ __html: WEB_ROOT_CSS }} />
-        <script dangerouslySetInnerHTML={{ __html: WEB_VIEWPORT_BOOT_SCRIPT }} />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* After body exists — Radford-style cover + bg before React hydrates */}
+        <script dangerouslySetInnerHTML={{ __html: WEB_VIEWPORT_BOOT_SCRIPT }} />
+      </body>
     </html>
   );
 }

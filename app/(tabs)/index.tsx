@@ -485,7 +485,7 @@ export default function TodayScreen() {
         expanded={!todayCollapsed.readings}
         onToggle={() => toggleSection('readings')}
         themeColors={theme.colors}
-        headerTrailing={
+        bodyTopTrailing={
           <ReadingsLanguageToggle
             value={defaultTextLang}
             onChange={setDefaultTextLang}
