@@ -1,52 +1,27 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
-import { isIosMobileWeb, layoutViewportHeightPx } from '../theme/webViewport';
+import { isIosMobileWeb } from '../theme/webViewport';
 
 type Props = {
   children: ReactNode;
   backgroundColor: string;
 };
 
-/**
- * On iOS, #root is a fixed shell at innerHeight px — this view must match that height exactly.
- */
+/** Fills the fixed #root shell on iOS (height: 100%); flex fill elsewhere. */
 export function WebShell({ children, backgroundColor }: Props) {
-  const [shellHeight, setShellHeight] = useState(() =>
-    Platform.OS === 'web' && isIosMobileWeb() ? layoutViewportHeightPx() : 0,
-  );
-
-  useEffect(() => {
-    if (Platform.OS !== 'web' || !isIosMobileWeb()) return;
-
-    const sync = () => setShellHeight(layoutViewportHeightPx());
-    sync();
-
-    window.addEventListener('resize', sync);
-    window.addEventListener('orientationchange', sync);
-    window.visualViewport?.addEventListener('resize', sync);
-    window.visualViewport?.addEventListener('scroll', sync);
-
-    return () => {
-      window.removeEventListener('resize', sync);
-      window.removeEventListener('orientationchange', sync);
-      window.visualViewport?.removeEventListener('resize', sync);
-      window.visualViewport?.removeEventListener('scroll', sync);
-    };
-  }, []);
-
   if (Platform.OS !== 'web') {
     return <>{children}</>;
   }
 
-  const iosShell = isIosMobileWeb() && shellHeight > 0;
+  const ios = isIosMobileWeb();
 
   return (
     <View
       style={[
         styles.shell,
         { backgroundColor },
-        iosShell ? { height: shellHeight, minHeight: shellHeight, maxHeight: shellHeight } : styles.shellFlex,
+        ios ? styles.shellIos : styles.shellFlex,
       ]}
     >
       {children}
@@ -58,6 +33,12 @@ const styles = StyleSheet.create({
   shell: {
     width: '100%',
     overflow: 'hidden',
+  },
+  shellIos: {
+    flex: 1,
+    height: '100%',
+    minHeight: '100%',
+    maxHeight: '100%',
   },
   shellFlex: {
     flex: 1,

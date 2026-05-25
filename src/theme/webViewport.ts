@@ -3,9 +3,8 @@ import { Platform } from 'react-native';
 import { SAFARI_TAB_BAR_BLEED_PX } from './layout';
 
 const BACKDROP_ID = 'orthodaily-viewport-backdrop';
-const IOS_SHELL_CLASS = 'orthodaily-ios-web';
+export const IOS_WEB_CLASS = 'orthodaily-ios-web';
 
-/** Unpatched visual viewport — Safari toolbar inset math only. */
 let nativeVisualViewport: VisualViewport | null = null;
 
 export function getNativeVisualViewport(): VisualViewport | null {
@@ -13,7 +12,6 @@ export function getNativeVisualViewport(): VisualViewport | null {
   return nativeVisualViewport ?? window.visualViewport ?? null;
 }
 
-/** Standalone “Add to Home Screen”. */
 export function isIosWebStandalone(): boolean {
   if (Platform.OS !== 'web' || typeof navigator === 'undefined') return false;
   const nav = navigator as Navigator & { standalone?: boolean };
@@ -33,7 +31,6 @@ export function isIosSafariBrowser(): boolean {
   return isIosMobileWeb() && !isIosWebStandalone();
 }
 
-/** Layout viewport — paints behind Safari UI with viewport-fit=cover. */
 export function layoutViewportHeightPx(): number {
   if (typeof window === 'undefined') return 0;
   return Math.round(window.innerHeight);
@@ -44,9 +41,15 @@ export function layoutViewportWidthPx(): number {
   return Math.round(window.innerWidth);
 }
 
+/** 1% of layout viewport — reliable on iOS Safari (unlike 1dvh). */
+export function layoutVhUnitPx(): number {
+  const h = layoutViewportHeightPx();
+  return h > 0 ? h / 100 : 0;
+}
+
 /**
- * RN Web uses visualViewport for Dimensions (shorter than layout viewport).
- * Proxy to innerHeight so flex layouts fill the fixed iOS shell.
+ * RN Web reads visualViewport for Dimensions (shorter than layout viewport).
+ * Proxy to innerHeight on all iOS mobile web.
  */
 export function installVisualViewportLayoutPatch(): void {
   if (typeof window === 'undefined' || !isIosMobileWeb()) return;
@@ -127,6 +130,11 @@ export function safariTabBarBottomOffset(chromePx: number): number {
   return Math.max(0, chromePx - SAFARI_TAB_BAR_BLEED_PX);
 }
 
+function readPageBackground(): string | undefined {
+  const fromVar = document.documentElement.style.getPropertyValue('--orthodaily-page-bg').trim();
+  return fromVar || undefined;
+}
+
 function ensureViewportBackdrop(): HTMLElement {
   let el = document.getElementById(BACKDROP_ID);
   if (!el) {
@@ -138,36 +146,25 @@ function ensureViewportBackdrop(): HTMLElement {
   return el;
 }
 
-function paintChrome(bg: string | undefined): void {
-  if (!bg || typeof document === 'undefined') return;
-  const doc = document.documentElement;
-  const body = document.body;
-  const root = document.getElementById('root');
-  const backdrop = document.getElementById(BACKDROP_ID);
-  doc.style.backgroundColor = bg;
-  body.style.backgroundColor = bg;
-  if (root) root.style.backgroundColor = bg;
-  if (backdrop) backdrop.style.backgroundColor = bg;
-}
-
-/** Fixed shell sized to innerHeight — avoids 100dvh/100vh letterboxing on iOS. */
-function applyIosMobileShell(pageBackground?: string): void {
+/** iOS: pixel shell from innerHeight (no 100dvh). Desktop: 100dvh flex shell. */
+function applyIosWebShell(pageBackground?: string): void {
   const h = layoutViewportHeightPx();
-  const w = layoutViewportWidthPx();
   if (h <= 0) return;
 
   const doc = document.documentElement;
-  doc.classList.add(IOS_SHELL_CLASS);
-  doc.style.setProperty('--orthodaily-shell-height', `${h}px`);
-  doc.style.setProperty('--orthodaily-shell-width', `${w}px`);
-  doc.style.setProperty('--app-height', `${h}px`);
+  const shellHeight = `${h}px`;
+
+  doc.classList.add(IOS_WEB_CLASS);
+  doc.style.setProperty('--app-height-px', shellHeight);
+  doc.style.setProperty('--vh', `${layoutVhUnitPx()}px`);
+  doc.style.setProperty('--app-height', shellHeight);
   doc.style.setProperty(
     '--safari-bottom-chrome',
     `${isIosSafariBrowser() ? measureSafariBottomChrome() : 0}px`,
   );
-  doc.style.height = `${h}px`;
-  doc.style.minHeight = `${h}px`;
-  doc.style.maxHeight = `${h}px`;
+  doc.style.height = shellHeight;
+  doc.style.minHeight = shellHeight;
+  doc.style.maxHeight = shellHeight;
   doc.style.width = '100%';
   doc.style.margin = '0';
   doc.style.padding = '0';
@@ -179,9 +176,9 @@ function applyIosMobileShell(pageBackground?: string): void {
   body.style.left = '0';
   body.style.right = '0';
   body.style.width = '100%';
-  body.style.height = `${h}px`;
-  body.style.minHeight = `${h}px`;
-  body.style.maxHeight = `${h}px`;
+  body.style.height = shellHeight;
+  body.style.minHeight = shellHeight;
+  body.style.maxHeight = shellHeight;
   body.style.margin = '0';
   body.style.padding = '0';
   body.style.overflow = 'hidden';
@@ -206,32 +203,37 @@ function applyIosMobileShell(pageBackground?: string): void {
     root.style.left = '0';
     root.style.right = '0';
     root.style.width = '100%';
-    root.style.height = `${h}px`;
-    root.style.minHeight = `${h}px`;
-    root.style.maxHeight = `${h}px`;
+    root.style.height = shellHeight;
+    root.style.minHeight = shellHeight;
+    root.style.maxHeight = shellHeight;
     root.style.margin = '0';
     root.style.padding = '0';
     root.style.display = 'flex';
     root.style.flexDirection = 'column';
+    root.style.boxSizing = 'border-box';
     root.style.overflow = 'hidden';
     root.style.zIndex = '1';
-    root.style.boxSizing = 'border-box';
   }
 
-  paintChrome(pageBackground);
+  const bg = pageBackground ?? readPageBackground();
+  if (bg) {
+    doc.style.backgroundColor = bg;
+    body.style.backgroundColor = bg;
+    backdrop.style.backgroundColor = bg;
+    if (root) root.style.backgroundColor = bg;
+  }
 }
 
-/** Desktop / Android web — dynamic viewport units, no fixed body. */
-function applyStandardWebShell(pageBackground?: string): void {
+function applyDesktopWebShell(pageBackground?: string): void {
   const doc = document.documentElement;
-  doc.classList.remove(IOS_SHELL_CLASS);
-  doc.style.removeProperty('--orthodaily-shell-height');
-  doc.style.removeProperty('--orthodaily-shell-width');
+  doc.classList.remove(IOS_WEB_CLASS);
+  doc.style.removeProperty('--app-height-px');
+  doc.style.removeProperty('--vh');
   doc.style.setProperty('--app-height', '100dvh');
   doc.style.setProperty('--safari-bottom-chrome', '0px');
   doc.style.removeProperty('height');
-  doc.style.removeProperty('minHeight');
-  doc.style.removeProperty('maxHeight');
+  doc.style.removeProperty('min-height');
+  doc.style.removeProperty('max-height');
 
   const body = document.body;
   body.style.position = '';
@@ -267,21 +269,22 @@ function applyStandardWebShell(pageBackground?: string): void {
     'pointer-events:none',
   ].join(';');
 
-  paintChrome(pageBackground);
+  const bg = pageBackground ?? readPageBackground();
+  if (bg) {
+    doc.style.backgroundColor = bg;
+    body.style.backgroundColor = bg;
+    backdrop.style.backgroundColor = bg;
+    if (root) root.style.backgroundColor = bg;
+  }
 }
 
 export function applyWebViewportMetrics(pageBackground?: string): void {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return;
 
-  const preservedBg = document.documentElement.style
-    .getPropertyValue('--orthodaily-page-bg')
-    .trim();
-  const bg = pageBackground ?? (preservedBg || undefined);
-
   if (isIosMobileWeb()) {
-    applyIosMobileShell(bg || undefined);
+    applyIosWebShell(pageBackground);
   } else {
-    applyStandardWebShell(bg || undefined);
+    applyDesktopWebShell(pageBackground);
   }
 }
 
@@ -294,24 +297,22 @@ export function installWebViewportShell(): void {
   installVisualViewportLayoutPatch();
   applyWebViewportMetrics();
 
-  if (typeof window !== 'undefined') {
-    window.dispatchEvent(new Event('resize'));
-  }
-
   const onChange = () => applyWebViewportMetrics();
   window.addEventListener('resize', onChange);
   window.addEventListener('orientationchange', onChange);
-  const native = getNativeVisualViewport();
-  native?.addEventListener('resize', onChange);
-  native?.addEventListener('scroll', onChange);
+  getNativeVisualViewport()?.addEventListener('resize', onChange);
+  getNativeVisualViewport()?.addEventListener('scroll', onChange);
   window.visualViewport?.addEventListener('resize', onChange);
   window.visualViewport?.addEventListener('scroll', onChange);
+
+  window.dispatchEvent(new Event('resize'));
 }
 
 export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
+  var IOS_CLASS='orthodaily-ios-web';
   function ios(){return /iPhone|iPad|iPod/i.test(navigator.userAgent||'');}
   function layoutH(){return Math.round(window.innerHeight);}
-  function layoutW(){return Math.round(window.innerWidth);}
+  function layoutVh(){var h=layoutH();return h>0?h/100:0;}
   function patchVv(){
     if(!ios()||!window.visualViewport||window.__orthodailyVvPatch)return;
     var native=window.visualViewport;
@@ -320,7 +321,7 @@ export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
     var proxy=new Proxy(native,{
       get:function(t,p,r){
         if(p==='height')return layoutH()/(t.scale||1);
-        if(p==='width')return layoutW()/(t.scale||1);
+        if(p==='width')return Math.round(window.innerWidth)/(t.scale||1);
         var v=Reflect.get(t,p,r);
         return typeof v==='function'?v.bind(t):v;
       }
@@ -334,34 +335,25 @@ export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
     return el;
   }
   function applyIos(){
-    var h=layoutH(),w=layoutW();
+    var h=layoutH();
     if(h<=0)return;
     var d=document.documentElement,b=document.body,r=document.getElementById('root');
-    d.classList.add('orthodaily-ios-web');
-    d.style.setProperty('--orthodaily-shell-height',h+'px');
+    d.classList.add(IOS_CLASS);
+    d.style.setProperty('--app-height-px',h+'px');
+    d.style.setProperty('--vh',layoutVh()+'px');
     d.style.setProperty('--app-height',h+'px');
     var bottom=0,nv=window.__orthodailyNativeVv;
     if(nv){bottom=Math.max(0,Math.floor(window.innerHeight-nv.height-nv.offsetTop));}
     d.style.setProperty('--safari-bottom-chrome',bottom+'px');
-    d.style.height=h+'px';d.style.minHeight=h+'px';d.style.maxHeight=h+'px';
-    d.style.width='100%';d.style.margin='0';d.style.padding='0';d.style.overflow='hidden';
-    b.style.position='fixed';b.style.top='0';b.style.left='0';b.style.right='0';
-    b.style.width='100%';b.style.height=h+'px';b.style.minHeight=h+'px';b.style.maxHeight=h+'px';
-    b.style.margin='0';b.style.padding='0';b.style.overflow='hidden';b.style.overscrollBehavior='none';
+    var shell='height:'+h+'px;min-height:'+h+'px;max-height:'+h+'px;width:100%;margin:0;padding:0;overflow:hidden';
+    d.style.height=h+'px';d.style.minHeight=h+'px';d.style.maxHeight=h+'px';d.style.width='100%';d.style.margin='0';d.style.padding='0';d.style.overflow='hidden';
+    b.style.cssText='position:fixed;top:0;left:0;right:0;'+shell+';overscroll-behavior:none';
     var bd=ensureBackdrop();
     bd.style.cssText='position:fixed;top:0;left:0;right:0;height:'+h+'px;width:100%;z-index:0;pointer-events:none';
-    if(r){
-      r.style.position='fixed';r.style.top='0';r.style.left='0';r.style.right='0';
-      r.style.width='100%';r.style.height=h+'px';r.style.minHeight=h+'px';r.style.maxHeight=h+'px';
-      r.style.margin='0';r.style.padding='0';r.style.display='flex';r.style.flexDirection='column';
-      r.style.overflow='hidden';r.style.zIndex='1';r.style.boxSizing='border-box';
-    }
+    if(r){r.style.cssText='position:fixed;top:0;left:0;right:0;'+shell+';display:flex;flex-direction:column;box-sizing:border-box;z-index:1';}
   }
   function sync(){
-    try{
-      patchVv();
-      if(ios()){applyIos();}
-    }catch(e){}
+    try{patchVv();if(ios()){applyIos();}}catch(e){}
   }
   sync();
   window.addEventListener('resize',sync);

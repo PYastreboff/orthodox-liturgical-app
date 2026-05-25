@@ -10,7 +10,7 @@ import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useLayoutSafeAreaInsets } from '../../src/hooks/useLayoutSafeAreaInsets';
 import { useSafariBottomChromeInset } from '../../src/hooks/useSafariBottomChromeInset';
-import { isIosSafariBrowser, safariTabBarBottomOffset } from '../../src/theme/webViewport';
+import { isIosSafariBrowser } from '../../src/theme/webViewport';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { SAFARI_TAB_BAR_BLEED_PX, TAB_BAR_CONTENT_HEIGHT } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
@@ -39,16 +39,20 @@ function TabsLayoutContent() {
   const phoneLayout = usePhoneLayout();
   const bottomInset = insets.bottom;
   const safariChrome = useSafariBottomChromeInset();
-  const safariTabBarBleed =
-    Platform.OS === 'web' && isIosSafariBrowser() && safariChrome > 0;
+  const useSafariDockedBar = Platform.OS === 'web' && isIosSafariBrowser() && safariChrome > 0;
+  const safariTabBarBleed = useSafariDockedBar;
   const nativePhoneBleed = phoneLayout && Platform.OS === 'ios' && !safariTabBarBleed;
   const tabBarBleedHeight = safariTabBarBleed
     ? SAFARI_TAB_BAR_BLEED_PX
     : nativePhoneBleed
       ? 2
       : 0;
-  const tabBarBottom = safariTabBarBleed ? safariTabBarBottomOffset(safariChrome) : safariChrome;
-  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + bottomInset + tabBarBleedHeight;
+  /** Dock to physical bottom; pad content above Safari toolbar (no floating gap). */
+  const tabBarBottom = useSafariDockedBar ? 0 : safariChrome;
+  const tabBarBottomPad = useSafariDockedBar
+    ? safariChrome + bottomInset + tabBarBleedHeight
+    : bottomInset + tabBarBleedHeight + (Platform.OS === 'android' && bottomInset === 0 ? 8 : 0);
+  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + tabBarBottomPad;
   const tabBarBg = tabBarBackground(isDark, phoneLayout);
 
   return (
@@ -74,10 +78,7 @@ function TabsLayoutContent() {
           borderBottomWidth: 0,
           height: tabBarHeight,
           paddingTop: 0,
-          paddingBottom:
-            bottomInset +
-            tabBarBleedHeight +
-            (Platform.OS === 'android' && bottomInset === 0 ? 8 : 0),
+          paddingBottom: tabBarBottomPad,
           elevation: 0,
           shadowOpacity: 0,
           shadowRadius: 0,

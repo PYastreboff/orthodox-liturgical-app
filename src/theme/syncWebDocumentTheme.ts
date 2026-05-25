@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 
 import { todayPageBackgroundColor } from '../lib/liturgical/vestmentGradient';
 import { colors } from './tokens';
-import { applyWebViewportMetrics } from './webViewport';
+import { applyWebViewportMetrics, IOS_WEB_CLASS } from './webViewport';
 
 function pageBackground(isDark: boolean): string {
   return todayPageBackgroundColor(isDark);
@@ -12,6 +12,7 @@ export function syncWebDocumentTheme(isDark: boolean, chromeColor?: string): voi
   if (Platform.OS !== 'web' || typeof document === 'undefined') return;
 
   const bg = chromeColor ?? pageBackground(isDark);
+  document.documentElement.style.setProperty('--orthodaily-page-bg', bg);
   applyWebViewportMetrics(bg);
 
   const themeMeta = document.querySelector('meta[name="theme-color"]');
@@ -23,12 +24,10 @@ export function syncWebDocumentTheme(isDark: boolean, chromeColor?: string): voi
   if (appleStatus) {
     appleStatus.setAttribute('content', 'black-translucent');
   }
-
-  document.documentElement.style.setProperty('--orthodaily-page-bg', bg);
 }
 
 /**
- * Base document chrome. iOS shell dimensions are set in JS (applyWebViewportMetrics).
+ * Base document chrome. iOS uses --app-height-px (innerHeight); desktop uses 100dvh.
  */
 export const WEB_ROOT_CSS = `
 html {
@@ -49,59 +48,39 @@ html {
     background-color: ${colors.darkBg};
   }
 }
-html.orthodaily-ios-web {
-  min-height: var(--orthodaily-shell-height, 100%);
-  height: var(--orthodaily-shell-height, 100%) !important;
-  max-height: var(--orthodaily-shell-height, 100%);
-  overflow: hidden;
+html.${IOS_WEB_CLASS},
+html.${IOS_WEB_CLASS} body,
+html.${IOS_WEB_CLASS} #root {
+  height: var(--app-height-px, 100%) !important;
+  min-height: var(--app-height-px, 100%) !important;
+  max-height: var(--app-height-px, 100%) !important;
 }
-html.orthodaily-ios-web body,
-html.orthodaily-ios-web #root {
-  height: var(--orthodaily-shell-height, 100%) !important;
-  min-height: var(--orthodaily-shell-height, 100%) !important;
-  max-height: var(--orthodaily-shell-height, 100%) !important;
+html:not(.${IOS_WEB_CLASS}) {
+  min-height: 100dvh;
 }
-body {
+html:not(.${IOS_WEB_CLASS}) body {
   margin: 0;
   padding: 0;
   width: 100%;
-  background-color: ${colors.parchment};
+  min-height: 100dvh;
   background-color: var(--orthodaily-page-bg);
 }
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: ${colors.darkBg};
-  }
-}
-html:not(.orthodaily-ios-web) body {
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
-}
-#root {
+html:not(.${IOS_WEB_CLASS}) #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  background-color: ${colors.parchment};
-  background-color: var(--orthodaily-page-bg);
-}
-@media (prefers-color-scheme: dark) {
-  #root {
-    background-color: ${colors.darkBg};
-  }
-}
-html:not(.orthodaily-ios-web) #root {
   min-height: 100dvh;
-  min-height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
-}
-#orthodaily-viewport-backdrop {
-  background-color: ${colors.parchment};
   background-color: var(--orthodaily-page-bg);
 }
-@media (prefers-color-scheme: dark) {
-  #orthodaily-viewport-backdrop {
-    background-color: ${colors.darkBg};
-  }
+body {
+  background-color: var(--orthodaily-page-bg);
+}
+#root {
+  background-color: var(--orthodaily-page-bg);
+}
+#orthodaily-viewport-backdrop {
+  background-color: var(--orthodaily-page-bg);
 }
 `;
