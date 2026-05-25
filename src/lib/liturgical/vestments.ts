@@ -17,6 +17,15 @@ export type VestmentLine = {
   value: string;
   pillBg: string;
   pillText: string;
+  /** Optional subheading before this row (e.g. Holy Saturday vespers vs liturgy). */
+  sectionHeader?: string;
+};
+
+export type VestmentGuidance = {
+  /** Why this liturgical colour is used today. */
+  colorReason: string;
+  lines: VestmentLine[];
+  footnote: string;
 };
 
 const SWATCH_COLOR_KEYS = {
@@ -43,66 +52,133 @@ const SWATCH = {
   purple: { pillBg: '#5c3d6e', pillText: '#ffffff' },
 } as const satisfies Record<SwatchKey, Omit<VestmentSwatch, 'name'>>;
 
+const REASON_KEY_BY_APPEARANCE: Record<string, string> = {
+  pascha: 'vestments.reason.pascha',
+  bright_week: 'vestments.reason.brightWeek',
+  theophany: 'vestments.reason.theophany',
+  annunciation: 'vestments.reason.annunciation',
+  dormition: 'vestments.reason.dormition',
+  nativity: 'vestments.reason.nativity',
+  transfiguration: 'vestments.reason.transfiguration',
+  palm_sunday: 'vestments.reason.palmSunday',
+  pentecost: 'vestments.reason.pentecost',
+  elevation_cross: 'vestments.reason.elevationCross',
+  great_friday: 'vestments.reason.greatFriday',
+  holy_saturday: 'vestments.reason.holySaturday',
+  holy_week: 'vestments.reason.holyWeek',
+  great_lent: 'vestments.reason.greatLent',
+  lent_sunday: 'vestments.reason.lentSunday',
+  lent_saturday: 'vestments.reason.lentSaturday',
+  wednesday_fast: 'vestments.reason.wednesdayFast',
+  friday_fast: 'vestments.reason.fridayFast',
+  sunday: 'vestments.reason.sunday',
+  all_saints: 'vestments.reason.allSaints',
+};
+
 function localizedSwatch(key: SwatchKey, lang: UiLanguage): VestmentSwatch {
   const base = SWATCH[key];
   return { ...base, name: translate(lang, SWATCH_COLOR_KEYS[key]) };
 }
 
-/** Liturgical colour of the day for sticharion and matching vestments. */
+function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): SwatchKey {
+  const key = appearance.key;
+  const label = appearance.label.toLowerCase();
+
+  if (key === 'theophany' || label.includes('theophany')) return 'blue';
+  if (key === 'annunciation') return 'blue';
+  if (key === 'dormition') return 'blue';
+  if (key === 'pascha' || label.includes('pascha')) return 'white';
+  if (key === 'bright_week') return 'white';
+  if (key === 'palm_sunday' || label.includes('palm')) return 'green';
+  if (key === 'pentecost' || label.includes('pentecost')) return 'green';
+  if (key === 'elevation_cross' || label.includes('cross')) return 'red';
+  if (key === 'great_friday' || label.includes('holy friday')) return 'black';
+  if (key === 'holy_saturday') return 'white';
+  if (key === 'holy_week' || key === 'great_lent' || key.includes('lent')) return 'purple';
+  if (key.includes('fast')) return 'dark';
+  if (key === 'nativity' || key === 'transfiguration' || key === 'all_saints' || key === 'sunday') {
+    return 'gold';
+  }
+
+  return 'gold';
+}
+
+/** Liturgical colour of the day for outer vestments and festal ryassa. */
 export function liturgicalVestmentColor(
   appearance: LiturgicalDayAppearance,
   lang: UiLanguage = 'en',
 ): VestmentSwatch {
+  return localizedSwatch(liturgicalSwatchKey(appearance), lang);
+}
+
+const REASON_BY_SWATCH: Record<SwatchKey, string> = {
+  gold: 'vestments.reason.gold',
+  white: 'vestments.reason.white',
+  blue: 'vestments.reason.blue',
+  red: 'vestments.reason.red',
+  green: 'vestments.reason.green',
+  dark: 'vestments.reason.dark',
+  black: 'vestments.reason.black',
+  purple: 'vestments.reason.purple',
+};
+
+export function vestmentColorReason(appearance: LiturgicalDayAppearance, lang: UiLanguage): string {
+  const reasonKey = REASON_KEY_BY_APPEARANCE[appearance.key];
+  if (reasonKey) return translate(lang, reasonKey);
+  return translate(lang, REASON_BY_SWATCH[liturgicalSwatchKey(appearance)]);
+}
+
+/** Podryasnik (under-cassock) is normally black year-round. */
+function podryasnikSwatch(lang: UiLanguage): VestmentSwatch {
+  return localizedSwatch('black', lang);
+}
+
+/**
+ * Ryassa: black on fast weekdays and Good Friday; otherwise often matches the festal liturgical colour.
+ */
+function ryassaSwatch(appearance: LiturgicalDayAppearance, lang: UiLanguage): VestmentSwatch {
   const key = appearance.key;
-  const label = appearance.label.toLowerCase();
-
-  if (key === 'theophany' || label.includes('theophany')) return localizedSwatch('blue', lang);
-  if (key === 'annunciation') return localizedSwatch('blue', lang);
-  if (key === 'dormition') return localizedSwatch('blue', lang);
-  if (key === 'pascha' || label.includes('pascha')) return localizedSwatch('white', lang);
-  if (key === 'bright_week') return localizedSwatch('white', lang);
-  if (key === 'palm_sunday' || label.includes('palm')) return localizedSwatch('green', lang);
-  if (key === 'pentecost' || label.includes('pentecost')) return localizedSwatch('green', lang);
-  if (key === 'elevation_cross' || label.includes('cross')) return localizedSwatch('red', lang);
-  if (key === 'great_friday' || label.includes('holy friday')) return localizedSwatch('black', lang);
-  if (key === 'holy_saturday') return localizedSwatch('white', lang);
-  if (key === 'holy_week' || key === 'great_lent' || key.includes('lent')) return localizedSwatch('purple', lang);
-  if (key.includes('fast')) return localizedSwatch('dark', lang);
   if (
-    key === 'nativity' ||
-    key === 'transfiguration' ||
-    key === 'all_saints' ||
-    key === 'sunday'
+    key === 'great_friday' ||
+    key === 'wednesday_fast' ||
+    key === 'friday_fast' ||
+    key.includes('fast')
   ) {
-    return localizedSwatch('gold', lang);
+    return localizedSwatch('black', lang);
   }
-
-  return localizedSwatch('gold', lang);
+  return liturgicalVestmentColor(appearance, lang);
 }
 
-function vestmentKindsForRole(role: ClergyRole): VestmentKind[] {
-  switch (role) {
-    case 'reader':
-      // Sticharion only for now; add more reader vestments here when needed.
-      return ['sticharion'];
-    case 'altar_server':
-      return ['sticharion'];
-    case 'deacon':
-      return ['sticharion', 'orarion'];
-    case 'priest':
-      return ['sticharion', 'epitrachelion', 'phelonion'];
-    case 'bishop':
-      return ['sticharion', 'epitrachelion', 'phelonion', 'omophorion'];
-    default:
-      return [];
-  }
-}
-
-function bishopOmophorion(
-  appearance: LiturgicalDayAppearance,
-  liturgical: VestmentSwatch,
+function garmentLine(
+  kind: VestmentKind,
+  swatch: VestmentSwatch,
   lang: UiLanguage,
-): VestmentSwatch {
+  sectionHeader?: string,
+): VestmentLine {
+  return {
+    kind,
+    label: vestmentDisplayLabel(kind, lang),
+    value: swatch.name,
+    pillBg: swatch.pillBg,
+    pillText: swatch.pillText,
+    sectionHeader,
+  };
+}
+
+function undergarmentLines(
+  appearance: LiturgicalDayAppearance,
+  lang: UiLanguage,
+  sectionHeader?: string,
+): VestmentLine[] {
+  const podryasnik = podryasnikSwatch(lang);
+  const ryassa = ryassaSwatch(appearance, lang);
+  return [
+    garmentLine('podryasnik', podryasnik, lang, sectionHeader),
+    garmentLine('ryassa', ryassa, lang),
+  ];
+}
+
+function bishopOmophorionSwatch(appearance: LiturgicalDayAppearance, liturgical: VestmentSwatch, lang: UiLanguage): VestmentSwatch {
   if (
     appearance.key === 'pascha' ||
     appearance.key === 'bright_week' ||
@@ -114,71 +190,128 @@ function bishopOmophorion(
   return liturgical;
 }
 
-function holySaturdayVestmentLines(role: ClergyRole, lang: UiLanguage): VestmentLine[] | null {
-  const kinds = vestmentKindsForRole(role);
-  if (!kinds.length) return null;
-
-  const black = localizedSwatch('black', lang);
-  const white = localizedSwatch('white', lang);
-  const lines: VestmentLine[] = [];
-
-  for (const kind of kinds) {
-    lines.push(garmentLine(kind, black, lang));
+function outerLinesForRole(
+  role: ClergyRole,
+  liturgical: VestmentSwatch,
+  appearance: LiturgicalDayAppearance,
+  lang: UiLanguage,
+  sectionHeader?: string,
+): VestmentLine[] {
+  switch (role) {
+    case 'reader':
+      return [garmentLine('sticharion', liturgical, lang, sectionHeader)];
+    case 'altar_server':
+      return [garmentLine('sticharion', liturgical, lang, sectionHeader)];
+    case 'deacon':
+      return [
+        garmentLine('sticharion', liturgical, lang, sectionHeader),
+        garmentLine('orarion', liturgical, lang),
+      ];
+    case 'priest':
+      return [
+        garmentLine('epitrachelion', liturgical, lang, sectionHeader),
+        garmentLine('phelonion', liturgical, lang),
+      ];
+    case 'bishop':
+      return [
+        garmentLine('epitrachelion', liturgical, lang, sectionHeader),
+        garmentLine('phelonion', liturgical, lang),
+        garmentLine('omophorion', bishopOmophorionSwatch(appearance, liturgical, lang), lang),
+      ];
+    default:
+      return [];
   }
-  for (const kind of kinds) {
-    lines.push(garmentLine(kind, white, lang));
-  }
-
-  return lines;
 }
 
-function garmentLine(kind: VestmentKind, swatch: VestmentSwatch, lang: UiLanguage): VestmentLine {
+function holySaturdayGuidance(
+  role: ClergyRole,
+  appearance: LiturgicalDayAppearance,
+  lang: UiLanguage,
+): VestmentLine[] {
+  const black = localizedSwatch('black', lang);
+  const white = localizedSwatch('white', lang);
+  const vespersHeader = translate(lang, 'vestments.groupHolySaturdayVespers');
+  const liturgyHeader = translate(lang, 'vestments.groupHolySaturdayLiturgy');
+
+  if (role === 'layperson') {
+    return [
+      layLiturgicalColourLine(black, lang, vespersHeader),
+      layLiturgicalColourLine(white, lang, liturgyHeader),
+      layClothingLine(lang),
+    ];
+  }
+
+  return [
+    garmentLine('podryasnik', black, lang, vespersHeader),
+    garmentLine('ryassa', black, lang),
+    ...outerLinesForRole(role, black, appearance, lang),
+    garmentLine('podryasnik', black, lang, liturgyHeader),
+    garmentLine('ryassa', white, lang),
+    ...outerLinesForRole(role, white, appearance, lang),
+  ];
+}
+
+function layLiturgicalColourLine(
+  swatch: VestmentSwatch,
+  lang: UiLanguage,
+  sectionHeader?: string,
+): VestmentLine {
   return {
-    kind,
-    label: vestmentDisplayLabel(kind, lang),
+    kind: 'layAttire',
+    label: translate(lang, 'vestments.layLiturgicalColour'),
     value: swatch.name,
     pillBg: swatch.pillBg,
     pillText: swatch.pillText,
+    sectionHeader,
   };
 }
 
-/** Role-specific vestment rows for the Today tab. Laypeople have no altar vestments. */
+function layClothingLine(lang: UiLanguage): VestmentLine {
+  return {
+    kind: 'layAttire',
+    label: translate(lang, 'vestments.layWhatYouWear'),
+    value: translate(lang, 'vestments.layWhatYouWearValue'),
+    pillBg: SWATCH.dark.pillBg,
+    pillText: SWATCH.dark.pillText,
+  };
+}
+
+function laypersonLines(appearance: LiturgicalDayAppearance, lang: UiLanguage): VestmentLine[] {
+  const liturgical = liturgicalVestmentColor(appearance, lang);
+  return [layLiturgicalColourLine(liturgical, lang), layClothingLine(lang)];
+}
+
+function clergyGuidance(
+  role: ClergyRole,
+  appearance: LiturgicalDayAppearance,
+  lang: UiLanguage,
+): VestmentLine[] {
+  if (appearance.key === 'holy_saturday') {
+    return holySaturdayGuidance(role, appearance, lang);
+  }
+
+  const liturgical = liturgicalVestmentColor(appearance, lang);
+  const underHeader = translate(lang, 'vestments.groupUndergarments');
+  const outerHeader = translate(lang, 'vestments.groupOuter');
+
+  return [
+    ...undergarmentLines(appearance, lang, underHeader),
+    ...outerLinesForRole(role, liturgical, appearance, lang, outerHeader),
+  ];
+}
+
+/** Role-specific vestment rows for the Today tab (all roles, including laypeople). */
 export function vestmentGuidanceForRole(
   role: ClergyRole,
   appearance: LiturgicalDayAppearance,
   lang: UiLanguage = 'en',
-): VestmentLine[] | null {
-  if (role === 'layperson') return null;
+): VestmentGuidance {
+  const lines =
+    role === 'layperson' ? laypersonLines(appearance, lang) : clergyGuidance(role, appearance, lang);
 
-  if (appearance.key === 'holy_saturday') {
-    return holySaturdayVestmentLines(role, lang);
-  }
-
-  const liturgical = liturgicalVestmentColor(appearance, lang);
-
-  switch (role) {
-    case 'reader':
-      return [garmentLine('sticharion', liturgical, lang)];
-    case 'altar_server':
-      return [garmentLine('sticharion', liturgical, lang)];
-    case 'deacon':
-      return [garmentLine('sticharion', liturgical, lang), garmentLine('orarion', liturgical, lang)];
-    case 'priest':
-      return [
-        garmentLine('sticharion', liturgical, lang),
-        garmentLine('epitrachelion', liturgical, lang),
-        garmentLine('phelonion', liturgical, lang),
-      ];
-    case 'bishop': {
-      const omophorion = bishopOmophorion(appearance, liturgical, lang);
-      return [
-        garmentLine('sticharion', liturgical, lang),
-        garmentLine('epitrachelion', liturgical, lang),
-        garmentLine('phelonion', liturgical, lang),
-        garmentLine('omophorion', omophorion, lang),
-      ];
-    }
-    default:
-      return null;
-  }
+  return {
+    colorReason: vestmentColorReason(appearance, lang),
+    lines,
+    footnote: translate(lang, role === 'layperson' ? 'vestments.layFootnote' : 'vestments.footnote'),
+  };
 }

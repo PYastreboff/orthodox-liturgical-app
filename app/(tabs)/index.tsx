@@ -203,7 +203,7 @@ export default function TodayScreen() {
     });
     return partitionCommemorations(entries);
   }, [appearance.key, appearance.label, liturgicalDay]);
-  const vestmentLines = useMemo(
+  const vestmentGuidance = useMemo(
     () => vestmentGuidanceForRole(servingRole, appearance, uiLanguage),
     [servingRole, appearance, uiLanguage],
   );
@@ -441,20 +441,38 @@ export default function TodayScreen() {
         <Text style={[styles.cardHint, type.hint]}>{dashboard.fastingNote}</Text>
       </CollapsibleSection>
 
-      {vestmentLines ? (
-        <CollapsibleSection
-          title={t('today.sectionVestments')}
-          icon="vestments"
-          expanded={!todayCollapsed.vestments}
-          onToggle={() => toggleSection('vestments')}
-          themeColors={theme.colors}
-        >
-          {vestmentLines.map((item, index) => {
-            const prev = vestmentLines[index - 1];
-            const whiteSetStart = prev && prev.pillBg !== item.pillBg;
-            return (
+      <CollapsibleSection
+        title={
+          servingRole === 'layperson' ? t('today.sectionChurchDress') : t('today.sectionVestments')
+        }
+        icon="vestments"
+        expanded={!todayCollapsed.vestments}
+        onToggle={() => toggleSection('vestments')}
+        themeColors={theme.colors}
+      >
+        <Text style={[styles.vestmentWhyHeading, type.body, { color: theme.colors.text }]}>
+          {servingRole === 'layperson'
+            ? t('today.churchClothingWhyHeading')
+            : t('today.vestmentsWhyHeading')}
+        </Text>
+        <Text style={[styles.vestmentColorReason, type.hint, { color: theme.colors.text }]}>
+          {vestmentGuidance.colorReason}
+        </Text>
+        {vestmentGuidance.lines.map((item, index) => {
+          const prev = vestmentGuidance.lines[index - 1];
+          const showSectionHeader =
+            item.sectionHeader != null && item.sectionHeader !== prev?.sectionHeader;
+          const whiteSetStart = prev && prev.pillBg !== item.pillBg;
+          return (
+            <View key={`${item.kind}-${index}-${item.pillBg}`}>
+              {showSectionHeader ? (
+                <Text
+                  style={[styles.vestmentSectionHeader, type.hint, { color: theme.colors.text }]}
+                >
+                  {item.sectionHeader}
+                </Text>
+              ) : null}
               <View
-                key={`${item.kind}-${item.pillBg}`}
                 style={[styles.rowBetween, whiteSetStart ? styles.vestmentWhiteSetStart : null]}
               >
                 <View style={styles.vestmentLabelRow}>
@@ -473,11 +491,12 @@ export default function TodayScreen() {
                   {item.value}
                 </Text>
               </View>
-            );
-          })}
-          <Text style={[styles.cardHint, type.hint]}>{t('today.vestmentsHint')}</Text>
-        </CollapsibleSection>
-      ) : null}
+            </View>
+          );
+        })}
+        <Text style={[styles.cardHint, type.hint]}>{vestmentGuidance.footnote}</Text>
+        <Text style={[styles.cardHint, type.hint]}>{t('today.vestmentsHint')}</Text>
+      </CollapsibleSection>
 
       <CollapsibleSection
         title={t('today.sectionReadings')}
@@ -692,6 +711,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
     gap: 8,
+  },
+  vestmentWhyHeading: {
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  vestmentColorReason: {
+    marginBottom: 12,
+    opacity: 0.92,
+  },
+  vestmentSectionHeader: {
+    fontWeight: '600',
+    marginTop: 4,
+    marginBottom: 6,
+    opacity: 0.85,
   },
   vestmentLabelRow: {
     flexDirection: 'row',

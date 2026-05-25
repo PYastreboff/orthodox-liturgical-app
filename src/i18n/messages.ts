@@ -85,6 +85,7 @@ const en = {
     sectionDate: 'Date & Liturgical Day',
     sectionFasting: 'Fasting Information',
     sectionVestments: 'Vestments',
+    sectionChurchDress: 'Church Clothing',
     sectionReadings: 'Liturgical Texts',
     sectionFeasts: 'Feasts',
     sectionSaints: 'Saints Commemorated Today',
@@ -94,8 +95,10 @@ const en = {
     notAllowedHeading: 'Not allowed',
     fastException: 'Note: {note}',
     majorFeastBadge: 'Major Feast',
+    vestmentsWhyHeading: 'Why these colours today?',
+    churchClothingWhyHeading: 'What kind of liturgical day is it?',
     vestmentsHint:
-      'Colours follow this Julian liturgical day (approximate until your typikon pack is loaded).',
+      'Confirm with your diocese or typikon — parish practice may vary.',
     slavonicLoading: 'Loading Church Slavonic scripture…',
     slavonicHint:
       'Scripture from Elizabeth Bible (1757). Troparia and kontakia stay in English when orthocal has no Slavonic.',
@@ -196,16 +199,61 @@ const en = {
     sat: 'Sat',
   },
   vestments: {
-    sticharion: 'Sticharion',
+    podryasnik: 'Podryasnik (under-cassock)',
+    ryassa: 'Ryassa',
+    sticharion: 'Sticharion (outer robe)',
     orarion: 'Orarion',
     epitrachelion: 'Epitrachelion',
-    phelonion: 'Phelonion',
+    phelonion: 'Phelonion (outer vestment)',
     omophorion: 'Omophorion',
-    sticharionA11y: 'Sticharion — altar robe',
+    layLiturgicalColour: "Today's liturgical colour",
+    layWhatYouWear: 'Your clothing',
+    layWhatYouWearValue: 'Modest and respectful; any colour is fine',
+    layFootnote:
+      'The coloured pill is what clergy wear at the altar today — you are not expected to match it.',
+    podryasnikA11y: 'Podryasnik — black under-cassock',
+    ryassaA11y: 'Ryassa — outer cassock',
+    sticharionA11y: 'Sticharion — altar servers and deacons',
     orarionA11y: 'Orarion — deacon stole',
     epitrachelionA11y: 'Epitrachelion — priest stole',
     phelonionA11y: 'Phelonion — priest outer vestment',
     omophorionA11y: 'Omophorion — bishop pall',
+    groupUndergarments: 'Undergarments',
+    groupOuter: 'Vestments at the altar',
+    groupHolySaturdayVespers: 'Holy Saturday — vespers / burial',
+    groupHolySaturdayLiturgy: 'Holy Saturday — Paschal liturgy',
+    footnote: 'Based on common Russian Orthodox practice; your parish may differ.',
+    reason: {
+      pascha: 'Bright vestments for the Resurrection of Christ — white or gold symbolizes the uncreated Light of Pascha.',
+      brightWeek: 'Throughout Bright Week the Church keeps festal white vestments in honour of the Risen Christ.',
+      theophany: 'Blue vestments for the Lord’s Baptism in the Jordan, when the Trinity was revealed.',
+      annunciation: 'Blue for feasts of the Mother of God — here the Annunciation of the Archangel Gabriel.',
+      dormition: 'Blue for the Mother of God — the feast of her Dormition and translation to life.',
+      nativity: 'Gold or festal colours for the Nativity of Christ — the King born in Bethlehem.',
+      transfiguration: 'Gold for the Lord’s Transfiguration on Tabor, when His divine glory shone forth.',
+      palmSunday: 'Green for Palm Sunday — the entry of the King of Glory into Jerusalem.',
+      pentecost: 'Green for Pentecost — the life-giving Spirit who renews creation in the Church.',
+      elevationCross: 'Red for the Exaltation of the Cross — the blood of Christ and the martyrs.',
+      greatFriday: 'Black for Great and Holy Friday — the death of Christ on the Cross.',
+      holySaturday:
+        'Black for the burial rites; white for the Paschal liturgy when the Church already proclaims the Resurrection.',
+      holyWeek: 'Dark purple for Holy Week — the solemn journey to the Cross.',
+      greatLent: 'Purple or dark vestments for Great Lent — repentance and restraint.',
+      lentSunday: 'Purple for the Lenten season; Sunday liturgies may use lighter tones per your typikon.',
+      lentSaturday: 'Purple for Lent; Saturday services may allow wine and oil — vestments often remain penitential.',
+      wednesdayFast: 'Dark vestments on fasting days — Wednesday commemorates the betrayal of Christ.',
+      fridayFast: 'Dark vestments on fasting days — Friday commemorates the Passion of the Lord.',
+      sunday: 'Gold for the Lord’s Day — the weekly feast of the Resurrection.',
+      allSaints: 'Gold for the Sunday of All Saints after Pentecost.',
+      gold: 'Gold for a Sunday or great feast of the Lord or the saints.',
+      white: 'White for a great feast of the Lord — purity and the uncreated Light.',
+      blue: 'Blue for a feast of the Mother of God or her icons.',
+      red: 'Red for the Cross, martyrs, or a blood-red feast.',
+      green: 'Green for the Holy Spirit, Palm Sunday, or Pentecost season.',
+      dark: 'Dark vestments on a fast day or penitential season.',
+      black: 'Black for mourning, Passion, or the most solemn services.',
+      purple: 'Purple for Lent, Holy Week, or penitential seasons.',
+    },
     colorGold: 'Gold',
     colorWhite: 'White',
     colorBlue: 'Blue',
@@ -346,6 +394,7 @@ const ru = {
     sectionDate: 'Дата и литургический день',
     sectionFasting: 'Пост',
     sectionVestments: 'Облачения',
+    sectionChurchDress: 'Церковная одежда',
     sectionReadings: 'Литургические тексты',
     sectionFeasts: 'Праздники',
     sectionSaints: 'Память святых сегодня',
@@ -355,8 +404,10 @@ const ru = {
     notAllowedHeading: 'Не разрешено',
     fastException: 'Примечание: {note}',
     majorFeastBadge: 'Великий праздник',
+    vestmentsWhyHeading: 'Почему сегодня эти цвета?',
+    churchClothingWhyHeading: 'Какой сегодня литургический день?',
     vestmentsHint:
-      'Цвета соответствуют юлианскому литургическому дню (приблизительно, до загрузки полного пакета типикона).',
+      'Уточняйте в своём приходе или по типику — практика может отличаться.',
     slavonicLoading: 'Загрузка церковнославянского писания…',
     slavonicHint:
       'Писание — Елизаветинская Библия (1757). Тропари и кондаки остаются по-английски, если нет славянского текста.',
@@ -458,16 +509,81 @@ const ru = {
     sat: 'Сб',
   },
   vestments: {
-    sticharion: 'Стихарь',
+    podryasnik: 'Подрясник',
+    ryassa: 'Ряса',
+    sticharion: 'Стихарь (верхняя риза)',
     orarion: 'Орарь',
     epitrachelion: 'Епитрахиль',
-    phelonion: 'Фелонь',
+    phelonion: 'Фелонь (верхнее облачение)',
     omophorion: 'Омофор',
-    sticharionA11y: 'Стихарь — алтарная риза',
+    layLiturgicalColour: 'Литургический цвет дня',
+    layWhatYouWear: 'Ваша одежда',
+    layWhatYouWearValue: 'Скромная и благочестная; цвет на ваш выбор',
+    layFootnote:
+      'Цветной значок — что носят священнослужители у престола; от мирян его совпадения не требуют.',
+    podryasnikA11y: 'Подрясник — чёрное подрясное облачение',
+    ryassaA11y: 'Ряса — верхняя священническая ряса',
+    sticharionA11y: 'Стихарь — для пономарей и диаконов',
     orarionA11y: 'Орарь — диаконский илиар',
     epitrachelionA11y: 'Епитрахиль — священнический илиар',
     phelonionA11y: 'Фелонь — верхнее облачение священника',
     omophorionA11y: 'Омофор — архиерейское облачение',
+    groupUndergarments: 'Подрясное облачение',
+    groupOuter: 'Богослужебные ризы у престола',
+    groupHolySaturdayVespers: 'Великая суббота — вечерня / отпевание',
+    groupHolySaturdayLiturgy: 'Великая суббота — пасхальная литургия',
+    footnote:
+      'По распространённой русской практике; в вашем приходе может быть иначе.',
+    reason: {
+      pascha:
+        'Светлые ризы в честь Воскресения Христова — белый или золотой символизирует небесный свет Пасхи.',
+      brightWeek:
+        'На Светлой седмице Церковь носит праздничные белые ризы в честь Воскресшего Христа.',
+      theophany:
+        'Голубые ризы на Крещение Господне в Иордане, когда явилась Пресвятая Троица.',
+      annunciation:
+        'Голубой — цвет праздников Пресвятой Богородицы; здесь Благовещение архангела Гавриила.',
+      dormition:
+        'Голубой для Богородицы — праздник Её Успения и переселения в жизнь вечную.',
+      nativity:
+        'Золотой или праздничный цвет на Рождество Христово — Царь, рождённый в Вифлееме.',
+      transfiguration:
+        'Золотой на Преображение Господне на Фаворе, когда явилась Божественная слава.',
+      palmSunday:
+        'Зелёный на Вход Господень в Иерусалим — вхождение Царя славы.',
+      pentecost:
+        'Зелёный на Пятидесятницу — Животворящий Дух, обновляющий творение в Церкви.',
+      elevationCross:
+        'Красный на Воздвижение Креста — Кровь Христова и кровь мучеников.',
+      greatFriday:
+        'Чёрный на Великую и Святую Пятницу — смерть Христа на Кресте.',
+      holySaturday:
+        'Чёрный на погребальные службы; белый на пасхальную литургию, когда Церковь уже провозглашает Воскресение.',
+      holyWeek:
+        'Тёмно-фиолетовый на Страстную седмицу — торжественный путь ко Кресту.',
+      greatLent:
+        'Фиолетовый или тёмные ризы на Великий пост — покаяние и сдержанность.',
+      lentSunday:
+        'Фиолетовый в пост; в воскресные литургии по типику могут быть светлее.',
+      lentSaturday:
+        'Фиолетовый в пост; в субботу могут быть разрешены вино и елей — ризы часто остаются покаянными.',
+      wednesdayFast:
+        'Тёмные ризы в дни поста — среда в память предательства Христа.',
+      fridayFast:
+        'Тёмные ризы в дни поста — пятница в память Страстей Господних.',
+      sunday:
+        'Золотой на Господень день — еженедельный праздник Воскресения.',
+      allSaints:
+        'Золотой в Неделю всех святых после Пятидесятницы.',
+      gold: 'Золотой на воскресенье или великий праздник Господа или святых.',
+      white: 'Белый на великий праздник Господень — чистота и небесный свет.',
+      blue: 'Голубой на праздник Пресвятой Богородицы или Её икон.',
+      red: 'Красный на Крест, мучеников или «кровавый» праздник.',
+      green: 'Зелёный на Духа Святого, Вход Господень или Пятидесятницу.',
+      dark: 'Тёмные ризы в день поста или покаянный период.',
+      black: 'Чёрный в трауре, Страстях или на самых торжественных службах печали.',
+      purple: 'Фиолетовый на пост, Страстную седмицу или покаянные периоды.',
+    },
     colorGold: 'Золотой',
     colorWhite: 'Белый',
     colorBlue: 'Голубой',
