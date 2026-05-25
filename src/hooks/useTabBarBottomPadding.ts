@@ -1,11 +1,15 @@
-import { useWebScrollBottomInset } from './useLayoutSafeAreaInsets';
+import { useLayoutSafeAreaInsets } from './useLayoutSafeAreaInsets';
+import { useSafariBottomChromeInset } from './useSafariBottomChromeInset';
 import { SCROLL_EXTRA_BOTTOM_PADDING, TAB_BAR_CONTENT_HEIGHT } from '../theme/layout';
 
-/**
- * Scroll content padding so the last lines clear the floating tab bar.
- * iOS standalone PWA: no extra home-indicator gap (layout uses full 100vh).
- */
+/** Scroll padding so content clears the tab bar (+ Safari toolbar when in browser). */
 export function useTabBarBottomPadding(): number {
-  const scrollBottomInset = useWebScrollBottomInset();
-  return TAB_BAR_CONTENT_HEIGHT + scrollBottomInset + SCROLL_EXTRA_BOTTOM_PADDING;
+  const insets = useLayoutSafeAreaInsets();
+  const safariChrome = useSafariBottomChromeInset();
+  return (
+    TAB_BAR_CONTENT_HEIGHT +
+    insets.bottom +
+    safariChrome +
+    SCROLL_EXTRA_BOTTOM_PADDING
+  );
 }

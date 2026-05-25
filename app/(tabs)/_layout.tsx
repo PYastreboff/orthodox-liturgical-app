@@ -7,6 +7,7 @@ import { TAB_ICON_SIZE, tabBarIconOptions } from '../../src/components/TabBarIco
 import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useLayoutSafeAreaInsets } from '../../src/hooks/useLayoutSafeAreaInsets';
+import { useSafariBottomChromeInset } from '../../src/hooks/useSafariBottomChromeInset';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { TAB_BAR_CONTENT_HEIGHT } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
@@ -33,6 +34,7 @@ function TabsLayoutContent() {
   const { t } = useAppTranslation();
   const showTabHeader = useTabHeaderShown();
   const bottomInset = insets.bottom;
+  const safariChrome = useSafariBottomChromeInset();
   const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + bottomInset;
 
   return (
@@ -50,7 +52,7 @@ function TabsLayoutContent() {
           position: 'absolute',
           left: 0,
           right: 0,
-          bottom: 0,
+          bottom: safariChrome,
           width: '100%',
           backgroundColor: tabBarBackground(isDark),
           borderTopColor: tabBarBorderColor(isDark),

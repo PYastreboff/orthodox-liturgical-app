@@ -175,13 +175,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    paddingHorizontal: 16,
     marginBottom: 8,
   },
   lede: {
     fontSize: 13,
     lineHeight: 18,
-    paddingHorizontal: 16,
     marginBottom: 0,
   },
   ledeCompact: {

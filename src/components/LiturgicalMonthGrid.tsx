@@ -145,7 +145,9 @@ export function LiturgicalMonthGrid({
   const isDark = useResolvedColorScheme() === 'dark';
   const { t, lang } = useAppTranslation();
   const intlLocale = intlLocaleForLanguage(lang);
-  const { width } = useWindowDimensions();
+  const { width: windowWidth } = useWindowDimensions();
+  const [layoutWidth, setLayoutWidth] = useState(0);
+  const width = layoutWidth > 0 ? layoutWidth : windowWidth;
   const today = useMemo(() => new Date(), []);
   const rows = useMemo(() => buildMonthCells(visibleMonth), [visibleMonth]);
   const { dayInfoForDate, feastRankForDate, showTypikonForDate, loading } = useOrthocalMonth(
@@ -172,7 +174,13 @@ export function LiturgicalMonthGrid({
   );
 
   return (
-    <View style={[styles.outer, isCompact ? styles.outerCompact : null]}>
+    <View
+      style={[styles.outer, isCompact ? styles.outerCompact : null]}
+      onLayout={(e) => {
+        const next = Math.round(e.nativeEvent.layout.width);
+        if (next > 0 && next !== layoutWidth) setLayoutWidth(next);
+      }}
+    >
       <View style={[styles.monthNav, isCompact ? styles.monthNavCompact : null]}>
         <Pressable
           onPress={() => onChangeMonth(-1)}
@@ -725,6 +733,7 @@ const styles = StyleSheet.create({
   weekHeaderRow: {
     flexDirection: 'row',
     marginBottom: 6,
+    alignSelf: 'center',
   },
   weekHeaderCell: {
     fontSize: 11,
@@ -751,6 +760,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'stretch',
     marginBottom: 5,
+    alignSelf: 'center',
   },
   cellSlot: {
     overflow: 'hidden',

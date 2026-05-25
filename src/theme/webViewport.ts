@@ -16,6 +16,11 @@ export function isIosMobileWeb(): boolean {
   return /iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
+/** Safari in-browser only (toolbar visible, page should paint underneath). */
+export function isIosSafariBrowser(): boolean {
+  return isIosMobileWeb() && !isIosWebStandalone();
+}
+
 /** Reliable read of env(safe-area-inset-*) on iOS (height probe, not getComputedStyle on :root). */
 export function measureWebSafeAreaInset(
   edge: 'safe-area-inset-top' | 'safe-area-inset-bottom' | 'safe-area-inset-left' | 'safe-area-inset-right',
@@ -53,30 +58,36 @@ export function readWebSafeAreaInsets(): {
 }
 
 /**
- * Pin the app shell to the visible viewport.
- * - Standalone PWA: 100vh (100dvh lies on cold start).
- * - Safari browser: visualViewport height + offset (eliminates letterbox bands).
+ * Gap between layout viewport bottom and visual viewport (Safari floating toolbar).
+ * Page background uses full 100vh; tab bar sits above this inset.
  */
+export function measureSafariBottomChrome(): number {
+  if (typeof window === 'undefined') return 0;
+  const vv = window.visualViewport;
+  if (!vv) return 0;
+  return Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+}
+
+function shellHeightUnit(): string {
+  if (isIosMobileWeb()) return '100vh';
+  return '100dvh';
+}
+
+/** Full layout viewport on iOS (paints behind Safari URL bar with viewport-fit=cover). */
 export function applyWebViewportHeight(): void {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+  document.documentElement.style.setProperty('--app-height', shellHeightUnit());
+}
 
-  const root = document.documentElement;
+export function applyWebSafariChromeInsets(): void {
+  if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+  const bottom = isIosSafariBrowser() ? measureSafariBottomChrome() : 0;
+  document.documentElement.style.setProperty('--safari-bottom-chrome', `${bottom}px`);
+}
 
-  if (isIosWebStandalone()) {
-    root.style.setProperty('--app-height', '100vh');
-    root.style.setProperty('--viewport-offset-top', '0px');
-    return;
-  }
-
-  const vv = window.visualViewport;
-  if (vv && isIosMobileWeb()) {
-    root.style.setProperty('--app-height', `${Math.round(vv.height)}px`);
-    root.style.setProperty('--viewport-offset-top', `${Math.round(vv.offsetTop)}px`);
-    return;
-  }
-
-  root.style.setProperty('--app-height', '100dvh');
-  root.style.setProperty('--viewport-offset-top', '0px');
+export function applyWebViewportMetrics(): void {
+  applyWebViewportHeight();
+  applyWebSafariChromeInsets();
 }
 
 let installed = false;
@@ -85,36 +96,29 @@ export function installWebViewportShell(): void {
   if (Platform.OS !== 'web' || typeof document === 'undefined' || installed) return;
   installed = true;
 
-  applyWebViewportHeight();
+  applyWebViewportMetrics();
 
-  const onGeometryChange = () => applyWebViewportHeight();
-  window.addEventListener('resize', onGeometryChange);
-  window.addEventListener('orientationchange', onGeometryChange);
-  window.visualViewport?.addEventListener('resize', onGeometryChange);
-  window.visualViewport?.addEventListener('scroll', onGeometryChange);
+  const onChange = () => applyWebViewportMetrics();
+  window.addEventListener('resize', onChange);
+  window.addEventListener('orientationchange', onChange);
+  window.visualViewport?.addEventListener('resize', onChange);
+  window.visualViewport?.addEventListener('scroll', onChange);
 }
 
 /** Inline boot script for +html (runs before React). */
 export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
+  function ios(){return /iPhone|iPad|iPod/i.test(navigator.userAgent||'');}
+  function standalone(){var n=navigator;return n.standalone===true||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches);}
   function sync(){
     try{
       var d=document.documentElement;
-      var n=window.navigator;
-      var standalone=n.standalone===true||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches);
-      if(standalone){
-        d.style.setProperty('--app-height','100vh');
-        d.style.setProperty('--viewport-offset-top','0px');
-        return;
+      d.style.setProperty('--app-height',ios()?'100vh':'100dvh');
+      var bottom=0;
+      if(ios()&&!standalone()&&window.visualViewport){
+        var vv=window.visualViewport;
+        bottom=Math.max(0,Math.round(window.innerHeight-vv.height-vv.offsetTop));
       }
-      var vv=window.visualViewport;
-      var ios=/iPhone|iPad|iPod/i.test(n.userAgent||'');
-      if(vv&&ios){
-        d.style.setProperty('--app-height',Math.round(vv.height)+'px');
-        d.style.setProperty('--viewport-offset-top',Math.round(vv.offsetTop)+'px');
-        return;
-      }
-      d.style.setProperty('--app-height','100dvh');
-      d.style.setProperty('--viewport-offset-top','0px');
+      d.style.setProperty('--safari-bottom-chrome',bottom+'px');
     }catch(e){}
   }
   sync();

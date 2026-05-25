@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { isIosWebStandalone, readWebSafeAreaInsets } from '../theme/webViewport';
+import { readWebSafeAreaInsets } from '../theme/webViewport';
 
 /**
  * Safe area for tab bar and scroll content padding.
@@ -18,12 +18,4 @@ export function useLayoutSafeAreaInsets() {
     left: Math.max(insets.left, css.left),
     right: Math.max(insets.right, css.right),
   };
-}
-
-/** Bottom inset for scroll padding — not added to layout height in iOS standalone PWA. */
-export function useWebScrollBottomInset(): number {
-  const insets = useLayoutSafeAreaInsets();
-  if (Platform.OS !== 'web') return insets.bottom;
-  if (isIosWebStandalone()) return 0;
-  return insets.bottom;
 }
