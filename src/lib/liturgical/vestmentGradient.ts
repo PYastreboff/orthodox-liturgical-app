@@ -17,7 +17,7 @@ export type VestmentHeroStyle = {
 /** Two-stop hero gradients keyed by vestment pill colour (light mode). */
 const HERO_GRADIENT_BY_PILL_BG: Record<string, VestmentHeroStyle> = {
   '#b08d57': { gradient: ['#f7f1e4', '#d9c49a'], foreground: '#1e1a16' },
-  '#f0ebe3': { gradient: ['#fffdf6', '#f2d58c'], foreground: '#1e1a16' },
+  '#f0ebe3': { gradient: ['#fffdf6', '#e5d4a8'], foreground: '#1e1a16' },
   '#2f4a6f': { gradient: ['#4a6a94', '#1a2a40'], foreground: '#ffffff' },
   '#8b2e3c': { gradient: ['#b84a58', '#4a1520'], foreground: '#ffffff' },
   '#2d5a3e': { gradient: ['#4a8a62', '#1a3024'], foreground: '#ffffff' },

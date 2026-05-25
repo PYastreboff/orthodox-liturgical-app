@@ -68,17 +68,19 @@ export function DayHero({
   const todayBtnType = text(13, 18);
 
   return (
-    <LinearGradient
-      colors={[...heroStyle.gradient]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+    <View
       style={[
-        styles.hero,
-        { paddingHorizontal: heroPaddingX },
-        isDark ? styles.heroDark : null,
+        styles.heroShell,
+        isDark ? styles.heroShellDark : null,
         isDark ? styles.heroShadow : null,
       ]}
     >
+      <LinearGradient
+        colors={[...heroStyle.gradient]}
+        start={{ x: 0, y: 0.15 }}
+        end={{ x: 0.92, y: 1 }}
+        style={[styles.heroGradient, { paddingHorizontal: heroPaddingX }]}
+      >
       <Text style={[styles.dayTitle, dayTitleType, { color: fg }]} numberOfLines={3}>
         {dayTitle}
       </Text>
@@ -140,20 +142,27 @@ export function DayHero({
           <Text style={[styles.todayBtnText, todayBtnType, { color: fg }]}>{t('today.jumpToToday')}</Text>
         </Pressable>
       ) : null}
-    </LinearGradient>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: {
+  heroShell: {
     borderRadius: 18,
-    paddingVertical: 20,
     marginBottom: 14,
-    alignItems: 'center',
+    width: '100%',
+    alignSelf: 'stretch',
+    overflow: 'hidden',
   },
-  heroDark: {
+  heroShellDark: {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: 'rgba(255,255,255,0.08)',
+  },
+  heroGradient: {
+    paddingVertical: 20,
+    alignItems: 'center',
+    width: '100%',
   },
   heroShadow: {
     shadowColor: '#000',
