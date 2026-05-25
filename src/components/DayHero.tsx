@@ -4,11 +4,13 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { useFontScale } from '../hooks/useFontScale';
+import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
 import { vestmentHeroGradient } from '../lib/liturgical/vestmentGradient';
 import { typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
+import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
 import { TypikonSymbol } from './TypikonSymbol';
 
 type Props = {
@@ -40,6 +42,8 @@ export function DayHero({
 }: Props) {
   const { t } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
+  const phoneLayout = usePhoneLayout();
+  const heroPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
   const { text } = useFontScale();
   const heroStyle = useMemo(
     () => vestmentHeroGradient(appearance, isDark),
@@ -70,6 +74,7 @@ export function DayHero({
       end={{ x: 1, y: 1 }}
       style={[
         styles.hero,
+        { paddingHorizontal: heroPaddingX },
         isDark ? styles.heroDark : null,
         isDark ? styles.heroShadow : null,
       ]}
@@ -143,7 +148,6 @@ const styles = StyleSheet.create({
   hero: {
     borderRadius: 18,
     paddingVertical: 20,
-    paddingHorizontal: 16,
     marginBottom: 14,
     alignItems: 'center',
   },

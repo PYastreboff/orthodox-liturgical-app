@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
+import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
 import { colors } from '../theme/tokens';
 
 const LEGEND_KEYS = [
@@ -17,9 +19,17 @@ type Props = {
 
 export function CalendarColorLegend({ textColor, compact = false }: Props) {
   const { t } = useAppTranslation();
+  const phoneLayout = usePhoneLayout();
+  const wrapPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
 
   return (
-    <View style={[styles.wrap, compact ? styles.wrapCompact : null]}>
+    <View
+      style={[
+        styles.wrap,
+        { paddingHorizontal: wrapPaddingX },
+        compact ? styles.wrapCompact : null,
+      ]}
+    >
       <View style={[styles.row, compact ? styles.rowCompact : null]}>
         {LEGEND_KEYS.map((item) => (
           <View key={item.key} style={styles.item}>
@@ -45,7 +55,6 @@ export function CalendarColorLegend({ textColor, compact = false }: Props) {
 const styles = StyleSheet.create({
   wrap: {
     paddingVertical: 10,
-    paddingHorizontal: 16,
     marginBottom: 12,
     alignItems: 'center',
   },

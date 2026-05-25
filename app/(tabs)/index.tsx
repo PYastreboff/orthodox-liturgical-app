@@ -30,7 +30,9 @@ import {
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
 import { useFontScale } from '../../src/hooks/useFontScale';
+import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
+import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../../src/theme/layout';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useLiturgicalTexts } from '../../src/hooks/useLiturgicalTexts';
 import {
@@ -150,6 +152,8 @@ export default function TodayScreen() {
   } = usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
   const screenSafe = useScreenSafePadding();
+  const phoneLayout = usePhoneLayout();
+  const sectionCardPadding = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
   const scrollBottomPadding = useTabBarBottomPadding();
 
   useFocusEffect(
@@ -230,8 +234,8 @@ export default function TodayScreen() {
         styles.container,
         {
           paddingTop: screenSafe.paddingTop + 20,
-          paddingLeft: screenSafe.paddingLeft + 20,
-          paddingRight: screenSafe.paddingRight + 20,
+          paddingLeft: screenSafe.paddingLeft,
+          paddingRight: screenSafe.paddingRight,
           paddingBottom: scrollBottomPadding,
         },
       ]}
@@ -260,7 +264,12 @@ export default function TodayScreen() {
         </Text>
       ) : null}
 
-      <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
+      <View
+        style={[
+          styles.card,
+          { backgroundColor: theme.colors.card, borderColor: theme.colors.border, padding: sectionCardPadding },
+        ]}
+      >
         <SectionTitleRow
           title={t('today.servingRole')}
           icon="serving-role"
@@ -587,7 +596,6 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 12,
-    padding: 16,
     marginBottom: 12,
     borderWidth: StyleSheet.hairlineWidth,
   },

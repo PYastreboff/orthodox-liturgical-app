@@ -14,7 +14,9 @@ import { intlLocaleForLanguage } from '../i18n/locale';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useCalendarSearch } from '../hooks/useCalendarSearch';
+import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
+import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
 import { CommemorationListMarker } from './CommemorationListMarker';
 import { colors } from '../theme/tokens';
 
@@ -137,11 +139,14 @@ export function CalendarSearch({
     clear,
   } = useCalendarSearch(calendar, year);
 
+  const phoneLayout = usePhoneLayout();
+  const wrapPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
+
   const inputBg = isDark ? colors.darkSurface : colors.card;
   const placeholderColor = mutedColor;
 
   return (
-    <View style={styles.wrap}>
+    <View style={[styles.wrap, { paddingHorizontal: wrapPaddingX }]}>
       <Text style={[styles.label, { color: textColor }]}>{t('calendar.searchTitle')}</Text>
       <View style={[styles.inputRow, { backgroundColor: inputBg, borderColor }]}>
         <Feather name="search" size={18} color={mutedColor} style={styles.searchIcon} />
@@ -235,7 +240,6 @@ export function CalendarSearch({
 
 const styles = StyleSheet.create({
   wrap: {
-    paddingHorizontal: 16,
     marginBottom: 12,
     gap: 10,
   },

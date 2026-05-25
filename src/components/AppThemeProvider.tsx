@@ -5,6 +5,7 @@ import { useEffect, type ReactNode } from 'react';
 import { navigationThemeDark, navigationThemeLight } from '../theme/navigationThemes';
 import { syncWebDocumentTheme } from '../theme/syncWebDocumentTheme';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
+import { WebShell } from './WebShell';
 
 export function AppThemeProvider({ children }: { children: ReactNode }) {
   const scheme = useResolvedColorScheme();
@@ -18,7 +19,7 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider value={navTheme}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
-      {children}
+      <WebShell backgroundColor={navTheme.colors.background}>{children}</WebShell>
     </ThemeProvider>
   );
 }

@@ -9,24 +9,13 @@ function pageBackground(isDark: boolean): string {
 }
 
 /**
- * Match Safari / PWA chrome to the app (same color on html, body, #root).
- * Layout height is handled by installWebViewportShell (--app-height).
+ * Match Safari / PWA chrome to the app (same color on html, body, backdrop, #root).
  */
 export function syncWebDocumentTheme(isDark: boolean, chromeColor?: string): void {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return;
 
-  applyWebViewportMetrics();
-
   const bg = chromeColor ?? pageBackground(isDark);
-
-  document.documentElement.style.backgroundColor = bg;
-  document.body.style.backgroundColor = bg;
-  document.documentElement.style.setProperty('--orthodaily-page-bg', bg);
-
-  const root = document.getElementById('root');
-  if (root) {
-    root.style.backgroundColor = bg;
-  }
+  applyWebViewportMetrics(bg);
 
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   if (themeMeta) {
@@ -37,18 +26,20 @@ export function syncWebDocumentTheme(isDark: boolean, chromeColor?: string): voi
   if (appleStatus) {
     appleStatus.setAttribute('content', 'black-translucent');
   }
+
+  document.documentElement.style.setProperty('--orthodaily-page-bg', bg);
 }
 
-/** Overrides expo ScrollViewStyleReset — must load after that reset in +html. */
+/**
+ * Shell CSS after ScrollViewStyleReset — no height:100% on html (breaks viewport-fit=cover on iOS).
+ */
 export const WEB_ROOT_CSS = `
 html {
   --app-height: 100dvh;
   --safari-bottom-chrome: 0px;
-  height: 100%;
-  height: var(--app-height, 100dvh);
-  min-height: var(--app-height, 100dvh);
   width: 100%;
   margin: 0;
+  padding: 0;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   background-color: ${colors.parchment};
@@ -61,13 +52,8 @@ html {
   }
 }
 body {
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100% !important;
-  margin: 0 !important;
-  overflow: hidden !important;
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  padding: 0;
   background-color: ${colors.parchment};
   background-color: var(--orthodaily-page-bg, ${colors.parchment});
 }
@@ -78,19 +64,23 @@ body {
   }
 }
 #root {
-  position: absolute !important;
-  inset: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 100% !important;
-  overflow: hidden !important;
+  margin: 0;
+  padding: 0;
   background-color: ${colors.parchment};
   background-color: var(--orthodaily-page-bg, ${colors.parchment});
 }
 @media (prefers-color-scheme: dark) {
   #root {
+    background-color: ${colors.darkBg};
+    background-color: var(--orthodaily-page-bg, ${colors.darkBg});
+  }
+}
+#orthodaily-viewport-backdrop {
+  background-color: ${colors.parchment};
+  background-color: var(--orthodaily-page-bg, ${colors.parchment});
+}
+@media (prefers-color-scheme: dark) {
+  #orthodaily-viewport-backdrop {
     background-color: ${colors.darkBg};
     background-color: var(--orthodaily-page-bg, ${colors.darkBg});
   }

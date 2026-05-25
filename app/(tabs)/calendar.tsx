@@ -41,7 +41,7 @@ export default function CalendarScreen() {
     return new Date(n.getFullYear(), n.getMonth(), 1);
   }, []);
 
-  const screenSafe = useScreenSafePadding();
+  const screenSafe = useScreenSafePadding({ calendar: true });
   const scrollBottomPadding = useTabBarBottomPadding();
   const [cursor, setCursor] = useState(thisMonth);
   const hydratedRef = useRef(false);
@@ -124,8 +124,8 @@ export default function CalendarScreen() {
         styles.scrollContent,
         {
           paddingTop: screenSafe.paddingTop + 12,
-          paddingLeft: screenSafe.paddingLeft + 16,
-          paddingRight: screenSafe.paddingRight + 16,
+          paddingLeft: screenSafe.paddingLeft,
+          paddingRight: screenSafe.paddingRight,
           paddingBottom: scrollBottomPadding,
         },
       ]}

@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text, View, type PressableProps } from 'react-native';
 
+import { usePhoneLayout } from '../../hooks/usePhoneLayout';
+import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../../theme/layout';
 import { colors } from '../../theme/tokens';
 
 type Props = Omit<PressableProps, 'style'> & {
@@ -18,6 +20,8 @@ export function SettingsRow({
   showDivider = true,
   ...rest
 }: Props) {
+  const phoneLayout = usePhoneLayout();
+  const rowPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
   const labelColor = isDark ? colors.darkInk : colors.ink;
   const hintColor = isDark ? '#a39e98' : colors.muted;
   const divider = isDark ? colors.darkBorder : colors.border;
@@ -26,6 +30,7 @@ export function SettingsRow({
     <Pressable
       style={({ pressed }) => [
         styles.row,
+        { paddingHorizontal: rowPaddingX },
         showDivider ? { ...styles.rowDivider, borderBottomColor: divider } : undefined,
         pressed ? styles.rowPressed : undefined,
       ]}
@@ -45,7 +50,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
     paddingVertical: 14,
     minHeight: 52,
   },

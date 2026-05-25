@@ -664,7 +664,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   outerCompact: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
   },
   monthNav: {
     flexDirection: 'row',

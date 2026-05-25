@@ -113,8 +113,8 @@ export default function SettingsScreen() {
         styles.container,
         {
           paddingTop: screenSafe.paddingTop + 20,
-          paddingLeft: screenSafe.paddingLeft + 20,
-          paddingRight: screenSafe.paddingRight + 20,
+          paddingLeft: screenSafe.paddingLeft,
+          paddingRight: screenSafe.paddingRight,
           paddingBottom: scrollBottomPadding,
         },
       ]}

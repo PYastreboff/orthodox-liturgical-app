@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
+import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { SectionTitleRow } from './SectionTitleRow';
@@ -44,6 +45,7 @@ export function CollapsibleSection({
 }: Props) {
   const { t } = useAppTranslation();
   const phoneLayout = usePhoneLayout();
+  const cardPadding = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
   const stackHeaderTrailing = phoneLayout && headerTrailing != null;
   const progress = useSharedValue(expanded ? 1 : 0);
 
@@ -93,7 +95,12 @@ export function CollapsibleSection({
   );
 
   return (
-    <View style={[styles.card, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: themeColors.card, borderColor: themeColors.border, padding: cardPadding },
+      ]}
+    >
       {stackHeaderTrailing ? (
         <View style={styles.sectionHeaderColumn}>
           {headerRow}
@@ -112,7 +119,6 @@ export function CollapsibleSection({
 const styles = StyleSheet.create({
   card: {
     borderRadius: 12,
-    padding: 16,
     marginBottom: 12,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
