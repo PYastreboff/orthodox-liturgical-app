@@ -165,6 +165,10 @@ function garmentLine(
   };
 }
 
+function roleWearsFullUndergarments(role: ClergyRole): boolean {
+  return role === 'deacon' || role === 'priest' || role === 'bishop';
+}
+
 function undergarmentLines(
   appearance: LiturgicalDayAppearance,
   lang: UiLanguage,
@@ -176,6 +180,11 @@ function undergarmentLines(
     garmentLine('podryasnik', podryasnik, lang, sectionHeader),
     garmentLine('ryassa', ryassa, lang),
   ];
+}
+
+/** Readers: black podryasnik only (no ryassa), then sticharion. */
+function podryasnikOnlyLines(lang: UiLanguage, sectionHeader?: string): VestmentLine[] {
+  return [garmentLine('podryasnik', podryasnikSwatch(lang), lang, sectionHeader)];
 }
 
 function bishopOmophorionSwatch(appearance: LiturgicalDayAppearance, liturgical: VestmentSwatch, lang: UiLanguage): VestmentSwatch {
@@ -241,13 +250,29 @@ function holySaturdayGuidance(
     ];
   }
 
+  if (roleWearsFullUndergarments(role)) {
+    return [
+      garmentLine('podryasnik', black, lang, vespersHeader),
+      garmentLine('ryassa', black, lang),
+      ...outerLinesForRole(role, black, appearance, lang),
+      garmentLine('podryasnik', black, lang, liturgyHeader),
+      garmentLine('ryassa', white, lang),
+      ...outerLinesForRole(role, white, appearance, lang),
+    ];
+  }
+
+  if (role === 'reader') {
+    return [
+      garmentLine('podryasnik', black, lang, vespersHeader),
+      ...outerLinesForRole(role, black, appearance, lang),
+      garmentLine('podryasnik', black, lang, liturgyHeader),
+      ...outerLinesForRole(role, white, appearance, lang),
+    ];
+  }
+
   return [
-    garmentLine('podryasnik', black, lang, vespersHeader),
-    garmentLine('ryassa', black, lang),
-    ...outerLinesForRole(role, black, appearance, lang),
-    garmentLine('podryasnik', black, lang, liturgyHeader),
-    garmentLine('ryassa', white, lang),
-    ...outerLinesForRole(role, white, appearance, lang),
+    ...outerLinesForRole(role, black, appearance, lang, vespersHeader),
+    ...outerLinesForRole(role, white, appearance, lang, liturgyHeader),
   ];
 }
 
@@ -291,8 +316,20 @@ function clergyGuidance(
   }
 
   const liturgical = liturgicalVestmentColor(appearance, lang);
-  const underHeader = translate(lang, 'vestments.groupUndergarments');
   const outerHeader = translate(lang, 'vestments.groupOuter');
+
+  const underHeader = translate(lang, 'vestments.groupUndergarments');
+
+  if (role === 'altar_server') {
+    return outerLinesForRole(role, liturgical, appearance, lang, outerHeader);
+  }
+
+  if (role === 'reader') {
+    return [
+      ...podryasnikOnlyLines(lang, underHeader),
+      ...outerLinesForRole(role, liturgical, appearance, lang, outerHeader),
+    ];
+  }
 
   return [
     ...undergarmentLines(appearance, lang, underHeader),
