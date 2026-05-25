@@ -19,7 +19,8 @@ import { getLiturgicalAppearanceForLocalDate } from '../../src/lib/calendar/dayA
 import {
   civilPlainDateFromLocal,
 } from '../../src/lib/calendar/liturgicalCalendar';
-import { startOfLocalDay } from '../../src/lib/calendar/localDate';
+import { startOfLocalDay, toDayIso } from '../../src/lib/calendar/localDate';
+import { useShareDay } from '../../src/hooks/useShareDay';
 import { CommemorationCard } from '../../src/components/CommemorationCard';
 import { LiturgicalTextSectionBlock } from '../../src/components/LiturgicalPassageBlock';
 import {
@@ -177,11 +178,11 @@ export default function TodayScreen() {
     const julian = gregorianPlainToJulianPlain(civilPlain);
     return `${String(julian.month).padStart(2, '0')}-${String(julian.day).padStart(2, '0')}`;
   }, [civilPlain]);
-  const appearance = useMemo(
-    () => getLiturgicalAppearanceForLocalDate(selectedDate, primaryCalendar),
-    [primaryCalendar, selectedDate],
-  );
   const { liturgicalDay, loading, error } = useOrthocalDay(selectedDate, primaryCalendar);
+  const appearance = useMemo(
+    () => getLiturgicalAppearanceForLocalDate(selectedDate, primaryCalendar, liturgicalDay),
+    [liturgicalDay, primaryCalendar, selectedDate],
+  );
   const dashboard = useMemo(
     () => buildDayDashboard(liturgicalDay, appearance, civilPlain, uiLanguage),
     [appearance, civilPlain, liturgicalDay, uiLanguage],
@@ -207,8 +208,26 @@ export default function TodayScreen() {
     () => vestmentGuidanceForRole(servingRole, appearance, uiLanguage),
     [servingRole, appearance, uiLanguage],
   );
+  const { shareDay } = useShareDay();
+  const shareFeastHighlight = dashboard.feastsHighlightTitle?.trim() || feasts[0]?.name?.trim() || null;
 
   const canGoToToday = selectedDate.getTime() !== today.getTime();
+  const handleShareDay = useCallback(() => {
+    void shareDay({
+      dayIso: toDayIso(selectedDate),
+      dayTitle: dashboard.dayTitle,
+      dateLabel: gregorianDateLabel,
+      fastLabel: dashboard.fastSummaryLabel,
+      feastHighlight: shareFeastHighlight,
+    });
+  }, [
+    dashboard.dayTitle,
+    dashboard.fastSummaryLabel,
+    gregorianDateLabel,
+    selectedDate,
+    shareDay,
+    shareFeastHighlight,
+  ]);
   const { text } = useFontScale();
   const type = {
     body: text(14, 20),
@@ -252,6 +271,7 @@ export default function TodayScreen() {
         onPrevious={() => setSelectedDate(addDays(selectedDate, -1))}
         onNext={() => setSelectedDate(addDays(selectedDate, 1))}
         onToday={() => setSelectedDate(today)}
+        onShare={handleShareDay}
       />
       {loading ? (
         <Text style={[styles.statusLine, type.status, { color: colors.muted }]}>
@@ -445,7 +465,7 @@ export default function TodayScreen() {
         title={
           servingRole === 'layperson' ? t('today.sectionChurchDress') : t('today.sectionVestments')
         }
-        icon="vestments"
+        icon={servingRole === 'layperson' ? 'church-clothing' : 'vestments'}
         expanded={!todayCollapsed.vestments}
         onToggle={() => toggleSection('vestments')}
         themeColors={theme.colors}

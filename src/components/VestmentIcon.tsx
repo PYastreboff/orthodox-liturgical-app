@@ -18,7 +18,8 @@ export type VestmentKind =
   | 'epitrachelion'
   | 'phelonion'
   | 'omophorion'
-  | 'layAttire';
+  | 'layLiturgicalColour'
+  | 'layClothing';
 
 const VESTMENT_META: Record<
   VestmentKind,
@@ -34,7 +35,8 @@ const VESTMENT_META: Record<
   epitrachelion: { icon: 'alpha-e-circle-outline', a11yKey: 'vestments.epitrachelionA11y' },
   phelonion: { icon: 'coat-rack', a11yKey: 'vestments.phelonionA11y' },
   omophorion: { icon: 'ellipse-outline', a11yKey: 'vestments.omophorionA11y' },
-  layAttire: { icon: 'account-outline', a11yKey: 'vestments.layAttireA11y' },
+  layLiturgicalColour: { icon: 'church', a11yKey: 'vestments.layLiturgicalColourA11y' },
+  layClothing: { icon: 'human-male-female', a11yKey: 'vestments.layClothingA11y' },
 };
 
 const DISPLAY_LABEL_KEYS: Record<VestmentKind, string> = {
@@ -45,7 +47,8 @@ const DISPLAY_LABEL_KEYS: Record<VestmentKind, string> = {
   epitrachelion: 'vestments.epitrachelion',
   phelonion: 'vestments.phelonion',
   omophorion: 'vestments.omophorion',
-  layAttire: 'vestments.layLiturgicalColour',
+  layLiturgicalColour: 'vestments.layLiturgicalColour',
+  layClothing: 'vestments.layWhatYouWear',
 };
 
 type Props = {

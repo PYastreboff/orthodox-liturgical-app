@@ -26,6 +26,7 @@ Long sections (liturgical texts, feasts, saints) start **collapsed**. Your expan
 - Cell colours: fasting, feasts, Palm Sunday, today.
 - **Search** — find saints and feasts in the visible year; tap a result to open that day on Today.
 - Tap any day to open it on **Today** (Julian or Gregorian rubrics follow Settings).
+- **Share** a day from Today (hero) — link includes `?date=YYYY-MM-DD` so family can open the same fast and readings.
 
 ### Settings
 
@@ -52,27 +53,103 @@ Long sections (liturgical texts, feasts, saints) start **collapsed**. Your expan
 
 English troparia/kontakia on major feasts come from a bundled English hymn set when Slavonic typikon text is not shown in EN mode.
 
-## Prerequisites
+## Install from GitHub
 
-- **Node.js LTS** (if `expo start` warns on Node 25+, use current LTS via `nvm use`).
-- **Xcode** (iOS) / **Android Studio** (Android) for simulators or devices.
+Use this when you have just cloned the repository and want to run the app locally.
 
-## Setup
+### 1. Prerequisites
+
+Install these **before** `npm install`:
+
+| Tool | Notes |
+|------|--------|
+| **Git** | To clone the repo |
+| **Node.js LTS** (20.x or 22.x) | [nodejs.org](https://nodejs.org/) or `nvm install --lts`. Avoid Node 25+ if Expo warns — switch with `nvm use --lts` |
+| **npm** | Ships with Node (npm 10+ is fine) |
+
+Optional, only if you run on a **simulator or physical device** (not required for web):
+
+- **Xcode** — iOS Simulator (macOS only)
+- **Android Studio** — Android emulator
+- **Expo Go** on your phone — same Wi‑Fi as your computer, or use `--tunnel` (see below)
+
+### 2. Clone the repository
 
 ```bash
+git clone https://github.com/PYastreboff/orthodox-liturgical-app.git
 cd orthodox-liturgical-app
+```
+
+If you cloned into a different folder name, `cd` into that directory instead.
+
+### 3. Install dependencies
+
+From the project root (the folder that contains `package.json`):
+
+```bash
 npm install
+```
+
+This downloads all Node modules into `node_modules/` and creates/updates `package-lock.json`. It is required after every fresh clone and after pulling dependency changes.
+
+If install fails or Expo complains about package versions after an upgrade:
+
+```bash
+npx expo install --fix
+```
+
+### 4. Start the development server
+
+```bash
 npm start
 ```
 
-Then press `i` (iOS), `a` (Android), or `w` (web), or scan the QR code with **Expo Go**.
+Expo Dev Tools opens in the terminal (and often in the browser). Then:
 
-After upgrading Expo: `npx expo install --fix` to realign native module versions.
+| Target | Action |
+|--------|--------|
+| **Web** | Press `w`, or run `npm run web` in another terminal |
+| **iOS Simulator** | Press `i` (macOS + Xcode only) |
+| **Android emulator** | Press `a` (Android Studio emulator running) |
+| **Phone (Expo Go)** | Scan the QR code with the Expo Go app |
+
+Same machine, different terminal:
 
 ```bash
-npm run lint          # expo lint
-npm run build:web     # static export to dist/
+npm run web      # web only
+npm run ios      # iOS only
+npm run android  # Android only
 ```
+
+If your phone cannot reach the dev server on Wi‑Fi:
+
+```bash
+npx expo start --tunnel
+```
+
+### 5. Useful commands (after install)
+
+```bash
+npm run lint                 # ESLint via Expo
+npm run build:web            # production static site → dist/
+npm run generate:brand-assets  # regenerate icon/splash PNGs (needs dev deps)
+```
+
+### 6. Local web preview (production build)
+
+```bash
+npm run build:web
+npx serve dist
+```
+
+Open the URL shown (often `http://localhost:3000`). The app needs network access for [orthocal.info](https://orthocal.info/) and Church Slavonic scripture.
+
+### Troubleshooting
+
+- **`command not found: npm`** — Install Node.js LTS and open a new terminal.
+- **`EACCES` / permission errors** — Do not use `sudo npm install`; fix npm permissions or use a Node version manager (`nvm`).
+- **Metro / Expo version mismatch** — Run `npx expo install --fix`, then `npm start` again.
+- **Empty or broken web page on GitHub Pages** — That is deploy configuration; see [Share online](#share-online) below.
 
 ### Rebuild menaion typikon index (optional)
 
@@ -104,14 +181,7 @@ Then **Settings → Pages** → **Deploy from branch** → **`gh-pages`** / **(r
 
 **If Pages shows only this README:** the site is serving `main`, not the built app — switch the Pages source as above.
 
-The web build needs network access for orthocal.info and Church Slavonic scripture. Preview locally:
-
-```bash
-npm run build:web
-npx serve dist
-```
-
-**Expo Go:** `npm start` on the same Wi‑Fi, or `npx expo start --tunnel` for a temporary public URL.
+For a local production preview after `npm install`, see [§6 Local web preview](#6-local-web-preview-production-build) in **Install from GitHub**.
 
 ## Project layout
 
@@ -147,4 +217,9 @@ npx serve dist
 
 ## Assets
 
-Default Expo template icons in `assets/` — replace with branded icon and splash when ready.
+Branded **wine + gold cross** icon, splash, and favicon in `assets/`. Regenerate after changing colours:
+
+```bash
+npm install
+npm run generate:brand-assets
+```

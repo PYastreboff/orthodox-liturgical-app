@@ -1,6 +1,9 @@
 import type { UiLanguage } from './types';
 
 const en = {
+  app: {
+    name: 'OrthoDaily',
+  },
   tabs: {
     today: 'Today',
     calendar: 'Calendar',
@@ -110,6 +113,11 @@ const en = {
     jumpToToday: 'Jump to today',
     prevDay: 'Previous day',
     nextDay: 'Next day',
+    shareDay: 'Share this day',
+    shareDayA11y: 'Share link to this liturgical day',
+    shareDayTitle: 'OrthoDaily',
+    shareDayCopied: 'Link copied to clipboard.',
+    shareDayCopyPrompt: 'Copy this link to share:',
   },
   fasting: {
     weeklyLevel: 'Strict fast (Wednesday & Friday)',
@@ -207,8 +215,10 @@ const en = {
     phelonion: 'Phelonion (outer vestment)',
     omophorion: 'Omophorion',
     layLiturgicalColour: "Today's liturgical colour",
+    layLiturgicalColourA11y: "Today's liturgical colour at the altar",
     layWhatYouWear: 'Your clothing',
-    layWhatYouWearValue: 'Modest and respectful; any colour is fine',
+    layWhatYouWearValue: 'Modest dress',
+    layClothingA11y: 'Modest clothing for church',
     layFootnote:
       'The coloured pill is what clergy wear at the altar today — you are not expected to match it.',
     podryasnikA11y: 'Podryasnik — black under-cassock',
@@ -308,6 +318,9 @@ const en = {
 } as const;
 
 const ru = {
+  app: {
+    name: 'OrthoDaily',
+  },
   tabs: {
     today: 'Сегодня',
     calendar: 'Календарь',
@@ -419,6 +432,11 @@ const ru = {
     jumpToToday: 'Перейти к сегодня',
     prevDay: 'Предыдущий день',
     nextDay: 'Следующий день',
+    shareDay: 'Поделиться этим днём',
+    shareDayA11y: 'Поделиться ссылкой на этот литургический день',
+    shareDayTitle: 'OrthoDaily',
+    shareDayCopied: 'Ссылка скопирована в буфер обмена.',
+    shareDayCopyPrompt: 'Скопируйте ссылку, чтобы поделиться:',
   },
   fasting: {
     weeklyLevel: 'Строгий пост (среда и пятница)',
@@ -517,8 +535,10 @@ const ru = {
     phelonion: 'Фелонь (верхнее облачение)',
     omophorion: 'Омофор',
     layLiturgicalColour: 'Литургический цвет дня',
+    layLiturgicalColourA11y: 'Литургический цвет дня у престола',
     layWhatYouWear: 'Ваша одежда',
-    layWhatYouWearValue: 'Скромная и благочестная; цвет на ваш выбор',
+    layWhatYouWearValue: 'Скромная одежда',
+    layClothingA11y: 'Скромная одежда для храма',
     layFootnote:
       'Цветной значок — что носят священнослужители у престола; от мирян его совпадения не требуют.',
     podryasnikA11y: 'Подрясник — чёрное подрясное облачение',

@@ -1,3 +1,4 @@
+import * as Linking from 'expo-linking';
 import {
   createContext,
   useCallback,
@@ -8,8 +9,14 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { Platform } from 'react-native';
 
 import { fromDayIso, startOfLocalDay, toDayIso } from '../lib/calendar/localDate';
+import {
+  parseDayIsoFromQueryParam,
+  readDayIsoFromWebLocation,
+  syncDayQueryParamOnWeb,
+} from '../lib/share/dayShareLink';
 import {
   parseStoredSelectedDay,
   persistSelectedDay,
@@ -36,26 +43,59 @@ export function DayNavigationProvider({ children }: { children: ReactNode }) {
   const pendingRef = useRef<string | null>(null);
   const hydratedRef = useRef(false);
 
+  const applyDayFromIso = useCallback((iso: string) => {
+    const day = fromDayIso(iso);
+    if (!day) return;
+    const normalized = startOfLocalDay(day);
+    setSelectedDateState(normalized);
+    if (hydratedRef.current) {
+      void persistSelectedDay(normalized);
+    }
+    syncDayQueryParamOnWeb(toDayIso(normalized));
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
       const stored = await readStoredPreferences();
       if (cancelled) return;
+      const urlDayIso = readDayIsoFromWebLocation();
       const restored = parseStoredSelectedDay(stored.selectedDayIso);
-      if (restored) {
-        setSelectedDateState(restored);
+      let initialDay = restored ?? startOfLocalDay(new Date());
+      if (urlDayIso) {
+        const fromUrl = fromDayIso(urlDayIso);
+        if (fromUrl) initialDay = startOfLocalDay(fromUrl);
       }
+      setSelectedDateState(initialDay);
+      syncDayQueryParamOnWeb(toDayIso(initialDay));
       hydratedRef.current = true;
+      void persistSelectedDay(initialDay);
       setNavigationReady(true);
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [applyDayFromIso]);
+
+  useEffect(() => {
+    const handleUrl = (incoming: string) => {
+      const parsed = Linking.parse(incoming);
+      const iso = parseDayIsoFromQueryParam(parsed.queryParams?.date ?? null);
+      if (iso) applyDayFromIso(iso);
+    };
+
+    void Linking.getInitialURL().then((url) => {
+      if (url) handleUrl(url);
+    });
+
+    const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url));
+    return () => subscription.remove();
+  }, [applyDayFromIso]);
 
   const setSelectedDate = useCallback((date: Date) => {
     const day = startOfLocalDay(date);
     setSelectedDateState(day);
+    syncDayQueryParamOnWeb(toDayIso(day));
     if (hydratedRef.current) {
       void persistSelectedDay(day);
     }
@@ -65,6 +105,7 @@ export function DayNavigationProvider({ children }: { children: ReactNode }) {
     const day = startOfLocalDay(date);
     setSelectedDateState(day);
     const iso = toDayIso(day);
+    syncDayQueryParamOnWeb(iso);
     pendingRef.current = iso;
     setPendingDayIso(iso);
     if (hydratedRef.current) {

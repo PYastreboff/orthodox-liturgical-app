@@ -1,3 +1,5 @@
+import type { OrthocalDay } from '../api/orthocal';
+import { annunciationFeastNameFromOrthocal } from '../liturgical/liturgicalDayTitle';
 import type { PlainDate } from './julianGregorian';
 import {
   gregorianPlainToJulianPlain,
@@ -36,6 +38,34 @@ function weekdayFromPlain(p: PlainDate): number {
 
 function sameLiturgicalDate(a: PlainDate, b: PlainDate): boolean {
   return a.year === b.year && a.month === b.month && a.day === b.day;
+}
+
+/** Blue vestments — Annunciation and other Theotokos great feasts. */
+export function annunciationAppearanceFields(
+  subtitle: string,
+  gregorianSubtitle: string,
+): Pick<LiturgicalDayAppearance, 'key' | 'gradient' | 'foreground' | 'label' | 'subtitle' | 'gregorianSubtitle'> {
+  return {
+    key: 'annunciation',
+    gradient: ['#355a8a', '#1c2f4a'],
+    foreground: '#eef4ff',
+    subtitle,
+    gregorianSubtitle,
+    label: 'Annunciation',
+  };
+}
+
+function isAnnunciationLiturgicalDate(liturgical: PlainDate): boolean {
+  return liturgical.month === 3 && liturgical.day === 25;
+}
+
+export function applyAnnunciationAppearance(
+  appearance: LiturgicalDayAppearance,
+): LiturgicalDayAppearance {
+  return {
+    ...appearance,
+    ...annunciationAppearanceFields(appearance.subtitle, appearance.gregorianSubtitle),
+  };
 }
 
 /**
@@ -77,7 +107,6 @@ export function getLiturgicalDayAppearance(
 
   const nativity = { year: y, month: 12, day: 25 } satisfies PlainDate;
   const theophany = { year: y, month: 1, day: 6 } satisfies PlainDate;
-  const annunciation = { year: y, month: 3, day: 25 } satisfies PlainDate;
   const transfiguration = { year: y, month: 8, day: 6 } satisfies PlainDate;
   const dormition = { year: y, month: 8, day: 15 } satisfies PlainDate;
   const elevationCross = { year: y, month: 9, day: 14 } satisfies PlainDate;
@@ -122,6 +151,11 @@ export function getLiturgicalDayAppearance(
       gregorianSubtitle,
       label: 'Palm Sunday',
     };
+  }
+
+  /** Annunciation (25 Mar) keeps Theotokos blue even in Great Lent or Holy Week. */
+  if (isAnnunciationLiturgicalDate(liturgical)) {
+    return annunciationAppearanceFields(subtitle, gregorianSubtitle);
   }
 
   if (inHolyWeek) {
@@ -220,17 +254,6 @@ export function getLiturgicalDayAppearance(
       subtitle,
     gregorianSubtitle,
       label: 'Theophany',
-    };
-  }
-
-  if (sameLiturgicalDate(liturgical, annunciation)) {
-    return {
-      key: 'annunciation',
-      gradient: ['#355a8a', '#1c2f4a'],
-      foreground: '#eef4ff',
-      subtitle,
-    gregorianSubtitle,
-      label: 'Annunciation',
     };
   }
 
@@ -351,16 +374,21 @@ export function getLiturgicalDayAppearance(
 export function getLiturgicalAppearanceForLocalDate(
   d: Date,
   liturgicalCalendar: PrimaryCalendar = 'julian',
+  orthocalDay?: OrthocalDay | null,
 ): LiturgicalDayAppearance {
   const civil = civilPlainDateFromLocal(d);
   const liturgical = appearanceLiturgicalPlainDate(civil, liturgicalCalendar);
   const julian = gregorianPlainToJulianPlain(civil);
   const jdn = julianCalendarToJulianDayNumber(julian.year, julian.month, julian.day);
-  const appearance = getLiturgicalDayAppearance(liturgical, jdn, d.getDay());
+  let appearance = getLiturgicalDayAppearance(liturgical, jdn, d.getDay());
   const civilReadable = formatGregorianReadable(civil, true);
-  return {
+  appearance = {
     ...appearance,
     subtitle: civilReadable,
     gregorianSubtitle: civilReadable,
   };
+  if (orthocalDay && annunciationFeastNameFromOrthocal(orthocalDay)) {
+    appearance = applyAnnunciationAppearance(appearance);
+  }
+  return appearance;
 }

@@ -25,6 +25,7 @@ type Props = {
   onPrevious: () => void;
   onNext: () => void;
   onToday: () => void;
+  onShare?: () => void;
 };
 
 export function DayHero({
@@ -39,6 +40,7 @@ export function DayHero({
   onPrevious,
   onNext,
   onToday,
+  onShare,
 }: Props) {
   const { t } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
@@ -81,9 +83,34 @@ export function DayHero({
         end={{ x: 0.92, y: 1 }}
         style={[styles.heroGradient, { paddingHorizontal: heroPaddingX }]}
       >
-      <Text style={[styles.dayTitle, dayTitleType, { color: fg }]} numberOfLines={3}>
-        {dayTitle}
-      </Text>
+      <View style={styles.titleRow}>
+        <Text
+          style={[
+            styles.dayTitle,
+            dayTitleType,
+            { color: fg },
+            onShare ? styles.dayTitleWithShare : null,
+          ]}
+          numberOfLines={3}
+        >
+          {dayTitle}
+        </Text>
+        {onShare ? (
+          <Pressable
+            style={({ pressed }) => [
+              styles.shareBtn,
+              { backgroundColor: navBtnBg },
+              pressed && styles.navBtnPressed,
+            ]}
+            onPress={onShare}
+            accessibilityLabel={t('today.shareDayA11y')}
+            accessibilityRole="button"
+            hitSlop={6}
+          >
+            <Feather name="share-2" size={16} color={fg} />
+          </Pressable>
+        ) : null}
+      </View>
 
       <View style={styles.navRow}>
         <Pressable
@@ -171,12 +198,32 @@ const styles = StyleSheet.create({
     shadowRadius: 14,
     elevation: 5,
   },
+  titleRow: {
+    width: '100%',
+    marginBottom: 12,
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 32,
+  },
   dayTitle: {
     fontWeight: '800',
     textAlign: 'center',
     letterSpacing: 0.2,
-    marginBottom: 12,
     width: '100%',
+  },
+  dayTitleWithShare: {
+    paddingHorizontal: 36,
+  },
+  shareBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   navRow: {
     flexDirection: 'row',

@@ -85,7 +85,7 @@ function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): SwatchKey {
   const label = appearance.label.toLowerCase();
 
   if (key === 'theophany' || label.includes('theophany')) return 'blue';
-  if (key === 'annunciation') return 'blue';
+  if (key === 'annunciation' || label.includes('annunciation')) return 'blue';
   if (key === 'dormition') return 'blue';
   if (key === 'pascha' || label.includes('pascha')) return 'white';
   if (key === 'bright_week') return 'white';
@@ -257,7 +257,7 @@ function layLiturgicalColourLine(
   sectionHeader?: string,
 ): VestmentLine {
   return {
-    kind: 'layAttire',
+    kind: 'layLiturgicalColour',
     label: translate(lang, 'vestments.layLiturgicalColour'),
     value: swatch.name,
     pillBg: swatch.pillBg,
@@ -268,7 +268,7 @@ function layLiturgicalColourLine(
 
 function layClothingLine(lang: UiLanguage): VestmentLine {
   return {
-    kind: 'layAttire',
+    kind: 'layClothing',
     label: translate(lang, 'vestments.layWhatYouWear'),
     value: translate(lang, 'vestments.layWhatYouWearValue'),
     pillBg: SWATCH.dark.pillBg,

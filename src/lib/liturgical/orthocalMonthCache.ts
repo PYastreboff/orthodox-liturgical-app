@@ -45,10 +45,13 @@ async function fetchMonthDayMap(
       const iso = toDayIso(date);
       const civil = civilPlainDateFromLocal(date);
       const queryDate = orthocalQueryDate(civil);
-      const appearance = getLiturgicalAppearanceForLocalDate(date, liturgicalCalendar);
-
       try {
         const orthocalDay = await fetchOrthocalDay(liturgicalCalendar, queryDate);
+        const appearance = getLiturgicalAppearanceForLocalDate(
+          date,
+          liturgicalCalendar,
+          orthocalDay,
+        );
         const apiRank = getFeastRankDisplay(
           orthocalDay.feast_level,
           orthocalDay.feast_level_description,
@@ -62,6 +65,7 @@ async function fetchMonthDayMap(
         );
         return [iso, info] as const;
       } catch {
+        const appearance = getLiturgicalAppearanceForLocalDate(date, liturgicalCalendar);
         const info = buildCalendarDayInfo(null, appearance.key, appearance.label, null);
         return [iso, info] as const;
       }
