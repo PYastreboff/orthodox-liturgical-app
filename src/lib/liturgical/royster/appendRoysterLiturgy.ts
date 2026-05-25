@@ -1,8 +1,9 @@
 import type { OrthocalDay } from '../../api/orthocal';
-import type {
-  BuildLiturgicalTextsOptions,
-  LiturgicalTextCategory,
-  LiturgicalTextItem,
+import {
+  liturgicalItemHasText,
+  type BuildLiturgicalTextsOptions,
+  type LiturgicalTextCategory,
+  type LiturgicalTextItem,
 } from '../liturgicalTexts';
 import { isOrthocalGreatFeastLevel } from '../liturgicalDayTitle';
 import { resolveRoysterLiturgySequence } from './resolveRoysterLiturgy';
@@ -29,8 +30,11 @@ export function appendRoysterLiturgy(
   const items = roysterSequenceToItems(sequence, lang, { isSunday, isFeastDay });
 
   for (const category of ROYSTER_CATEGORIES) {
-    if (buckets[category].length > 0) continue;
+    const existing = buckets[category];
+    if (existing.some(liturgicalItemHasText)) continue;
     const next = items[category];
-    if (next?.length) buckets[category].push(...next);
+    if (!next?.length) continue;
+    if (existing.length) buckets[category] = [...next];
+    else buckets[category].push(...next);
   }
 }

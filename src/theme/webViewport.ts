@@ -1,7 +1,5 @@
 import { Platform } from 'react-native';
 
-import { SAFARI_TAB_BAR_BLEED_PX } from './layout';
-
 const BACKDROP_ID = 'orthodaily-viewport-backdrop';
 export const IOS_WEB_CLASS = 'orthodaily-ios-web';
 
@@ -12,7 +10,7 @@ export function getNativeVisualViewport(): VisualViewport | null {
   return nativeVisualViewport ?? window.visualViewport ?? null;
 }
 
-export function isIosWebStandalone(): boolean {
+function isIosWebStandalone(): boolean {
   if (Platform.OS !== 'web' || typeof navigator === 'undefined') return false;
   const nav = navigator as Navigator & { standalone?: boolean };
   if (nav.standalone === true) return true;
@@ -126,11 +124,6 @@ export function measureSafariBottomChrome(): number {
   return Math.max(0, Math.floor(window.innerHeight - vv.height - vv.offsetTop));
 }
 
-export function safariTabBarBottomOffset(chromePx: number): number {
-  if (chromePx <= 0) return 0;
-  return Math.max(0, chromePx - SAFARI_TAB_BAR_BLEED_PX);
-}
-
 function readPageBackground(): string | undefined {
   const fromVar = document.documentElement.style.getPropertyValue('--orthodaily-page-bg').trim();
   return fromVar || undefined;
@@ -229,7 +222,6 @@ function applyDesktopWebShell(pageBackground?: string): void {
   const doc = document.documentElement;
   doc.classList.remove(IOS_WEB_CLASS);
   doc.style.removeProperty('--app-height-px');
-  doc.style.removeProperty('--app-cover-height-px');
   doc.style.removeProperty('--vh');
   doc.style.setProperty('--app-height', '100dvh');
   doc.style.setProperty('--safari-bottom-chrome', '0px');

@@ -70,5 +70,6 @@ Desktop.ini
 
 # Misc caches
 node_modules/.cache/
+node_modules/.cache/gh-pages/
 .eslintcache
 *.hprof
