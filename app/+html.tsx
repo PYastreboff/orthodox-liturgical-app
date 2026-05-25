@@ -23,6 +23,12 @@ export default function Root({ children }: PropsWithChildren) {
         <title>OrthoDaily</title>
         <ScrollViewStyleReset />
         <style dangerouslySetInnerHTML={{ __html: WEB_ROOT_CSS }} />
+        <style
+          dangerouslySetInnerHTML={{
+            __html:
+              'html,body,#root{height:auto!important;min-height:100dvh;min-height:-webkit-fill-available;}',
+          }}
+        />
         <script dangerouslySetInnerHTML={{ __html: WEB_VIEWPORT_BOOT_SCRIPT }} />
       </head>
       <body>{children}</body>

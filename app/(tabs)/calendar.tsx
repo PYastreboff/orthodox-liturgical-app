@@ -14,6 +14,7 @@ import Head from 'expo-router/head';
 import { CalendarColorLegend } from '../../src/components/CalendarColorLegend';
 import { CalendarSearch } from '../../src/components/CalendarSearch';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
+import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
@@ -25,6 +26,7 @@ import {
   usePreferences,
 } from '../../src/state/PreferencesContext';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
+import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 
@@ -103,6 +105,8 @@ export default function CalendarScreen() {
   const calendarBg = theme.dark ? colors.darkBg : '#e8e3d8';
   const { width } = useWindowDimensions();
   const isCompact = width < CALENDAR_COMPACT_BREAKPOINT;
+  const phoneLayout = usePhoneLayout();
+  const sectionInsetX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
 
   useFocusEffect(
     useCallback(() => {
@@ -130,10 +134,12 @@ export default function CalendarScreen() {
         },
       ]}
     >
-      <Text style={[styles.title, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
-      <Text style={[styles.lede, isCompact ? styles.ledeCompact : null, { color: colors.muted }]}>
-        {t(isCompact ? 'calendar.subtitleShort' : 'calendar.subtitle')}
-      </Text>
+      <View style={[styles.header, { paddingHorizontal: sectionInsetX }]}>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
+        <Text style={[styles.lede, isCompact ? styles.ledeCompact : null, { color: colors.muted }]}>
+          {t(isCompact ? 'calendar.subtitleShort' : 'calendar.subtitle')}
+        </Text>
+      </View>
       <CalendarColorLegend textColor={theme.colors.text} compact={isCompact} />
 
       <CalendarSearch
@@ -171,6 +177,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 12,
     paddingBottom: 32,
+  },
+  header: {
+    width: '100%',
   },
   title: {
     fontSize: 22,

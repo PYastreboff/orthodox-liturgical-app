@@ -31,7 +31,8 @@ export function syncWebDocumentTheme(isDark: boolean, chromeColor?: string): voi
 }
 
 /**
- * Shell CSS after ScrollViewStyleReset — no height:100% on html (breaks viewport-fit=cover on iOS).
+ * Shell CSS after ScrollViewStyleReset — 100dvh (not 100vh/height:100%) + viewport-fit=cover.
+ * Safe-area padding is applied in React (content insets), not on body, so backgrounds bleed edge-to-edge.
  */
 export const WEB_ROOT_CSS = `
 html {
@@ -40,6 +41,9 @@ html {
   width: 100%;
   margin: 0;
   padding: 0;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  height: auto;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   background-color: ${colors.parchment};
@@ -54,6 +58,12 @@ html {
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  height: auto;
+  position: relative;
+  overflow-x: hidden;
   background-color: ${colors.parchment};
   background-color: var(--orthodaily-page-bg, ${colors.parchment});
 }
@@ -66,6 +76,13 @@ body {
 #root {
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   background-color: ${colors.parchment};
   background-color: var(--orthodaily-page-bg, ${colors.parchment});
 }

@@ -3,6 +3,9 @@ export const TAB_BAR_CONTENT_HEIGHT = 52;
 
 export const SCROLL_EXTRA_BOTTOM_PADDING = 12;
 
+/** Overlap into Safari bottom chrome to hide sub-pixel gaps (iOS Safari web). */
+export const SAFARI_TAB_BAR_BLEED_PX = 4;
+
 /** Horizontal gutter outside safe area on scroll screens. */
 export const SCREEN_GUTTER_X = 20;
 export const SCREEN_GUTTER_X_PHONE = 10;

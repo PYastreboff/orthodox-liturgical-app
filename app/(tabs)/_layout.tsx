@@ -3,20 +3,23 @@ import { useTheme } from '@react-navigation/native';
 import { Platform, StyleSheet } from 'react-native';
 
 import { AppBrandHeader } from '../../src/components/AppBrandHeader';
+import { TabBarBleedBackground } from '../../src/components/TabBarBleedBackground';
 import { TAB_ICON_SIZE, tabBarIconOptions } from '../../src/components/TabBarIcon';
+import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
 import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useLayoutSafeAreaInsets } from '../../src/hooks/useLayoutSafeAreaInsets';
 import { useSafariBottomChromeInset } from '../../src/hooks/useSafariBottomChromeInset';
+import { isIosSafariBrowser, safariTabBarBottomOffset } from '../../src/theme/webViewport';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
-import { TAB_BAR_CONTENT_HEIGHT } from '../../src/theme/layout';
+import { SAFARI_TAB_BAR_BLEED_PX, TAB_BAR_CONTENT_HEIGHT } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
 
-function tabBarBackground(isDark: boolean): string {
+function tabBarBackground(isDark: boolean, phoneLayout: boolean): string {
   if (isDark) {
-    return 'rgba(28, 24, 20, 0.92)';
+    return phoneLayout ? colors.darkSurface : 'rgba(28, 24, 20, 0.92)';
   }
-  return 'rgba(245, 240, 232, 0.92)';
+  return phoneLayout ? colors.parchment : 'rgba(245, 240, 232, 0.92)';
 }
 
 function tabBarBorderColor(isDark: boolean): string {
@@ -33,9 +36,20 @@ function TabsLayoutContent() {
   const insets = useLayoutSafeAreaInsets();
   const { t } = useAppTranslation();
   const showTabHeader = useTabHeaderShown();
+  const phoneLayout = usePhoneLayout();
   const bottomInset = insets.bottom;
   const safariChrome = useSafariBottomChromeInset();
-  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + bottomInset;
+  const safariTabBarBleed =
+    Platform.OS === 'web' && isIosSafariBrowser() && safariChrome > 0;
+  const nativePhoneBleed = phoneLayout && Platform.OS === 'ios' && !safariTabBarBleed;
+  const tabBarBleedHeight = safariTabBarBleed
+    ? SAFARI_TAB_BAR_BLEED_PX
+    : nativePhoneBleed
+      ? 2
+      : 0;
+  const tabBarBottom = safariTabBarBleed ? safariTabBarBottomOffset(safariChrome) : safariChrome;
+  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + bottomInset + tabBarBleedHeight;
+  const tabBarBg = tabBarBackground(isDark, phoneLayout);
 
   return (
     <Tabs
@@ -52,16 +66,29 @@ function TabsLayoutContent() {
           position: 'absolute',
           left: 0,
           right: 0,
-          bottom: safariChrome,
+          bottom: tabBarBottom,
           width: '100%',
-          backgroundColor: tabBarBackground(isDark),
+          backgroundColor: tabBarBg,
           borderTopColor: tabBarBorderColor(isDark),
           borderTopWidth: StyleSheet.hairlineWidth,
+          borderBottomWidth: 0,
           height: tabBarHeight,
           paddingTop: 0,
-          paddingBottom: bottomInset > 0 ? bottomInset : Platform.OS === 'android' ? 8 : 0,
+          paddingBottom:
+            bottomInset +
+            tabBarBleedHeight +
+            (Platform.OS === 'android' && bottomInset === 0 ? 8 : 0),
           elevation: 0,
+          shadowOpacity: 0,
+          shadowRadius: 0,
+          overflow: 'visible',
+          ...(Platform.OS === 'web'
+            ? ({ boxShadow: 'none' } as const)
+            : null),
         },
+        tabBarBackground: () => (
+          <TabBarBleedBackground color={tabBarBg} bleedPx={tabBarBleedHeight} />
+        ),
         tabBarItemStyle: {
           height: TAB_BAR_CONTENT_HEIGHT,
           justifyContent: 'center',
