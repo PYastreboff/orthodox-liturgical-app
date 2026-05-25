@@ -3,8 +3,9 @@ import { Platform } from 'react-native';
 import { SAFARI_TAB_BAR_BLEED_PX } from './layout';
 
 const BACKDROP_ID = 'orthodaily-viewport-backdrop';
+const IOS_SHELL_CLASS = 'orthodaily-ios-web';
 
-/** Unpatched visual viewport — needed for Safari toolbar inset math. */
+/** Unpatched visual viewport — Safari toolbar inset math only. */
 let nativeVisualViewport: VisualViewport | null = null;
 
 export function getNativeVisualViewport(): VisualViewport | null {
@@ -12,7 +13,7 @@ export function getNativeVisualViewport(): VisualViewport | null {
   return nativeVisualViewport ?? window.visualViewport ?? null;
 }
 
-/** Standalone “Add to Home Screen” — not the same as `display-mode: standalone` on iOS. */
+/** Standalone “Add to Home Screen”. */
 export function isIosWebStandalone(): boolean {
   if (Platform.OS !== 'web' || typeof navigator === 'undefined') return false;
   const nav = navigator as Navigator & { standalone?: boolean };
@@ -28,35 +29,27 @@ export function isIosMobileWeb(): boolean {
   return /iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
-/** Safari in-browser only (floating URL bar; page paints underneath). */
 export function isIosSafariBrowser(): boolean {
   return isIosMobileWeb() && !isIosWebStandalone();
 }
 
-/** Layout viewport height — used for standalone PWA shell sync only. */
+/** Layout viewport — paints behind Safari UI with viewport-fit=cover. */
 export function layoutViewportHeightPx(): number {
   if (typeof window === 'undefined') return 0;
   return Math.round(window.innerHeight);
 }
 
-/** Layout viewport width. */
 export function layoutViewportWidthPx(): number {
   if (typeof window === 'undefined') return 0;
   return Math.round(window.innerWidth);
 }
 
-function appHeightExpression(): string {
-  if (typeof window === 'undefined') return '100dvh';
-  if (isIosWebStandalone()) return '100vh';
-  return '100dvh';
-}
-
 /**
- * RN Web reads `visualViewport` for Dimensions — shorter than layout viewport in Safari.
- * Proxy height/width so flex layouts fill the painted shell (100dvh).
+ * RN Web uses visualViewport for Dimensions (shorter than layout viewport).
+ * Proxy to innerHeight so flex layouts fill the fixed iOS shell.
  */
 export function installVisualViewportLayoutPatch(): void {
-  if (typeof window === 'undefined' || !isIosSafariBrowser()) return;
+  if (typeof window === 'undefined' || !isIosMobileWeb()) return;
   const w = window as Window & { __orthodailyVvPatch?: boolean };
   if (w.__orthodailyVvPatch) return;
   const native = window.visualViewport;
@@ -87,7 +80,6 @@ export function installVisualViewportLayoutPatch(): void {
   }
 }
 
-/** Reliable read of env(safe-area-inset-*) on iOS (height probe). */
 export function measureWebSafeAreaInset(
   edge: 'safe-area-inset-top' | 'safe-area-inset-bottom' | 'safe-area-inset-left' | 'safe-area-inset-right',
 ): number {
@@ -123,16 +115,13 @@ export function readWebSafeAreaInsets(): {
   };
 }
 
-/** Safari floating toolbar height (tab bar sits above this). */
 export function measureSafariBottomChrome(): number {
   if (typeof window === 'undefined') return 0;
   const vv = getNativeVisualViewport();
   if (!vv) return 0;
-  // Floor avoids rounding up and leaving a ~1px gap above Safari’s toolbar.
   return Math.max(0, Math.floor(window.innerHeight - vv.height - vv.offsetTop));
 }
 
-/** Tab bar `bottom` offset — bleeds slightly into chrome to hide hairline gaps. */
 export function safariTabBarBottomOffset(chromePx: number): number {
   if (chromePx <= 0) return 0;
   return Math.max(0, chromePx - SAFARI_TAB_BAR_BLEED_PX);
@@ -146,83 +135,153 @@ function ensureViewportBackdrop(): HTMLElement {
     el.setAttribute('aria-hidden', 'true');
     document.body.insertBefore(el, document.body.firstChild);
   }
-  el.style.cssText = [
+  return el;
+}
+
+function paintChrome(bg: string | undefined): void {
+  if (!bg || typeof document === 'undefined') return;
+  const doc = document.documentElement;
+  const body = document.body;
+  const root = document.getElementById('root');
+  const backdrop = document.getElementById(BACKDROP_ID);
+  doc.style.backgroundColor = bg;
+  body.style.backgroundColor = bg;
+  if (root) root.style.backgroundColor = bg;
+  if (backdrop) backdrop.style.backgroundColor = bg;
+}
+
+/** Fixed shell sized to innerHeight — avoids 100dvh/100vh letterboxing on iOS. */
+function applyIosMobileShell(pageBackground?: string): void {
+  const h = layoutViewportHeightPx();
+  const w = layoutViewportWidthPx();
+  if (h <= 0) return;
+
+  const doc = document.documentElement;
+  doc.classList.add(IOS_SHELL_CLASS);
+  doc.style.setProperty('--orthodaily-shell-height', `${h}px`);
+  doc.style.setProperty('--orthodaily-shell-width', `${w}px`);
+  doc.style.setProperty('--app-height', `${h}px`);
+  doc.style.setProperty(
+    '--safari-bottom-chrome',
+    `${isIosSafariBrowser() ? measureSafariBottomChrome() : 0}px`,
+  );
+  doc.style.height = `${h}px`;
+  doc.style.minHeight = `${h}px`;
+  doc.style.maxHeight = `${h}px`;
+  doc.style.width = '100%';
+  doc.style.margin = '0';
+  doc.style.padding = '0';
+  doc.style.overflow = 'hidden';
+
+  const body = document.body;
+  body.style.position = 'fixed';
+  body.style.top = '0';
+  body.style.left = '0';
+  body.style.right = '0';
+  body.style.width = '100%';
+  body.style.height = `${h}px`;
+  body.style.minHeight = `${h}px`;
+  body.style.maxHeight = `${h}px`;
+  body.style.margin = '0';
+  body.style.padding = '0';
+  body.style.overflow = 'hidden';
+  body.style.overscrollBehavior = 'none';
+
+  const backdrop = ensureViewportBackdrop();
+  backdrop.style.cssText = [
     'position:fixed',
     'top:0',
     'left:0',
     'right:0',
-    'bottom:0',
+    `height:${h}px`,
     'width:100%',
-    'min-height:100dvh',
-    'min-height:-webkit-fill-available',
     'z-index:0',
     'pointer-events:none',
   ].join(';');
-  return el;
+
+  const root = document.getElementById('root');
+  if (root) {
+    root.style.position = 'fixed';
+    root.style.top = '0';
+    root.style.left = '0';
+    root.style.right = '0';
+    root.style.width = '100%';
+    root.style.height = `${h}px`;
+    root.style.minHeight = `${h}px`;
+    root.style.maxHeight = `${h}px`;
+    root.style.margin = '0';
+    root.style.padding = '0';
+    root.style.display = 'flex';
+    root.style.flexDirection = 'column';
+    root.style.overflow = 'hidden';
+    root.style.zIndex = '1';
+    root.style.boxSizing = 'border-box';
+  }
+
+  paintChrome(pageBackground);
 }
 
-/** Sync CSS vars + theme backdrop. Safari browser uses 100dvh (no fixed-body / innerHeight px). */
-export function applyWebViewportMetrics(pageBackground?: string): void {
-  if (Platform.OS !== 'web' || typeof document === 'undefined') return;
-
-  const heightExpr = appHeightExpression();
-  const safariBottom = isIosSafariBrowser() ? measureSafariBottomChrome() : 0;
-
+/** Desktop / Android web — dynamic viewport units, no fixed body. */
+function applyStandardWebShell(pageBackground?: string): void {
   const doc = document.documentElement;
-  doc.style.setProperty('--app-height', heightExpr);
-  doc.style.setProperty('--safari-bottom-chrome', `${safariBottom}px`);
+  doc.classList.remove(IOS_SHELL_CLASS);
+  doc.style.removeProperty('--orthodaily-shell-height');
+  doc.style.removeProperty('--orthodaily-shell-width');
+  doc.style.setProperty('--app-height', '100dvh');
+  doc.style.setProperty('--safari-bottom-chrome', '0px');
+  doc.style.removeProperty('height');
+  doc.style.removeProperty('minHeight');
+  doc.style.removeProperty('maxHeight');
 
   const body = document.body;
-  const root = document.getElementById('root');
+  body.style.position = '';
+  body.style.top = '';
+  body.style.left = '';
+  body.style.right = '';
+  body.style.height = '';
+  body.style.minHeight = '';
+  body.style.maxHeight = '';
+  body.style.overflow = '';
+  body.style.overscrollBehavior = '';
 
-  if (isIosWebStandalone()) {
-    const heightPx = layoutViewportHeightPx();
-    if (heightPx > 0) {
-      doc.style.height = `${heightPx}px`;
-      doc.style.minHeight = `${heightPx}px`;
-      body.style.position = 'fixed';
-      body.style.top = '0';
-      body.style.left = '0';
-      body.style.right = '0';
-      body.style.bottom = '0';
-      body.style.width = '100%';
-      body.style.margin = '0';
-      body.style.overflow = 'hidden';
-      body.style.height = `${heightPx}px`;
-      if (root) {
-        root.style.position = 'absolute';
-        root.style.inset = '0';
-        root.style.display = 'flex';
-        root.style.flexDirection = 'column';
-        root.style.width = '100%';
-        root.style.height = '100%';
-        root.style.overflow = 'hidden';
-        root.style.zIndex = '1';
-      }
-    }
-  } else {
-    doc.style.removeProperty('height');
-    body.style.position = '';
-    body.style.top = '';
-    body.style.left = '';
-    body.style.right = '';
-    body.style.bottom = '';
-    body.style.height = '';
-    body.style.overflow = '';
-    if (root) {
-      root.style.position = '';
-      root.style.inset = '';
-      root.style.height = '';
-      root.style.zIndex = '';
-    }
+  const root = document.getElementById('root');
+  if (root) {
+    root.style.position = '';
+    root.style.top = '';
+    root.style.left = '';
+    root.style.right = '';
+    root.style.height = '';
+    root.style.minHeight = '';
+    root.style.maxHeight = '';
+    root.style.zIndex = '';
+    root.style.boxSizing = '';
   }
 
   const backdrop = ensureViewportBackdrop();
-  if (pageBackground) {
-    backdrop.style.backgroundColor = pageBackground;
-    doc.style.backgroundColor = pageBackground;
-    body.style.backgroundColor = pageBackground;
-    if (root) root.style.backgroundColor = pageBackground;
+  backdrop.style.cssText = [
+    'position:fixed',
+    'inset:0',
+    'width:100%',
+    'min-height:100dvh',
+    'z-index:0',
+    'pointer-events:none',
+  ].join(';');
+
+  paintChrome(pageBackground);
+}
+
+export function applyWebViewportMetrics(pageBackground?: string): void {
+  if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+
+  const preservedBg = document.documentElement.style
+    .getPropertyValue('--orthodaily-page-bg')
+    .trim();
+  const bg = pageBackground ?? (preservedBg || undefined);
+
+  if (isIosMobileWeb()) {
+    applyIosMobileShell(bg || undefined);
+  } else {
+    applyStandardWebShell(bg || undefined);
   }
 }
 
@@ -235,30 +294,33 @@ export function installWebViewportShell(): void {
   installVisualViewportLayoutPatch();
   applyWebViewportMetrics();
 
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('resize'));
+  }
+
   const onChange = () => applyWebViewportMetrics();
   window.addEventListener('resize', onChange);
   window.addEventListener('orientationchange', onChange);
-  getNativeVisualViewport()?.addEventListener('resize', onChange);
-  getNativeVisualViewport()?.addEventListener('scroll', onChange);
+  const native = getNativeVisualViewport();
+  native?.addEventListener('resize', onChange);
+  native?.addEventListener('scroll', onChange);
   window.visualViewport?.addEventListener('resize', onChange);
   window.visualViewport?.addEventListener('scroll', onChange);
 }
 
-/** Runs before React — 100dvh shell; standalone PWA keeps 100vh fixed body. */
 export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
   function ios(){return /iPhone|iPad|iPod/i.test(navigator.userAgent||'');}
-  function standalone(){var n=navigator;return n.standalone===true||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches);}
-  function safariBrowser(){return ios()&&!standalone();}
   function layoutH(){return Math.round(window.innerHeight);}
+  function layoutW(){return Math.round(window.innerWidth);}
   function patchVv(){
-    if(!safariBrowser()||!window.visualViewport||window.__orthodailyVvPatch)return;
+    if(!ios()||!window.visualViewport||window.__orthodailyVvPatch)return;
     var native=window.visualViewport;
     window.__orthodailyNativeVv=native;
     window.__orthodailyVvPatch=true;
     var proxy=new Proxy(native,{
       get:function(t,p,r){
         if(p==='height')return layoutH()/(t.scale||1);
-        if(p==='width')return Math.round(window.innerWidth)/(t.scale||1);
+        if(p==='width')return layoutW()/(t.scale||1);
         var v=Reflect.get(t,p,r);
         return typeof v==='function'?v.bind(t):v;
       }
@@ -269,39 +331,38 @@ export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
     var id='orthodaily-viewport-backdrop';
     var el=document.getElementById(id);
     if(!el){el=document.createElement('div');el.id=id;el.setAttribute('aria-hidden','true');document.body.insertBefore(el,document.body.firstChild);}
-    el.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;width:100%;min-height:100dvh;min-height:-webkit-fill-available;z-index:0;pointer-events:none';
+    return el;
+  }
+  function applyIos(){
+    var h=layoutH(),w=layoutW();
+    if(h<=0)return;
+    var d=document.documentElement,b=document.body,r=document.getElementById('root');
+    d.classList.add('orthodaily-ios-web');
+    d.style.setProperty('--orthodaily-shell-height',h+'px');
+    d.style.setProperty('--app-height',h+'px');
+    var bottom=0,nv=window.__orthodailyNativeVv;
+    if(nv){bottom=Math.max(0,Math.floor(window.innerHeight-nv.height-nv.offsetTop));}
+    d.style.setProperty('--safari-bottom-chrome',bottom+'px');
+    d.style.height=h+'px';d.style.minHeight=h+'px';d.style.maxHeight=h+'px';
+    d.style.width='100%';d.style.margin='0';d.style.padding='0';d.style.overflow='hidden';
+    b.style.position='fixed';b.style.top='0';b.style.left='0';b.style.right='0';
+    b.style.width='100%';b.style.height=h+'px';b.style.minHeight=h+'px';b.style.maxHeight=h+'px';
+    b.style.margin='0';b.style.padding='0';b.style.overflow='hidden';b.style.overscrollBehavior='none';
+    var bd=ensureBackdrop();
+    bd.style.cssText='position:fixed;top:0;left:0;right:0;height:'+h+'px;width:100%;z-index:0;pointer-events:none';
+    if(r){
+      r.style.position='fixed';r.style.top='0';r.style.left='0';r.style.right='0';
+      r.style.width='100%';r.style.height=h+'px';r.style.minHeight=h+'px';r.style.maxHeight=h+'px';
+      r.style.margin='0';r.style.padding='0';r.style.display='flex';r.style.flexDirection='column';
+      r.style.overflow='hidden';r.style.zIndex='1';r.style.boxSizing='border-box';
+    }
   }
   function sync(){
     try{
       patchVv();
-      var d=document.documentElement,b=document.body,r=document.getElementById('root');
-      var heightExpr=standalone()?'100vh':'100dvh';
-      d.style.setProperty('--app-height',heightExpr);
-      var bottom=0;
-      if(safariBrowser()){
-        var nv=window.__orthodailyNativeVv||null;
-        if(nv){bottom=Math.max(0,Math.floor(window.innerHeight-nv.height-nv.offsetTop));}
-      }
-      d.style.setProperty('--safari-bottom-chrome',bottom+'px');
-      if(standalone()){
-        var h=layoutH();
-        if(h>0){
-          d.style.height=h+'px';d.style.minHeight=h+'px';
-          b.style.position='fixed';b.style.top='0';b.style.left='0';b.style.right='0';b.style.bottom='0';
-          b.style.width='100%';b.style.margin='0';b.style.overflow='hidden';b.style.height=h+'px';
-          if(r){r.style.position='absolute';r.style.top='0';r.style.left='0';r.style.right='0';r.style.bottom='0';
-            r.style.display='flex';r.style.flexDirection='column';r.style.width='100%';r.style.height='100%';r.style.zIndex='1';}
-        }
-      }else{
-        d.style.removeProperty('height');
-        b.style.position='';b.style.top='';b.style.left='';b.style.right='';b.style.bottom='';
-        b.style.height='';b.style.overflow='';
-        if(r){r.style.position='';r.style.height='';r.style.zIndex='';}
-      }
-      ensureBackdrop();
+      if(ios()){applyIos();}
     }catch(e){}
   }
-  patchVv();
   sync();
   window.addEventListener('resize',sync);
   window.addEventListener('orientationchange',sync);

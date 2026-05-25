@@ -52,5 +52,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     width: '100%',
+    height: Platform.OS === 'web' ? '100%' : undefined,
+    minHeight: Platform.OS === 'web' ? '100%' : undefined,
   },
 });
