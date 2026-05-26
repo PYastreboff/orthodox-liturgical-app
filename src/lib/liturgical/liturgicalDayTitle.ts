@@ -420,7 +420,12 @@ export function liturgicalDayTitle(
     }
   }
 
-  return defaultTitleFromOrthocal(day, appearanceLabel);
+  const fallback = defaultTitleFromOrthocal(day, appearanceLabel);
+  if (day && isOrthocalGreatFeastLevel(day)) {
+    const feast = primaryFeastTitle(day, appearanceKey);
+    if (feast && isOrdinarySeasonLectionaryTitle(fallback)) return feast;
+  }
+  return fallback;
 }
 
 /** Calendar cell feast bullets — orthocal feasts except the headline title. */

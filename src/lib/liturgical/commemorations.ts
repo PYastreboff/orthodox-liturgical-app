@@ -101,6 +101,33 @@ function hasFeastNamed(entries: CommemorationEntry[], name: string): boolean {
   return entries.some((e) => e.kind === 'feast' && e.name.trim().toLowerCase() === key);
 }
 
+function hasSaintNamed(entries: CommemorationEntry[], name: string): boolean {
+  const key = name.trim().toLowerCase();
+  return entries.some((e) => e.kind === 'saint' && e.name.trim().toLowerCase() === key);
+}
+
+/**
+ * Great feasts often have a life account only in orthocal `stories[]`, linked from `feasts[]`.
+ * Show the liturgical name under Feasts and the hagiography under Saints.
+ */
+function addSaintEntryForFeastStory(
+  entries: CommemorationEntry[],
+  feastName: string,
+  story: { title: string; story: string },
+): void {
+  const saintName = sanitizeTypikonProse(story.title.trim());
+  if (!saintName) return;
+  if (saintName.trim().toLowerCase() === feastName.trim().toLowerCase()) return;
+  if (hasSaintNamed(entries, saintName)) return;
+  entries.push({
+    id: `saint:${saintName}`,
+    name: saintName,
+    kind: 'saint',
+    storyTitle: story.title,
+    body: stripHtml(story.story),
+  });
+}
+
 function prependFeastIfMissing(
   entries: CommemorationEntry[],
   name: string,
@@ -133,13 +160,19 @@ export function buildCommemorationEntries(
     const trimmed = feast.trim();
     if (!trimmed) continue;
     const story = findStoryForName(trimmed, stories);
-    if (story?.title) usedStoryTitles.add(story.title);
+    let linkedSaint = false;
+    if (story?.title) {
+      usedStoryTitles.add(story.title);
+      const countBefore = entries.length;
+      addSaintEntryForFeastStory(entries, trimmed, story);
+      linkedSaint = entries.length > countBefore;
+    }
     entries.push({
       id: `feast:${trimmed}`,
       name: trimmed,
       kind: 'feast',
-      storyTitle: story?.title,
-      body: story ? stripHtml(story.story) : undefined,
+      storyTitle: linkedSaint ? undefined : story?.title,
+      body: linkedSaint ? undefined : story ? stripHtml(story.story) : undefined,
     });
   }
 
