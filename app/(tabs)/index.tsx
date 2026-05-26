@@ -52,7 +52,7 @@ import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import type { ClergyRole } from '../../src/types/liturgical';
 import type { TodayCollapsibleKey } from '../../src/state/todayUiState';
 
-const ROLE_IDS: ClergyRole[] = ['layperson', 'reader', 'altar_server', 'deacon', 'priest', 'bishop'];
+const ROLE_IDS: ClergyRole[] = ['layperson', 'altar_server', 'reader', 'deacon', 'priest', 'bishop'];
 
 // One distinct icon per role (used only in the role picker).
 const ROLE_ICON_NAMES: Record<ClergyRole, string> = {
