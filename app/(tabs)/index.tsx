@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useCallback, useMemo } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { CollapsibleSection } from '../../src/components/CollapsibleSection';
 import { FastingFoodList } from '../../src/components/FastingFoodList';
@@ -52,6 +53,16 @@ import type { ClergyRole } from '../../src/types/liturgical';
 import type { TodayCollapsibleKey } from '../../src/state/todayUiState';
 
 const ROLE_IDS: ClergyRole[] = ['layperson', 'reader', 'altar_server', 'deacon', 'priest', 'bishop'];
+
+// One distinct icon per role (used only in the role picker).
+const ROLE_ICON_NAMES: Record<ClergyRole, string> = {
+  layperson: 'account-outline',
+  reader: 'book-open-page-variant-outline',
+  altar_server: 'candle',
+  deacon: 'account-tie-outline',
+  priest: 'cross',
+  bishop: 'crown-outline',
+};
 
 function roleLabel(t: (path: string) => string, id: ClergyRole): string {
   const keys: Record<ClergyRole, string> = {
@@ -310,15 +321,23 @@ export default function TodayScreen() {
                 ]}
                 onPress={() => setServingRole(id)}
               >
-                <Text
-                  style={[
-                    styles.roleButtonText,
-                    type.roleButton,
-                    { color: active ? '#fff' : theme.colors.text },
-                  ]}
-                >
-                  {roleLabel(t, id)}
-                </Text>
+                <View style={styles.roleButtonInner}>
+                  <MaterialCommunityIcons
+                    // Cast: MaterialCommunityIcons uses a string union for `name`.
+                    name={ROLE_ICON_NAMES[id] as any}
+                    size={18}
+                    color={active ? '#fff' : theme.colors.text}
+                  />
+                  <Text
+                    style={[
+                      styles.roleButtonText,
+                      type.roleButton,
+                      { color: active ? '#fff' : theme.colors.text },
+                    ]}
+                  >
+                    {roleLabel(t, id)}
+                  </Text>
+                </View>
               </Pressable>
             );
           })}
@@ -641,14 +660,20 @@ const styles = StyleSheet.create({
   roleRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 2,
+    gap: 10,
+    marginTop: 6,
   },
   roleButton: {
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 999,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  roleButtonInner: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
   },
   roleButtonText: {
     fontWeight: '700',
