@@ -3,12 +3,14 @@ import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { feastRankServiceLabelForMajorFeastDay } from '../i18n/feastRank';
 import { useFontScale } from '../hooks/useFontScale';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
 import { vestmentHeroGradient } from '../lib/liturgical/vestmentGradient';
 import { typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import { colors } from '../theme/tokens';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
 import { TypikonSymbol } from './TypikonSymbol';
@@ -21,6 +23,8 @@ type Props = {
   toneLabel: string;
   feastRank: FeastRankDisplay;
   fastLabel: string;
+  isMajorFeastDay?: boolean;
+  orthocalFeastLevel?: number;
   canGoToToday: boolean;
   onPrevious: () => void;
   onNext: () => void;
@@ -36,13 +40,15 @@ export function DayHero({
   toneLabel,
   feastRank,
   fastLabel,
+  isMajorFeastDay = false,
+  orthocalFeastLevel,
   canGoToToday,
   onPrevious,
   onNext,
   onToday,
   onShare,
 }: Props) {
-  const { t } = useAppTranslation();
+  const { t, lang } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
   const phoneLayout = usePhoneLayout();
   const heroPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
@@ -67,7 +73,19 @@ export function DayHero({
   const primaryDateType = text(17, 22);
   const julianDateType = text(12, 16);
   const chipType = text(12, 16);
+  const feastChipType = text(12, 16);
   const todayBtnType = text(13, 18);
+  const typikonSurface = lightHeroText ? 'light' : isDark ? 'dark' : 'light';
+  const typikonColor = typikonIconColor(feastRank, typikonSurface);
+  const majorFeastServiceLabel = isMajorFeastDay
+    ? feastRankServiceLabelForMajorFeastDay(feastRank, orthocalFeastLevel, lang)
+    : null;
+  const majorFeastChipBg = lightHeroText
+    ? 'rgba(214,58,82,0.22)'
+    : isDark
+      ? 'rgba(214,58,82,0.28)'
+      : 'rgba(214,58,82,0.16)';
+  const majorFeastBorder = isDark ? colors.feastHoverBorderDark : colors.feastBorder;
 
   return (
     <View
@@ -75,6 +93,9 @@ export function DayHero({
         styles.heroShell,
         isDark ? styles.heroShellDark : null,
         isDark ? styles.heroShadow : null,
+        isMajorFeastDay
+          ? { borderWidth: 2, borderColor: majorFeastBorder }
+          : null,
       ]}
     >
       <LinearGradient
@@ -89,6 +110,7 @@ export function DayHero({
             styles.dayTitle,
             dayTitleType,
             { color: fg },
+            isMajorFeastDay ? styles.dayTitleFeast : null,
             onShare ? styles.dayTitleWithShare : null,
           ]}
           numberOfLines={3}
@@ -151,14 +173,31 @@ export function DayHero({
         <View style={[styles.chip, { backgroundColor: chipBg }]}>
           <Text style={[styles.chipText, chipType, { color: fg }]}>{toneLabel}</Text>
         </View>
-        <View style={[styles.chip, { backgroundColor: chipBg }]}>
-          <TypikonSymbol
-            feastRank={feastRank}
-            variant="chip"
-            color={typikonIconColor(feastRank, lightHeroText ? 'light' : isDark ? 'dark' : 'light')}
-            style={styles.chipIcon}
-          />
-        </View>
+        {isMajorFeastDay && majorFeastServiceLabel ? (
+          <View style={[styles.chip, styles.feastChip, { backgroundColor: majorFeastChipBg }]}>
+            <TypikonSymbol
+              feastRank={feastRank}
+              variant="chip"
+              color={typikonColor}
+              style={styles.chipIcon}
+            />
+            <Text
+              style={[styles.feastChipText, feastChipType, { color: fg }]}
+              numberOfLines={2}
+            >
+              {majorFeastServiceLabel}
+            </Text>
+          </View>
+        ) : (
+          <View style={[styles.chip, { backgroundColor: chipBg }]}>
+            <TypikonSymbol
+              feastRank={feastRank}
+              variant="chip"
+              color={typikonColor}
+              style={styles.chipIcon}
+            />
+          </View>
+        )}
         <View style={[styles.chip, { backgroundColor: chipBg }]}>
           <Text style={[styles.chipText, chipType, { color: fg }]}>{fastLabel}</Text>
         </View>
@@ -211,6 +250,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.2,
     width: '100%',
+  },
+  dayTitleFeast: {
+    letterSpacing: 0.35,
   },
   dayTitleWithShare: {
     paddingHorizontal: 36,
@@ -282,6 +324,18 @@ const styles = StyleSheet.create({
   },
   chipIcon: {
     marginVertical: 0,
+  },
+  feastChip: {
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 10,
+    maxWidth: '92%',
+  },
+  feastChipText: {
+    fontWeight: '700',
+    flexShrink: 1,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   todayBtn: {
     marginTop: 12,

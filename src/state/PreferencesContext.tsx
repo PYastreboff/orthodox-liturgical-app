@@ -10,7 +10,6 @@ import {
 } from 'react';
 
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
-import { fromDayIso, startOfLocalDay, toDayIso } from '../lib/calendar/localDate';
 import type { UiLanguage } from '../i18n/types';
 import type { ClergyRole } from '../types/liturgical';
 import type { FontScalePreference } from '../theme/fontScale';
@@ -50,7 +49,6 @@ type StoredPreferences = {
   fontScale?: FontScalePreference;
   servingRole?: ClergyRole;
   todayCollapsed?: Partial<TodayCollapsedState>;
-  selectedDayIso?: string;
   /** Calendar grid month as `YYYY-MM`. */
   calendarMonth?: string;
 };
@@ -328,13 +326,6 @@ export function usePreferences() {
   return ctx;
 }
 
-/** Persisted civil day for Today / calendar navigation. */
-export function parseStoredSelectedDay(iso: string | undefined): Date | null {
-  if (!iso) return null;
-  const day = fromDayIso(iso);
-  return day ? startOfLocalDay(day) : null;
-}
-
 export function formatCalendarMonth(date: Date): string {
   const y = date.getFullYear();
   const m = date.getMonth() + 1;
@@ -346,10 +337,6 @@ export function parseStoredCalendarMonth(value: string | undefined): Date | null
   const [y, m] = value.split('-').map(Number);
   if (!y || m < 1 || m > 12) return null;
   return new Date(y, m - 1, 1);
-}
-
-export async function persistSelectedDay(date: Date): Promise<void> {
-  await writeStoredPreferences({ selectedDayIso: toDayIso(startOfLocalDay(date)) });
 }
 
 export async function persistCalendarMonth(date: Date): Promise<void> {

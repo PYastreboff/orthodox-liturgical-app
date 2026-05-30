@@ -278,6 +278,8 @@ export default function TodayScreen() {
         toneLabel={dashboard.toneLabel}
         feastRank={dashboard.feastRank}
         fastLabel={dashboard.fastSummaryLabel}
+        isMajorFeastDay={dashboard.isMajorFeastDay}
+        orthocalFeastLevel={liturgicalDay?.feast_level}
         canGoToToday={canGoToToday}
         onPrevious={() => setSelectedDate(addDays(selectedDate, -1))}
         onNext={() => setSelectedDate(addDays(selectedDate, 1))}
