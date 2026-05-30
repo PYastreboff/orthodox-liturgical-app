@@ -32,7 +32,10 @@ jobs:
 
       - run: npx expo export --platform web
 
+      - run: node scripts/prepare-gh-pages-spa.mjs
+
       - run: test -f dist/index.html
+      - run: test -f dist/calendar/index.html
 
       - run: touch dist/.nojekyll
 

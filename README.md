@@ -181,6 +181,8 @@ Then **Settings → Pages** → **Deploy from branch** → **`gh-pages`** / **(r
 
 **If Pages shows only this README:** the site is serving `main`, not the built app — switch the Pages source as above.
 
+**Refresh on Calendar or Settings shows “Page not found”:** redeploy after pulling — `build:web` now copies `index.html` to `/calendar` and `/settings` so GitHub Pages can serve those routes.
+
 For a local production preview after `npm install`, see [§6 Local web preview](#6-local-web-preview-production-build) in **Install from GitHub**.
 
 ## Project layout
