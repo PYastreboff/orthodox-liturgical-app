@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { feastRankServiceLabelForMajorFeastDay } from '../i18n/feastRank';
+import { feastRankHeroLabelForMajorFeastDay } from '../i18n/feastRank';
 import { useFontScale } from '../hooks/useFontScale';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -78,7 +78,7 @@ export function DayHero({
   const typikonSurface = lightHeroText ? 'light' : isDark ? 'dark' : 'light';
   const typikonColor = typikonIconColor(feastRank, typikonSurface);
   const majorFeastServiceLabel = isMajorFeastDay
-    ? feastRankServiceLabelForMajorFeastDay(feastRank, orthocalFeastLevel, lang)
+    ? feastRankHeroLabelForMajorFeastDay(feastRank, orthocalFeastLevel, lang)
     : null;
   const majorFeastChipBg = lightHeroText
     ? 'rgba(214,58,82,0.22)'

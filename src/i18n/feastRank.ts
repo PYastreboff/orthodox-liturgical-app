@@ -62,6 +62,27 @@ export function feastRankServiceLabelForMajorFeastDay(
   return translate(lang, 'typikon.majorFeast');
 }
 
+/** Shorter typikon label for the Today hero chip (no “ranked service”). */
+export function feastRankHeroLabelForMajorFeastDay(
+  rank: FeastRankDisplay,
+  orthocalFeastLevel: number | undefined,
+  lang: UiLanguage,
+): string {
+  if (orthocalFeastLevel === 7) {
+    return translate(lang, 'typikon.majorFeastTheotokosHero');
+  }
+  if (orthocalFeastLevel === 8) {
+    return translate(lang, 'typikon.majorFeastHero');
+  }
+  if (orthocalFeastLevel !== undefined && orthocalFeastLevel >= 6) {
+    return translate(lang, 'typikon.greatFeastHero');
+  }
+  if (rank.glyph === 'great_feast') {
+    return translate(lang, 'typikon.greatFeastHero');
+  }
+  return translate(lang, 'typikon.majorFeastHero');
+}
+
 export function feastRankAccessibilityLabel(rank: FeastRankDisplay, lang: UiLanguage): string {
   return feastRankServiceLabel(rank, lang);
 }
