@@ -49,8 +49,6 @@ type StoredPreferences = {
   fontScale?: FontScalePreference;
   servingRole?: ClergyRole;
   todayCollapsed?: Partial<TodayCollapsedState>;
-  /** Calendar grid month as `YYYY-MM`. */
-  calendarMonth?: string;
 };
 
 type Preferences = {
@@ -324,21 +322,4 @@ export function usePreferences() {
     throw new Error('usePreferences must be used within PreferencesProvider');
   }
   return ctx;
-}
-
-export function formatCalendarMonth(date: Date): string {
-  const y = date.getFullYear();
-  const m = date.getMonth() + 1;
-  return `${y}-${String(m).padStart(2, '0')}`;
-}
-
-export function parseStoredCalendarMonth(value: string | undefined): Date | null {
-  if (!value || !/^\d{4}-\d{2}$/.test(value)) return null;
-  const [y, m] = value.split('-').map(Number);
-  if (!y || m < 1 || m > 12) return null;
-  return new Date(y, m - 1, 1);
-}
-
-export async function persistCalendarMonth(date: Date): Promise<void> {
-  await writeStoredPreferences({ calendarMonth: formatCalendarMonth(date) });
 }

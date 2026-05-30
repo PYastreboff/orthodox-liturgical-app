@@ -6,6 +6,7 @@ import { HoverAccessible } from './HoverAccessible';
 export type SectionIconName =
   | 'serving-role'
   | 'date'
+  | 'about-today'
   | 'feasts'
   | 'saints'
   | 'fasting'
@@ -16,6 +17,7 @@ export type SectionIconName =
 const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
   'serving-role': 'today.servingRole',
   date: 'today.sectionDate',
+  'about-today': 'dayAbout.sectionTitle',
   feasts: 'today.sectionFeasts',
   saints: 'today.sectionSaints',
   fasting: 'today.sectionFasting',
@@ -41,6 +43,8 @@ export function SectionIcon({ name, color }: Props) {
         );
       case 'date':
         return <Feather name="calendar" size={SECTION_ICON_SIZE} color={color} />;
+      case 'about-today':
+        return <Feather name="book-open" size={SECTION_ICON_SIZE} color={color} />;
       case 'feasts':
         return <MaterialCommunityIcons name="star-four-points-outline" size={SECTION_ICON_SIZE} color={color} />;
       case 'saints':

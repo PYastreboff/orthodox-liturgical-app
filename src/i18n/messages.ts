@@ -119,6 +119,73 @@ const en = {
     shareDayCopied: 'Link copied to clipboard.',
     shareDayCopyPrompt: 'Copy this link to share:',
   },
+  dayAbout: {
+    sectionTitle: 'About Today',
+    majorFeast: {
+      generic:
+        '{title} is kept as a major feast in the Orthodox Church — a day of solemn liturgy, fasting rules relaxed where the typikon allows, and festal hymns at the services.',
+      nativity:
+        'The Nativity of Christ (Christmas) celebrates God becoming man for our salvation. The Church keeps a long fast beforehand and greets the feast with night liturgy, proclaiming that Christ the Savior is born in Bethlehem.',
+      theophany:
+        'Theophany (Epiphany) commemorates the Baptism of the Lord in the Jordan, when the Holy Trinity was revealed: the Son baptized, the Spirit descending as a dove, and the Father’s voice from heaven. Blessing of water is central to the feast.',
+      annunciation:
+        'The Annunciation marks the Archangel Gabriel’s greeting to the Virgin Mary and the moment the Word of God took flesh in her womb. It is a feast of the Incarnation and of the Mother of God’s faithful consent.',
+      palmSunday:
+        'Palm Sunday opens Holy Week with the Lord’s entry into Jerusalem. The Church blesses branches and processes with them, remembering the crowd’s welcome of the King who would go on to suffer, die, and rise.',
+      pascha:
+        'Pascha is the Feast of Feasts — the Resurrection of Christ from the dead. The Church celebrates through the night with light, procession, and the joyful proclamation that Christ is risen, trampling down death by death.',
+      ascension:
+        'The Ascension of the Lord marks Christ’s return to the Father forty days after Pascha. The Church teaches that the risen Body of Christ is enthroned in heaven and that we are called to live already by the hope of glory.',
+      pentecost:
+        'Pentecost is the descent of the Holy Spirit upon the Apostles, the birthday of the Church. After this feast the Church enters the season of the Synaxis, continuing in the grace of the Spirit who makes Christ present in the world.',
+      transfiguration:
+        'The Transfiguration reveals Christ’s divine glory on Mount Tabor before the Passion. The Church also blesses fruit and produce on this feast, giving thanks to God who transfigures creation in Christ.',
+      dormition:
+        'The Dormition (Falling Asleep) of the Mother of God commemorates her peaceful repose and translation to life. Orthodox Christians honor the Theotokos as the first to be fully united to the risen life of her Son.',
+      elevationCross:
+        'The Exaltation of the Cross honors both the finding of the Cross by St Helen and its recovery from the Persians. The Church lifts up the Cross for veneration, remembering that through the Cross joy has come into all the world.',
+      nativityTheotokos:
+        'The Nativity of the Mother of God celebrates the birth of Mary, through whom salvation entered the world. The Church sees in her birth the dawn of the Incarnation and the hope of all generations.',
+      presentation:
+        'The Presentation of the Lord (Meeting of the Lord) recalls the infant Christ brought to the Temple in fulfillment of the Law. Simeon and Anna greet the Messiah, and the Church meditates on Christ as the Light revealed to the nations.',
+      peterAndPaul:
+        'The feast of the Holy Apostles Peter and Paul honors the chief pillars of the Church. Peter’s confession and Paul’s preaching spread the Gospel to the nations; together they witness that the Church is built on apostolic faith and mission.',
+    },
+    season: {
+      brightWeek:
+        'Bright Week continues the joy of Pascha. Liturgically the Church still sings “Christ is risen” as though every day were Sunday, and fasting remains suspended as the faithful live in the light of the Resurrection.',
+      holyWeek:
+        'Holy Week is the solemn passage with Christ toward the Cross. Services recount the final days in Jerusalem — the Bridegroom services, the Passion, and the preparation for Pascha.',
+      greatFriday:
+        'Great and Holy Friday is the day of the Lord’s crucifixion and burial. The Church keeps strict fast and venerates the shroud of Christ, standing at the foot of the Cross in mourning and hope.',
+      holySaturday:
+        'Great and Holy Saturday is the day the Lord rested in the tomb while Hades trembled. Vespers and the Paschal vigil bridge the stillness of death and the coming proclamation of the Resurrection.',
+      greatLent:
+        'Great Lent is a season of repentance, prayer, and fasting as the Church prepares for Pascha. Weekday services are penitential; the faithful seek reconciliation and renewal in Christ.',
+      lentSunday:
+        'On this Sunday in Lent the Church continues toward Pascha while keeping the Lord’s Day. {title} is observed in the Lenten cycle — still a day of worship, with fasting eased according to the typikon.',
+      lentSaturday:
+        'This Saturday falls within Great Lent. {title} is kept with the Church’s penitential tone, though Saturday services often allow wine and oil where the rubrics permit.',
+      dormitionFast:
+        'The Dormition Fast prepares the faithful for the feast of the Mother of God. The Church prays and fasts as it approaches the commemoration of her repose and glory.',
+      nativityFast:
+        'The Nativity Fast (Philip’s Fast) prepares for the birth of Christ. Through prayer and restraint the Church readies heart and body to greet the Incarnation.',
+      apostlesFast:
+        'The Apostles’ Fast follows Pentecost and prepares for the feast of SS Peter and Paul. It is a shorter season of discipline before honoring the leaders of the Apostles.',
+      wednesdayFast:
+        'Wednesday is a traditional fast day in the Orthodox week, remembering Judas’s betrayal. {title} is kept with the Church’s weekly rhythm of repentance and restraint.',
+      fridayFast:
+        'Friday is a traditional fast day, remembering the Passion of the Lord. {title} is observed as the Church unites weekday discipline with the memory of the Cross.',
+      allSaints:
+        'The Sunday after Pentecost honors all the saints — known and unknown — who have shone forth in every age. The Church gives thanks for the communion of saints who surround us in the life of the Spirit.',
+    },
+    ordinary: {
+      sunday:
+        'In the Orthodox Church this is {title}, a Sunday in Tone {tone}. Each Lord’s Day celebrates the Resurrection; the eight tones rotate the hymnography through the year.',
+      weekday:
+        'On the Orthodox liturgical calendar this day is known as {title}. The Church remembers the saints appointed for this date and continues the annual cycle of Scripture and hymnody.',
+    },
+  },
   fasting: {
     weeklyLevel: 'Strict fast (Wednesday & Friday)',
     weeklyFoods:
@@ -440,6 +507,73 @@ const ru = {
     shareDayTitle: 'OrthoDaily',
     shareDayCopied: 'Ссылка скопирована в буфер обмена.',
     shareDayCopyPrompt: 'Скопируйте ссылку, чтобы поделиться:',
+  },
+  dayAbout: {
+    sectionTitle: 'О сегодняшнем дне',
+    majorFeast: {
+      generic:
+        '{title} — великий праздник в Православной Церкви: торжественное богослужение, ослабление поста по типикону и праздничное пение на службах.',
+      nativity:
+        'Рождество Христово — праздник Боговоплощения ради нашего спасения. Церковь готовится длинным постом и встречает праздник ночной литургией, провозглашая, что в Вифлееме родился Спаситель.',
+      theophany:
+        'Богоявление (Крещение Господне) — явление Пресвятой Троицы при Крещении Господа в Иордане: Сын крещается, Дух сходит в виде голубя, глас Отца с небес. Центральное место — освящение воды.',
+      annunciation:
+        'Благовещение — день, когда архангел Гавриил возвестил Пресвятой Деве и Слово Божие приняло плоть во чреве. Праздник Боговоплощения и верного согласия Богородицы.',
+      palmSunday:
+        'Вход Господа в Иерусалим открывает Страстную седмицу. Церковь освящает ветви и совершает крестный ход, вспоминая торжественную встречу Царя, Который идёт на страдание, смерть и Воскресение.',
+      pascha:
+        'Пасха — Праздник праздников, Воскресение Христа из мёртвых. Церковь празднует ночью со светом, процессией и радостным провозглашением: Христос воскрес, смертию смерть поправ.',
+      ascension:
+        'Вознесение Господа — возвращение Христа к Отцу на сороковой день после Пасхи. Церковь учит, что Воскресшее Тело Христово пребывает на небесном престоле, и мы призваны жить надеждой славы.',
+      pentecost:
+        'Пятидесятница — сошествие Святого Духа на апостолов, день рождения Церкви. После праздника наступает время Синаксиса — жизнь в благодати Духа, Который являет Христа в мире.',
+      transfiguration:
+        'Преображение Господа — явление Божественной славы Христа на Фаворе перед страданиями. Церковь также освящает плоды, благодаря Бога, преображающего творение во Христе.',
+      dormition:
+        'Успение Пресвятой Богородицы — её мирный исход и переселение в жизнь. Православные чтут Богорodицу как первую, полностью соединённую с воскресной жизнью Сына.',
+      elevationCross:
+        'Воздвижение Креста Госпodne — память обретения Креста св. Еленой и его возвращения из плена. Церковь возносит Крест для поклонения: крестом радость пришла во всём мире.',
+      nativityTheotokos:
+        'Рождество Пресвятой Богородицы — рождение Марии, через Которую в мир пришло спасение. Церковь видит в этом празднике зарю Боговоплощения и надежду всех родов.',
+      presentation:
+        'Сретение Госпodne — принесение Младенца Христа в храм по закону. Симеон и Анна встречают Мессию; Церковь созерцает Христа как Свет, явленный языцам.',
+      peterAndPaul:
+        'Праздник святых апостолов Петра и Павла — память главных столпов Церкви. Исповедание Петра и проповедь Павла несли Евангелие народам; вместе они свидетельствуют об апостольской вере и миссии.',
+    },
+    season: {
+      brightWeek:
+        'Светлая седмица продолжает радость Пасхи. Церковь поёт «Христос воскресе» как в каждое воскресенье, пост не держится — верные живут во свете Воскресения.',
+      holyWeek:
+        'Страстная седмица — торжественное шествие со Христом ко Кресту. Богослужения воспоминают последние дни в Иерусалиме — службы Жениха, Страсти и приготовление к Пасхе.',
+      greatFriday:
+        'Великая Пятница — день распятия и погребения Господа. Церковь строго постится и поклоняется Плащанице, стоя у Креста в скорби и надежде.',
+      holySaturday:
+        'Великая суббота — день, когда Госпodь почил во гробе, а ад потрясён. Вечерня и пасхальная заутреня соединяют безмолвие смерти и грядущее провозглашение Воскресения.',
+      greatLent:
+        'Великий пост — время покаяния, молитвы и воздержания в приготовлении к Пасхе. Будничные службы покаянны; верные ищут примирения и обновления во Христе.',
+      lentSunday:
+        'В это воскресенье Великого поста Церковь идёт к Пасхе, сохраняя день Госпodен. {title} совершается в постном круге — день богослужения, с послаблением поста по типикону.',
+      lentSaturday:
+        'Эта суббота приходится на Великий пост. {title} сохраняет покаянный характер, хотя в субботу часто дозволяются вино и масло по рубрикам.',
+      dormitionFast:
+        'Успенский пост готовит к празднику Богородицы. Церковь молится и постится, приближаясь к памяти Её успения и славы.',
+      nativityFast:
+        'Рождественский (Филиппов) пост готовит к Рождеству Христову. Молитвой и воздержанием Церковь готовит сердце и тело к Боговоплощению.',
+      apostlesFast:
+        'Петров пост следует за Пятидесятницей и готовит к празднику апостолов Петра и Павла. Это короткий период воздержания перед чествованием первоверховных апостолов.',
+      wednesdayFast:
+        'Среда — традиционный постный день недели в память предательства Иуды. {title} совершается в недельном ритме покаяния и воздержания.',
+      fridayFast:
+        'Пятница — традиционный постный день в память Страстей Госпodних. {title} совершается в соединении с недельной дисциплиной и памятью Креста.',
+      allSaints:
+        'Неделя всех святых после Пятидесятницы — память всех святых, известных и неизвестных. Церковь благодарит за общение святых в жизни Духа.',
+    },
+    ordinary: {
+      sunday:
+        'В Православной Церкви сегодня {title}, воскресенье {tone}-го гласа. Каждый день Госпoden — праздник Воскресения; восемь гласов сменяют церковное пение в течение года.',
+      weekday:
+        'По православному церковному календарю этот день именуется: {title}. Церковь поминает святых этого дня и продолжает годовой круг Писания и пения.',
+    },
   },
   fasting: {
     weeklyLevel: 'Строгий пост (среда и пятница)',

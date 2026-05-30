@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   Platform,
   ScrollView,
@@ -19,12 +19,7 @@ import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
-import {
-  parseStoredCalendarMonth,
-  persistCalendarMonth,
-  readStoredPreferences,
-  usePreferences,
-} from '../../src/state/PreferencesContext';
+import { usePreferences } from '../../src/state/PreferencesContext';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
@@ -46,30 +41,9 @@ export default function CalendarScreen() {
   const screenSafe = useScreenSafePadding({ calendar: true });
   const scrollBottomPadding = useTabBarBottomPadding();
   const [cursor, setCursor] = useState(thisMonth);
-  const hydratedRef = useRef(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const stored = await readStoredPreferences();
-      if (cancelled) return;
-      const restored = parseStoredCalendarMonth(stored.calendarMonth);
-      if (restored) {
-        setCursor(restored);
-      }
-      hydratedRef.current = true;
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const setCursorMonth = useCallback((date: Date) => {
-    const month = new Date(date.getFullYear(), date.getMonth(), 1);
-    setCursor(month);
-    if (hydratedRef.current) {
-      void persistCalendarMonth(month);
-    }
+    setCursor(new Date(date.getFullYear(), date.getMonth(), 1));
   }, []);
 
   const canGoToThisMonth =

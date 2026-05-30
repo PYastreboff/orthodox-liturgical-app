@@ -43,6 +43,7 @@ import {
 } from '../../src/i18n/feastRank';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { buildDayDashboard } from '../../src/lib/liturgical/dayDashboard';
+import { buildLiturgicalDayAbout } from '../../src/lib/liturgical/liturgicalDayAbout';
 import { vestmentGuidanceForRole } from '../../src/lib/liturgical/vestments';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
@@ -215,6 +216,31 @@ export default function TodayScreen() {
     });
     return partitionCommemorations(entries);
   }, [appearance.key, appearance.label, liturgicalDay]);
+  const aboutToday = useMemo(
+    () =>
+      buildLiturgicalDayAbout({
+        day: liturgicalDay,
+        appearance,
+        dayTitle: dashboard.dayTitle,
+        feastsHighlightTitle: dashboard.feastsHighlightTitle,
+        isMajorFeastDay: dashboard.isMajorFeastDay,
+        toneLabel: dashboard.toneLabel,
+        feasts,
+        saints,
+        lang: uiLanguage,
+      }),
+    [
+      appearance,
+      dashboard.dayTitle,
+      dashboard.feastsHighlightTitle,
+      dashboard.isMajorFeastDay,
+      dashboard.toneLabel,
+      feasts,
+      liturgicalDay,
+      saints,
+      uiLanguage,
+    ],
+  );
   const vestmentGuidance = useMemo(
     () => vestmentGuidanceForRole(servingRole, appearance, uiLanguage),
     [servingRole, appearance, uiLanguage],
@@ -244,7 +270,7 @@ export default function TodayScreen() {
     body: text(14, 20),
     hint: text(13, 20),
     status: text(13, 18),
-    roleButton: text(13, 18),
+    roleButton: text(phoneLayout ? 10 : 13, phoneLayout ? 12 : 18),
     serviceRank: text(13, 18),
     dateLine: text(17, 22),
     pill: text(12, 16),
@@ -309,25 +335,30 @@ export default function TodayScreen() {
           color={theme.colors.text}
           marginBottom={10}
         />
-        <View style={styles.roleRow}>
+        <View style={[styles.roleRow, phoneLayout ? styles.roleRowPhone : null]}>
           {ROLE_IDS.map((id) => {
             const active = id === servingRole;
+            const label = roleLabel(t, id);
             return (
               <Pressable
                 key={id}
                 style={[
                   styles.roleButton,
+                  phoneLayout ? styles.roleButtonPhone : null,
                   active
                     ? { backgroundColor: colors.accentWine, borderColor: colors.accentWine }
                     : { backgroundColor: 'transparent', borderColor: theme.colors.border },
                 ]}
                 onPress={() => setServingRole(id)}
+                accessibilityLabel={roleLabel(t, id)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: active }}
               >
-                <View style={styles.roleButtonInner}>
+                <View style={[styles.roleButtonInner, phoneLayout ? styles.roleButtonInnerPhone : null]}>
                   <MaterialCommunityIcons
                     // Cast: MaterialCommunityIcons uses a string union for `name`.
                     name={ROLE_ICON_NAMES[id] as any}
-                    size={18}
+                    size={phoneLayout ? 14 : 18}
                     color={active ? '#fff' : theme.colors.text}
                   />
                   <Text
@@ -336,8 +367,9 @@ export default function TodayScreen() {
                       type.roleButton,
                       { color: active ? '#fff' : theme.colors.text },
                     ]}
+                    numberOfLines={1}
                   >
-                    {roleLabel(t, id)}
+                    {label}
                   </Text>
                 </View>
               </Pressable>
@@ -417,6 +449,18 @@ export default function TodayScreen() {
               : feastRankServiceLabel(dashboard.feastRank, lang)}
           </Text>
         </View>
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        title={t('dayAbout.sectionTitle')}
+        icon="about-today"
+        expanded={!todayCollapsed.aboutToday}
+        onToggle={() => toggleSection('aboutToday')}
+        themeColors={theme.colors}
+      >
+        <Text style={[styles.aboutTodayBody, type.body, { color: theme.colors.text }]}>
+          {aboutToday}
+        </Text>
       </CollapsibleSection>
 
       <CollapsibleSection
@@ -665,17 +709,28 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 6,
   },
+  roleRowPhone: {
+    gap: 6,
+    justifyContent: 'center',
+  },
   roleButton: {
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 999,
     paddingVertical: 10,
     paddingHorizontal: 14,
   },
+  roleButtonPhone: {
+    paddingVertical: 5,
+    paddingHorizontal: 9,
+  },
   roleButtonInner: {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 2,
+  },
+  roleButtonInnerPhone: {
+    gap: 1,
   },
   roleButtonText: {
     fontWeight: '700',
@@ -692,6 +747,9 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     fontWeight: '600',
     opacity: 0.85,
+  },
+  aboutTodayBody: {
+    opacity: 0.92,
   },
   dateLineValue: {
     fontWeight: '600',

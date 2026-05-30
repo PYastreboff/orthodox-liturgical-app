@@ -86,6 +86,12 @@ export function DayHero({
       ? 'rgba(214,58,82,0.28)'
       : 'rgba(214,58,82,0.16)';
   const majorFeastBorder = isDark ? colors.feastHoverBorderDark : colors.feastBorder;
+  const majorFeastTypikonColor = lightHeroText ? colors.feastBorder : fg;
+  const majorFeastTypikonBackdrop = lightHeroText
+    ? 'rgba(255,255,255,0.28)'
+    : isDark
+      ? 'rgba(255,255,255,0.14)'
+      : 'rgba(255,255,255,0.72)';
 
   return (
     <View
@@ -175,12 +181,16 @@ export function DayHero({
         </View>
         {isMajorFeastDay && majorFeastServiceLabel ? (
           <View style={[styles.chip, styles.feastChip, { backgroundColor: majorFeastChipBg }]}>
-            <TypikonSymbol
-              feastRank={feastRank}
-              variant="chip"
-              color={typikonColor}
-              style={styles.chipIcon}
-            />
+            <View
+              style={[styles.feastTypikonBackdrop, { backgroundColor: majorFeastTypikonBackdrop }]}
+            >
+              <TypikonSymbol
+                feastRank={feastRank}
+                variant="chip"
+                color={majorFeastTypikonColor}
+                style={styles.chipIcon}
+              />
+            </View>
             <Text
               style={[styles.feastChipText, feastChipType, { color: fg }]}
               numberOfLines={2}
@@ -330,6 +340,14 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 10,
     maxWidth: '92%',
+  },
+  feastTypikonBackdrop: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
   },
   feastChipText: {
     fontWeight: '700',
