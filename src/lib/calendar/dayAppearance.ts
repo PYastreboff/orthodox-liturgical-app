@@ -2,6 +2,7 @@ import type { OrthocalDay } from '../api/orthocal';
 import { annunciationFeastNameFromOrthocal } from '../liturgical/liturgicalDayTitle';
 import type { PlainDate } from './julianGregorian';
 import {
+  gregorianCalendarToJulianDayNumber,
   gregorianPlainToJulianPlain,
   julianCalendarToGregorian,
   julianCalendarToJulianDayNumber,
@@ -29,6 +30,19 @@ export type LiturgicalDayAppearance = {
 
 function jdnForJulian(y: number, m: number, d: number): number {
   return julianCalendarToJulianDayNumber(y, m, d);
+}
+
+/** Fixed feast/fast date on the active church calendar (Julian or Gregorian components). */
+function jdnForLiturgicalFixedDate(
+  liturgical: PlainDate,
+  calendar: PrimaryCalendar,
+  month: number,
+  day: number,
+): number {
+  if (calendar === 'gregorian') {
+    return gregorianCalendarToJulianDayNumber(liturgical.year, month, day);
+  }
+  return jdnForJulian(liturgical.year, month, day);
 }
 
 /** Weekday for a liturgical plain date: 0 = Sunday … 6 = Saturday. */
@@ -77,6 +91,7 @@ export function getLiturgicalDayAppearance(
   jdn: number,
   /** Civil (Gregorian) weekday for the day being viewed — used for Wed/Fri fast styling. */
   civilWeekday: number,
+  liturgicalCalendar: PrimaryCalendar = 'julian',
 ): LiturgicalDayAppearance {
   const y = liturgical.year;
   const pascha = orthodoxPaschaJdn(y);
@@ -88,14 +103,14 @@ export function getLiturgicalDayAppearance(
   const pentecost = pascha + 49;
   const allSaintsSunday = pascha + 56;
   const apostlesFastMonday = pascha + 57;
-  const stPeter = jdnForJulian(y, 6, 29);
+  const peterAndPaul = jdnForLiturgicalFixedDate(liturgical, liturgicalCalendar, 6, 29);
 
   const wd = weekdayFromPlain(liturgical);
 
   const inHolyWeek = jdn > palmSunday && jdn < greatFriday;
   const inBrightWeek = jdn >= pascha && jdn <= brightEnd;
   const inGreatLent = jdn >= cleanMonday && jdn < palmSunday;
-  const inApostlesFast = jdn >= apostlesFastMonday && jdn < stPeter;
+  const inApostlesFast = jdn >= apostlesFastMonday && jdn < peterAndPaul;
 
   const aug1 = jdnForJulian(y, 8, 1);
   const aug14 = jdnForJulian(y, 8, 14);
@@ -380,7 +395,7 @@ export function getLiturgicalAppearanceForLocalDate(
   const liturgical = appearanceLiturgicalPlainDate(civil, liturgicalCalendar);
   const julian = gregorianPlainToJulianPlain(civil);
   const jdn = julianCalendarToJulianDayNumber(julian.year, julian.month, julian.day);
-  let appearance = getLiturgicalDayAppearance(liturgical, jdn, d.getDay());
+  let appearance = getLiturgicalDayAppearance(liturgical, jdn, d.getDay(), liturgicalCalendar);
   const civilReadable = formatGregorianReadable(civil, true);
   appearance = {
     ...appearance,
