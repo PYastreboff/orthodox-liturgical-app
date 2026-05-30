@@ -13,6 +13,7 @@ import Constants from 'expo-constants';
 import Head from 'expo-router/head';
 
 import { AppLanguagePicker } from '../../src/components/settings/AppLanguagePicker';
+import { BugReportLink } from '../../src/components/settings/BugReportLink';
 import { CalendarModePicker } from '../../src/components/settings/CalendarModePicker';
 import { SettingsRow } from '../../src/components/settings/SettingsRow';
 import { SettingsSection } from '../../src/components/settings/SettingsSection';
@@ -177,6 +178,14 @@ export default function SettingsScreen() {
         isDark={isDark}
       >
         <AppLanguagePicker value={uiLanguage} onChange={setUiLanguage} isDark={isDark} />
+      </SettingsSection>
+
+      <SettingsSection
+        title={t('settings.bugReportTitle')}
+        description={t('settings.bugReportHint')}
+        isDark={isDark}
+      >
+        <BugReportLink isDark={isDark} />
       </SettingsSection>
 
       <View style={styles.footer}>

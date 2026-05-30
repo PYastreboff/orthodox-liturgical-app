@@ -49,6 +49,11 @@ const en = {
     sourceGetBibleHint: 'Church Slavonic scripture (Elizabeth Bible, 1757)',
     dataSourcesNote:
       'Verify against your typikon where Moscow Patriarchate practice differs from OCA data.',
+    bugReportTitle: 'Something wrong?',
+    bugReportHint:
+      'If a feast, fasting day, or reading looks incorrect, tell us in your own words what you expected to see. We read every message.',
+    bugReportLink: 'Send feedback',
+    bugReportFootnote: 'A free GitHub account may be required.',
   },
   calendar: {
     title: 'Liturgical calendar',
@@ -437,6 +442,11 @@ const ru = {
     sourceGetBibleHint: 'Церковнославянское Писание (Библия Елизаветы, 1757)',
     dataSourcesNote:
       'Сверяйте с вашим типиконом, где практика Московской Патриархии расходится с данными OCA.',
+    bugReportTitle: 'Что-то не так?',
+    bugReportHint:
+      'Если праздник, пост или чтения отображаются неверно, опишите своими словами, что вы ожидали увидеть. Мы читаем каждое сообщение.',
+    bugReportLink: 'Написать нам',
+    bugReportFootnote: 'Может понадобиться бесплатный аккаунт GitHub.',
   },
   calendar: {
     title: 'Церковный календарь',
