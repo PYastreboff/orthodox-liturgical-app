@@ -210,12 +210,19 @@ export default function TodayScreen() {
     appearanceKey: appearance.key,
   });
   const { feasts, saints } = useMemo(() => {
-    const entries = buildCommemorationEntries(liturgicalDay, {
-      appearanceKey: appearance.key,
-      appearanceLabel: appearance.label,
-    });
+    const entries = buildCommemorationEntries(
+      liturgicalDay,
+      {
+        appearanceKey: appearance.key,
+        appearanceLabel: appearance.label,
+      },
+      uiLanguage,
+    );
     return partitionCommemorations(entries);
-  }, [appearance.key, appearance.label, liturgicalDay]);
+  }, [appearance.key, appearance.label, liturgicalDay, uiLanguage]);
+  const showOrthocalContentNote =
+    uiLanguage !== 'en' &&
+    [...feasts, ...saints].some((entry) => Boolean(entry.body?.trim()));
   const aboutToday = useMemo(
     () =>
       buildLiturgicalDayAbout({
@@ -666,15 +673,24 @@ export default function TodayScreen() {
             {t('today.loadingSaints')}
           </Text>
         ) : (
-          <CommemorationEntryList
-            entries={saints}
-            emptyMessage={t('today.noSaints')}
-            textColor={theme.colors.text}
-            mutedColor={isDark ? '#a39e98' : colors.muted}
-            cardBg={isDark ? colors.darkSurface : colors.card}
-            borderColor={theme.colors.border}
-            bodyType={type.body}
-          />
+          <>
+            <CommemorationEntryList
+              entries={saints}
+              emptyMessage={t('today.noSaints')}
+              textColor={theme.colors.text}
+              mutedColor={isDark ? '#a39e98' : colors.muted}
+              cardBg={isDark ? colors.darkSurface : colors.card}
+              borderColor={theme.colors.border}
+              bodyType={type.body}
+            />
+            {showOrthocalContentNote ? (
+              <Text
+                style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}
+              >
+                {t('today.orthocalContentNote')}
+              </Text>
+            ) : null}
+          </>
         )}
       </CollapsibleSection>
     </ScrollView>

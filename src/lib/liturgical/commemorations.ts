@@ -1,4 +1,6 @@
 import type { OrthocalDay } from '../api/orthocal';
+import { localizeOrthocalText } from '../../i18n/orthocalContent';
+import type { UiLanguage } from '../../i18n/types';
 import { stripHtml } from '../api/orthocal';
 import {
   annunciationFeastNameFromOrthocal,
@@ -149,6 +151,7 @@ function prependFeastIfMissing(
 export function buildCommemorationEntries(
   day: OrthocalDay | null,
   liturgical?: LiturgicalFeastContext,
+  lang: UiLanguage = 'en',
 ): CommemorationEntry[] {
   if (!day) return [];
 
@@ -237,7 +240,15 @@ export function buildCommemorationEntries(
     prependFeastIfMissing(entries, extraFeasts[i], stories, usedStoryTitles);
   }
 
-  return entries;
+  if (lang === 'en') return entries;
+
+  return entries.map((entry) => ({
+    ...entry,
+    name: localizeOrthocalText(entry.name, lang),
+    storyTitle: entry.storyTitle
+      ? localizeOrthocalText(entry.storyTitle, lang)
+      : undefined,
+  }));
 }
 
 export function partitionCommemorations(entries: CommemorationEntry[]): {

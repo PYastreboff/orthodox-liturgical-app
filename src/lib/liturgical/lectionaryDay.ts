@@ -46,6 +46,29 @@ export function isOrdinarySeasonLectionaryTitle(title: string): boolean {
   return false;
 }
 
+/**
+ * orthocal paschal / pentecostarion season labels (not named feasts in the title).
+ * e.g. "Friday of the 7th Sunday of Pascha", "Monday of the 1st week after Pentecost".
+ */
+export function isSeasonLectionaryTitle(title: string): boolean {
+  if (isOrdinarySeasonLectionaryTitle(title)) return true;
+  const t = title.trim();
+  if (!t) return false;
+  if (/^pascha$/i.test(t) || /^pentecost$/i.test(t)) return false;
+  if (ASCENSION_TITLE.test(t)) return false;
+  if (
+    /\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)\s+of\s+the\s+.+?\b(?:pascha|pentecost)\b/i.test(
+      t,
+    )
+  ) {
+    return true;
+  }
+  if (/\b(?:\d+(?:st|nd|rd|th)?\s+)?sunday\s+of\s+pascha\b/i.test(t) && !/\bfeast\b/i.test(t)) {
+    return true;
+  }
+  return false;
+}
+
 const ASCENSION_TITLE = /\bascension\b/i;
 
 export function isHolyTuesdayDay(day: OrthocalDay | null | undefined): boolean {

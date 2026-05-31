@@ -1,1 +1,1 @@
-export type UiLanguage = 'en' | 'ru';
+export type UiLanguage = 'en' | 'ru' | 'el';

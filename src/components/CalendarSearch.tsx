@@ -11,6 +11,7 @@ import { Feather } from '@expo/vector-icons';
 
 import type { CalendarSearchFilter, CalendarSearchResult } from '../lib/liturgical/calendarSearch';
 import { intlLocaleForLanguage } from '../i18n/locale';
+import { localizeOrthocalText } from '../i18n/orthocalContent';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useCalendarSearch } from '../hooks/useCalendarSearch';
@@ -73,7 +74,9 @@ function SearchResultRow({
   borderColor: string;
   onPress: () => void;
 }) {
-  const { t } = useAppTranslation();
+  const { t, lang } = useAppTranslation();
+  const displayName = localizeOrthocalText(result.name, lang);
+  const displayDayTitle = localizeOrthocalText(result.dayTitle, lang);
   const lineColor =
     result.kind === 'feast' && result.isGreatFeast
       ? colors.feastBorder
@@ -89,7 +92,7 @@ function SearchResultRow({
         { backgroundColor: cardBg, borderColor, opacity: pressed ? 0.88 : 1 },
       ]}
       accessibilityRole="button"
-      accessibilityLabel={`${formatResultDate(result.date, intlLocale)} — ${result.name}`}
+      accessibilityLabel={`${formatResultDate(result.date, intlLocale)} — ${displayName}`}
     >
       <View style={styles.resultDateCol}>
         <Text style={[styles.resultDate, { color: textColor }]}>
@@ -101,12 +104,12 @@ function SearchResultRow({
         <View style={styles.resultNameRow}>
           <CommemorationListMarker kind={result.kind} color={lineColor} size={13} lineHeight={18} />
           <Text style={[styles.resultName, { color: lineColor }]} numberOfLines={2}>
-            {result.name}
+            {displayName}
           </Text>
         </View>
-        {result.name !== result.dayTitle ? (
+        {displayName !== displayDayTitle ? (
           <Text style={[styles.resultDayTitle, { color: mutedColor }]} numberOfLines={1}>
-            {result.dayTitle}
+            {displayDayTitle}
           </Text>
         ) : null}
       </View>

@@ -34,6 +34,7 @@ const TYPIKON_XML_URL =
   'https://github.com/Mount-Skete/orthodox-typikon-feasts-xml';
 const PONOMAR_URL = 'https://www.ponomar.net/';
 const GETBIBLE_URL = 'https://getbible.net/v2/';
+const OCMA_API_URL = 'https://ocma-api-e9870f.gitlab.io/';
 
 type DataSource = {
   url: string;
@@ -41,12 +42,14 @@ type DataSource = {
     | 'settings.sourceOrthocalLink'
     | 'settings.sourceTypikonLink'
     | 'settings.sourceRoysterLink'
-    | 'settings.sourceGetBibleLink';
+    | 'settings.sourceGetBibleLink'
+    | 'settings.sourceOcmaLink';
   hintKey:
     | 'settings.sourceOrthocalHint'
     | 'settings.sourceTypikonHint'
     | 'settings.sourceRoysterHint'
-    | 'settings.sourceGetBibleHint';
+    | 'settings.sourceGetBibleHint'
+    | 'settings.sourceOcmaHint';
 };
 
 const LITURGICAL_DATA_SOURCES: DataSource[] = [
@@ -69,6 +72,11 @@ const LITURGICAL_DATA_SOURCES: DataSource[] = [
     url: GETBIBLE_URL,
     linkKey: 'settings.sourceGetBibleLink',
     hintKey: 'settings.sourceGetBibleHint',
+  },
+  {
+    url: OCMA_API_URL,
+    linkKey: 'settings.sourceOcmaLink',
+    hintKey: 'settings.sourceOcmaHint',
   },
 ];
 

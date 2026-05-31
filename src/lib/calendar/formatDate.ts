@@ -40,7 +40,7 @@ export function formatReadableDate(
   options?: { includeYear?: boolean; weekday?: string; lang?: UiLanguage },
 ) {
   const lang = options?.lang ?? 'en';
-  if (lang === 'ru') {
+  if (lang === 'ru' || lang === 'el') {
     return new Intl.DateTimeFormat(intlLocaleForLanguage(lang), {
       weekday: 'long',
       day: 'numeric',

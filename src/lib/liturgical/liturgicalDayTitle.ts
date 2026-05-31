@@ -1,6 +1,11 @@
 import type { OrthocalDay } from '../api/orthocal';
 import { isFeastCellAppearance } from '../calendar/calendarCellStyle';
 import {
+  localizeOrthocalText,
+  localizedAppearanceLabel,
+} from '../../i18n/orthocalContent';
+import type { UiLanguage } from '../../i18n/types';
+import {
   dayTitleStrings,
   GREAT_FRIDAY_TITLE,
   HOLY_SATURDAY_TITLE,
@@ -13,6 +18,7 @@ import {
   isHolyWednesdayDay,
   isHolySaturdayDay,
   isOrdinarySeasonLectionaryTitle,
+  isSeasonLectionaryTitle,
 } from './lectionaryDay';
 import type { FeastRankDisplay } from './typikonSymbols';
 import { sanitizeTypikonProse } from './typikonSymbols';
@@ -160,7 +166,24 @@ function isLectionaryLikeFeastName(name: string): boolean {
   const trimmed = name.trim();
   if (!trimmed) return true;
   if (feastMatchesHolyWeekDayLabel(trimmed)) return true;
-  return isOrdinarySeasonLectionaryTitle(trimmed);
+  return isOrdinarySeasonLectionaryTitle(trimmed) || isSeasonLectionaryTitle(trimmed);
+}
+
+/** First named feast in orthocal `feasts[]` (e.g. Day of the Holy Spirit, Leavetaking of Ascension). */
+function orthocalNamedFeastHeadline(day: OrthocalDay | null | undefined): string | null {
+  if (!day) return null;
+  const feasts = allFeastsFromOrthocalDay(day);
+  return feasts.find((f) => !isLectionaryLikeFeastName(f)) ?? null;
+}
+
+function orthocalPrimaryTitle(day: OrthocalDay | null | undefined, fallback: string): string {
+  if (day?.titles?.[0]?.trim()) {
+    return sanitizeTypikonProse(day.titles[0]);
+  }
+  if (day?.summary_title?.trim()) {
+    return sanitizeTypikonProse(day.summary_title);
+  }
+  return sanitizeTypikonProse(fallback);
 }
 
 export function allFeastsFromOrthocalDay(day: OrthocalDay | null | undefined): string[] {
@@ -344,6 +367,11 @@ export function shouldUseMajorFeastDayTitle(
   if (isFeastCellAppearance(appearanceKey)) return true;
   if (isOrthocalGreatFeastLevel(day)) return true;
   if (feastRank?.glyph === 'great_feast') return true;
+  if (day) {
+    const namedFeast = orthocalNamedFeastHeadline(day);
+    const primaryTitle = orthocalPrimaryTitle(day, '');
+    if (namedFeast && isSeasonLectionaryTitle(primaryTitle)) return true;
+  }
   return false;
 }
 
@@ -388,13 +416,21 @@ export function isOrthocalGreatFeastForCalendar(
 }
 
 function defaultTitleFromOrthocal(day: OrthocalDay | null | undefined, fallback: string): string {
-  if (day?.titles?.[0]?.trim()) {
-    return sanitizeTypikonProse(day.titles[0]);
+  return orthocalPrimaryTitle(day, fallback);
+}
+
+function finalizeDisplayTitle(
+  title: string,
+  appearanceKey: string,
+  appearanceLabel: string,
+  lang: UiLanguage,
+): string {
+  if (lang === 'en') return title;
+  const cleanLabel = sanitizeTypikonProse(appearanceLabel);
+  if (title.trim() === cleanLabel.trim()) {
+    return localizedAppearanceLabel(appearanceKey, appearanceLabel, lang);
   }
-  if (day?.summary_title?.trim()) {
-    return sanitizeTypikonProse(day.summary_title);
-  }
-  return sanitizeTypikonProse(fallback);
+  return localizeOrthocalText(title, lang);
 }
 
 /**
@@ -406,26 +442,44 @@ export function liturgicalDayTitle(
   appearanceKey: string,
   appearanceLabel: string,
   feastRank: FeastRankDisplay | null | undefined,
+  lang: UiLanguage = 'en',
 ): string {
   if (day) {
     const holyHeadline = holyWeekHeadline(day, appearanceKey);
-    if (holyHeadline) return holyHeadline;
+    if (holyHeadline) {
+      return finalizeDisplayTitle(holyHeadline, appearanceKey, appearanceLabel, lang);
+    }
   }
 
   if (shouldUseMajorFeastDayTitle(day, appearanceKey, feastRank)) {
     const feast = day ? primaryFeastTitle(day, appearanceKey) : null;
-    if (feast) return feast;
+    if (feast) return finalizeDisplayTitle(feast, appearanceKey, appearanceLabel, lang);
     if (isFeastCellAppearance(appearanceKey)) {
-      return sanitizeTypikonProse(appearanceLabel);
+      return finalizeDisplayTitle(
+        sanitizeTypikonProse(appearanceLabel),
+        appearanceKey,
+        appearanceLabel,
+        lang,
+      );
+    }
+  }
+
+  if (day) {
+    const namedFeast = orthocalNamedFeastHeadline(day);
+    const orthocalDefault = defaultTitleFromOrthocal(day, appearanceLabel);
+    if (namedFeast && isSeasonLectionaryTitle(orthocalDefault)) {
+      return finalizeDisplayTitle(namedFeast, appearanceKey, appearanceLabel, lang);
     }
   }
 
   const fallback = defaultTitleFromOrthocal(day, appearanceLabel);
   if (day && isOrthocalGreatFeastLevel(day)) {
     const feast = primaryFeastTitle(day, appearanceKey);
-    if (feast && isOrdinarySeasonLectionaryTitle(fallback)) return feast;
+    if (feast && isOrdinarySeasonLectionaryTitle(fallback)) {
+      return finalizeDisplayTitle(feast, appearanceKey, appearanceLabel, lang);
+    }
   }
-  return fallback;
+  return finalizeDisplayTitle(fallback, appearanceKey, appearanceLabel, lang);
 }
 
 /** Calendar cell feast bullets — orthocal feasts except the headline title. */
@@ -452,12 +506,15 @@ export function greatFeastDisplayTitle(
   appearanceLabel: string,
   feastRank: FeastRankDisplay | null | undefined,
   calendarTitle: string,
+  lang: UiLanguage = 'en',
 ): string {
   if (!day) return calendarTitle;
 
   if (isHolyWeekWeekdayHeadline(day, appearanceKey, calendarTitle)) {
     const transferred = greatFeastNameFromOrthocal(day, appearanceKey, calendarTitle);
-    if (transferred && transferred.trim() !== calendarTitle.trim()) return transferred;
+    if (transferred && transferred.trim() !== calendarTitle.trim()) {
+      return finalizeDisplayTitle(transferred, appearanceKey, appearanceLabel, lang);
+    }
     return calendarTitle;
   }
 
@@ -466,14 +523,19 @@ export function greatFeastDisplayTitle(
   }
 
   const feast = greatFeastNameFromOrthocal(day, appearanceKey, calendarTitle);
-  if (feast) return feast;
+  if (feast) return finalizeDisplayTitle(feast, appearanceKey, appearanceLabel, lang);
 
   if (isFeastCellAppearance(appearanceKey)) {
-    return sanitizeTypikonProse(appearanceLabel);
+    return finalizeDisplayTitle(
+      sanitizeTypikonProse(appearanceLabel),
+      appearanceKey,
+      appearanceLabel,
+      lang,
+    );
   }
 
   const fallback = primaryFeastTitle(day, appearanceKey);
-  if (fallback) return fallback;
+  if (fallback) return finalizeDisplayTitle(fallback, appearanceKey, appearanceLabel, lang);
 
   return calendarTitle;
 }

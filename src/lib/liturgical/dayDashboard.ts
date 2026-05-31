@@ -128,6 +128,7 @@ export function buildDayDashboard(
     appearanceKey,
     localFallbackTitle,
     feastRank,
+    lang,
   );
   const feastsHighlightTitle = greatFeastDisplayTitle(
     liturgicalDay,
@@ -135,6 +136,7 @@ export function buildDayDashboard(
     localFallbackTitle,
     feastRank,
     dayTitle,
+    lang,
   );
   const isMajorFeastDay = isMajorFeastDayForDateBlock(
     liturgicalDay,

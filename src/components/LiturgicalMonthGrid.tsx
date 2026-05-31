@@ -22,6 +22,7 @@ import {
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
 import { feastRankAccessibilityLabel } from '../i18n/feastRank';
 import { intlLocaleForLanguage } from '../i18n/locale';
+import { localizeCalendarDayInfo } from '../i18n/orthocalContent';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
@@ -361,6 +362,10 @@ function DayCell({
   const scheme = useColorScheme();
   const isWeb = Platform.OS === 'web';
   const [hovered, setHovered] = useState(false);
+  const displayInfo = useMemo(
+    () => localizeCalendarDayInfo(dayInfo, lang),
+    [dayInfo, lang],
+  );
   const cellStyle = getCalendarCellStyle(dayInfo.appearanceKey, {
     feastCell: dayInfo.isFeastCell,
   });
@@ -391,7 +396,7 @@ function DayCell({
     : cellStyle.foreground;
   const hoverLabel = calendarDayHoverLabel(
     date,
-    dayInfo,
+    displayInfo,
     feastRank,
     showTypikon,
     isToday,
@@ -418,12 +423,12 @@ function DayCell({
   );
 
   const commLines: CommLine[] = [
-    ...dayInfo.feasts.map((name) => ({ kind: 'feast' as const, name })),
-    ...dayInfo.saints.map((name) => ({ kind: 'saint' as const, name })),
+    ...displayInfo.feasts.map((name) => ({ kind: 'feast' as const, name })),
+    ...displayInfo.saints.map((name) => ({ kind: 'saint' as const, name })),
   ];
   const dayTitleLines = titleLinesForCell(commLines.length);
-  const feastCount = dayInfo.feasts.length;
-  const saintCount = dayInfo.saints.length;
+  const feastCount = displayInfo.feasts.length;
+  const saintCount = displayInfo.saints.length;
   const markerCount = feastCount + saintCount;
 
   return (
@@ -499,7 +504,7 @@ function DayCell({
               style={[styles.dayLabel, { color: titleColor }]}
               numberOfLines={dayTitleLines}
             >
-              {dayInfo.dayTitle}
+              {displayInfo.dayTitle}
             </Text>
             {commLines.length > 0 ? (
               <View style={styles.commArea}>
@@ -563,7 +568,7 @@ function CalendarMonthAgenda({
       <Text style={[styles.agendaTitle, { color: textColor }]}>{t('calendar.agendaTitle')}</Text>
       <Text style={[styles.agendaHint, { color: mutedColor }]}>{t('calendar.tapHint')}</Text>
       {agendaDates.map((date) => {
-        const info = dayInfoForDate(date);
+        const info = localizeCalendarDayInfo(dayInfoForDate(date), lang);
         const feastRank = info.feastRank;
         const showTypikon = showTypikonForDate(date);
         const isToday = isSameLocalDay(date, today);

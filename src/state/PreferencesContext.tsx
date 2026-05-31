@@ -149,7 +149,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         if (typeof parsed.showVestmentGradient === 'boolean') {
           setShowVestmentGradientState(parsed.showVestmentGradient);
         }
-        if (parsed.uiLanguage === 'en' || parsed.uiLanguage === 'ru') {
+        if (parsed.uiLanguage === 'en' || parsed.uiLanguage === 'ru' || parsed.uiLanguage === 'el') {
           setUiLanguageState(parsed.uiLanguage);
         }
         if (
