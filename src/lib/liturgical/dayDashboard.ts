@@ -37,7 +37,7 @@ export type DayDashboardData = {
   dayTitle: string;
   /** Great feast for Date major-feast block and Feasts highlight (may differ from dayTitle in Holy Week). */
   feastsHighlightTitle: string;
-  /** orthocal great feast / fixed major feast — highlight in Date & Liturgical Day. */
+  /** orthocal great feast / fixed feast cell — hero, Date block, Feasts highlight, About Today. */
   isMajorFeastDay: boolean;
   toneLabel: string;
   feastRank: FeastRankDisplay;

@@ -87,12 +87,10 @@ function isPrimaryGreatFeastEntry(
   entry: CommemorationEntry,
   isMajorFeastDay: boolean,
   primaryFeastTitle: string,
-  dayTitle: string,
 ): boolean {
   if (entry.kind !== 'feast') return false;
-  if (entry.name.trim() !== primaryFeastTitle.trim()) return false;
-  if (isMajorFeastDay) return true;
-  return primaryFeastTitle.trim() !== dayTitle.trim();
+  if (!isMajorFeastDay) return false;
+  return entry.name.trim() === primaryFeastTitle.trim();
 }
 
 function CommemorationEntryList({
@@ -105,7 +103,6 @@ function CommemorationEntryList({
   bodyType,
   isMajorFeastDay = false,
   primaryFeastTitle = '',
-  dayTitle = '',
   isDark = false,
 }: {
   entries: CommemorationEntry[];
@@ -117,7 +114,6 @@ function CommemorationEntryList({
   bodyType: { fontSize: number; lineHeight: number };
   isMajorFeastDay?: boolean;
   primaryFeastTitle?: string;
-  dayTitle?: string;
   isDark?: boolean;
 }) {
   if (!entries.length) {
@@ -137,7 +133,6 @@ function CommemorationEntryList({
             entry,
             isMajorFeastDay,
             primaryFeastTitle,
-            dayTitle,
           )}
           isDark={isDark}
         />
@@ -655,7 +650,6 @@ export default function TodayScreen() {
             bodyType={type.body}
             isMajorFeastDay={dashboard.isMajorFeastDay}
             primaryFeastTitle={dashboard.feastsHighlightTitle}
-            dayTitle={dashboard.dayTitle}
             isDark={isDark}
           />
         )}

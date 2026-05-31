@@ -370,6 +370,7 @@ export function shouldUseMajorFeastDayTitle(
   if (day) {
     const namedFeast = orthocalNamedFeastHeadline(day);
     const primaryTitle = orthocalPrimaryTitle(day, '');
+    // Named feast over lectionary label (e.g. Day of the Holy Spirit) — not major-feast UI styling.
     if (namedFeast && isSeasonLectionaryTitle(primaryTitle)) return true;
   }
   return false;
@@ -388,19 +389,30 @@ export function isHolyWeekWeekdayHeadline(
 }
 
 /**
- * Today → Date “Major Feast” block and feast-rank styling.
- * Holy Week weekdays stay ordinary even when orthocal ranks a transferred feast (e.g. Annunciation).
+ * Twelve great feasts and fixed feast cells — major-feast UI (hero, Date block, About Today).
+ * Excludes ordinary named feasts (e.g. SS Constantine and Helen) that headline the day.
  */
+export function isGreatFeastDayForFeastsHighlight(
+  day: OrthocalDay | null | undefined,
+  appearanceKey: string,
+  dayTitle: string,
+  feastRank: FeastRankDisplay | null | undefined,
+): boolean {
+  if (transferredGreatFeastOnHolyWeekDay(day, appearanceKey, dayTitle)) return true;
+  if (isFeastCellAppearance(appearanceKey)) return true;
+  if (isOrthocalGreatFeastLevel(day)) return true;
+  if (feastRank?.glyph === 'great_feast') return true;
+  return false;
+}
+
+/** @alias isGreatFeastDayForFeastsHighlight */
 export function isMajorFeastDayForDateBlock(
   day: OrthocalDay | null | undefined,
   appearanceKey: string,
   feastRank: FeastRankDisplay | null | undefined,
   dayTitle: string,
 ): boolean {
-  if (transferredGreatFeastOnHolyWeekDay(day, appearanceKey, dayTitle)) return true;
-  if (!shouldUseMajorFeastDayTitle(day, appearanceKey, feastRank)) return false;
-  if (isHolyWeekWeekdayHeadline(day, appearanceKey, dayTitle)) return false;
-  return true;
+  return isGreatFeastDayForFeastsHighlight(day, appearanceKey, dayTitle, feastRank);
 }
 
 /** Calendar pink cell — including transferred great feasts on Holy Week weekdays. */
