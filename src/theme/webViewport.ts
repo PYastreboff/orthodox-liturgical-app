@@ -95,8 +95,8 @@ export function measureWebSafeAreaInset(
     'position:fixed',
     'top:0',
     'left:0',
-    horizontal ? `width:env(${edge}, 0px)` : 'width:0',
-    horizontal ? 'height:0' : `height:env(${edge}, 0px)`,
+    horizontal ? `width:env(${edge}, constant(${edge}, 0px))` : 'width:0',
+    horizontal ? 'height:0' : `height:env(${edge}, constant(${edge}, 0px))`,
     'visibility:hidden',
     'pointer-events:none',
   ].join(';');
@@ -261,6 +261,87 @@ function clearFixedWebShellStyles(doc: HTMLElement, body: HTMLElement, root: HTM
   }
 }
 
+function applySafariBrowserShell(pageBackground?: string): void {
+  const doc = document.documentElement;
+  const body = document.body;
+  const root = document.getElementById('root');
+
+  doc.classList.remove(IOS_WEB_CLASS);
+  doc.classList.add(IOS_SAFARI_BROWSER_CLASS);
+  doc.style.removeProperty('--app-height-px');
+  doc.style.removeProperty('--vh');
+  doc.style.setProperty('--app-height', '100dvh');
+  doc.style.setProperty('--safari-bottom-chrome', '0px');
+  doc.style.removeProperty('height');
+  doc.style.removeProperty('max-height');
+  doc.style.removeProperty('overflow');
+  doc.style.width = '100%';
+  doc.style.margin = '0';
+  doc.style.padding = '0';
+  doc.style.minHeight = '100dvh';
+
+  const insets = readWebSafeAreaInsets();
+  doc.style.setProperty('--safe-area-top', `${insets.top}px`);
+  doc.style.setProperty('--safe-area-bottom', `${insets.bottom}px`);
+
+  body.style.position = '';
+  body.style.top = '';
+  body.style.left = '';
+  body.style.right = '';
+  body.style.width = '100%';
+  body.style.height = 'auto';
+  body.style.minHeight = '100dvh';
+  body.style.maxHeight = 'none';
+  body.style.margin = '0';
+  body.style.padding = '0';
+  body.style.overflow = 'hidden';
+  body.style.overscrollBehavior = 'none';
+  body.style.backgroundColor = 'transparent';
+
+  if (root) {
+    root.style.position = '';
+    root.style.top = '';
+    root.style.left = '';
+    root.style.right = '';
+    root.style.width = '100%';
+    root.style.height = '100%';
+    root.style.minHeight = '100dvh';
+    root.style.maxHeight = 'none';
+    root.style.margin = '0';
+    root.style.padding = '0';
+    root.style.display = 'flex';
+    root.style.flexDirection = 'column';
+    root.style.flex = '1';
+    root.style.boxSizing = 'border-box';
+    root.style.overflow = 'hidden';
+    root.style.zIndex = '0';
+    root.style.backgroundColor = 'transparent';
+  }
+
+  const bg = pageBackground ?? readPageBackground();
+  const backdrop = ensureViewportBackdrop();
+  backdrop.style.cssText = [
+    'position:fixed',
+    'top:0',
+    'left:0',
+    'right:0',
+    'bottom:0',
+    'width:100%',
+    'height:100%',
+    'min-height:100dvh',
+    'min-height:-webkit-fill-available',
+    'z-index:-1',
+    'pointer-events:none',
+    bg ? `background-color:${bg}` : '',
+  ]
+    .filter(Boolean)
+    .join(';');
+
+  if (bg) {
+    doc.style.backgroundColor = bg;
+  }
+}
+
 function applyDesktopWebShell(pageBackground?: string): void {
   const doc = document.documentElement;
   const body = document.body;
@@ -273,7 +354,7 @@ function applyDesktopWebShell(pageBackground?: string): void {
     'inset:0',
     'width:100%',
     'min-height:100dvh',
-    'z-index:0',
+    'z-index:-1',
     'pointer-events:none',
   ].join(';');
 
@@ -292,11 +373,7 @@ export function applyWebViewportMetrics(pageBackground?: string): void {
   const doc = document.documentElement;
 
   if (isIosSafariBrowser()) {
-    applyDesktopWebShell(pageBackground);
-    doc.classList.add(IOS_SAFARI_BROWSER_CLASS);
-    const insets = readWebSafeAreaInsets();
-    doc.style.setProperty('--safe-area-top', `${insets.top}px`);
-    doc.style.setProperty('--safe-area-bottom', `${insets.bottom}px`);
+    applySafariBrowserShell(pageBackground);
     return;
   }
 
@@ -392,13 +469,16 @@ export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
     d.style.setProperty('--app-height','100dvh');
     d.style.setProperty('--safari-bottom-chrome','0px');
     d.style.removeProperty('height');
-    d.style.removeProperty('min-height');
     d.style.removeProperty('max-height');
     d.style.removeProperty('overflow');
-    b.style.cssText='margin:0;padding:0;min-height:100dvh;overflow:hidden;overscroll-behavior:none';
-    if(r){r.style.cssText='margin:0;padding:0;width:100%;min-height:100dvh;display:flex;flex-direction:column;box-sizing:border-box;overflow:hidden;z-index:1';}
+    d.style.minHeight='100dvh';
+    d.style.width='100%';
+    d.style.margin='0';
+    d.style.padding='0';
+    b.style.cssText='margin:0;padding:0;width:100%;height:auto;min-height:100dvh;max-height:none;overflow:hidden;overscroll-behavior:none;background:transparent';
+    if(r){r.style.cssText='margin:0;padding:0;width:100%;height:100%;min-height:100dvh;max-height:none;display:flex;flex-direction:column;box-sizing:border-box;overflow:hidden;z-index:0;background:transparent';}
     var bd=ensureBackdrop();
-    bd.style.cssText='position:fixed;inset:0;width:100%;min-height:100dvh;z-index:0;pointer-events:none';
+    bd.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;min-height:100dvh;min-height:-webkit-fill-available;z-index:-1;pointer-events:none';
   }
   function applyIos(){
     var h=layoutH();

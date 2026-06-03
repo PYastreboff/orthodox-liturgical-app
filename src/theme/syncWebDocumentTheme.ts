@@ -78,30 +78,40 @@ html:not(.${IOS_WEB_CLASS}) #root {
   flex-direction: column;
   background-color: var(--orthodaily-page-bg);
 }
-html.${IOS_SAFARI_BROWSER_CLASS},
-html.${IOS_SAFARI_BROWSER_CLASS} body,
-html.${IOS_SAFARI_BROWSER_CLASS} #root {
+html.${IOS_SAFARI_BROWSER_CLASS} {
   min-height: 100dvh;
+  min-height: -webkit-fill-available;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  background-color: var(--orthodaily-page-bg);
 }
 html.${IOS_SAFARI_BROWSER_CLASS} body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  max-height: none;
   overflow: hidden;
   overscroll-behavior: none;
-  background-color: var(--orthodaily-page-bg);
+  background-color: transparent !important;
 }
 html.${IOS_SAFARI_BROWSER_CLASS} #root {
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  max-height: none;
   display: flex;
   flex-direction: column;
+  flex: 1;
   overflow: hidden;
-  background-color: var(--orthodaily-page-bg);
+  background-color: transparent !important;
 }
 #orthodaily-viewport-backdrop {
   background-color: var(--orthodaily-page-bg);
+  z-index: -1;
 }
 `;

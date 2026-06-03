@@ -52,8 +52,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     width: '100%',
-    ...(Platform.OS === 'web'
-      ? ({ height: '100%', minHeight: '100%', maxHeight: '100%' } as const)
-      : null),
+    ...(Platform.OS === 'web' ? ({ minHeight: 0 } as const) : null),
   },
 });
