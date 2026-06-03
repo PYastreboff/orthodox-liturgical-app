@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 
-import { applyWebViewportMetrics, installWebViewportShell } from '../theme/webViewport';
+import { applyWebViewportMetrics, installWebViewportShell, isIosSafariBrowser, unlockSafariDocumentScroll } from '../theme/webViewport';
 import { installClipDebug } from '../lib/debug/clipDebug';
 
 /** Installs iOS innerHeight shell + keeps it synced on resize / Safari toolbar changes. */
@@ -11,17 +11,39 @@ export function WebViewportBootstrap() {
     installWebViewportShell();
     installClipDebug();
 
-    const onResize = () => applyWebViewportMetrics();
-    window.addEventListener('resize', onResize);
-    window.addEventListener('orientationchange', onResize);
-    window.visualViewport?.addEventListener('resize', onResize);
-    window.visualViewport?.addEventListener('scroll', onResize);
+    const onChange = () => applyWebViewportMetrics();
+    window.addEventListener('resize', onChange);
+    window.addEventListener('orientationchange', onChange);
+    window.visualViewport?.addEventListener('resize', onChange);
+    window.visualViewport?.addEventListener('scroll', onChange);
+
+    let unlockTimer: ReturnType<typeof setTimeout> | undefined;
+    const scheduleUnlock = () => {
+      if (!isIosSafariBrowser()) return;
+      if (unlockTimer) clearTimeout(unlockTimer);
+      unlockTimer = setTimeout(() => {
+        unlockSafariDocumentScroll();
+        requestAnimationFrame(unlockSafariDocumentScroll);
+      }, 50);
+    };
+
+    scheduleUnlock();
+    const root = document.getElementById('root');
+    const observer =
+      root && isIosSafariBrowser()
+        ? new MutationObserver(scheduleUnlock)
+        : null;
+    if (root && observer) {
+      observer.observe(root, { childList: true, subtree: true, attributes: true });
+    }
 
     return () => {
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('orientationchange', onResize);
-      window.visualViewport?.removeEventListener('resize', onResize);
-      window.visualViewport?.removeEventListener('scroll', onResize);
+      window.removeEventListener('resize', onChange);
+      window.removeEventListener('orientationchange', onChange);
+      window.visualViewport?.removeEventListener('resize', onChange);
+      window.visualViewport?.removeEventListener('scroll', onChange);
+      if (unlockTimer) clearTimeout(unlockTimer);
+      observer?.disconnect();
     };
   }, []);
 

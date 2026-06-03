@@ -3,7 +3,6 @@ import {
   Linking,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -13,6 +12,7 @@ import Constants from 'expo-constants';
 import Head from 'expo-router/head';
 
 import { AppLanguagePicker } from '../../src/components/settings/AppLanguagePicker';
+import { ScreenScroll } from '../../src/components/ScreenScroll';
 import { BugReportLink } from '../../src/components/settings/BugReportLink';
 import { CalendarModePicker } from '../../src/components/settings/CalendarModePicker';
 import { SettingsRow } from '../../src/components/settings/SettingsRow';
@@ -21,6 +21,7 @@ import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
 import { FontScalePicker } from '../../src/components/settings/FontScalePicker';
 import { ThemeModePicker } from '../../src/components/settings/ThemeModePicker';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
+import { useDocumentScrollWeb } from '../../src/hooks/useDocumentScrollWeb';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { usePreferences } from '../../src/state/PreferencesContext';
@@ -101,6 +102,7 @@ export default function SettingsScreen() {
   const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
   const pageBg = theme.colors.background;
+  const documentScroll = useDocumentScrollWeb();
 
   useFocusEffect(
     useCallback(() => {
@@ -115,9 +117,9 @@ export default function SettingsScreen() {
       <Head>
         <title>{t('tabs.browserTitleSettings')}</title>
       </Head>
-      <View style={[styles.page, { backgroundColor: pageBg }]}>
-      <ScrollView
-      style={styles.scroll}
+      <View style={[styles.page, documentScroll && styles.pageDocumentScroll, { backgroundColor: pageBg }]}>
+      <ScreenScroll
+      style={documentScroll ? styles.scrollDocument : styles.scroll}
       contentContainerStyle={[
         styles.container,
         {
@@ -236,7 +238,7 @@ export default function SettingsScreen() {
           </Text>
         </View>
       </View>
-    </ScrollView>
+    </ScreenScroll>
       </View>
     </>
   );
@@ -246,8 +248,17 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
+  pageDocumentScroll: {
+    flexGrow: 0,
+    flexShrink: 0,
+    height: 'auto',
+    minHeight: '100%',
+  },
   scroll: {
     flex: 1,
+  },
+  scrollDocument: {
+    height: 'auto',
   },
   container: {
     flexGrow: 1,

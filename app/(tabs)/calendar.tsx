@@ -1,18 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
 import {
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   useWindowDimensions,
   View,
 } from 'react-native';
+import { useDocumentScrollWeb } from '../../src/hooks/useDocumentScrollWeb';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
 import Head from 'expo-router/head';
 
 import { CalendarColorLegend } from '../../src/components/CalendarColorLegend';
 import { CalendarSearch } from '../../src/components/CalendarSearch';
+import { ScreenScroll } from '../../src/components/ScreenScroll';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
 import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
@@ -77,6 +78,7 @@ export default function CalendarScreen() {
   );
 
   const calendarBg = theme.dark ? colors.darkBg : '#e8e3d8';
+  const documentScroll = useDocumentScrollWeb();
   const { width } = useWindowDimensions();
   const isCompact = width < CALENDAR_COMPACT_BREAKPOINT;
   const phoneLayout = usePhoneLayout();
@@ -95,9 +97,9 @@ export default function CalendarScreen() {
       <Head>
         <title>{t('tabs.browserTitleCalendar')}</title>
       </Head>
-      <View style={[styles.page, { backgroundColor: calendarBg }]}>
-      <ScrollView
-      style={styles.scroll}
+      <View style={[styles.page, documentScroll && styles.pageDocumentScroll, { backgroundColor: calendarBg }]}>
+      <ScreenScroll
+      style={documentScroll ? styles.scrollDocument : styles.scroll}
       contentContainerStyle={[
         styles.scrollContent,
         {
@@ -135,7 +137,7 @@ export default function CalendarScreen() {
         onDayPress={onDayPress}
         liturgicalCalendar={primaryCalendar}
       />
-    </ScrollView>
+    </ScreenScroll>
       </View>
     </>
   );
@@ -145,8 +147,17 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
+  pageDocumentScroll: {
+    flexGrow: 0,
+    flexShrink: 0,
+    height: 'auto',
+    minHeight: '100%',
+  },
   scroll: {
     flex: 1,
+  },
+  scrollDocument: {
+    height: 'auto',
   },
   scrollContent: {
     paddingTop: 12,

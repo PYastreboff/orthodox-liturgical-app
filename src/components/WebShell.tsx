@@ -8,20 +8,25 @@ type Props = {
   backgroundColor: string;
 };
 
-/** Fills the web shell; iOS Safari browser uses natural 100dvh like a normal site. */
+/** Fills the web shell; iPhone Safari browser scrolls the document like a normal site. */
 export function WebShell({ children, backgroundColor }: Props) {
   if (Platform.OS !== 'web') {
     return <>{children}</>;
   }
 
-  const iosFixedShell = isIosMobileWeb() && !isIosSafariBrowser();
+  const documentScroll = isIosSafariBrowser();
+  const iosFixedShell = isIosMobileWeb() && !documentScroll;
 
   return (
     <View
       style={[
         styles.shell,
         { backgroundColor },
-        iosFixedShell ? styles.shellIos : styles.shellFlex,
+        documentScroll
+          ? styles.shellDocumentScroll
+          : iosFixedShell
+            ? styles.shellIos
+            : styles.shellFlex,
       ]}
     >
       {children}
@@ -33,6 +38,13 @@ const styles = StyleSheet.create({
   shell: {
     width: '100%',
     overflow: 'hidden',
+  },
+  shellDocumentScroll: {
+    flexGrow: 0,
+    flexShrink: 0,
+    height: 'auto',
+    minHeight: '100%',
+    overflow: 'visible',
   },
   shellIos: {
     flex: 1,

@@ -79,35 +79,40 @@ html:not(.${IOS_WEB_CLASS}) #root {
   background-color: var(--orthodaily-page-bg);
 }
 html.${IOS_SAFARI_BROWSER_CLASS} {
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
+  height: 100% !important;
+  min-height: 100dvh !important;
+  min-height: -webkit-fill-available !important;
+  max-height: none !important;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
   background-color: var(--orthodaily-page-bg);
 }
 html.${IOS_SAFARI_BROWSER_CLASS} body {
   margin: 0;
   padding: 0;
   width: 100%;
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
-  max-height: none;
-  overflow: hidden;
-  overscroll-behavior: none;
+  height: auto !important;
+  min-height: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+  overscroll-behavior: auto !important;
   background-color: transparent !important;
 }
 html.${IOS_SAFARI_BROWSER_CLASS} #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
-  max-height: none;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
+  height: auto !important;
+  min-height: 100% !important;
+  max-height: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: none !important;
+  overflow: visible !important;
   background-color: transparent !important;
 }
 #orthodaily-viewport-backdrop {
