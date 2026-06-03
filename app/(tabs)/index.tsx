@@ -701,6 +701,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   scrollDocument: {
+    width: '100%',
     height: 'auto',
     backgroundColor: 'transparent',
   },

@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     ...(Platform.OS === 'web' ? ({ minHeight: 0 } as const) : null),
   },
   rootDocumentScroll: {
-    flexGrow: 0,
-    flexShrink: 0,
+    flex: 1,
+    width: '100%',
     height: 'auto',
     minHeight: '100%',
   },

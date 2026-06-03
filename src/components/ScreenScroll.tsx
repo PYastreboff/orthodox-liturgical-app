@@ -30,8 +30,8 @@ export function ScreenScroll({
 
   if (documentScroll) {
     return (
-      <View style={[style, styles.documentFlow]}>
-        <View style={contentContainerStyle}>{children}</View>
+      <View style={[styles.documentFlow, style]}>
+        <View style={[styles.documentContent, contentContainerStyle]}>{children}</View>
       </View>
     );
   }
@@ -49,8 +49,14 @@ export function ScreenScroll({
 
 const styles = {
   documentFlow: {
-    flexGrow: 0,
+    width: '100%' as const,
+    alignSelf: 'stretch' as const,
+    flexGrow: 1,
     flexShrink: 0,
     height: 'auto' as const,
+  },
+  documentContent: {
+    width: '100%' as const,
+    alignSelf: 'stretch' as const,
   },
 };

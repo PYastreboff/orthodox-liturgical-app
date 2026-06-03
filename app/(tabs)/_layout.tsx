@@ -49,8 +49,8 @@ function TabsLayoutContent() {
   const tabBarBg = tabBarBackground(isDark, phoneLayout);
   const sceneStyle = iosSafariBrowser
     ? ({
-        flexGrow: 1,
-        flexShrink: 0,
+        flex: 1,
+        width: '100%',
         height: 'auto',
         minHeight: '100%' as const,
         backgroundColor: sceneBackground,
@@ -126,8 +126,8 @@ function TabsLayoutContent() {
           headerTitle: () => <AppBrandHeader />,
           sceneStyle: iosSafariBrowser
             ? ({
-                flexGrow: 1,
-                flexShrink: 0,
+                flex: 1,
+                width: '100%',
                 height: 'auto',
                 minHeight: '100%' as const,
                 backgroundColor: 'transparent',

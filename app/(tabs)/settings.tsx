@@ -249,8 +249,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pageDocumentScroll: {
-    flexGrow: 0,
-    flexShrink: 0,
+    flex: 1,
+    width: '100%',
     height: 'auto',
     minHeight: '100%',
   },
@@ -258,6 +258,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollDocument: {
+    width: '100%',
     height: 'auto',
   },
   container: {

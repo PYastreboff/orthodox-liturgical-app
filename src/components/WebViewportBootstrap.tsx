@@ -34,7 +34,7 @@ export function WebViewportBootstrap() {
         ? new MutationObserver(scheduleUnlock)
         : null;
     if (root && observer) {
-      observer.observe(root, { childList: true, subtree: true, attributes: true });
+      observer.observe(root, { childList: true, subtree: true });
     }
 
     return () => {

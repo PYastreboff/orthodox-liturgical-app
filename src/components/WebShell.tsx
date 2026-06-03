@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   shellDocumentScroll: {
-    flexGrow: 0,
-    flexShrink: 0,
+    flex: 1,
+    width: '100%',
     height: 'auto',
     minHeight: '100%',
     overflow: 'visible',

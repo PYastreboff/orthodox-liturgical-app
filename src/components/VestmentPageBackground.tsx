@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   rootDocumentScroll: {
-    flexGrow: 1,
-    flexShrink: 0,
+    flex: 1,
+    width: '100%',
     height: 'auto',
     minHeight: '100%',
   },
@@ -84,6 +84,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   contentDocumentScroll: {
+    flex: 1,
+    width: '100%',
     zIndex: 1,
   },
 });

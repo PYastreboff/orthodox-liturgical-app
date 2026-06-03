@@ -346,7 +346,7 @@ function applySafariBrowserShell(pageBackground?: string): void {
   requestAnimationFrame(unlockSafariDocumentScroll);
 }
 
-/** RN tab shells use overflow:hidden + flex:1; unlock so html can scroll. */
+/** RN tab shells use overflow:hidden + flex:1; unlock only those — not in-page flex rows. */
 export function unlockSafariDocumentScroll(): void {
   if (!isIosSafariBrowser()) return;
   const root = document.getElementById('root');
@@ -360,16 +360,16 @@ export function unlockSafariDocumentScroll(): void {
     const style = getComputedStyle(node);
     if (style.position === 'fixed' || style.position === 'absolute') return;
 
-    if (style.overflow === 'hidden' || style.overflowY === 'hidden') {
-      node.style.setProperty('overflow', 'visible', 'important');
-      node.style.setProperty('overflow-y', 'visible', 'important');
-    }
+    const isHidden = style.overflow === 'hidden' || style.overflowY === 'hidden';
+    const isFlexFill = style.flex.startsWith('1') || style.flexGrow === '1';
+    if (!isHidden || !isFlexFill) return;
 
-    if (style.flex.startsWith('1') && style.height !== 'auto') {
-      node.style.setProperty('flex', 'none', 'important');
-      node.style.setProperty('height', 'auto', 'important');
-      node.style.setProperty('max-height', 'none', 'important');
-    }
+    node.style.setProperty('overflow', 'visible', 'important');
+    node.style.setProperty('overflow-y', 'visible', 'important');
+    node.style.setProperty('flex', 'none', 'important');
+    node.style.setProperty('height', 'auto', 'important');
+    node.style.setProperty('max-height', 'none', 'important');
+    node.style.setProperty('width', '100%', 'important');
   });
 }
 
