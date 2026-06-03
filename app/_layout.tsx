@@ -6,7 +6,6 @@ import { SafeAreaProvider, type Metrics } from 'react-native-safe-area-context';
 
 import { AppThemeProvider } from '../src/components/AppThemeProvider';
 import { WebViewportBootstrap } from '../src/components/WebViewportBootstrap';
-import { useDocumentScrollWeb } from '../src/hooks/useDocumentScrollWeb';
 import { DayNavigationProvider } from '../src/state/DayNavigationContext';
 import { PreferencesProvider } from '../src/state/PreferencesContext';
 
@@ -17,15 +16,8 @@ const WEB_SAFE_AREA_METRICS: Metrics = {
 
 function RootStack() {
   const theme = useTheme();
-  const documentScroll = useDocumentScrollWeb();
   return (
-    <View
-      style={[
-        styles.root,
-        documentScroll && styles.rootDocumentScroll,
-        { backgroundColor: theme.colors.background },
-      ]}
-    >
+    <View style={[styles.root, { backgroundColor: theme.colors.background }]}>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -61,11 +53,5 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     ...(Platform.OS === 'web' ? ({ minHeight: 0 } as const) : null),
-  },
-  rootDocumentScroll: {
-    flex: 1,
-    width: '100%',
-    height: 'auto',
-    minHeight: '100%',
   },
 });

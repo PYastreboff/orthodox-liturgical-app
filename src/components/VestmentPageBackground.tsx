@@ -7,7 +7,6 @@ import {
   todayPageBackgroundColor,
   vestmentPageGradient,
 } from '../lib/liturgical/vestmentGradient';
-import { useDocumentScrollWeb } from '../hooks/useDocumentScrollWeb';
 import { syncWebDocumentTheme } from '../theme/syncWebDocumentTheme';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 
@@ -26,7 +25,6 @@ export function VestmentPageBackground({
   style,
 }: Props) {
   const isDark = useResolvedColorScheme() === 'dark';
-  const documentScroll = useDocumentScrollWeb();
   const backgroundColor = todayPageBackgroundColor(isDark);
   const gradient = useMemo(
     () => vestmentPageGradient(appearance, gradientEnabled, isDark),
@@ -40,14 +38,7 @@ export function VestmentPageBackground({
   }, [isDark, backgroundColor]);
 
   return (
-    <View
-      style={[
-        styles.root,
-        documentScroll ? styles.rootDocumentScroll : null,
-        { backgroundColor },
-        style,
-      ]}
-    >
+    <View style={[styles.root, { backgroundColor }, style]}>
       {gradient ? (
         <LinearGradient
           colors={[...gradient.colors]}
@@ -58,7 +49,7 @@ export function VestmentPageBackground({
           pointerEvents="none"
         />
       ) : null}
-      <View style={documentScroll ? styles.contentDocumentScroll : styles.content}>{children}</View>
+      <View style={styles.content}>{children}</View>
     </View>
   );
 }
@@ -69,23 +60,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  rootDocumentScroll: {
-    flex: 1,
-    width: '100%',
-    height: 'auto',
-    minHeight: '100%',
-  },
   gradientLayer: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 0,
   },
   content: {
     flex: 1,
-    zIndex: 1,
-  },
-  contentDocumentScroll: {
-    flex: 1,
-    width: '100%',
     zIndex: 1,
   },
 });

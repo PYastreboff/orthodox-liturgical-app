@@ -86,33 +86,33 @@ html.${IOS_SAFARI_BROWSER_CLASS} {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden !important;
   background-color: var(--orthodaily-page-bg);
 }
 html.${IOS_SAFARI_BROWSER_CLASS} body {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: auto !important;
-  min-height: 100% !important;
+  height: 100% !important;
+  min-height: 100dvh !important;
+  min-height: -webkit-fill-available !important;
   max-height: none !important;
-  overflow: visible !important;
-  overscroll-behavior: auto !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
   background-color: transparent !important;
 }
 html.${IOS_SAFARI_BROWSER_CLASS} #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: auto !important;
-  min-height: 100% !important;
+  height: 100% !important;
+  min-height: 100dvh !important;
+  min-height: -webkit-fill-available !important;
   max-height: none !important;
   display: flex !important;
   flex-direction: column !important;
-  flex: none !important;
-  overflow: visible !important;
+  flex: 1 !important;
+  overflow: hidden !important;
   background-color: transparent !important;
 }
 #orthodaily-viewport-backdrop {

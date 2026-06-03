@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useCallback, useMemo } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -7,7 +7,6 @@ import { CollapsibleSection } from '../../src/components/CollapsibleSection';
 import { FastingFoodList } from '../../src/components/FastingFoodList';
 import { FastSummaryPill } from '../../src/components/FastSummaryPill';
 import { SectionTitleRow } from '../../src/components/SectionTitleRow';
-import { ScreenScroll } from '../../src/components/ScreenScroll';
 import { DayHero } from '../../src/components/DayHero';
 import { TypikonSymbol } from '../../src/components/TypikonSymbol';
 import { VestmentIcon } from '../../src/components/VestmentIcon';
@@ -33,7 +32,6 @@ import {
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
 import { useFontScale } from '../../src/hooks/useFontScale';
-import { useDocumentScrollWeb } from '../../src/hooks/useDocumentScrollWeb';
 import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../../src/theme/layout';
@@ -165,7 +163,6 @@ export default function TodayScreen() {
   const phoneLayout = usePhoneLayout();
   const sectionCardPadding = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
   const scrollBottomPadding = useTabBarBottomPadding();
-  const documentScroll = useDocumentScrollWeb();
 
   useFocusEffect(
     useCallback(() => {
@@ -289,8 +286,8 @@ export default function TodayScreen() {
 
   return (
     <VestmentPageBackground appearance={appearance} gradientEnabled={showVestmentGradient}>
-    <ScreenScroll
-      style={documentScroll ? styles.scrollDocument : styles.scroll}
+    <ScrollView
+      style={styles.scroll}
       contentContainerStyle={[
         styles.container,
         {
@@ -690,7 +687,7 @@ export default function TodayScreen() {
           </>
         )}
       </CollapsibleSection>
-    </ScreenScroll>
+    </ScrollView>
     </VestmentPageBackground>
   );
 }
@@ -698,11 +695,6 @@ export default function TodayScreen() {
 const styles = StyleSheet.create({
   scroll: {
     flex: 1,
-    backgroundColor: 'transparent',
-  },
-  scrollDocument: {
-    width: '100%',
-    height: 'auto',
     backgroundColor: 'transparent',
   },
   container: {

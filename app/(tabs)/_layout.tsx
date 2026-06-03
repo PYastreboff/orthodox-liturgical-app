@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { useTheme } from '@react-navigation/native';
-import { Platform, StyleSheet, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import { AppBrandHeader } from '../../src/components/AppBrandHeader';
 import { TabBarBleedBackground } from '../../src/components/TabBarBleedBackground';
@@ -47,18 +47,6 @@ function TabsLayoutContent() {
     (Platform.OS === 'android' && bottomInset === 0 ? 8 : iosSafariBrowser ? 4 : 0);
   const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + tabBarBottomPad;
   const tabBarBg = tabBarBackground(isDark, phoneLayout);
-  const sceneStyle = iosSafariBrowser
-    ? ({
-        flex: 1,
-        width: '100%',
-        height: 'auto',
-        minHeight: '100%' as const,
-        backgroundColor: sceneBackground,
-      } as const)
-    : {
-        flex: 1,
-        backgroundColor: sceneBackground,
-      };
 
   return (
     <Tabs
@@ -67,11 +55,12 @@ function TabsLayoutContent() {
         headerStyle: { backgroundColor: isDark ? colors.darkSurface : colors.parchment },
         headerTintColor: isDark ? colors.darkInk : colors.ink,
         headerTitleStyle: { fontWeight: '600' },
-        sceneStyle,
+        sceneStyle: {
+          flex: 1,
+          backgroundColor: sceneBackground,
+        },
         tabBarStyle: {
-          ...(iosSafariBrowser
-            ? ({ position: 'fixed' } as unknown as ViewStyle)
-            : { position: 'absolute' as const }),
+          position: 'absolute',
           left: 0,
           right: 0,
           bottom: tabBarBottom,
@@ -124,15 +113,7 @@ function TabsLayoutContent() {
           title: 'OrthoDaily',
           tabBarLabel: t('tabs.today'),
           headerTitle: () => <AppBrandHeader />,
-          sceneStyle: iosSafariBrowser
-            ? ({
-                flex: 1,
-                width: '100%',
-                height: 'auto',
-                minHeight: '100%' as const,
-                backgroundColor: 'transparent',
-              } as const)
-            : { flex: 1, backgroundColor: 'transparent' },
+          sceneStyle: { flex: 1, backgroundColor: 'transparent' },
           ...tabBarIconOptions('today'),
         }}
       />

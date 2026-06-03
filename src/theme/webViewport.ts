@@ -278,9 +278,7 @@ function applySafariBrowserShell(pageBackground?: string): void {
   doc.style.height = '100%';
   doc.style.minHeight = '100dvh';
   doc.style.maxHeight = 'none';
-  doc.style.overflowX = 'hidden';
-  doc.style.overflowY = 'auto';
-  doc.style.setProperty('-webkit-overflow-scrolling', 'touch');
+  doc.style.overflow = 'hidden';
 
   const insets = readWebSafeAreaInsets();
   doc.style.setProperty('--safe-area-top', `${insets.top}px`);
@@ -291,13 +289,13 @@ function applySafariBrowserShell(pageBackground?: string): void {
   body.style.left = '';
   body.style.right = '';
   body.style.width = '100%';
-  body.style.height = 'auto';
-  body.style.minHeight = '100%';
+  body.style.height = '100%';
+  body.style.minHeight = '100dvh';
   body.style.maxHeight = 'none';
   body.style.margin = '0';
   body.style.padding = '0';
-  body.style.overflow = 'visible';
-  body.style.overscrollBehavior = 'auto';
+  body.style.overflow = 'hidden';
+  body.style.overscrollBehavior = 'none';
   body.style.backgroundColor = 'transparent';
 
   if (root) {
@@ -306,16 +304,16 @@ function applySafariBrowserShell(pageBackground?: string): void {
     root.style.left = '';
     root.style.right = '';
     root.style.width = '100%';
-    root.style.height = 'auto';
-    root.style.minHeight = '100%';
+    root.style.height = '100%';
+    root.style.minHeight = '100dvh';
     root.style.maxHeight = 'none';
     root.style.margin = '0';
     root.style.padding = '0';
     root.style.display = 'flex';
     root.style.flexDirection = 'column';
-    root.style.flex = 'none';
+    root.style.flex = '1';
     root.style.boxSizing = 'border-box';
-    root.style.overflow = 'visible';
+    root.style.overflow = 'hidden';
     root.style.zIndex = '0';
     root.style.backgroundColor = 'transparent';
   }
@@ -342,35 +340,6 @@ function applySafariBrowserShell(pageBackground?: string): void {
   if (bg) {
     doc.style.backgroundColor = bg;
   }
-
-  requestAnimationFrame(unlockSafariDocumentScroll);
-}
-
-/** RN tab shells use overflow:hidden + flex:1; unlock only those — not in-page flex rows. */
-export function unlockSafariDocumentScroll(): void {
-  if (!isIosSafariBrowser()) return;
-  const root = document.getElementById('root');
-  if (!root) return;
-
-  root.querySelectorAll('*').forEach((node) => {
-    if (!(node instanceof HTMLElement)) return;
-    const role = node.getAttribute('role');
-    if (role === 'tablist' || role === 'tab') return;
-
-    const style = getComputedStyle(node);
-    if (style.position === 'fixed' || style.position === 'absolute') return;
-
-    const isHidden = style.overflow === 'hidden' || style.overflowY === 'hidden';
-    const isFlexFill = style.flex.startsWith('1') || style.flexGrow === '1';
-    if (!isHidden || !isFlexFill) return;
-
-    node.style.setProperty('overflow', 'visible', 'important');
-    node.style.setProperty('overflow-y', 'visible', 'important');
-    node.style.setProperty('flex', 'none', 'important');
-    node.style.setProperty('height', 'auto', 'important');
-    node.style.setProperty('max-height', 'none', 'important');
-    node.style.setProperty('width', '100%', 'important');
-  });
 }
 
 function applyDesktopWebShell(pageBackground?: string): void {
@@ -505,11 +474,9 @@ export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
     d.style.height='100%';
     d.style.minHeight='100dvh';
     d.style.maxHeight='none';
-    d.style.overflowX='hidden';
-    d.style.overflowY='auto';
-    d.style.webkitOverflowScrolling='touch';
-    b.style.cssText='margin:0;padding:0;width:100%;height:auto;min-height:100%;max-height:none;overflow:visible;overscroll-behavior:auto;background:transparent';
-    if(r){r.style.cssText='margin:0;padding:0;width:100%;height:auto;min-height:100%;max-height:none;display:flex;flex-direction:column;flex:none;box-sizing:border-box;overflow:visible;z-index:0;background:transparent';}
+    d.style.overflow='hidden';
+    b.style.cssText='margin:0;padding:0;width:100%;height:100%;min-height:100dvh;max-height:none;overflow:hidden;overscroll-behavior:none;background:transparent';
+    if(r){r.style.cssText='margin:0;padding:0;width:100%;height:100%;min-height:100dvh;max-height:none;display:flex;flex-direction:column;flex:1;box-sizing:border-box;overflow:hidden;z-index:0;background:transparent';}
     var bd=ensureBackdrop();
     bd.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;min-height:100dvh;min-height:-webkit-fill-available;z-index:-1;pointer-events:none';
   }
