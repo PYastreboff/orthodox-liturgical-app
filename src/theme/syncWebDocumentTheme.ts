@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 
 import { todayPageBackgroundColor } from '../lib/liturgical/vestmentGradient';
 import { colors } from './tokens';
-import { applyWebViewportMetrics, IOS_WEB_CLASS } from './webViewport';
+import { applyWebViewportMetrics, IOS_SAFARI_BROWSER_CLASS, IOS_WEB_CLASS } from './webViewport';
 
 function pageBackground(isDark: boolean): string {
   return todayPageBackgroundColor(isDark);
@@ -78,10 +78,27 @@ html:not(.${IOS_WEB_CLASS}) #root {
   flex-direction: column;
   background-color: var(--orthodaily-page-bg);
 }
-body {
+html.${IOS_SAFARI_BROWSER_CLASS},
+html.${IOS_SAFARI_BROWSER_CLASS} body,
+html.${IOS_SAFARI_BROWSER_CLASS} #root {
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+html.${IOS_SAFARI_BROWSER_CLASS} body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
   background-color: var(--orthodaily-page-bg);
 }
-#root {
+html.${IOS_SAFARI_BROWSER_CLASS} #root {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background-color: var(--orthodaily-page-bg);
 }
 #orthodaily-viewport-backdrop {

@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import {
   SCREEN_GUTTER_X,
   SCREEN_GUTTER_X_CALENDAR,

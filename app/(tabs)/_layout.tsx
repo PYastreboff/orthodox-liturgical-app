@@ -9,10 +9,9 @@ import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
 import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useLayoutSafeAreaInsets } from '../../src/hooks/useLayoutSafeAreaInsets';
-import { useSafariBottomChromeInset } from '../../src/hooks/useSafariBottomChromeInset';
-import { isIosSafariBrowser } from '../../src/theme/webViewport';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
-import { SAFARI_TAB_BAR_BLEED_PX, TAB_BAR_CONTENT_HEIGHT } from '../../src/theme/layout';
+import { isIosSafariBrowser } from '../../src/theme/webViewport';
+import { TAB_BAR_CONTENT_HEIGHT } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
 
 function tabBarBackground(isDark: boolean, phoneLayout: boolean): string {
@@ -38,22 +37,15 @@ function TabsLayoutContent() {
   const showTabHeader = useTabHeaderShown();
   const phoneLayout = usePhoneLayout();
   const bottomInset = insets.bottom;
-  const safariChrome = useSafariBottomChromeInset();
-  const useSafariDockedBar = Platform.OS === 'web' && isIosSafariBrowser() && safariChrome > 0;
-  const phoneBottomOverlap =
-    phoneLayout && (useSafariDockedBar || Platform.OS === 'ios') ? 3 : 0;
-  const safariTabBarBleed = useSafariDockedBar || phoneBottomOverlap > 0;
-  const nativePhoneBleed = phoneLayout && Platform.OS === 'ios' && !useSafariDockedBar;
-  const tabBarBleedHeight = safariTabBarBleed
-    ? SAFARI_TAB_BAR_BLEED_PX
-    : nativePhoneBleed
-      ? 2
-      : 0;
-  const tabBarBottom = useSafariDockedBar ? -phoneBottomOverlap : safariChrome;
-  const tabBarBottomPad = useSafariDockedBar
-    ? safariChrome + bottomInset + tabBarBleedHeight
-    : bottomInset + tabBarBleedHeight + (Platform.OS === 'android' && bottomInset === 0 ? 8 : 0);
-  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + tabBarBottomPad + phoneBottomOverlap;
+  const iosSafariBrowser = Platform.OS === 'web' && isIosSafariBrowser();
+  const nativePhoneBleed = phoneLayout && Platform.OS === 'ios';
+  const tabBarBleedHeight = nativePhoneBleed ? 2 : 0;
+  const tabBarBottom = 0;
+  const tabBarBottomPad =
+    bottomInset +
+    tabBarBleedHeight +
+    (Platform.OS === 'android' && bottomInset === 0 ? 8 : iosSafariBrowser ? 4 : 0);
+  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + tabBarBottomPad;
   const tabBarBg = tabBarBackground(isDark, phoneLayout);
 
   return (
@@ -89,10 +81,7 @@ function TabsLayoutContent() {
             : null),
         },
         tabBarBackground: () => (
-          <TabBarBleedBackground
-            color={tabBarBg}
-            bleedPx={tabBarBleedHeight + phoneBottomOverlap}
-          />
+          <TabBarBleedBackground color={tabBarBg} bleedPx={tabBarBleedHeight} />
         ),
         tabBarItemStyle: {
           height: TAB_BAR_CONTENT_HEIGHT,

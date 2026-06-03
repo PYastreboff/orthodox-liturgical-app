@@ -1,27 +1,27 @@
 import type { ReactNode } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
-import { isIosMobileWeb } from '../theme/webViewport';
+import { isIosMobileWeb, isIosSafariBrowser } from '../theme/webViewport';
 
 type Props = {
   children: ReactNode;
   backgroundColor: string;
 };
 
-/** Fills the fixed #root shell on iOS (height: 100%); flex fill elsewhere. */
+/** Fills the web shell; iOS Safari browser uses natural 100dvh like a normal site. */
 export function WebShell({ children, backgroundColor }: Props) {
   if (Platform.OS !== 'web') {
     return <>{children}</>;
   }
 
-  const ios = isIosMobileWeb();
+  const iosFixedShell = isIosMobileWeb() && !isIosSafariBrowser();
 
   return (
     <View
       style={[
         styles.shell,
         { backgroundColor },
-        ios ? styles.shellIos : styles.shellFlex,
+        iosFixedShell ? styles.shellIos : styles.shellFlex,
       ]}
     >
       {children}
@@ -43,5 +43,6 @@ const styles = StyleSheet.create({
   shellFlex: {
     flex: 1,
     minHeight: 0,
+    overflow: 'visible',
   },
 });

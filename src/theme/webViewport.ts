@@ -1,7 +1,10 @@
 import { Platform } from 'react-native';
 
 const BACKDROP_ID = 'orthodaily-viewport-backdrop';
+/** Fixed innerHeight shell — iOS installed web app only. */
 export const IOS_WEB_CLASS = 'orthodaily-ios-web';
+/** Natural 100dvh scroll — iOS Safari in the browser (like a normal website). */
+export const IOS_SAFARI_BROWSER_CLASS = 'orthodaily-safari-browser';
 
 let nativeVisualViewport: VisualViewport | null = null;
 
@@ -50,7 +53,7 @@ export function layoutVhUnitPx(): number {
  * Proxy to innerHeight on all iOS mobile web.
  */
 export function installVisualViewportLayoutPatch(): void {
-  if (typeof window === 'undefined' || !isIosMobileWeb()) return;
+  if (typeof window === 'undefined' || !isIosMobileWeb() || isIosSafariBrowser()) return;
   const w = window as Window & { __orthodailyVvPatch?: boolean };
   if (w.__orthodailyVvPatch) return;
   const native = window.visualViewport;
@@ -152,10 +155,7 @@ function applyIosWebShell(pageBackground?: string): void {
   doc.style.setProperty('--app-height-px', shellHeight);
   doc.style.setProperty('--vh', `${layoutVhUnitPx()}px`);
   doc.style.setProperty('--app-height', shellHeight);
-  doc.style.setProperty(
-    '--safari-bottom-chrome',
-    `${isIosSafariBrowser() ? measureSafariBottomChrome() : 0}px`,
-  );
+  doc.style.setProperty('--safari-bottom-chrome', '0px');
   doc.style.height = shellHeight;
   doc.style.minHeight = shellHeight;
   doc.style.maxHeight = shellHeight;
@@ -218,8 +218,7 @@ function applyIosWebShell(pageBackground?: string): void {
   }
 }
 
-function applyDesktopWebShell(pageBackground?: string): void {
-  const doc = document.documentElement;
+function clearFixedWebShellStyles(doc: HTMLElement, body: HTMLElement, root: HTMLElement | null): void {
   doc.classList.remove(IOS_WEB_CLASS);
   doc.style.removeProperty('--app-height-px');
   doc.style.removeProperty('--vh');
@@ -228,30 +227,45 @@ function applyDesktopWebShell(pageBackground?: string): void {
   doc.style.removeProperty('height');
   doc.style.removeProperty('min-height');
   doc.style.removeProperty('max-height');
+  doc.style.removeProperty('overflow');
 
-  const body = document.body;
   body.style.position = '';
   body.style.top = '';
   body.style.left = '';
   body.style.right = '';
+  body.style.width = '';
   body.style.height = '';
-  body.style.minHeight = '';
+  body.style.minHeight = '100dvh';
   body.style.maxHeight = '';
-  body.style.overflow = '';
-  body.style.overscrollBehavior = '';
+  body.style.margin = '0';
+  body.style.padding = '0';
+  body.style.overflow = 'hidden';
+  body.style.overscrollBehavior = 'none';
 
-  const root = document.getElementById('root');
   if (root) {
     root.style.position = '';
     root.style.top = '';
     root.style.left = '';
     root.style.right = '';
+    root.style.width = '100%';
     root.style.height = '';
-    root.style.minHeight = '';
+    root.style.minHeight = '100dvh';
     root.style.maxHeight = '';
-    root.style.zIndex = '';
-    root.style.boxSizing = '';
+    root.style.margin = '0';
+    root.style.padding = '0';
+    root.style.display = 'flex';
+    root.style.flexDirection = 'column';
+    root.style.boxSizing = 'border-box';
+    root.style.overflow = 'hidden';
+    root.style.zIndex = '1';
   }
+}
+
+function applyDesktopWebShell(pageBackground?: string): void {
+  const doc = document.documentElement;
+  const body = document.body;
+  const root = document.getElementById('root');
+  clearFixedWebShellStyles(doc, body, root);
 
   const backdrop = ensureViewportBackdrop();
   backdrop.style.cssText = [
@@ -275,6 +289,21 @@ function applyDesktopWebShell(pageBackground?: string): void {
 export function applyWebViewportMetrics(pageBackground?: string): void {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return;
 
+  const doc = document.documentElement;
+
+  if (isIosSafariBrowser()) {
+    applyDesktopWebShell(pageBackground);
+    doc.classList.add(IOS_SAFARI_BROWSER_CLASS);
+    const insets = readWebSafeAreaInsets();
+    doc.style.setProperty('--safe-area-top', `${insets.top}px`);
+    doc.style.setProperty('--safe-area-bottom', `${insets.bottom}px`);
+    return;
+  }
+
+  doc.classList.remove(IOS_SAFARI_BROWSER_CLASS);
+  doc.style.removeProperty('--safe-area-top');
+  doc.style.removeProperty('--safe-area-bottom');
+
   if (isIosMobileWeb()) {
     applyIosWebShell(pageBackground);
   } else {
@@ -288,7 +317,9 @@ export function installWebViewportShell(): void {
   if (Platform.OS !== 'web' || typeof document === 'undefined' || installed) return;
   installed = true;
 
-  installVisualViewportLayoutPatch();
+  if (!isIosSafariBrowser()) {
+    installVisualViewportLayoutPatch();
+  }
   applyWebViewportMetrics();
 
   const onChange = () => applyWebViewportMetrics();
@@ -304,7 +335,14 @@ export function installWebViewportShell(): void {
 
 export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
   var IOS_CLASS='orthodaily-ios-web';
+  var SAFARI_CLASS='orthodaily-safari-browser';
   function ios(){return /iPhone|iPad|iPod/i.test(navigator.userAgent||'');}
+  function safariBrowser(){
+    if(!ios())return false;
+    var nav=navigator;
+    if(nav.standalone===true)return false;
+    try{return !window.matchMedia('(display-mode: standalone)').matches;}catch(e){return true;}
+  }
   function layoutH(){return Math.round(window.innerHeight);}
   function layoutVh(){var h=layoutH();return h>0?h/100:0;}
   function syncPageBackground(){
@@ -325,7 +363,7 @@ export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
     }
   }
   function patchVv(){
-    if(!ios()||!window.visualViewport||window.__orthodailyVvPatch)return;
+    if(!ios()||safariBrowser()||!window.visualViewport||window.__orthodailyVvPatch)return;
     var native=window.visualViewport;
     window.__orthodailyNativeVv=native;
     window.__orthodailyVvPatch=true;
@@ -345,17 +383,33 @@ export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
     if(!el){el=document.createElement('div');el.id=id;el.setAttribute('aria-hidden','true');document.body.insertBefore(el,document.body.firstChild);}
     return el;
   }
+  function applyNaturalShell(){
+    var d=document.documentElement,b=document.body,r=document.getElementById('root');
+    d.classList.remove(IOS_CLASS);
+    d.classList.add(SAFARI_CLASS);
+    d.style.removeProperty('--app-height-px');
+    d.style.removeProperty('--vh');
+    d.style.setProperty('--app-height','100dvh');
+    d.style.setProperty('--safari-bottom-chrome','0px');
+    d.style.removeProperty('height');
+    d.style.removeProperty('min-height');
+    d.style.removeProperty('max-height');
+    d.style.removeProperty('overflow');
+    b.style.cssText='margin:0;padding:0;min-height:100dvh;overflow:hidden;overscroll-behavior:none';
+    if(r){r.style.cssText='margin:0;padding:0;width:100%;min-height:100dvh;display:flex;flex-direction:column;box-sizing:border-box;overflow:hidden;z-index:1';}
+    var bd=ensureBackdrop();
+    bd.style.cssText='position:fixed;inset:0;width:100%;min-height:100dvh;z-index:0;pointer-events:none';
+  }
   function applyIos(){
     var h=layoutH();
     if(h<=0)return;
     var d=document.documentElement,b=document.body,r=document.getElementById('root');
+    d.classList.remove(SAFARI_CLASS);
     d.classList.add(IOS_CLASS);
     d.style.setProperty('--app-height-px',h+'px');
     d.style.setProperty('--vh',layoutVh()+'px');
     d.style.setProperty('--app-height',h+'px');
-    var bottom=0,nv=window.__orthodailyNativeVv;
-    if(nv){bottom=Math.max(0,Math.floor(window.innerHeight-nv.height-nv.offsetTop));}
-    d.style.setProperty('--safari-bottom-chrome',bottom+'px');
+    d.style.setProperty('--safari-bottom-chrome','0px');
     var shell='height:'+h+'px;min-height:'+h+'px;max-height:'+h+'px;width:100%;margin:0;padding:0;overflow:hidden';
     d.style.height=h+'px';d.style.minHeight=h+'px';d.style.maxHeight=h+'px';d.style.width='100%';d.style.margin='0';d.style.padding='0';d.style.overflow='hidden';
     b.style.cssText='position:fixed;top:0;left:0;right:0;'+shell+';overscroll-behavior:none';
@@ -367,7 +421,8 @@ export const WEB_VIEWPORT_BOOT_SCRIPT = `(function(){
     try{
       patchVv();
       syncPageBackground();
-      if(ios()){applyIos();}
+      if(safariBrowser()){applyNaturalShell();}
+      else if(ios()){applyIos();}
       syncPageBackground();
     }catch(e){}
   }
