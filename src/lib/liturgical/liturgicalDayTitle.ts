@@ -70,6 +70,10 @@ const APPEARANCE_FEAST_PATTERN: Partial<Record<string, RegExp>> = {
   elevation_cross: /\belevation of (?:the )?cross\b/i,
   pascha: /\bpascha\b/i,
   pentecost: /\bpentecost\b/i,
+  ascension: /\bascension\b/i,
+  peter_and_paul: /\bpeter and paul\b|\bapostles peter\b/i,
+  nativity_theotokos: /\bnativity of (?:the )?(?:holy )?theotokos\b/i,
+  presentation: /\bpresentation of (?:the )?lord\b|\bmeeting of (?:the )?lord\b/i,
 };
 
 const HOLY_WEEK_HEADLINE_PATTERNS = [

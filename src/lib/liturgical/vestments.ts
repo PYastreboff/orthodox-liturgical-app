@@ -53,6 +53,15 @@ const SWATCH = {
 } as const satisfies Record<SwatchKey, Omit<VestmentSwatch, 'name'>>;
 
 const REASON_KEY_BY_APPEARANCE: Record<string, string> = {
+  ascension: 'vestments.reason.ascension',
+  ascension_leavetaking: 'vestments.reason.ascensionLeavetaking',
+  holy_spirit: 'vestments.reason.holySpirit',
+  pentecost_season: 'vestments.reason.pentecostSeason',
+  trinity_day: 'vestments.reason.trinityDay',
+  all_saints_russia: 'vestments.reason.allSaintsRussia',
+  nativity_theotokos: 'vestments.reason.nativityTheotokos',
+  presentation: 'vestments.reason.presentation',
+  peter_and_paul: 'vestments.reason.peterAndPaul',
   pascha: 'vestments.reason.pascha',
   bright_week: 'vestments.reason.brightWeek',
   theophany: 'vestments.reason.theophany',
@@ -84,19 +93,42 @@ function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): SwatchKey {
   const key = appearance.key;
   const label = appearance.label.toLowerCase();
 
+  if (key === 'ascension' || key === 'ascension_leavetaking' || label.includes('ascension')) {
+    return 'gold';
+  }
   if (key === 'theophany' || label.includes('theophany')) return 'blue';
   if (key === 'annunciation' || label.includes('annunciation')) return 'blue';
-  if (key === 'dormition') return 'blue';
+  if (
+    key === 'dormition' ||
+    key === 'nativity_theotokos' ||
+    key === 'presentation' ||
+    label.includes('theotokos') ||
+    label.includes('presentation')
+  ) {
+    return 'blue';
+  }
   if (key === 'pascha' || label.includes('pascha')) return 'white';
   if (key === 'bright_week') return 'white';
   if (key === 'palm_sunday' || label.includes('palm')) return 'green';
   if (key === 'pentecost' || label.includes('pentecost')) return 'green';
+  if (
+    key === 'holy_spirit' ||
+    key === 'pentecost_season' ||
+    key === 'trinity_day' ||
+    key === 'all_saints_russia' ||
+    key === 'all_saints' ||
+    label.includes('holy spirit') ||
+    label.includes('trinity')
+  ) {
+    return 'green';
+  }
+  if (key === 'peter_and_paul' || label.includes('peter and paul')) return 'red';
   if (key === 'elevation_cross' || label.includes('cross')) return 'red';
   if (key === 'great_friday' || label.includes('holy friday')) return 'black';
   if (key === 'holy_saturday') return 'white';
   if (key === 'holy_week' || key === 'great_lent' || key.includes('lent')) return 'purple';
   if (key.includes('fast')) return 'dark';
-  if (key === 'nativity' || key === 'transfiguration' || key === 'all_saints' || key === 'sunday') {
+  if (key === 'nativity' || key === 'transfiguration' || key === 'sunday') {
     return 'gold';
   }
 

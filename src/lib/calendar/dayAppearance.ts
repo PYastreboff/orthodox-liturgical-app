@@ -73,6 +73,181 @@ function isAnnunciationLiturgicalDate(liturgical: PlainDate): boolean {
   return liturgical.month === 3 && liturgical.day === 25;
 }
 
+type AppearancePreset = Pick<
+  LiturgicalDayAppearance,
+  'key' | 'gradient' | 'foreground' | 'label'
+>;
+
+const THEOTOKOS_BLUE_GRADIENT = ['#355a8a', '#1c2f4a'] as [string, string];
+const THEOTOKOS_BLUE_FG = '#eef4ff';
+const PENTECOST_GREEN_GRADIENT = ['#dce8dc', '#3d7350'] as [string, string];
+const PENTECOST_GREEN_FG = '#1e1a16';
+const LORD_GOLD_GRADIENT = ['#f2efe6', '#c6a86a'] as [string, string];
+const LORD_GOLD_FG = '#1e1a16';
+const MARTYR_RED_GRADIENT = ['#8b2838', '#4a1420'] as [string, string];
+const MARTYR_RED_FG = '#fff5f5';
+
+function appearanceFromPreset(
+  preset: AppearancePreset,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return { ...preset, subtitle, gregorianSubtitle };
+}
+
+/** Blue — Theotokos feasts (St John the Evangelist Orthodox Church guide). */
+export function theotokosAppearanceFields(
+  key: string,
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return appearanceFromPreset(
+    {
+      key,
+      gradient: THEOTOKOS_BLUE_GRADIENT,
+      foreground: THEOTOKOS_BLUE_FG,
+      label,
+    },
+    subtitle,
+    gregorianSubtitle,
+  );
+}
+
+/** Green — Pentecost season, Holy Spirit, and related commemorations. */
+export function pentecostSeasonAppearanceFields(
+  key: string,
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return appearanceFromPreset(
+    {
+      key,
+      gradient: PENTECOST_GREEN_GRADIENT,
+      foreground: PENTECOST_GREEN_FG,
+      label,
+    },
+    subtitle,
+    gregorianSubtitle,
+  );
+}
+
+/** Gold — feasts of Our Lord (St John guide). */
+export function lordFeastAppearanceFields(
+  key: string,
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return appearanceFromPreset(
+    {
+      key,
+      gradient: LORD_GOLD_GRADIENT,
+      foreground: LORD_GOLD_FG,
+      label,
+    },
+    subtitle,
+    gregorianSubtitle,
+  );
+}
+
+/** Red — martyrs and SS Peter & Paul (St John guide). */
+export function martyrFeastAppearanceFields(
+  key: string,
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return appearanceFromPreset(
+    {
+      key,
+      gradient: MARTYR_RED_GRADIENT,
+      foreground: MARTYR_RED_FG,
+      label,
+    },
+    subtitle,
+    gregorianSubtitle,
+  );
+}
+
+function orthocalFeastHaystack(day: OrthocalDay): string {
+  return [...(day.feasts ?? []), day.summary_title, ...(day.titles ?? [])]
+    .filter(Boolean)
+    .join(' ');
+}
+
+/** Override computed appearance when orthocal names a feast we model locally. */
+export function applyOrthocalFeastAppearance(
+  appearance: LiturgicalDayAppearance,
+  day: OrthocalDay,
+): LiturgicalDayAppearance {
+  const haystack = orthocalFeastHaystack(day);
+  const { subtitle, gregorianSubtitle } = appearance;
+
+  if (/\ball saints of russia\b/i.test(haystack)) {
+    return pentecostSeasonAppearanceFields(
+      'all_saints_russia',
+      'All Saints of Russia',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+  if (/\bascension\b/i.test(haystack) && !/\bleavetaking\b/i.test(haystack)) {
+    return lordFeastAppearanceFields('ascension', 'Ascension', subtitle, gregorianSubtitle);
+  }
+  if (/\bleavetaking of ascension\b/i.test(haystack)) {
+    return lordFeastAppearanceFields(
+      'ascension_leavetaking',
+      'Leavetaking of Ascension',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+  if (/\bholy spirit\b|\bday of (?:the )?holy spirit\b/i.test(haystack)) {
+    return pentecostSeasonAppearanceFields(
+      'holy_spirit',
+      'Day of the Holy Spirit',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+  if (/\bthird day of (?:the )?trinity\b|\bholy trinity\b/i.test(haystack)) {
+    return pentecostSeasonAppearanceFields(
+      'trinity_day',
+      'Trinity Day',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+  if (/\bpeter and paul\b|\bapostles peter\b|\bleaders of the apostles\b/i.test(haystack)) {
+    return martyrFeastAppearanceFields(
+      'peter_and_paul',
+      'Saints Peter and Paul',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+  if (/\bnativity of (?:the )?(?:holy )?theotokos\b/i.test(haystack)) {
+    return theotokosAppearanceFields(
+      'nativity_theotokos',
+      'Nativity of the Theotokos',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+  if (/\bpresentation of (?:the )?lord\b|\bmeeting of (?:the )?lord\b/i.test(haystack)) {
+    return theotokosAppearanceFields(
+      'presentation',
+      'Presentation of the Lord',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
+  return appearance;
+}
+
 export function applyAnnunciationAppearance(
   appearance: LiturgicalDayAppearance,
 ): LiturgicalDayAppearance {
@@ -101,7 +276,11 @@ export function getLiturgicalDayAppearance(
   const holySaturday = pascha - 1;
   const brightEnd = pascha + 7;
   const pentecost = pascha + 49;
+  const ascension = pascha + 39;
+  const ascensionLeavetaking = pascha + 40;
+  const holySpiritMonday = pascha + 50;
   const allSaintsSunday = pascha + 56;
+  const allSaintsRussiaSunday = pascha + 63;
   const apostlesFastMonday = pascha + 57;
   const peterAndPaul = jdnForLiturgicalFixedDate(liturgical, liturgicalCalendar, 6, 29);
 
@@ -122,6 +301,8 @@ export function getLiturgicalDayAppearance(
 
   const nativity = { year: y, month: 12, day: 25 } satisfies PlainDate;
   const theophany = { year: y, month: 1, day: 6 } satisfies PlainDate;
+  const presentation = { year: y, month: 2, day: 2 } satisfies PlainDate;
+  const nativityTheotokos = { year: y, month: 9, day: 8 } satisfies PlainDate;
   const transfiguration = { year: y, month: 8, day: 6 } satisfies PlainDate;
   const dormition = { year: y, month: 8, day: 15 } satisfies PlainDate;
   const elevationCross = { year: y, month: 9, day: 14 } satisfies PlainDate;
@@ -239,15 +420,48 @@ export function getLiturgicalDayAppearance(
     };
   }
 
-  if (jdn === allSaintsSunday) {
-    return {
-      key: 'all_saints',
-      gradient: ['#f2efe6', '#c6a86a'],
-      foreground: '#1e1a16',
+  if (jdn === ascension) {
+    return lordFeastAppearanceFields('ascension', 'Ascension', subtitle, gregorianSubtitle);
+  }
+
+  if (jdn === ascensionLeavetaking) {
+    return lordFeastAppearanceFields(
+      'ascension_leavetaking',
+      'Leavetaking of Ascension',
       subtitle,
-    gregorianSubtitle,
-      label: 'All Saints',
-    };
+      gregorianSubtitle,
+    );
+  }
+
+  if (jdn === holySpiritMonday) {
+    return pentecostSeasonAppearanceFields(
+      'holy_spirit',
+      'Day of the Holy Spirit',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
+  if (jdn > pentecost && jdn < allSaintsSunday) {
+    return pentecostSeasonAppearanceFields(
+      'pentecost_season',
+      'Pentecost season',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
+  if (jdn === allSaintsSunday) {
+    return pentecostSeasonAppearanceFields('all_saints', 'All Saints', subtitle, gregorianSubtitle);
+  }
+
+  if (jdn === allSaintsRussiaSunday) {
+    return pentecostSeasonAppearanceFields(
+      'all_saints_russia',
+      'All Saints of Russia',
+      subtitle,
+      gregorianSubtitle,
+    );
   }
 
   if (sameLiturgicalDate(liturgical, nativity)) {
@@ -303,6 +517,33 @@ export function getLiturgicalDayAppearance(
     gregorianSubtitle,
       label: 'Elevation of the Cross',
     };
+  }
+
+  if (sameLiturgicalDate(liturgical, presentation)) {
+    return theotokosAppearanceFields(
+      'presentation',
+      'Presentation of the Lord',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
+  if (sameLiturgicalDate(liturgical, nativityTheotokos)) {
+    return theotokosAppearanceFields(
+      'nativity_theotokos',
+      'Nativity of the Theotokos',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
+  if (jdn === peterAndPaul) {
+    return martyrFeastAppearanceFields(
+      'peter_and_paul',
+      'Saints Peter and Paul',
+      subtitle,
+      gregorianSubtitle,
+    );
   }
 
   if (inDormitionFast) {
@@ -404,6 +645,9 @@ export function getLiturgicalAppearanceForLocalDate(
   };
   if (orthocalDay && annunciationFeastNameFromOrthocal(orthocalDay)) {
     appearance = applyAnnunciationAppearance(appearance);
+  }
+  if (orthocalDay) {
+    appearance = applyOrthocalFeastAppearance(appearance, orthocalDay);
   }
   return appearance;
 }

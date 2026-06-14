@@ -190,6 +190,8 @@ const en = {
         'Friday is a traditional fast day, remembering the Passion of the Lord. {title} is observed as the Church unites weekday discipline with the memory of the Cross.',
       allSaints:
         'The Sunday after Pentecost honors all the saints — known and unknown — who have shone forth in every age. The Church gives thanks for the communion of saints who surround us in the life of the Spirit.',
+      allSaintsRussia:
+        'The second Sunday after Pentecost commemorates All Saints who shone forth in the Russian land — a festal day in green vestments, even during the Apostles’ Fast.',
     },
     ordinary: {
       sunday:
@@ -325,6 +327,15 @@ const en = {
       transfiguration: 'Gold for the Lord’s Transfiguration on Tabor, when His divine glory shone forth.',
       palmSunday: 'Green for Palm Sunday — the entry of the King of Glory into Jerusalem.',
       pentecost: 'Green for Pentecost — the life-giving Spirit who renews creation in the Church.',
+      holySpirit: 'Green for the Day of the Holy Spirit — the Monday after Pentecost.',
+      pentecostSeason: 'Green for the Pentecost season — feasts of the Spirit and the saints.',
+      trinityDay: 'Green for Trinity Day and the days following Pentecost.',
+      ascension: 'Gold for the Ascension of the Lord — a feast of Christ who returns to the Father.',
+      ascensionLeavetaking: 'Gold for the Leavetaking of Ascension — the close of the Ascension feast.',
+      nativityTheotokos: 'Blue for the Nativity of the Theotokos — a feast of the Mother of God.',
+      presentation: 'Blue for the Presentation of the Lord in the Temple.',
+      peterAndPaul: 'Red for the feast of the Holy Apostles Peter and Paul — leaders of the Church.',
+      allSaintsRussia: 'Green for All Saints of Russia — saints who shone forth in the Russian land.',
       elevationCross: 'Red for the Exaltation of the Cross — the blood of Christ and the martyrs.',
       greatFriday: 'Black for Great and Holy Friday — the death of Christ on the Cross.',
       holySaturday:
@@ -336,7 +347,7 @@ const en = {
       wednesdayFast: 'Dark vestments on fasting days — Wednesday commemorates the betrayal of Christ.',
       fridayFast: 'Dark vestments on fasting days — Friday commemorates the Passion of the Lord.',
       sunday: 'Gold for the Lord’s Day — the weekly feast of the Resurrection.',
-      allSaints: 'Gold for the Sunday of All Saints after Pentecost.',
+      allSaints: 'Green for the Sunday of All Saints after Pentecost.',
       gold: 'Gold for a Sunday or great feast of the Lord or the saints.',
       white: 'White for a great feast of the Lord — purity and the uncreated Light.',
       blue: 'Blue for a feast of the Mother of God or her icons.',
@@ -423,6 +434,15 @@ const en = {
     bright_week: 'Bright Week',
     pentecost: 'Pentecost',
     all_saints: 'All Saints',
+    all_saints_russia: 'All Saints of Russia',
+    ascension: 'Ascension',
+    ascension_leavetaking: 'Leavetaking of Ascension',
+    holy_spirit: 'Day of the Holy Spirit',
+    pentecost_season: 'Pentecost season',
+    trinity_day: 'Trinity Day',
+    nativity_theotokos: 'Nativity of the Theotokos',
+    presentation: 'Presentation of the Lord',
+    peter_and_paul: 'Saints Peter and Paul',
     nativity: 'Nativity',
     theophany: 'Theophany',
     transfiguration: 'Transfiguration',
@@ -641,6 +661,8 @@ const ru = {
         'Пятница — традиционный постный день в память Страстей Госпodних. {title} совершается в соединении с недельной дисциплиной и памятью Креста.',
       allSaints:
         'Неделя всех святых после Пятидесятницы — память всех святых, известных и неизвестных. Церковь благодарит за общение святых в жизни Духа.',
+      allSaintsRussia:
+        'Вторая неделя после Пятидесятницы — Собор всех святых, в земле Русской просиявших; праздник в зелёных ризах, даже в Петров пост.',
     },
     ordinary: {
       sunday:
@@ -787,6 +809,17 @@ const ru = {
         'Зелёный на Вход Господень в Иерусалим — вхождение Царя славы.',
       pentecost:
         'Зелёный на Пятидесятницу — Животворящий Дух, обновляющий творение в Церкви.',
+      holySpirit: 'Зелёный на день Святого Духа — понедельник после Пятидесятницы.',
+      pentecostSeason: 'Зелёный в пятидесятницы — праздники Духа и святых.',
+      trinityDay: 'Зелёный на день Троицы и дни после Пятидесятницы.',
+      ascension: 'Золотой на Вознесение Господне — праздник Господа, возшедшего к Отцу.',
+      ascensionLeavetaking: 'Золотой на отдание Вознесения — завершение праздника Вознесения.',
+      nativityTheotokos: 'Голубой на Рождество Пресвятой Богородицы — праздник Божией Матери.',
+      presentation: 'Голубой на Сретение Господне в храме.',
+      peterAndPaul:
+        'Красный на праздник святых апостолов Петра и Павла — первоверховных апостолов.',
+      allSaintsRussia:
+        'Зелёный на всех святых, в земле Русской просиявших.',
       elevationCross:
         'Красный на Воздвижение Креста — Кровь Христова и кровь мучеников.',
       greatFriday:
@@ -808,7 +841,7 @@ const ru = {
       sunday:
         'Золотой на Господень день — еженедельный праздник Воскресения.',
       allSaints:
-        'Золотой в Неделю всех святых после Пятидесятницы.',
+        'Зелёный в Неделю всех святых после Пятидесятницы.',
       gold: 'Золотой на воскресенье или великий праздник Господа или святых.',
       white: 'Белый на великий праздник Господень — чистота и небесный свет.',
       blue: 'Голубой на праздник Пресвятой Богородицы или Её икон.',
@@ -895,6 +928,15 @@ const ru = {
     bright_week: 'Светлая седмица',
     pentecost: 'Пятидесятница',
     all_saints: 'Все святые',
+    all_saints_russia: 'Все святые, в земле Русской просиявших',
+    ascension: 'Вознесение',
+    ascension_leavetaking: 'Отдание Вознесения',
+    holy_spirit: 'День Святого Духа',
+    pentecost_season: 'Пятидесятница',
+    trinity_day: 'День Троицы',
+    nativity_theotokos: 'Рождество Пресвятой Богородицы',
+    presentation: 'Сретение Господне',
+    peter_and_paul: 'Святые апостолы Петр и Павел',
     nativity: 'Рождество',
     theophany: 'Богоявление',
     transfiguration: 'Преображение',

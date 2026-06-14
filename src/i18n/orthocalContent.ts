@@ -39,6 +39,8 @@ const FEAST_KEY_BY_ENGLISH: Record<string, string> = {
   'Bright Week': 'appearance.bright_week',
   Pentecost: 'appearance.pentecost',
   'All Saints': 'appearance.all_saints',
+  'All Saints of America, All Saints of Russia': 'appearance.all_saints_russia',
+  'All Saints of Russia': 'appearance.all_saints_russia',
   Nativity: 'appearance.nativity',
   Transfiguration: 'appearance.transfiguration',
   Dormition: 'appearance.dormition',

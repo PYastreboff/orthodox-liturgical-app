@@ -67,6 +67,7 @@ const FAST_EXCEPTION_KEYS: Record<string, string> = {
   'wine and oil allowed': 'fasting.exceptionWineOil',
   'wine oil allowed': 'fasting.exceptionWineOil',
   'fish wine and oil allowed': 'fasting.exceptionFishWineOil',
+  'fish wine and oil are allowed': 'fasting.exceptionFishWineOil',
   'fish allowed': 'fasting.exceptionFish',
   'dairy allowed': 'fasting.exceptionDairy',
   'meat allowed': 'fasting.exceptionMeat',

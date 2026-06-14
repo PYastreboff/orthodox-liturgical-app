@@ -50,6 +50,7 @@ const SEASON_BY_APPEARANCE: Record<string, string> = {
   wednesday_fast: 'dayAbout.season.wednesdayFast',
   friday_fast: 'dayAbout.season.fridayFast',
   all_saints: 'dayAbout.season.allSaints',
+  all_saints_russia: 'dayAbout.season.allSaintsRussia',
 };
 
 function normalizeName(value: string): string {
