@@ -150,7 +150,14 @@ export function DayHero({
           onPress={onPrevious}
           accessibilityLabel={t('today.prevDay')}
         >
-          <Feather name="chevron-left" size={26} color={fg} />
+          <View style={styles.navChevronSlot} pointerEvents="none">
+            <Feather
+              name="chevron-left"
+              size={24}
+              color={fg}
+              style={styles.navChevronLeft}
+            />
+          </View>
         </Pressable>
 
         <View style={styles.dateBlock}>
@@ -171,7 +178,14 @@ export function DayHero({
           onPress={onNext}
           accessibilityLabel={t('today.nextDay')}
         >
-          <Feather name="chevron-right" size={26} color={fg} />
+          <View style={styles.navChevronSlot} pointerEvents="none">
+            <Feather
+              name="chevron-right"
+              size={24}
+              color={fg}
+              style={styles.navChevronRight}
+            />
+          </View>
         </Pressable>
       </View>
 
@@ -288,6 +302,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
@@ -295,6 +310,22 @@ const styles = StyleSheet.create({
   },
   navBtnPressed: {
     opacity: 0.75,
+  },
+  navChevronSlot: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navChevronLeft: {
+    lineHeight: 24,
+    textAlign: 'center',
+    transform: [{ translateX: -1 }],
+  },
+  navChevronRight: {
+    lineHeight: 24,
+    textAlign: 'center',
+    transform: [{ translateX: 1 }],
   },
   dateBlock: {
     flex: 1,
