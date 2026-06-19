@@ -15,6 +15,7 @@ import Head from 'expo-router/head';
 import { AppLanguagePicker } from '../../src/components/settings/AppLanguagePicker';
 import { BugReportLink } from '../../src/components/settings/BugReportLink';
 import { CalendarModePicker } from '../../src/components/settings/CalendarModePicker';
+import { OrthoDailyLogo } from '../../src/components/OrthoDailyLogo';
 import { SettingsRow } from '../../src/components/settings/SettingsRow';
 import { SettingsSection } from '../../src/components/settings/SettingsSection';
 import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
@@ -197,6 +198,7 @@ export default function SettingsScreen() {
       </SettingsSection>
 
       <View style={styles.footer}>
+        <OrthoDailyLogo size={36} />
         <Text style={[styles.footerApp, { color: theme.colors.text }]}>OrthoDaily</Text>
         <Text style={[styles.footerMeta, { color: isDark ? '#a39e98' : colors.muted }]}>
           {t('settings.version', { version })}
@@ -273,6 +275,7 @@ const styles = StyleSheet.create({
   footerApp: {
     fontSize: 15,
     fontWeight: '600',
+    marginTop: 10,
   },
   footerMeta: {
     fontSize: 12,

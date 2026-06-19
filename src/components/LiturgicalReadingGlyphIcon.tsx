@@ -39,7 +39,7 @@ function EpistleGlyph({ color, sw }: { color: string; sw: number }) {
   );
 }
 
-/** Evangelion — open codex with central cross (distinct from tab book-cross). */
+/** Evangelion — open codex with central cross (distinct from tab Orthodox cross). */
 function GospelGlyph({ color, sw }: { color: string; sw: number }) {
   return (
     <G>

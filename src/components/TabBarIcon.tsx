@@ -1,8 +1,8 @@
 import { StyleSheet, View } from 'react-native';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 
-import { colors } from '../theme/tokens';
 import { HoverAccessible } from './HoverAccessible';
+import { OrthodoxCrossGlyph } from './OrthodoxCrossGlyph';
 
 type TabName = 'today' | 'calendar' | 'settings';
 
@@ -28,7 +28,7 @@ export function TabBarIcon({ name, color, size = ICON_SIZE, focused }: Props) {
   const icon = (() => {
     switch (name) {
       case 'today':
-        return <MaterialCommunityIcons name="book-cross" size={size} color={color} />;
+        return <OrthodoxCrossGlyph size={size} color={color} />;
       case 'calendar':
         return <Feather name="calendar" size={size} color={color} />;
       case 'settings':

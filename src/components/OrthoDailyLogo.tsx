@@ -1,45 +1,34 @@
-import Svg, { Line, Rect } from 'react-native-svg';
+import Svg, { G, Rect } from 'react-native-svg';
 
+import { ORTHODOX_CROSS_VIEW } from '../brand/orthodoxCrossGeometry';
 import { colors } from '../theme/tokens';
+import { OrthodoxCrossPaths } from './OrthodoxCrossGlyph';
 
 type Props = {
   size?: number;
 };
 
 /**
- * Simple Orthodox cross on a wine rounded square — readable at tab-bar and header sizes.
+ * Branded app mark — wine rounded square with gold Russian Orthodox cross.
  */
 export function OrthoDailyLogo({ size = 28 }: Props) {
+  const inset = size * 0.13;
+  const inner = size - inset * 2;
+  const scale = inner / ORTHODOX_CROSS_VIEW;
+
   return (
-    <Svg width={size} height={size} viewBox="0 0 32 32" accessibilityRole="image">
-      <Rect x={1} y={1} width={30} height={30} rx={7} fill={colors.accentWine} />
-      <Line
-        x1={16}
-        y1={7}
-        x2={16}
-        y2={25}
-        stroke={colors.accentGold}
-        strokeWidth={2}
-        strokeLinecap="round"
+    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} accessibilityRole="image">
+      <Rect
+        x={1}
+        y={1}
+        width={size - 2}
+        height={size - 2}
+        rx={size * 0.22}
+        fill={colors.accentWine}
       />
-      <Line
-        x1={10.5}
-        y1={12.5}
-        x2={21.5}
-        y2={12.5}
-        stroke={colors.accentGold}
-        strokeWidth={2}
-        strokeLinecap="round"
-      />
-      <Line
-        x1={13}
-        y1={9.5}
-        x2={19}
-        y2={9.5}
-        stroke={colors.accentGold}
-        strokeWidth={1.6}
-        strokeLinecap="round"
-      />
+      <G transform={`translate(${inset}, ${inset}) scale(${scale})`}>
+        <OrthodoxCrossPaths color={colors.accentGold} size={inner} footrest />
+      </G>
     </Svg>
   );
 }
