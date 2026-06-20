@@ -191,7 +191,7 @@ const en = {
       allSaints:
         'The Sunday after Pentecost honors all the saints — known and unknown — who have shone forth in every age. The Church gives thanks for the communion of saints who surround us in the life of the Spirit.',
       allSaintsRussia:
-        'The second Sunday after Pentecost commemorates All Saints who shone forth in the Russian land — a festal day in green vestments, even during the Apostles’ Fast.',
+        'The second Sunday after Pentecost commemorates All Saints who shone forth in the Russian land — gold vestments on this Sunday, even when it falls during the Apostles’ Fast.',
     },
     ordinary: {
       sunday:
@@ -318,38 +318,49 @@ const en = {
     groupOuter: 'Vestments in the altar',
     groupHolySaturdayVespers: 'Holy Saturday — vespers / burial',
     groupHolySaturdayLiturgy: 'Holy Saturday — Paschal liturgy',
-    footnote: 'Based on common Russian Orthodox practice; your parish may differ.',
+    footnote:
+      'Based on ROCOR Europe and Slavic practice (OrthodoxWiki): gold on Sundays during fasts; black Lenten weekdays; Holy Week and feast-day exceptions vary by parish.',
     reason: {
       pascha: 'Bright vestments for the Resurrection of Christ — white or gold symbolizes the uncreated Light of Pascha.',
       brightWeek: 'Throughout Bright Week the Church keeps festal white vestments in honour of the Risen Christ.',
-      theophany: 'Blue vestments for the Lord’s Baptism in the Jordan, when the Trinity was revealed.',
+      theophany: 'White for Theophany — the Lord’s Baptism and the revelation of the Holy Trinity.',
       annunciation: 'Blue for feasts of the Mother of God — here the Annunciation of the Archangel Gabriel.',
       dormition: 'Blue for the Mother of God — the feast of her Dormition and translation to life.',
-      nativity: 'Gold or festal colours for the Nativity of Christ — the King born in Bethlehem.',
-      transfiguration: 'Gold for the Lord’s Transfiguration on Tabor, when His divine glory shone forth.',
+      nativity: 'White for the Nativity of Christ until the leavetaking.',
+      transfiguration: 'White for the Transfiguration of the Lord on Tabor.',
       palmSunday: 'Green for Palm Sunday — the entry of the King of Glory into Jerusalem.',
-      pentecost: 'Green for Pentecost — the life-giving Spirit who renews creation in the Church.',
+      pentecost: 'Green for Pentecost until the leavetaking.',
       holySpirit: 'Green for the Day of the Holy Spirit — the Monday after Pentecost.',
-      pentecostSeason: 'Green for the Pentecost season — feasts of the Spirit and the saints.',
+      pentecostSeason: 'Green for the Pentecost season — feasts of the Spirit.',
       trinityDay: 'Green for Trinity Day and the days following Pentecost.',
-      ascension: 'Gold for the Ascension of the Lord — a feast of Christ who returns to the Father.',
-      ascensionLeavetaking: 'Gold for the Leavetaking of Ascension — the close of the Ascension feast.',
+      ascension: 'White for the Ascension of the Lord until the leavetaking.',
+      ascensionLeavetaking: 'White for the Leavetaking of Ascension.',
       nativityTheotokos: 'Blue for the Nativity of the Theotokos — a feast of the Mother of God.',
       presentation: 'Blue for the Presentation of the Lord in the Temple.',
-      peterAndPaul: 'Red for the feast of the Holy Apostles Peter and Paul — leaders of the Church.',
-      allSaintsRussia: 'Green for All Saints of Russia — saints who shone forth in the Russian land.',
-      elevationCross: 'Red for the Exaltation of the Cross — the blood of Christ and the martyrs.',
+      peterAndPaul: 'Gold for the feast of the Holy Apostles Peter and Paul.',
+      allSaintsRussia:
+        'Gold for All Saints of Russia — the second Sunday after Pentecost, even during the Apostles’ Fast.',
+      elevationCross: 'Red for the Exaltation of the Cross — feasts of the Cross.',
       greatFriday: 'Black for Great and Holy Friday — the death of Christ on the Cross.',
       holySaturday:
         'Black for the burial rites; white for the Paschal liturgy when the Church already proclaims the Resurrection.',
-      holyWeek: 'Dark purple for Holy Week — the solemn journey to the Cross.',
-      greatLent: 'Purple or dark vestments for Great Lent — repentance and restraint.',
-      lentSunday: 'Purple for the Lenten season; Sunday liturgies may use lighter tones per your typikon.',
-      lentSaturday: 'Purple for Lent; Saturday services may allow wine and oil — vestments often remain penitential.',
+      holyWeek: 'Black for Holy Week weekdays before Friday — some Slavic parishes use red (OrthodoxWiki).',
+      greatLent: 'Black for weekdays of Great Lent — repentance and restraint.',
+      lentSunday:
+        'Gold for Lenten Sundays — the Lord’s Day, even in the fast (Slavic practice; some parishes use purple with gold trim).',
+      lentSaturday:
+        'Purple for Lenten Saturdays; wine and oil may be allowed where the rubrics permit.',
       wednesdayFast: 'Dark vestments on fasting days — Wednesday commemorates the betrayal of Christ.',
       fridayFast: 'Dark vestments on fasting days — Friday commemorates the Passion of the Lord.',
       sunday: 'Gold for the Lord’s Day — the weekly feast of the Resurrection.',
-      allSaints: 'Green for the Sunday of All Saints after Pentecost.',
+      allSaints: 'Gold for the Sunday of All Saints after Pentecost.',
+      apostlesFastSeason:
+        'Red for the Apostles’ Fast on weekdays; gold on Sundays and on All-Saints Sundays.',
+      nativityFastSeason: 'Red for the Nativity Fast on weekdays; gold on Sundays.',
+      dormitionFastSeason:
+        'Red for the Dormition Fast on weekdays until Transfiguration Eve; gold on Sundays.',
+      fastSeasonSunday:
+        'Gold on a Sunday during a major fast — the weekly feast of the Resurrection (Slavic practice).',
       gold: 'Gold for a Sunday or great feast of the Lord or the saints.',
       white: 'White for a great feast of the Lord — purity and the uncreated Light.',
       blue: 'Blue for a feast of the Mother of God or her icons.',
@@ -793,22 +804,20 @@ const ru = {
     groupHolySaturdayVespers: 'Великая суббота — вечерня / отпевание',
     groupHolySaturdayLiturgy: 'Великая суббота — пасхальная литургия',
     footnote:
-      'По распространённой русской практике; в вашем приходе может быть иначе.',
+      'По практике ROCOR Europe и славянской традиции (OrthodoxWiki): золотой на воскресенья в постах; чёрный на будни Великого поста; Страстная седмица и праздники — по уставу прихода.',
     reason: {
       pascha:
         'Светлые ризы в честь Воскресения Христова — белый или золотой символизирует небесный свет Пасхи.',
       brightWeek:
         'На Светлой седмице Церковь носит праздничные белые ризы в честь Воскресшего Христа.',
       theophany:
-        'Голубые ризы на Крещение Господне в Иордане, когда явилась Пресвятая Троица.',
+        'Белый на Богоявление — Крещение Господне и явление Пресвятой Троицы.',
       annunciation:
         'Голубой — цвет праздников Пресвятой Богородицы; здесь Благовещение архангела Гавриила.',
       dormition:
         'Голубой для Богородицы — праздник Её Успения и переселения в жизнь вечную.',
-      nativity:
-        'Золотой или праздничный цвет на Рождество Христово — Царь, рождённый в Вифлееме.',
-      transfiguration:
-        'Золотой на Преображение Господне на Фаворе, когда явилась Божественная слава.',
+      nativity: 'Белый на Рождество Христово до отдания.',
+      transfiguration: 'Белый на Преображение Господне на Фаворе.',
       palmSunday:
         'Зелёный на Вход Господень в Иерусалим — вхождение Царя славы.',
       pentecost:
@@ -816,14 +825,13 @@ const ru = {
       holySpirit: 'Зелёный на день Святого Духа — понедельник после Пятидесятницы.',
       pentecostSeason: 'Зелёный в пятидесятницы — праздники Духа и святых.',
       trinityDay: 'Зелёный на день Троицы и дни после Пятидесятницы.',
-      ascension: 'Золотой на Вознесение Господне — праздник Господа, возшедшего к Отцу.',
-      ascensionLeavetaking: 'Золотой на отдание Вознесения — завершение праздника Вознесения.',
+      ascension: 'Белый на Вознесение Господне до отдания.',
+      ascensionLeavetaking: 'Белый на отдание Вознесения.',
       nativityTheotokos: 'Голубой на Рождество Пресвятой Богородицы — праздник Божией Матери.',
       presentation: 'Голубой на Сретение Господне в храме.',
-      peterAndPaul:
-        'Красный на праздник святых апостолов Петра и Павла — первоверховных апостолов.',
+      peterAndPaul: 'Золотой на праздник святых апостолов Петра и Павла.',
       allSaintsRussia:
-        'Зелёный на всех святых, в земле Русской просиявших.',
+        'Золотой на всех святых, в земле Русской просиявших — даже в Петров пост.',
       elevationCross:
         'Красный на Воздвижение Креста — Кровь Христова и кровь мучеников.',
       greatFriday:
@@ -831,11 +839,10 @@ const ru = {
       holySaturday:
         'Чёрный на погребальные службы; белый на пасхальную литургию, когда Церковь уже провозглашает Воскресение.',
       holyWeek:
-        'Тёмно-фиолетовый на Страстную седмицу — торжественный путь ко Кресту.',
-      greatLent:
-        'Фиолетовый или тёмные ризы на Великий пост — покаяние и сдержанность.',
+        'Чёрный на будни Страстной седмицы до Пятницы — в некоторых славянских приходах красный (OrthodoxWiki).',
+      greatLent: 'Чёрный на будни Великого поста — покаяние и сдержанность.',
       lentSunday:
-        'Фиолетовый в пост; в воскресные литургии по типику могут быть светлее.',
+        'Золотой в воскресенья Великого поста — день Господень (славянская практика; в иных местах — фиолетовый с золотом).',
       lentSaturday:
         'Фиолетовый в пост; в субботу могут быть разрешены вино и елей — ризы часто остаются покаянными.',
       wednesdayFast:
@@ -844,8 +851,14 @@ const ru = {
         'Тёмные ризы в дни поста — пятница в память Страстей Господних.',
       sunday:
         'Золотой на Господень день — еженедельный праздник Воскресения.',
-      allSaints:
-        'Зелёный в Неделю всех святых после Пятидесятницы.',
+      allSaints: 'Золотой в Неделю всех святых после Пятидесятницы.',
+      apostlesFastSeason:
+        'Красный в Петров пост в будни; золотой в воскресенья и на неделях всех святых.',
+      nativityFastSeason: 'Красный в Рождественский пост в будни; золотой в воскресенья.',
+      dormitionFastSeason:
+        'Красный в Успенский пост в будни до кануна Преображения; золотой в воскресенья.',
+      fastSeasonSunday:
+        'Золотой в воскресенье в период поста — еженедельная память Воскресения (славянская практика).',
       gold: 'Золотой на воскресенье или великий праздник Господа или святых.',
       white: 'Белый на великий праздник Господень — чистота и небесный свет.',
       blue: 'Голубой на праздник Пресвятой Богородицы или Её икон.',

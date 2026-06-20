@@ -45,9 +45,9 @@ function jdnForLiturgicalFixedDate(
   return jdnForJulian(liturgical.year, month, day);
 }
 
-/** Weekday for a liturgical plain date: 0 = Sunday … 6 = Saturday. */
-function weekdayFromPlain(p: PlainDate): number {
-  return new Date(p.year, p.month - 1, p.day).getDay();
+/** Weekday from Julian day number: 0 = Sunday … 6 = Saturday. */
+function weekdayFromJdn(jdn: number): number {
+  return (jdn + 1) % 7;
 }
 
 function sameLiturgicalDate(a: PlainDate, b: PlainDate): boolean {
@@ -84,8 +84,12 @@ const PENTECOST_GREEN_GRADIENT = ['#dce8dc', '#3d7350'] as [string, string];
 const PENTECOST_GREEN_FG = '#1e1a16';
 const LORD_GOLD_GRADIENT = ['#f2efe6', '#c6a86a'] as [string, string];
 const LORD_GOLD_FG = '#1e1a16';
-const MARTYR_RED_GRADIENT = ['#8b2838', '#4a1420'] as [string, string];
-const MARTYR_RED_FG = '#fff5f5';
+const WHITE_FEAST_GRADIENT = ['#fffdf6', '#f2d58c'] as [string, string];
+const WHITE_FEAST_FG = '#1e1a16';
+const RED_FAST_GRADIENT = ['#8b2838', '#4a1420'] as [string, string];
+const RED_FAST_FG = '#fff5f5';
+const LENT_BLACK_GRADIENT = ['#2a2826', '#0a0a0a'] as [string, string];
+const LENT_BLACK_FG = '#f2ebe2';
 
 function appearanceFromPreset(
   preset: AppearancePreset,
@@ -133,7 +137,7 @@ export function pentecostSeasonAppearanceFields(
   );
 }
 
-/** Gold — feasts of Our Lord (St John guide). */
+/** Gold — general Lord feasts, All Saints Sundays, apostles (ROCOR). */
 export function lordFeastAppearanceFields(
   key: string,
   label: string,
@@ -152,8 +156,8 @@ export function lordFeastAppearanceFields(
   );
 }
 
-/** Red — martyrs and SS Peter & Paul (St John guide). */
-export function martyrFeastAppearanceFields(
+/** White — Pascha season, Nativity, Theophany, Transfiguration, Ascension (ROCOR). */
+export function whiteFeastAppearanceFields(
   key: string,
   label: string,
   subtitle: string,
@@ -162,13 +166,52 @@ export function martyrFeastAppearanceFields(
   return appearanceFromPreset(
     {
       key,
-      gradient: MARTYR_RED_GRADIENT,
-      foreground: MARTYR_RED_FG,
+      gradient: WHITE_FEAST_GRADIENT,
+      foreground: WHITE_FEAST_FG,
       label,
     },
     subtitle,
     gregorianSubtitle,
   );
+}
+
+/** Red — Nativity / Dormition / Apostles fasts and Cross feasts (ROCOR). */
+export function redFastAppearanceFields(
+  key: string,
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return appearanceFromPreset(
+    {
+      key,
+      gradient: RED_FAST_GRADIENT,
+      foreground: RED_FAST_FG,
+      label,
+    },
+    subtitle,
+    gregorianSubtitle,
+  );
+}
+
+/** Red — Exaltation of the Cross and other Cross feasts. */
+export function crossFeastAppearanceFields(
+  key: string,
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return redFastAppearanceFields(key, label, subtitle, gregorianSubtitle);
+}
+
+/** @deprecated Use lordFeastAppearanceFields or crossFeastAppearanceFields. */
+export function martyrFeastAppearanceFields(
+  key: string,
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return lordFeastAppearanceFields(key, label, subtitle, gregorianSubtitle);
 }
 
 function orthocalFeastHaystack(day: OrthocalDay): string {
@@ -186,7 +229,7 @@ export function applyOrthocalFeastAppearance(
   const { subtitle, gregorianSubtitle } = appearance;
 
   if (/\ball saints of russia\b/i.test(haystack)) {
-    return pentecostSeasonAppearanceFields(
+    return lordFeastAppearanceFields(
       'all_saints_russia',
       'All Saints of Russia',
       subtitle,
@@ -194,10 +237,10 @@ export function applyOrthocalFeastAppearance(
     );
   }
   if (/\bascension\b/i.test(haystack) && !/\bleavetaking\b/i.test(haystack)) {
-    return lordFeastAppearanceFields('ascension', 'Ascension', subtitle, gregorianSubtitle);
+    return whiteFeastAppearanceFields('ascension', 'Ascension', subtitle, gregorianSubtitle);
   }
   if (/\bleavetaking of ascension\b/i.test(haystack)) {
-    return lordFeastAppearanceFields(
+    return whiteFeastAppearanceFields(
       'ascension_leavetaking',
       'Leavetaking of Ascension',
       subtitle,
@@ -221,7 +264,7 @@ export function applyOrthocalFeastAppearance(
     );
   }
   if (/\bpeter and paul\b|\bapostles peter\b|\bleaders of the apostles\b/i.test(haystack)) {
-    return martyrFeastAppearanceFields(
+    return lordFeastAppearanceFields(
       'peter_and_paul',
       'Saints Peter and Paul',
       subtitle,
@@ -284,7 +327,7 @@ export function getLiturgicalDayAppearance(
   const apostlesFastMonday = pascha + 57;
   const peterAndPaul = jdnForLiturgicalFixedDate(liturgical, liturgicalCalendar, 6, 29);
 
-  const wd = weekdayFromPlain(liturgical);
+  const wd = weekdayFromJdn(jdn);
 
   const inHolyWeek = jdn > palmSunday && jdn < greatFriday;
   const inBrightWeek = jdn >= pascha && jdn <= brightEnd;
@@ -357,8 +400,8 @@ export function getLiturgicalDayAppearance(
   if (inHolyWeek) {
     return {
       key: 'holy_week',
-      gradient: ['#4a1520', '#120508'],
-      foreground: '#fceff2',
+      gradient: LENT_BLACK_GRADIENT,
+      foreground: LENT_BLACK_FG,
       subtitle,
       gregorianSubtitle,
       label: 'Holy Week',
@@ -421,11 +464,11 @@ export function getLiturgicalDayAppearance(
   }
 
   if (jdn === ascension) {
-    return lordFeastAppearanceFields('ascension', 'Ascension', subtitle, gregorianSubtitle);
+    return whiteFeastAppearanceFields('ascension', 'Ascension', subtitle, gregorianSubtitle);
   }
 
   if (jdn === ascensionLeavetaking) {
-    return lordFeastAppearanceFields(
+    return whiteFeastAppearanceFields(
       'ascension_leavetaking',
       'Leavetaking of Ascension',
       subtitle,
@@ -452,11 +495,11 @@ export function getLiturgicalDayAppearance(
   }
 
   if (jdn === allSaintsSunday) {
-    return pentecostSeasonAppearanceFields('all_saints', 'All Saints', subtitle, gregorianSubtitle);
+    return lordFeastAppearanceFields('all_saints', 'All Saints', subtitle, gregorianSubtitle);
   }
 
   if (jdn === allSaintsRussiaSunday) {
-    return pentecostSeasonAppearanceFields(
+    return lordFeastAppearanceFields(
       'all_saints_russia',
       'All Saints of Russia',
       subtitle,
@@ -465,36 +508,20 @@ export function getLiturgicalDayAppearance(
   }
 
   if (sameLiturgicalDate(liturgical, nativity)) {
-    return {
-      key: 'nativity',
-      gradient: ['#fff9f0', '#d8b892'],
-      foreground: '#1e1a16',
-      subtitle,
-    gregorianSubtitle,
-      label: 'Nativity',
-    };
+    return whiteFeastAppearanceFields('nativity', 'Nativity', subtitle, gregorianSubtitle);
   }
 
   if (sameLiturgicalDate(liturgical, theophany)) {
-    return {
-      key: 'theophany',
-      gradient: ['#3d5a80', '#1a2a40'],
-      foreground: '#f2f7ff',
-      subtitle,
-    gregorianSubtitle,
-      label: 'Theophany',
-    };
+    return whiteFeastAppearanceFields('theophany', 'Theophany', subtitle, gregorianSubtitle);
   }
 
   if (sameLiturgicalDate(liturgical, transfiguration)) {
-    return {
-      key: 'transfiguration',
-      gradient: ['#f6f0e4', '#d4b56a'],
-      foreground: '#1e1a16',
+    return whiteFeastAppearanceFields(
+      'transfiguration',
+      'Transfiguration',
       subtitle,
-    gregorianSubtitle,
-      label: 'Transfiguration',
-    };
+      gregorianSubtitle,
+    );
   }
 
   if (sameLiturgicalDate(liturgical, dormition)) {
@@ -509,14 +536,12 @@ export function getLiturgicalDayAppearance(
   }
 
   if (sameLiturgicalDate(liturgical, elevationCross)) {
-    return {
-      key: 'elevation_cross',
-      gradient: ['#4a2a58', '#1a0f24'],
-      foreground: '#f6ecff',
+    return crossFeastAppearanceFields(
+      'elevation_cross',
+      'Elevation of the Cross',
       subtitle,
-    gregorianSubtitle,
-      label: 'Elevation of the Cross',
-    };
+      gregorianSubtitle,
+    );
   }
 
   if (sameLiturgicalDate(liturgical, presentation)) {
@@ -538,7 +563,7 @@ export function getLiturgicalDayAppearance(
   }
 
   if (jdn === peterAndPaul) {
-    return martyrFeastAppearanceFields(
+    return lordFeastAppearanceFields(
       'peter_and_paul',
       'Saints Peter and Paul',
       subtitle,
@@ -547,48 +572,49 @@ export function getLiturgicalDayAppearance(
   }
 
   if (inDormitionFast) {
-    return {
-      key: 'dormition_fast',
-      gradient: ['#243548', '#0f141f'],
-      foreground: '#e8eef8',
+    if (wd === 0) {
+      return lordFeastAppearanceFields(
+        'fast_season_sunday',
+        'Dormition Fast · Sunday',
+        subtitle,
+        gregorianSubtitle,
+      );
+    }
+    return redFastAppearanceFields(
+      'dormition_fast',
+      'Dormition Fast',
       subtitle,
-    gregorianSubtitle,
-      label: 'Dormition Fast',
-    };
+      gregorianSubtitle,
+    );
   }
 
   if (inNativityFast) {
-    return {
-      key: 'nativity_fast',
-      gradient: ['#252c44', '#0e111c'],
-      foreground: '#e8ecfc',
-      subtitle,
-    gregorianSubtitle,
-      label: 'Nativity Fast',
-    };
+    if (wd === 0) {
+      return lordFeastAppearanceFields(
+        'fast_season_sunday',
+        'Nativity Fast · Sunday',
+        subtitle,
+        gregorianSubtitle,
+      );
+    }
+    return redFastAppearanceFields('nativity_fast', 'Nativity Fast', subtitle, gregorianSubtitle);
   }
 
   if (inApostlesFast) {
-    return {
-      key: 'apostles_fast',
-      gradient: ['#2a2838', '#14121c'],
-      foreground: '#ebe8f4',
-      subtitle,
-    gregorianSubtitle,
-      label: 'Apostles’ Fast',
-    };
+    if (wd === 0) {
+      return lordFeastAppearanceFields(
+        'fast_season_sunday',
+        'Apostles’ Fast · Sunday',
+        subtitle,
+        gregorianSubtitle,
+      );
+    }
+    return redFastAppearanceFields('apostles_fast', 'Apostles’ Fast', subtitle, gregorianSubtitle);
   }
 
   if (inGreatLent) {
     if (wd === 0) {
-      return {
-        key: 'lent_sunday',
-        gradient: ['#6a3a48', '#2a1218'],
-        foreground: '#fdf5f7',
-        subtitle,
-    gregorianSubtitle,
-        label: 'Lent · Sunday',
-      };
+      return lordFeastAppearanceFields('lent_sunday', 'Lent · Sunday', subtitle, gregorianSubtitle);
     }
     if (wd === 6) {
       return {
@@ -602,10 +628,10 @@ export function getLiturgicalDayAppearance(
     }
     return {
       key: 'great_lent',
-      gradient: ['#3d2440', '#150a18'],
-      foreground: '#f7eef8',
+      gradient: LENT_BLACK_GRADIENT,
+      foreground: LENT_BLACK_FG,
       subtitle,
-    gregorianSubtitle,
+      gregorianSubtitle,
       label: 'Great Lent',
     };
   }

@@ -14,37 +14,9 @@ import {
   isOrthocalFastDay,
   localizedFastingFoodsDetail,
 } from '../src/i18n/fastingLabels';
+import { liturgicalSwatchKey } from '../src/lib/liturgical/liturgicalSwatchKey';
 
-type Swatch = 'gold' | 'blue' | 'green' | 'red' | 'dark' | 'purple' | 'white' | 'black';
-
-/** Mirror of vestments.ts liturgicalSwatchKey — keep in sync for verification. */
-function expectedSwatchForKey(key: string): Swatch {
-  if (key === 'ascension' || key === 'ascension_leavetaking') return 'gold';
-  if (key === 'theophany' || key === 'annunciation' || key === 'dormition') return 'blue';
-  if (key === 'nativity_theotokos' || key === 'presentation') return 'blue';
-  if (key === 'pascha' || key === 'bright_week' || key === 'holy_saturday') return 'white';
-  if (
-    key === 'palm_sunday' ||
-    key === 'pentecost' ||
-    key === 'holy_spirit' ||
-    key === 'pentecost_season' ||
-    key === 'trinity_day' ||
-    key === 'all_saints' ||
-    key === 'all_saints_russia'
-  ) {
-    return 'green';
-  }
-  if (key === 'peter_and_paul' || key === 'elevation_cross') return 'red';
-  if (key === 'great_friday') return 'black';
-  if (key.includes('lent') || key === 'holy_week') return 'purple';
-  if (key.includes('fast')) return 'dark';
-  if (key === 'nativity' || key === 'transfiguration' || key === 'sunday') return 'gold';
-  return 'gold';
-}
-
-function swatchName(appearance: ReturnType<typeof getLiturgicalAppearanceForLocalDate>): Swatch {
-  return expectedSwatchForKey(appearance.key);
-}
+type Swatch = ReturnType<typeof liturgicalSwatchKey>;
 
 function civilFromJulian(y: number, m: number, d: number): Date {
   const g = julianCalendarToGregorian(y, m, d);
@@ -67,16 +39,28 @@ type Case = {
 
 const cases: Case[] = [
   {
+    name: 'Great Lent Sunday (pascha-42)',
+    date: paschaPlus(-42),
+    expectKey: 'lent_sunday',
+    expectSwatch: 'gold',
+  },
+  {
+    name: 'Nativity Fast Sunday (Dec 21 Julian 2026)',
+    date: civilFromJulian(2026, 12, 21),
+    expectKey: 'fast_season_sunday',
+    expectSwatch: 'gold',
+  },
+  {
     name: 'Ascension (pascha+39)',
     date: paschaPlus(39),
     expectKey: 'ascension',
-    expectSwatch: 'gold',
+    expectSwatch: 'white',
   },
   {
     name: 'Leavetaking of Ascension (pascha+40)',
     date: paschaPlus(40),
     expectKey: 'ascension_leavetaking',
-    expectSwatch: 'gold',
+    expectSwatch: 'white',
   },
   {
     name: 'Day of the Holy Spirit (pascha+50)',
@@ -94,13 +78,13 @@ const cases: Case[] = [
     name: 'All Saints Sunday (pascha+56)',
     date: paschaPlus(56),
     expectKey: 'all_saints',
-    expectSwatch: 'green',
+    expectSwatch: 'gold',
   },
   {
     name: 'All Saints of Russia (pascha+63)',
     date: paschaPlus(63),
     expectKey: 'all_saints_russia',
-    expectSwatch: 'green',
+    expectSwatch: 'gold',
     orthocal: {
       feasts: ['All Saints of America, All Saints of Russia'],
       fast_level: 3,
@@ -113,13 +97,13 @@ const cases: Case[] = [
     name: 'Apostles Fast weekday (pascha+58, no feast)',
     date: paschaPlus(58),
     expectKey: 'apostles_fast',
-    expectSwatch: 'dark',
+    expectSwatch: 'red',
   },
   {
     name: 'SS Peter & Paul (29 Jun Julian 2026)',
     date: civilFromJulian(2026, 6, 29),
     expectKey: 'peter_and_paul',
-    expectSwatch: 'red',
+    expectSwatch: 'gold',
   },
   {
     name: 'Presentation (2 Feb Julian 2026)',
@@ -134,10 +118,28 @@ const cases: Case[] = [
     expectSwatch: 'blue',
   },
   {
+    name: 'Theophany (6 Jan Julian 2026)',
+    date: civilFromJulian(2026, 1, 6),
+    expectKey: 'theophany',
+    expectSwatch: 'white',
+  },
+  {
+    name: 'Transfiguration (6 Aug Julian 2026)',
+    date: civilFromJulian(2026, 8, 6),
+    expectKey: 'transfiguration',
+    expectSwatch: 'white',
+  },
+  {
+    name: 'Nativity (25 Dec Julian 2026)',
+    date: civilFromJulian(2026, 12, 25),
+    expectKey: 'nativity',
+    expectSwatch: 'white',
+  },
+  {
     name: 'Orthocal override: Russia feast on apostles-fast Sunday',
     date: new Date(2026, 5, 14),
     expectKey: 'all_saints_russia',
-    expectSwatch: 'green',
+    expectSwatch: 'gold',
     orthocal: {
       feasts: ['All Saints of America, All Saints of Russia'],
       summary_title: '2nd Sunday after Pentecost',
@@ -156,7 +158,7 @@ for (const c of cases) {
     'julian',
     c.orthocal as OrthocalDay | undefined,
   );
-  const swatch = swatchName(appearance);
+  const swatch = liturgicalSwatchKey(appearance);
   const keyOk = appearance.key === c.expectKey;
   const swatchOk = swatch === c.expectSwatch;
 

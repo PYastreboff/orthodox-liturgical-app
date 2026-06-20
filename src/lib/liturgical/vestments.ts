@@ -3,7 +3,10 @@ import { vestmentDisplayLabel } from '../../components/VestmentIcon';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
 import type { LiturgicalDayAppearance } from '../calendar/dayAppearance';
+import { liturgicalSwatchKey } from './liturgicalSwatchKey';
 import type { ClergyRole } from '../../types/liturgical';
+
+export { liturgicalSwatchKey } from './liturgicalSwatchKey';
 
 export type VestmentSwatch = {
   name: string;
@@ -82,57 +85,15 @@ const REASON_KEY_BY_APPEARANCE: Record<string, string> = {
   friday_fast: 'vestments.reason.fridayFast',
   sunday: 'vestments.reason.sunday',
   all_saints: 'vestments.reason.allSaints',
+  apostles_fast: 'vestments.reason.apostlesFastSeason',
+  nativity_fast: 'vestments.reason.nativityFastSeason',
+  dormition_fast: 'vestments.reason.dormitionFastSeason',
+  fast_season_sunday: 'vestments.reason.fastSeasonSunday',
 };
 
 function localizedSwatch(key: SwatchKey, lang: UiLanguage): VestmentSwatch {
   const base = SWATCH[key];
   return { ...base, name: translate(lang, SWATCH_COLOR_KEYS[key]) };
-}
-
-function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): SwatchKey {
-  const key = appearance.key;
-  const label = appearance.label.toLowerCase();
-
-  if (key === 'ascension' || key === 'ascension_leavetaking' || label.includes('ascension')) {
-    return 'gold';
-  }
-  if (key === 'theophany' || label.includes('theophany')) return 'blue';
-  if (key === 'annunciation' || label.includes('annunciation')) return 'blue';
-  if (
-    key === 'dormition' ||
-    key === 'nativity_theotokos' ||
-    key === 'presentation' ||
-    label.includes('theotokos') ||
-    label.includes('presentation')
-  ) {
-    return 'blue';
-  }
-  if (key === 'pascha' || label.includes('pascha')) return 'white';
-  if (key === 'bright_week') return 'white';
-  if (key === 'palm_sunday' || label.includes('palm')) return 'green';
-  if (key === 'pentecost' || label.includes('pentecost')) return 'green';
-  if (
-    key === 'holy_spirit' ||
-    key === 'pentecost_season' ||
-    key === 'trinity_day' ||
-    key === 'all_saints_russia' ||
-    key === 'all_saints' ||
-    label.includes('holy spirit') ||
-    label.includes('trinity')
-  ) {
-    return 'green';
-  }
-  if (key === 'peter_and_paul' || label.includes('peter and paul')) return 'red';
-  if (key === 'elevation_cross' || label.includes('cross')) return 'red';
-  if (key === 'great_friday' || label.includes('holy friday')) return 'black';
-  if (key === 'holy_saturday') return 'white';
-  if (key === 'holy_week' || key === 'great_lent' || key.includes('lent')) return 'purple';
-  if (key.includes('fast')) return 'dark';
-  if (key === 'nativity' || key === 'transfiguration' || key === 'sunday') {
-    return 'gold';
-  }
-
-  return 'gold';
 }
 
 /** Liturgical colour of the day for sticharion, orarion, epitrachelion, phelonion, sakkos, etc. */
