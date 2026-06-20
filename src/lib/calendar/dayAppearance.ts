@@ -232,14 +232,51 @@ export function lentPurpleAppearanceFields(
   );
 }
 
-/** Red — Nativity, Dormition, and Apostles fast seasons (ROCOR). */
-export function redFastSeasonAppearanceFields(
+/** Purple — weekday fast seasons (Nativity, Dormition, Apostles). */
+export function purpleFastWeekdayAppearanceFields(
+  key: string,
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return appearanceFromPreset(
+    {
+      key,
+      gradient: LENT_PURPLE_GRADIENT,
+      foreground: LENT_PURPLE_FG,
+      label,
+    },
+    subtitle,
+    gregorianSubtitle,
+  );
+}
+
+/** Red — Sunday within Nativity, Dormition, or Apostles fast. */
+export function redFastSundayAppearanceFields(
   key: string,
   label: string,
   subtitle: string,
   gregorianSubtitle: string,
 ): LiturgicalDayAppearance {
   return redFeastAppearanceFields(key, label, subtitle, gregorianSubtitle);
+}
+
+function minorFastSeasonAppearance(
+  baseKey: 'apostles_fast' | 'nativity_fast' | 'dormition_fast',
+  seasonLabel: string,
+  wd: number,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  if (wd === 0) {
+    return redFastSundayAppearanceFields(
+      `${baseKey}_sunday`,
+      `${seasonLabel} · Sunday`,
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+  return purpleFastWeekdayAppearanceFields(baseKey, seasonLabel, subtitle, gregorianSubtitle);
 }
 
 /** @deprecated Use redFeastAppearanceFields. */
@@ -630,27 +667,30 @@ export function getLiturgicalDayAppearance(
   }
 
   if (inDormitionFast) {
-    return redFastSeasonAppearanceFields(
+    return minorFastSeasonAppearance(
       'dormition_fast',
       'Dormition Fast',
+      wd,
       subtitle,
       gregorianSubtitle,
     );
   }
 
   if (inNativityFast) {
-    return redFastSeasonAppearanceFields(
+    return minorFastSeasonAppearance(
       'nativity_fast',
       'Nativity Fast',
+      wd,
       subtitle,
       gregorianSubtitle,
     );
   }
 
   if (inApostlesFast) {
-    return redFastSeasonAppearanceFields(
+    return minorFastSeasonAppearance(
       'apostles_fast',
       'Apostles’ Fast',
+      wd,
       subtitle,
       gregorianSubtitle,
     );

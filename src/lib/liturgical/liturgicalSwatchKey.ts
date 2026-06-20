@@ -34,6 +34,13 @@ export function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): Liturg
   if (key === 'great_lent') return 'black';
   if (key === 'lent_sunday' || key === 'lent_saturday') return 'purple';
   if (key === 'apostles_fast' || key === 'nativity_fast' || key === 'dormition_fast') {
+    return 'purple';
+  }
+  if (
+    key === 'apostles_fast_sunday' ||
+    key === 'nativity_fast_sunday' ||
+    key === 'dormition_fast_sunday'
+  ) {
     return 'red';
   }
 

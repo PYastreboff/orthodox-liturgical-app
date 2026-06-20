@@ -18,8 +18,11 @@ const FASTING_KEYS = new Set([
   'lent_sunday',
   'lent_saturday',
   'dormition_fast',
+  'dormition_fast_sunday',
   'nativity_fast',
+  'nativity_fast_sunday',
   'apostles_fast',
+  'apostles_fast_sunday',
   ...WEEKLY_FAST_APPEARANCE_KEYS,
 ]);
 

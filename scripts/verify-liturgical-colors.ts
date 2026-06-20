@@ -53,7 +53,7 @@ const cases: Case[] = [
   {
     name: 'Nativity Fast Sunday (Dec 21 Julian 2026)',
     date: civilFromJulian(2026, 12, 21),
-    expectKey: 'nativity_fast',
+    expectKey: 'nativity_fast_sunday',
     expectSwatch: 'red',
   },
   {
@@ -103,13 +103,19 @@ const cases: Case[] = [
     name: 'Apostles Fast weekday (pascha+58, no feast)',
     date: paschaPlus(58),
     expectKey: 'apostles_fast',
+    expectSwatch: 'purple',
+  },
+  {
+    name: 'Apostles Fast Sunday (pascha+70)',
+    date: paschaPlus(70),
+    expectKey: 'apostles_fast_sunday',
     expectSwatch: 'red',
   },
   {
     name: 'Nativity Fast weekday (Nov 20 Julian 2026)',
     date: civilFromJulian(2026, 11, 20),
     expectKey: 'nativity_fast',
-    expectSwatch: 'red',
+    expectSwatch: 'purple',
   },
   {
     name: 'Exaltation of the Cross (14 Sep Julian 2026)',
