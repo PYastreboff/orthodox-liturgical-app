@@ -135,7 +135,7 @@ function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): SwatchKey {
   return 'gold';
 }
 
-/** Liturgical colour of the day for outer vestments and festal ryassa. */
+/** Liturgical colour of the day for sticharion, orarion, epitrachelion, phelonion, sakkos, etc. */
 export function liturgicalVestmentColor(
   appearance: LiturgicalDayAppearance,
   lang: UiLanguage = 'en',
@@ -165,20 +165,9 @@ function podryasnikSwatch(lang: UiLanguage): VestmentSwatch {
   return localizedSwatch('black', lang);
 }
 
-/**
- * Ryassa: black on fast weekdays and Good Friday; otherwise often matches the festal liturgical colour.
- */
-function ryassaSwatch(appearance: LiturgicalDayAppearance, lang: UiLanguage): VestmentSwatch {
-  const key = appearance.key;
-  if (
-    key === 'great_friday' ||
-    key === 'wednesday_fast' ||
-    key === 'friday_fast' ||
-    key.includes('fast')
-  ) {
-    return localizedSwatch('black', lang);
-  }
-  return liturgicalVestmentColor(appearance, lang);
+/** Ryassa (outer cassock) is black year-round; liturgical colour is in the vestments worn over it. */
+function ryassaSwatch(lang: UiLanguage): VestmentSwatch {
+  return localizedSwatch('black', lang);
 }
 
 function garmentLine(
@@ -207,7 +196,7 @@ function undergarmentLines(
   sectionHeader?: string,
 ): VestmentLine[] {
   const podryasnik = podryasnikSwatch(lang);
-  const ryassa = ryassaSwatch(appearance, lang);
+  const ryassa = ryassaSwatch(lang);
   return [
     garmentLine('podryasnik', podryasnik, lang, sectionHeader),
     garmentLine('ryassa', ryassa, lang),
@@ -256,7 +245,7 @@ function outerLinesForRole(
     case 'bishop':
       return [
         garmentLine('epitrachelion', liturgical, lang, sectionHeader),
-        garmentLine('phelonion', liturgical, lang),
+        garmentLine('sakkos', liturgical, lang),
         garmentLine('omophorion', bishopOmophorionSwatch(appearance, liturgical, lang), lang),
       ];
     default:
@@ -288,7 +277,7 @@ function holySaturdayGuidance(
       garmentLine('ryassa', black, lang),
       ...outerLinesForRole(role, black, appearance, lang),
       garmentLine('podryasnik', black, lang, liturgyHeader),
-      garmentLine('ryassa', white, lang),
+      garmentLine('ryassa', black, lang),
       ...outerLinesForRole(role, white, appearance, lang),
     ];
   }

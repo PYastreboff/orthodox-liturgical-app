@@ -1,4 +1,4 @@
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Platform, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { useFontScale } from '../hooks/useFontScale';
 import type { LiturgicalTextCategory, LiturgicalTextItem } from '../lib/liturgical/liturgicalTexts';
@@ -7,6 +7,13 @@ import { useAppTranslation } from '../i18n/useAppTranslation';
 import { LiturgicalReadingIcon } from './LiturgicalReadingIcon';
 
 const SIDE_BY_SIDE_MIN_WIDTH = 560;
+/** Match tab header breakpoint — centred titles only on wide web. */
+const SIDE_BY_SIDE_CENTER_TITLES_MIN_WIDTH = 768;
+
+function passageTitle(item: LiturgicalTextItem): string {
+  const suffix = item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : '';
+  return `${item.citation}${suffix}`;
+}
 
 type PassageBodyProps = {
   item: LiturgicalTextItem;
@@ -68,8 +75,7 @@ export function LiturgicalPassageBlock({ item, textColor, verseNumberColor }: Pr
   return (
     <View style={styles.block}>
       <Text style={[styles.header, headerType, { color: textColor }]}>
-        {item.citation}
-        {item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : ''}
+        {passageTitle(item)}
       </Text>
       <PassageBody item={item} textColor={textColor} verseNumberColor={verseNumberColor} />
     </View>
@@ -100,19 +106,30 @@ export function LiturgicalPassageBlockSideBySide({
   const labelType = text(11, 14);
   const hintType = text(12, 16);
   const horizontal = width >= SIDE_BY_SIDE_MIN_WIDTH;
+  const centerTitles =
+    horizontal && Platform.OS === 'web' && width >= SIDE_BY_SIDE_CENTER_TITLES_MIN_WIDTH;
   const slavonic = slavonicItem ?? englishItem;
+  const titleStyle = centerTitles ? styles.columnTitleCentered : null;
+  const labelStyle = centerTitles ? styles.columnLabelCentered : null;
 
   return (
     <View style={styles.block}>
-      <Text style={[styles.header, headerType, { color: textColor }]}>
-        {englishItem.citation}
-        {englishItem.source ? ` (${englishItem.source})` : ''}
-      </Text>
+      {!centerTitles ? (
+        <Text style={[styles.header, headerType, { color: textColor }]}>
+          {passageTitle(englishItem)}
+        </Text>
+      ) : null}
       <View style={horizontal ? styles.columnsRow : styles.columnsStack}>
         <View style={[styles.column, horizontal ? styles.columnFlex : null]}>
-          <Text style={[styles.columnLabel, labelType, { color: mutedColor }]}>
-            {t('readings.langEnglish')}
-          </Text>
+          {centerTitles ? (
+            <Text style={[styles.columnTitle, headerType, { color: textColor }, titleStyle]}>
+              {passageTitle(englishItem)}
+            </Text>
+          ) : (
+            <Text style={[styles.columnLabel, labelType, { color: mutedColor }, labelStyle]}>
+              {t('readings.langEnglish')}
+            </Text>
+          )}
           <PassageBody
             item={englishItem}
             textColor={textColor}
@@ -126,26 +143,32 @@ export function LiturgicalPassageBlockSideBySide({
           ]}
         />
         <View style={[styles.column, horizontal ? styles.columnFlex : null]}>
-          <Text style={[styles.columnLabel, labelType, { color: mutedColor }]}>
-            {t('readings.langSlavonic')}
-          </Text>
+          {centerTitles ? (
+            <Text style={[styles.columnTitle, headerType, { color: textColor }, titleStyle]}>
+              {passageTitle(slavonic)}
+            </Text>
+          ) : (
+            <Text style={[styles.columnLabel, labelType, { color: mutedColor }, labelStyle]}>
+              {t('readings.langSlavonic')}
+            </Text>
+          )}
           {slavonicLoading && !slavonicItem ? (
-            <Text style={[styles.loadingHint, hintType, { color: mutedColor }]}>
+            <Text
+              style={[
+                styles.loadingHint,
+                hintType,
+                { color: mutedColor },
+                centerTitles ? styles.columnLabelCentered : null,
+              ]}
+            >
               {t('today.slavonicLoading')}
             </Text>
           ) : (
-            <>
-              {slavonic.detail ? (
-                <Text style={[styles.columnDetail, hintType, { color: mutedColor }]}>
-                  {slavonic.detail}
-                </Text>
-              ) : null}
-              <PassageBody
-                item={slavonic}
-                textColor={textColor}
-                verseNumberColor={verseNumberColor}
-              />
-            </>
+            <PassageBody
+              item={slavonic}
+              textColor={textColor}
+              verseNumberColor={verseNumberColor}
+            />
           )}
         </View>
       </View>
@@ -284,9 +307,15 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginBottom: 4,
   },
-  columnDetail: {
-    marginBottom: 4,
-    fontStyle: 'italic',
+  columnLabelCentered: {
+    textAlign: 'center',
+  },
+  columnTitle: {
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  columnTitleCentered: {
+    textAlign: 'center',
   },
   loadingHint: {
     fontStyle: 'italic',
