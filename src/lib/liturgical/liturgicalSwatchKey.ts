@@ -35,11 +35,10 @@ export function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): Liturg
   if (key === 'great_friday' || label.includes('holy friday')) return 'black';
   /** Holy Week Mon–Wed (Slavic: often black; some parishes red — see footnote). */
   if (key === 'holy_week') return 'black';
-  if (key === 'great_lent') return 'black';
+  if (key === 'great_lent' || key === 'lent_saturday') return 'purple';
 
-  /** Slavic: gold on Sundays in fast seasons (OrthodoxWiki); purple Lenten Saturdays. */
+  /** Slavic: gold on Sundays in fast seasons (OrthodoxWiki). */
   if (key === 'lent_sunday' || key === 'fast_season_sunday') return 'gold';
-  if (key === 'lent_saturday') return 'purple';
 
   if (key === 'annunciation' || label.includes('annunciation')) return 'blue';
   if (

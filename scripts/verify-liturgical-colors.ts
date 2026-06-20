@@ -39,6 +39,12 @@ type Case = {
 
 const cases: Case[] = [
   {
+    name: 'Great Lent weekday (pascha-45)',
+    date: paschaPlus(-45),
+    expectKey: 'great_lent',
+    expectSwatch: 'purple',
+  },
+  {
     name: 'Great Lent Sunday (pascha-42)',
     date: paschaPlus(-42),
     expectKey: 'lent_sunday',

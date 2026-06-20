@@ -90,6 +90,8 @@ const RED_FAST_GRADIENT = ['#8b2838', '#4a1420'] as [string, string];
 const RED_FAST_FG = '#fff5f5';
 const LENT_BLACK_GRADIENT = ['#2a2826', '#0a0a0a'] as [string, string];
 const LENT_BLACK_FG = '#f2ebe2';
+const LENT_PURPLE_GRADIENT = ['#352040', '#140a1c'] as [string, string];
+const LENT_PURPLE_FG = '#f3ecfc';
 
 function appearanceFromPreset(
   preset: AppearancePreset,
@@ -619,17 +621,17 @@ export function getLiturgicalDayAppearance(
     if (wd === 6) {
       return {
         key: 'lent_saturday',
-        gradient: ['#352040', '#140a1c'],
-        foreground: '#f3ecfc',
+        gradient: LENT_PURPLE_GRADIENT,
+        foreground: LENT_PURPLE_FG,
         subtitle,
-    gregorianSubtitle,
+        gregorianSubtitle,
         label: 'Lent · Saturday',
       };
     }
     return {
       key: 'great_lent',
-      gradient: LENT_BLACK_GRADIENT,
-      foreground: LENT_BLACK_FG,
+      gradient: LENT_PURPLE_GRADIENT,
+      foreground: LENT_PURPLE_FG,
       subtitle,
       gregorianSubtitle,
       label: 'Great Lent',

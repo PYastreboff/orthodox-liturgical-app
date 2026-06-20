@@ -319,7 +319,7 @@ const en = {
     groupHolySaturdayVespers: 'Holy Saturday — vespers / burial',
     groupHolySaturdayLiturgy: 'Holy Saturday — Paschal liturgy',
     footnote:
-      'Based on ROCOR Europe and Slavic practice (OrthodoxWiki): gold on Sundays during fasts; black Lenten weekdays; Holy Week and feast-day exceptions vary by parish.',
+      'Based on ROCOR Europe and Slavic practice (OrthodoxWiki): gold on Sundays during fasts; purple Great Lent weekdays; Holy Week and feast-day exceptions vary by parish.',
     reason: {
       pascha: 'Bright vestments for the Resurrection of Christ — white or gold symbolizes the uncreated Light of Pascha.',
       brightWeek: 'Throughout Bright Week the Church keeps festal white vestments in honour of the Risen Christ.',
@@ -345,7 +345,7 @@ const en = {
       holySaturday:
         'Black for the burial rites; white for the Paschal liturgy when the Church already proclaims the Resurrection.',
       holyWeek: 'Black for Holy Week weekdays before Friday — some Slavic parishes use red (OrthodoxWiki).',
-      greatLent: 'Black for weekdays of Great Lent — repentance and restraint.',
+      greatLent: 'Purple for weekdays of Great Lent — repentance and restraint.',
       lentSunday:
         'Gold for Lenten Sundays — the Lord’s Day, even in the fast (Slavic practice; some parishes use purple with gold trim).',
       lentSaturday:
@@ -804,7 +804,7 @@ const ru = {
     groupHolySaturdayVespers: 'Великая суббота — вечерня / отпевание',
     groupHolySaturdayLiturgy: 'Великая суббота — пасхальная литургия',
     footnote:
-      'По практике ROCOR Europe и славянской традиции (OrthodoxWiki): золотой на воскресенья в постах; чёрный на будни Великого поста; Страстная седмица и праздники — по уставу прихода.',
+      'По практике ROCOR Europe и славянской традиции (OrthodoxWiki): золотой на воскресенья в постах; фиолетовый на будни Великого поста; Страстная седмица и праздники — по уставу прихода.',
     reason: {
       pascha:
         'Светлые ризы в честь Воскресения Христова — белый или золотой символизирует небесный свет Пасхи.',
@@ -840,7 +840,7 @@ const ru = {
         'Чёрный на погребальные службы; белый на пасхальную литургию, когда Церковь уже провозглашает Воскресение.',
       holyWeek:
         'Чёрный на будни Страстной седмицы до Пятницы — в некоторых славянских приходах красный (OrthodoxWiki).',
-      greatLent: 'Чёрный на будни Великого поста — покаяние и сдержанность.',
+      greatLent: 'Фиолетовый на будни Великого поста — покаяние и сдержанность.',
       lentSunday:
         'Золотой в воскресенья Великого поста — день Господень (славянская практика; в иных местах — фиолетовый с золотом).',
       lentSaturday:
