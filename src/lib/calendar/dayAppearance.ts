@@ -177,8 +177,8 @@ export function whiteFeastAppearanceFields(
   );
 }
 
-/** Red — Nativity / Dormition / Apostles fasts and Cross feasts (ROCOR). */
-export function redFastAppearanceFields(
+/** Red — Cross feasts and other explicitly “blood-red” commemorations. */
+export function redFeastAppearanceFields(
   key: string,
   label: string,
   subtitle: string,
@@ -196,6 +196,62 @@ export function redFastAppearanceFields(
   );
 }
 
+/** Black — Great Lent weekdays (ROCOR Europe handbook). */
+export function lentBlackAppearanceFields(
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return appearanceFromPreset(
+    {
+      key: 'great_lent',
+      gradient: LENT_BLACK_GRADIENT,
+      foreground: LENT_BLACK_FG,
+      label: 'Great Lent',
+    },
+    subtitle,
+    gregorianSubtitle,
+  );
+}
+
+/** Purple — Great Lent Sundays and Saturdays (ROCOR). */
+export function lentPurpleAppearanceFields(
+  key: 'lent_sunday' | 'lent_saturday',
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return appearanceFromPreset(
+    {
+      key,
+      gradient: LENT_PURPLE_GRADIENT,
+      foreground: LENT_PURPLE_FG,
+      label,
+    },
+    subtitle,
+    gregorianSubtitle,
+  );
+}
+
+/** Red — Nativity, Dormition, and Apostles fast seasons (ROCOR). */
+export function redFastSeasonAppearanceFields(
+  key: string,
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return redFeastAppearanceFields(key, label, subtitle, gregorianSubtitle);
+}
+
+/** @deprecated Use redFeastAppearanceFields. */
+export function redFastAppearanceFields(
+  key: string,
+  label: string,
+  subtitle: string,
+  gregorianSubtitle: string,
+): LiturgicalDayAppearance {
+  return redFeastAppearanceFields(key, label, subtitle, gregorianSubtitle);
+}
+
 /** Red — Exaltation of the Cross and other Cross feasts. */
 export function crossFeastAppearanceFields(
   key: string,
@@ -203,7 +259,7 @@ export function crossFeastAppearanceFields(
   subtitle: string,
   gregorianSubtitle: string,
 ): LiturgicalDayAppearance {
-  return redFastAppearanceFields(key, label, subtitle, gregorianSubtitle);
+  return redFeastAppearanceFields(key, label, subtitle, gregorianSubtitle);
 }
 
 /** @deprecated Use lordFeastAppearanceFields or crossFeastAppearanceFields. */
@@ -574,15 +630,7 @@ export function getLiturgicalDayAppearance(
   }
 
   if (inDormitionFast) {
-    if (wd === 0) {
-      return lordFeastAppearanceFields(
-        'fast_season_sunday',
-        'Dormition Fast · Sunday',
-        subtitle,
-        gregorianSubtitle,
-      );
-    }
-    return redFastAppearanceFields(
+    return redFastSeasonAppearanceFields(
       'dormition_fast',
       'Dormition Fast',
       subtitle,
@@ -591,51 +639,41 @@ export function getLiturgicalDayAppearance(
   }
 
   if (inNativityFast) {
-    if (wd === 0) {
-      return lordFeastAppearanceFields(
-        'fast_season_sunday',
-        'Nativity Fast · Sunday',
-        subtitle,
-        gregorianSubtitle,
-      );
-    }
-    return redFastAppearanceFields('nativity_fast', 'Nativity Fast', subtitle, gregorianSubtitle);
+    return redFastSeasonAppearanceFields(
+      'nativity_fast',
+      'Nativity Fast',
+      subtitle,
+      gregorianSubtitle,
+    );
   }
 
   if (inApostlesFast) {
-    if (wd === 0) {
-      return lordFeastAppearanceFields(
-        'fast_season_sunday',
-        'Apostles’ Fast · Sunday',
-        subtitle,
-        gregorianSubtitle,
-      );
-    }
-    return redFastAppearanceFields('apostles_fast', 'Apostles’ Fast', subtitle, gregorianSubtitle);
+    return redFastSeasonAppearanceFields(
+      'apostles_fast',
+      'Apostles’ Fast',
+      subtitle,
+      gregorianSubtitle,
+    );
   }
 
   if (inGreatLent) {
     if (wd === 0) {
-      return lordFeastAppearanceFields('lent_sunday', 'Lent · Sunday', subtitle, gregorianSubtitle);
-    }
-    if (wd === 6) {
-      return {
-        key: 'lent_saturday',
-        gradient: LENT_PURPLE_GRADIENT,
-        foreground: LENT_PURPLE_FG,
+      return lentPurpleAppearanceFields(
+        'lent_sunday',
+        'Lent · Sunday',
         subtitle,
         gregorianSubtitle,
-        label: 'Lent · Saturday',
-      };
+      );
     }
-    return {
-      key: 'great_lent',
-      gradient: LENT_PURPLE_GRADIENT,
-      foreground: LENT_PURPLE_FG,
-      subtitle,
-      gregorianSubtitle,
-      label: 'Great Lent',
-    };
+    if (wd === 6) {
+      return lentPurpleAppearanceFields(
+        'lent_saturday',
+        'Lent · Saturday',
+        subtitle,
+        gregorianSubtitle,
+      );
+    }
+    return lentBlackAppearanceFields(subtitle, gregorianSubtitle);
   }
 
   if (isWeeklyFastDay(jdn, civilWeekday, liturgical)) {

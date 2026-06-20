@@ -42,19 +42,19 @@ const cases: Case[] = [
     name: 'Great Lent weekday (pascha-45)',
     date: paschaPlus(-45),
     expectKey: 'great_lent',
-    expectSwatch: 'purple',
+    expectSwatch: 'black',
   },
   {
     name: 'Great Lent Sunday (pascha-42)',
     date: paschaPlus(-42),
     expectKey: 'lent_sunday',
-    expectSwatch: 'gold',
+    expectSwatch: 'purple',
   },
   {
     name: 'Nativity Fast Sunday (Dec 21 Julian 2026)',
     date: civilFromJulian(2026, 12, 21),
-    expectKey: 'fast_season_sunday',
-    expectSwatch: 'gold',
+    expectKey: 'nativity_fast',
+    expectSwatch: 'red',
   },
   {
     name: 'Ascension (pascha+39)',
@@ -103,6 +103,18 @@ const cases: Case[] = [
     name: 'Apostles Fast weekday (pascha+58, no feast)',
     date: paschaPlus(58),
     expectKey: 'apostles_fast',
+    expectSwatch: 'red',
+  },
+  {
+    name: 'Nativity Fast weekday (Nov 20 Julian 2026)',
+    date: civilFromJulian(2026, 11, 20),
+    expectKey: 'nativity_fast',
+    expectSwatch: 'red',
+  },
+  {
+    name: 'Exaltation of the Cross (14 Sep Julian 2026)',
+    date: civilFromJulian(2026, 9, 14),
+    expectKey: 'elevation_cross',
     expectSwatch: 'red',
   },
   {

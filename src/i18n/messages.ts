@@ -319,7 +319,7 @@ const en = {
     groupHolySaturdayVespers: 'Holy Saturday — vespers / burial',
     groupHolySaturdayLiturgy: 'Holy Saturday — Paschal liturgy',
     footnote:
-      'Based on ROCOR Europe and Slavic practice (OrthodoxWiki): gold on Sundays during fasts; purple Great Lent weekdays; Holy Week and feast-day exceptions vary by parish.',
+      'Based on the ROCOR Europe Liturgical Handbook. Local parish practice may vary on feast-day exceptions.',
     reason: {
       pascha: 'Bright vestments for the Resurrection of Christ — white or gold symbolizes the uncreated Light of Pascha.',
       brightWeek: 'Throughout Bright Week the Church keeps festal white vestments in honour of the Risen Christ.',
@@ -340,14 +340,13 @@ const en = {
       peterAndPaul: 'Gold for the feast of the Holy Apostles Peter and Paul.',
       allSaintsRussia:
         'Gold for All Saints of Russia — the second Sunday after Pentecost, even during the Apostles’ Fast.',
-      elevationCross: 'Red for the Exaltation of the Cross — feasts of the Cross.',
+      elevationCross: 'Red for feasts of the Cross — the Precious and Life-giving Cross.',
       greatFriday: 'Black for Great and Holy Friday — the death of Christ on the Cross.',
       holySaturday:
         'Black for the burial rites; white for the Paschal liturgy when the Church already proclaims the Resurrection.',
-      holyWeek: 'Black for Holy Week weekdays before Friday — some Slavic parishes use red (OrthodoxWiki).',
-      greatLent: 'Purple for weekdays of Great Lent — repentance and restraint.',
-      lentSunday:
-        'Gold for Lenten Sundays — the Lord’s Day, even in the fast (Slavic practice; some parishes use purple with gold trim).',
+      holyWeek: 'Black for Great Monday, Tuesday, and Wednesday of Passion Week.',
+      greatLent: 'Black for weekdays of Great Lent — repentance and restraint.',
+      lentSunday: 'Purple for Lenten Sundays — the general Great Lent colour on weekends.',
       lentSaturday:
         'Purple for Lenten Saturdays; wine and oil may be allowed where the rubrics permit.',
       wednesdayFast: 'Dark vestments on fasting days — Wednesday commemorates the betrayal of Christ.',
@@ -355,20 +354,18 @@ const en = {
       sunday: 'Gold for the Lord’s Day — the weekly feast of the Resurrection.',
       allSaints: 'Gold for the Sunday of All Saints after Pentecost.',
       apostlesFastSeason:
-        'Red for the Apostles’ Fast on weekdays; gold on Sundays and on All-Saints Sundays.',
-      nativityFastSeason: 'Red for the Nativity Fast on weekdays; gold on Sundays.',
+        'Red for the Apostles’ Fast; gold on the All Saints Sundays when they fall during the fast.',
+      nativityFastSeason: 'Red for the Nativity Fast.',
       dormitionFastSeason:
-        'Red for the Dormition Fast on weekdays until Transfiguration Eve; gold on Sundays.',
-      fastSeasonSunday:
-        'Gold on a Sunday during a major fast — the weekly feast of the Resurrection (Slavic practice).',
+        'Red for the Dormition Fast until the Eve of the Transfiguration.',
       gold: 'Gold for a Sunday or great feast of the Lord or the saints.',
       white: 'White for a great feast of the Lord — purity and the uncreated Light.',
       blue: 'Blue for a feast of the Mother of God or her icons.',
-      red: 'Red for the Cross, martyrs, or a blood-red feast.',
+      red: 'Red for the Cross, martyrs, angels, and the Nativity, Dormition, and Apostles fasts.',
       green: 'Green for the Holy Spirit, Palm Sunday, or Pentecost season.',
       dark: 'Dark vestments on a fast day or penitential season.',
       black: 'Black for mourning, Passion, or the most solemn services.',
-      purple: 'Purple for Lent, Holy Week, or penitential seasons.',
+      purple: 'Purple for Lenten Sundays and Saturdays in Great Lent.',
     },
     colorGold: 'Gold',
     colorWhite: 'White',
@@ -804,7 +801,7 @@ const ru = {
     groupHolySaturdayVespers: 'Великая суббота — вечерня / отпевание',
     groupHolySaturdayLiturgy: 'Великая суббота — пасхальная литургия',
     footnote:
-      'По практике ROCOR Europe и славянской традиции (OrthodoxWiki): золотой на воскресенья в постах; фиолетовый на будни Великого поста; Страстная седмица и праздники — по уставу прихода.',
+      'По Служебнику РПЦЗ в Европе. В отдельных приходах возможны местные особенности праздничных дней.',
     reason: {
       pascha:
         'Светлые ризы в честь Воскресения Христова — белый или золотой символизирует небесный свет Пасхи.',
@@ -838,11 +835,9 @@ const ru = {
         'Чёрный на Великую и Святую Пятницу — смерть Христа на Кресте.',
       holySaturday:
         'Чёрный на погребальные службы; белый на пасхальную литургию, когда Церковь уже провозглашает Воскресение.',
-      holyWeek:
-        'Чёрный на будни Страстной седмицы до Пятницы — в некоторых славянских приходах красный (OrthodoxWiki).',
-      greatLent: 'Фиолетовый на будни Великого поста — покаяние и сдержанность.',
-      lentSunday:
-        'Золотой в воскресенья Великого поста — день Господень (славянская практика; в иных местах — фиолетовый с золотом).',
+      holyWeek: 'Чёрный на Великий понедельник, вторник и среду Страстной седмицы.',
+      greatLent: 'Чёрный на будни Великого поста — покаяние и сдержанность.',
+      lentSunday: 'Фиолетовый в воскресенья Великого поста — общий цвет поста в эти дни.',
       lentSaturday:
         'Фиолетовый в пост; в субботу могут быть разрешены вино и елей — ризы часто остаются покаянными.',
       wednesdayFast:
@@ -853,20 +848,18 @@ const ru = {
         'Золотой на Господень день — еженедельный праздник Воскресения.',
       allSaints: 'Золотой в Неделю всех святых после Пятидесятницы.',
       apostlesFastSeason:
-        'Красный в Петров пост в будни; золотой в воскресенья и на неделях всех святых.',
-      nativityFastSeason: 'Красный в Рождественский пост в будни; золотой в воскресенья.',
+        'Красный в Петров пост; золотой в недели всех святых, если они приходятся на пост.',
+      nativityFastSeason: 'Красный в Рождественский пост.',
       dormitionFastSeason:
-        'Красный в Успенский пост в будни до кануна Преображения; золотой в воскресенья.',
-      fastSeasonSunday:
-        'Золотой в воскресенье в период поста — еженедельная память Воскресения (славянская практика).',
+        'Красный в Успенский пост до кануна Преображения.',
       gold: 'Золотой на воскресенье или великий праздник Господа или святых.',
       white: 'Белый на великий праздник Господень — чистота и небесный свет.',
       blue: 'Голубой на праздник Пресвятой Богородицы или Её икон.',
-      red: 'Красный на Крест, мучеников или «кровавый» праздник.',
+      red: 'Красный на Крест, мучеников, ангелов и посты Рождества, Успения и апостольский.',
       green: 'Зелёный на Духа Святого, Вход Господень или Пятидесятницу.',
       dark: 'Тёмные ризы в день поста или покаянный период.',
       black: 'Чёрный в трауре, Страстях или на самых торжественных службах печали.',
-      purple: 'Фиолетовый на пост, Страстную седмицу или покаянные периоды.',
+      purple: 'Фиолетовый в воскресенья и субботы Великого поста.',
     },
     colorGold: 'Золотой',
     colorWhite: 'Белый',

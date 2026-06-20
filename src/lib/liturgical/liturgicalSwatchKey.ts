@@ -10,10 +10,7 @@ export type LiturgicalSwatchKey =
   | 'black'
   | 'purple';
 
-/**
- * Slavic vestment colours — ROCOR Europe handbook cross-checked with
- * OrthodoxWiki “Slavic practice” (gold on Sundays during fasts; Holy Week exceptions).
- */
+/** Vestment colours per the ROCOR Europe Liturgical Handbook. */
 export function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): LiturgicalSwatchKey {
   const key = appearance.key;
   const label = appearance.label.toLowerCase();
@@ -33,12 +30,12 @@ export function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): Liturg
   if (key === 'transfiguration' || label.includes('transfiguration')) return 'white';
 
   if (key === 'great_friday' || label.includes('holy friday')) return 'black';
-  /** Holy Week Mon–Wed (Slavic: often black; some parishes red — see footnote). */
   if (key === 'holy_week') return 'black';
-  if (key === 'great_lent' || key === 'lent_saturday') return 'purple';
-
-  /** Slavic: gold on Sundays in fast seasons (OrthodoxWiki). */
-  if (key === 'lent_sunday' || key === 'fast_season_sunday') return 'gold';
+  if (key === 'great_lent') return 'black';
+  if (key === 'lent_sunday' || key === 'lent_saturday') return 'purple';
+  if (key === 'apostles_fast' || key === 'nativity_fast' || key === 'dormition_fast') {
+    return 'red';
+  }
 
   if (key === 'annunciation' || label.includes('annunciation')) return 'blue';
   if (
@@ -61,9 +58,6 @@ export function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): Liturg
   if (key === 'peter_and_paul' || label.includes('peter and paul')) return 'gold';
 
   if (key === 'elevation_cross' || (label.includes('cross') && !label.includes('sunday'))) {
-    return 'red';
-  }
-  if (key === 'apostles_fast' || key === 'nativity_fast' || key === 'dormition_fast') {
     return 'red';
   }
 

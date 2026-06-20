@@ -88,7 +88,6 @@ const REASON_KEY_BY_APPEARANCE: Record<string, string> = {
   apostles_fast: 'vestments.reason.apostlesFastSeason',
   nativity_fast: 'vestments.reason.nativityFastSeason',
   dormition_fast: 'vestments.reason.dormitionFastSeason',
-  fast_season_sunday: 'vestments.reason.fastSeasonSunday',
 };
 
 function localizedSwatch(key: SwatchKey, lang: UiLanguage): VestmentSwatch {
