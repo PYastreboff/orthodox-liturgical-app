@@ -12,8 +12,13 @@ import {
 import { useTheme } from '@react-navigation/native';
 
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';
+import { CalendarFastingFoodIcon } from './CalendarFastingFoodIcon';
 import { useOrthocalMonth } from '../hooks/useOrthocalMonth';
-import type { CalendarDayInfo } from '../lib/liturgical/calendarDayInfo';
+import {
+  calendarCellCommemorations,
+  CALENDAR_CELL_MAX_COMMEMORATIONS,
+  type CalendarDayInfo,
+} from '../lib/liturgical/calendarDayInfo';
 import {
   calendarCellHoverBackground,
   getCalendarCellStyle,
@@ -108,6 +113,11 @@ function calendarDayHoverLabel(
 ): string {
   const rankLabel =
     feastRank && showTypikon ? feastRankAccessibilityLabel(feastRank, lang) : null;
+  const fastingLabels = [
+    dayInfo.fastingFoodIcons.noEating ? t('fasting.levelNoEating') : null,
+    dayInfo.fastingFoodIcons.fish ? t('fasting.foodFish') : null,
+    dayInfo.fastingFoodIcons.oil ? t('fasting.foodOil') : null,
+  ].filter(Boolean);
   return [
     new Intl.DateTimeFormat(intlLocale, {
       weekday: 'long',
@@ -119,6 +129,7 @@ function calendarDayHoverLabel(
     dayInfo.feasts.length ? dayInfo.feasts.join(' · ') : null,
     dayInfo.saints.length ? dayInfo.saints.join(' · ') : null,
     rankLabel,
+    fastingLabels.length ? fastingLabels.join(', ') : null,
     t('calendarHover.clickToOpen'),
   ]
     .filter(Boolean)
@@ -331,14 +342,13 @@ export function LiturgicalMonthGrid({
 const CELL_HEIGHT = 120;
 const CELL_HEIGHT_COMPACT = 52;
 const CELL_BORDER_RADIUS = 10;
-const COMM_FONT_SIZE = 7.5;
-const COMM_LINE_HEIGHT = 11;
-const COMM_MARKER_SIZE = 10;
-const COMM_ROW_GAP = 2;
-type CommLine = { kind: 'feast' | 'saint'; name: string };
+const COMM_FONT_SIZE = 6.5;
+const COMM_LINE_HEIGHT = 9.5;
+const COMM_MARKER_SIZE = 8;
+const COMM_ROW_GAP = 1;
 
 function titleLinesForCell(commCount: number): number {
-  return commCount >= 3 ? 1 : 2;
+  return commCount >= 2 ? 1 : 2;
 }
 
 function DayCell({
@@ -422,14 +432,24 @@ function DayCell({
     isDark,
   );
 
-  const commLines: CommLine[] = [
-    ...displayInfo.feasts.map((name) => ({ kind: 'feast' as const, name })),
-    ...displayInfo.saints.map((name) => ({ kind: 'saint' as const, name })),
-  ];
+  const { lines: commLines, hiddenCount: hiddenCommCount } = useMemo(
+    () =>
+      calendarCellCommemorations(
+        displayInfo.dayTitle,
+        displayInfo.feasts,
+        displayInfo.saints,
+        CALENDAR_CELL_MAX_COMMEMORATIONS,
+      ),
+    [displayInfo.dayTitle, displayInfo.feasts, displayInfo.saints],
+  );
   const dayTitleLines = titleLinesForCell(commLines.length);
   const feastCount = displayInfo.feasts.length;
   const saintCount = displayInfo.saints.length;
   const markerCount = feastCount + saintCount;
+  const fastingIcons = dayInfo.fastingFoodIcons;
+  const fastingIconSize = compact ? 12 : typikonSize >= 20 ? 18 : 16;
+  const showFastingIcons =
+    fastingIcons.noEating || fastingIcons.fish || fastingIcons.oil;
 
   return (
     <Pressable
@@ -460,6 +480,21 @@ function DayCell({
           >
             <TypikonGlyphIcon glyph={feastRank.glyph} size={typikonSize} color={typikonColor} />
           </HoverAccessible>
+        ) : null}
+        {showFastingIcons ? (
+          <View
+            style={[styles.fastingCorner, compact ? styles.fastingCornerCompact : null]}
+          >
+            {fastingIcons.noEating ? (
+              <CalendarFastingFoodIcon kind="noEating" size={fastingIconSize} />
+            ) : null}
+            {!fastingIcons.noEating && fastingIcons.fish ? (
+              <CalendarFastingFoodIcon kind="fish" size={fastingIconSize} />
+            ) : null}
+            {!fastingIcons.noEating && fastingIcons.oil ? (
+              <CalendarFastingFoodIcon kind="oil" size={fastingIconSize} />
+            ) : null}
+          </View>
         ) : null}
         <View style={[styles.dayNumWrap, compact ? styles.dayNumWrapCompact : null]}>
           {isToday ? (
@@ -522,12 +557,21 @@ function DayCell({
                         size={COMM_MARKER_SIZE}
                         lineHeight={COMM_LINE_HEIGHT}
                       />
-                      <Text style={[isFeast ? styles.dayFeast : styles.daySaint, { color }]}>
+                      <Text
+                        style={[isFeast ? styles.dayFeast : styles.daySaint, { color }]}
+                        numberOfLines={2}
+                        ellipsizeMode="tail"
+                      >
                         {line.name}
                       </Text>
                     </View>
                   );
                 })}
+                {hiddenCommCount > 0 ? (
+                  <Text style={[styles.commMore, { color: subColor }]}>
+                    +{hiddenCommCount}
+                  </Text>
+                ) : null}
               </View>
             ) : null}
           </>
@@ -624,7 +668,7 @@ function CalendarMonthAgenda({
               >
                 {info.dayTitle}
               </Text>
-              {lines.slice(0, 4).map((line, index) => {
+              {lines.slice(0, CALENDAR_CELL_MAX_COMMEMORATIONS).map((line, index) => {
                 const lineColor = line.kind === 'feast' ? colors.feastBorder : mutedColor;
                 return (
                   <View key={`${line.kind}-${index}`} style={styles.agendaCommRow}>
@@ -643,9 +687,9 @@ function CalendarMonthAgenda({
                   </View>
                 );
               })}
-              {lines.length > 4 ? (
+              {lines.length > CALENDAR_CELL_MAX_COMMEMORATIONS ? (
                 <Text style={[styles.agendaMore, { color: mutedColor }]}>
-                  +{lines.length - 4}
+                  +{lines.length - CALENDAR_CELL_MAX_COMMEMORATIONS}
                 </Text>
               ) : null}
             </View>
@@ -913,11 +957,32 @@ const styles = StyleSheet.create({
     gap: COMM_ROW_GAP,
     overflow: 'hidden',
   },
+  commMore: {
+    fontSize: 6.5,
+    fontWeight: '700',
+    lineHeight: 8,
+    textAlign: 'center',
+    marginTop: 1,
+    opacity: 0.85,
+  },
   typikonCorner: {
     position: 'absolute',
     top: 2,
     left: 2,
     zIndex: 1,
+  },
+  fastingCorner: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    zIndex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 1,
+  },
+  fastingCornerCompact: {
+    top: 1,
+    right: 1,
   },
   dayNumWrap: {
     alignSelf: 'center',
@@ -945,10 +1010,10 @@ const styles = StyleSheet.create({
   },
   dayLabel: {
     marginTop: 2,
-    fontSize: 8,
+    fontSize: 7,
     fontWeight: '700',
     textAlign: 'center',
-    lineHeight: 11,
+    lineHeight: 9,
   },
   commRow: {
     flexDirection: 'row',

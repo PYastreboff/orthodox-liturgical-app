@@ -1,5 +1,8 @@
+import { calendarFastingFoodIcons, type CalendarFastingFoodIcons } from '../../i18n/fastingLabels';
 import type { OrthocalDay } from '../api/orthocal';
 import { isFeastCellAppearance } from '../calendar/calendarCellStyle';
+import type { PlainDate } from '../calendar/julianGregorian';
+import { shouldApplyWeeklyFastOverride } from '../calendar/weeklyFast';
 import { isGreatFridayDay, shouldUseOrthocalFeastRank } from './lectionaryDay';
 import {
   calendarFeastsForDay,
@@ -28,7 +31,32 @@ export type CalendarDayInfo = {
   appearanceKey: string;
   /** Feast names that use great-feast red styling (search, lists). */
   greatFeastNames: string[];
+  /** Blue fish / gold oil icons on fast days when orthocal allows them. */
+  fastingFoodIcons: CalendarFastingFoodIcons;
 };
+
+/** Max feast/saint lines shown inside a calendar month cell (feasts listed before saints). */
+export const CALENDAR_CELL_MAX_COMMEMORATIONS = 3;
+
+export type CalendarCommemorationLine = { kind: 'feast' | 'saint'; name: string };
+
+export function calendarCellCommemorations(
+  dayTitle: string,
+  feasts: string[],
+  saints: string[],
+  max = CALENDAR_CELL_MAX_COMMEMORATIONS,
+): { lines: CalendarCommemorationLine[]; hiddenCount: number } {
+  const normalizedTitle = dayTitle.trim();
+  const feastLines = feasts
+    .filter((name) => name.trim() && name.trim() !== normalizedTitle)
+    .map((name) => ({ kind: 'feast' as const, name }));
+  const saintLines = saints.map((name) => ({ kind: 'saint' as const, name }));
+  const all = [...feastLines, ...saintLines];
+  return {
+    lines: all.slice(0, max),
+    hiddenCount: Math.max(0, all.length - max),
+  };
+}
 
 export function saintsFromOrthocalDay(day: OrthocalDay | null): string[] {
   if (!day?.saints?.length) return [];
@@ -95,11 +123,14 @@ export function buildCalendarDayInfo(
   appearanceKey: string,
   appearanceLabel: string,
   feastRank: FeastRankDisplay | null,
+  civil: PlainDate,
 ): CalendarDayInfo {
   const dayTitle = liturgicalDayTitle(day, appearanceKey, appearanceLabel, feastRank);
   const isFeastCell = isCalendarFeastCell(day, appearanceKey, feastRank, dayTitle);
   const isFeastTitleRed = isCalendarFeastTitleRed(day, appearanceKey, feastRank, dayTitle);
   const greatFeastNames = greatFeastNamesForCalendarDay(day, appearanceKey, feastRank, dayTitle);
+  const weeklyFast = shouldApplyWeeklyFastOverride(day, civil);
+  const fastingFoodIcons = calendarFastingFoodIcons(day, appearanceKey, weeklyFast, civil);
   return {
     dayTitle,
     feasts: calendarFeastsForDay(day, dayTitle),
@@ -110,5 +141,6 @@ export function buildCalendarDayInfo(
     isGreatFridayBorder: isGreatFridayDay(day),
     appearanceKey,
     greatFeastNames,
+    fastingFoodIcons,
   };
 }

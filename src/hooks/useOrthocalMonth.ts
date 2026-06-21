@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
 import { getLiturgicalAppearanceForLocalDate } from '../lib/calendar/dayAppearance';
+import { civilPlainDateFromLocal } from '../lib/calendar/liturgicalCalendar';
 import {
   buildCalendarDayInfo,
   type CalendarDayInfo,
@@ -56,7 +57,8 @@ export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: Primary
         const cached = dayByIso[iso];
         if (cached) return cached;
         const appearance = getLiturgicalAppearanceForLocalDate(date, liturgicalCalendar);
-        return buildCalendarDayInfo(null, appearance.key, appearance.label, null);
+        const civil = civilPlainDateFromLocal(date);
+        return buildCalendarDayInfo(null, appearance.key, appearance.label, null, civil);
       },
     [dayByIso, liturgicalCalendar],
   );

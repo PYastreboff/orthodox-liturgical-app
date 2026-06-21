@@ -62,11 +62,13 @@ async function fetchMonthDayMap(
           appearance.key,
           appearance.label,
           feastRank,
+          civil,
         );
         return [iso, info] as const;
       } catch {
         const appearance = getLiturgicalAppearanceForLocalDate(date, liturgicalCalendar);
-        const info = buildCalendarDayInfo(null, appearance.key, appearance.label, null);
+        const civil = civilPlainDateFromLocal(date);
+        const info = buildCalendarDayInfo(null, appearance.key, appearance.label, null, civil);
         return [iso, info] as const;
       }
     }),

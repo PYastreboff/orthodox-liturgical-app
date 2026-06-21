@@ -57,6 +57,14 @@ const HOLY_WEEK_TITLE_RULES: {
 ];
 
 const ANNUNCIATION_FEAST = /\bannunciation\b/i;
+const ANNUNCIATION_SUBORDINATE =
+  /\b(?:forefeast|afterfeast|leavetaking)\s+of\s+(?:the\s+)?annunciation\b/i;
+
+function isPrimaryAnnunciationFeastName(name: string): boolean {
+  const trimmed = name.trim();
+  if (!trimmed || ANNUNCIATION_SUBORDINATE.test(trimmed)) return false;
+  return ANNUNCIATION_FEAST.test(trimmed);
+}
 const ASCENSION_FEAST = /\bascension\b/i;
 
 /** Fixed-calendar appearance → feast name in orthocal `feasts`. */
@@ -116,19 +124,19 @@ function ascensionFeastName(day: OrthocalDay): string | null {
 /** Annunciation in `feasts[]` or orthocal headlines (e.g. transferred to Great and Holy Tuesday). */
 export function annunciationFeastNameFromOrthocal(day: OrthocalDay | null | undefined): string | null {
   if (!day) return null;
-  const fromFeasts = allFeastsFromOrthocalDay(day).find((f) => ANNUNCIATION_FEAST.test(f));
+  const fromFeasts = allFeastsFromOrthocalDay(day).find((f) => isPrimaryAnnunciationFeastName(f));
   if (fromFeasts) return fromFeasts;
 
   const fromTitles = titleMatchingPattern(day, ANNUNCIATION_FEAST);
-  if (fromTitles) return fromTitles;
+  if (fromTitles && isPrimaryAnnunciationFeastName(fromTitles)) return fromTitles;
 
   const levelDesc = day.feast_level_description?.trim();
-  if (levelDesc && ANNUNCIATION_FEAST.test(levelDesc)) {
+  if (levelDesc && isPrimaryAnnunciationFeastName(levelDesc)) {
     return sanitizeTypikonProse(levelDesc);
   }
 
   for (const story of day.stories ?? []) {
-    if (ANNUNCIATION_FEAST.test(story.title)) {
+    if (isPrimaryAnnunciationFeastName(story.title)) {
       return sanitizeTypikonProse(story.title);
     }
   }

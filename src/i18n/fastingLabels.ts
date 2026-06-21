@@ -290,3 +290,32 @@ export function localizedFastingFoodsDetail(
   if (exceptionNote) detail.exceptionNote = exceptionNote;
   return detail;
 }
+
+export type CalendarFastingFoodIcons = {
+  fish: boolean;
+  oil: boolean;
+  /** Black X — total fast (Great and Holy Friday). */
+  noEating: boolean;
+};
+
+/** Language-agnostic fish / oil flags for calendar month cells. */
+export function calendarFastingFoodIcons(
+  day: OrthocalDay | null,
+  appearanceKey: string,
+  weeklyFast: boolean,
+  civil: PlainDate,
+): CalendarFastingFoodIcons {
+  if (!isOrthocalFastDay(day, appearanceKey, weeklyFast)) {
+    return { fish: false, oil: false, noEating: false };
+  }
+  const detail = localizedFastingFoodsDetail(day, appearanceKey, weeklyFast, 'en', civil);
+  if (detail.totalAbstinence) {
+    return { fish: false, oil: false, noEating: true };
+  }
+  const allowed = new Set(detail.allowed.map((item) => item.kind));
+  return {
+    fish: allowed.has('fish'),
+    oil: allowed.has('oil'),
+    noEating: false,
+  };
+}

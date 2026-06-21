@@ -136,6 +136,18 @@ const cases: Case[] = [
     expectSwatch: 'red',
   },
   {
+    name: 'Entry of the Theotokos (21 Nov Julian 2026)',
+    date: civilFromJulian(2026, 11, 21),
+    expectKey: 'entry_theotokos',
+    expectSwatch: 'blue',
+  },
+  {
+    name: 'Protection of the Theotokos / Pokrov (1 Oct Julian 2026)',
+    date: civilFromJulian(2026, 10, 1),
+    expectKey: 'pokrov',
+    expectSwatch: 'blue',
+  },
+  {
     name: 'SS Peter & Paul (29 Jun Julian 2026)',
     date: civilFromJulian(2026, 6, 29),
     expectKey: 'peter_and_paul',
@@ -154,6 +166,12 @@ const cases: Case[] = [
     expectSwatch: 'blue',
   },
   {
+    name: 'Circumcision of Our Lord; St Basil (1 Jan Julian 2026)',
+    date: civilFromJulian(2026, 1, 1),
+    expectKey: 'circumcision',
+    expectSwatch: 'white',
+  },
+  {
     name: 'Theophany (6 Jan Julian 2026)',
     date: civilFromJulian(2026, 1, 6),
     expectKey: 'theophany',
@@ -170,6 +188,18 @@ const cases: Case[] = [
     date: civilFromJulian(2026, 12, 25),
     expectKey: 'nativity',
     expectSwatch: 'white',
+  },
+  {
+    name: 'Great and Holy Monday — Forefeast of Annunciation stays Holy Week (2026)',
+    date: paschaPlus(-6, 2026),
+    expectKey: 'holy_week',
+    expectSwatch: 'black',
+    orthocal: {
+      summary_title: 'Great and Holy Monday',
+      titles: ['Great and Holy Monday'],
+      feasts: ['Forefeast of Annunciation'],
+      pascha_distance: -6,
+    },
   },
   {
     name: 'Orthocal override: Russia feast on apostles-fast Sunday',

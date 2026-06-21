@@ -19,6 +19,7 @@ export function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): Liturg
   if (key === 'ascension' || key === 'ascension_leavetaking' || label.includes('ascension')) {
     return 'white';
   }
+  if (key === 'circumcision' || label.includes('circumcision')) return 'white';
   if (key === 'theophany' || label.includes('theophany')) return 'white';
   if (key === 'transfiguration' || label.includes('transfiguration')) return 'white';
   if (
@@ -61,7 +62,11 @@ export function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): Liturg
     key === 'dormition' ||
     key === 'nativity_theotokos' ||
     key === 'presentation' ||
+    key === 'entry_theotokos' ||
+    key === 'pokrov' ||
     label.includes('theotokos') ||
+    label.includes('pokrov') ||
+    label.includes('entry of the') ||
     label.includes('presentation of the lord') ||
     label.includes('meeting of the lord')
   ) {

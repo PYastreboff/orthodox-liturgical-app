@@ -358,6 +358,14 @@ export function applyOrthocalFeastAppearance(
       gregorianSubtitle,
     );
   }
+  if (/\bcircumcision of (?:our )?lord\b|\bcircumcision of christ\b/i.test(haystack)) {
+    return whiteFeastAppearanceFields(
+      'circumcision',
+      'Circumcision of Our Lord; St Basil the Great',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
   if (/\bpeter and paul\b|\bapostles peter\b|\bleaders of the apostles\b/i.test(haystack)) {
     return lordFeastAppearanceFields(
       'peter_and_paul',
@@ -402,6 +410,26 @@ export function applyOrthocalFeastAppearance(
     return theotokosAppearanceFields(
       'presentation',
       'Presentation of the Lord',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+  if (
+    /\bentry of (?:the )?(?:most[- ]?holy )?(?:theotokos|mother of god)\b|\bpresentation of (?:the )?(?:holy )?theotokos\b|\btheotokos into the temple\b/i.test(
+      haystack,
+    )
+  ) {
+    return theotokosAppearanceFields(
+      'entry_theotokos',
+      'Entry of the Most-Holy Theotokos into the Temple',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+  if (/\bpokrov\b|\bprotection of (?:the )?(?:holy )?theotokos\b|\bintercession of the theotokos\b/i.test(haystack)) {
+    return theotokosAppearanceFields(
+      'pokrov',
+      'Protection of the Theotokos',
       subtitle,
       gregorianSubtitle,
     );
@@ -463,13 +491,16 @@ export function getLiturgicalDayAppearance(
 
   const nativity = { year: y, month: 12, day: 25 } satisfies PlainDate;
   const theophany = { year: y, month: 1, day: 6 } satisfies PlainDate;
+  const circumcision = { year: y, month: 1, day: 1 } satisfies PlainDate;
   const presentation = { year: y, month: 2, day: 2 } satisfies PlainDate;
   const nativityTheotokos = { year: y, month: 9, day: 8 } satisfies PlainDate;
+  const entryTheotokos = { year: y, month: 11, day: 21 } satisfies PlainDate;
   const nativityJohnBaptist = { year: y, month: 6, day: 24 } satisfies PlainDate;
   const beheadingJohnBaptist = { year: y, month: 8, day: 29 } satisfies PlainDate;
   const transfiguration = { year: y, month: 8, day: 6 } satisfies PlainDate;
   const dormition = { year: y, month: 8, day: 15 } satisfies PlainDate;
   const elevationCross = { year: y, month: 9, day: 14 } satisfies PlainDate;
+  const pokrov = { year: y, month: 10, day: 1 } satisfies PlainDate;
 
   const g = julianCalendarToGregorian(liturgical.year, liturgical.month, liturgical.day);
   const subtitle = formatJulianReadable(liturgical, true);
@@ -632,6 +663,15 @@ export function getLiturgicalDayAppearance(
     return whiteFeastAppearanceFields('nativity', 'Nativity', subtitle, gregorianSubtitle);
   }
 
+  if (sameLiturgicalDate(liturgical, circumcision)) {
+    return whiteFeastAppearanceFields(
+      'circumcision',
+      'Circumcision of Our Lord; St Basil the Great',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
   if (sameLiturgicalDate(liturgical, theophany)) {
     return whiteFeastAppearanceFields('theophany', 'Theophany', subtitle, gregorianSubtitle);
   }
@@ -678,6 +718,24 @@ export function getLiturgicalDayAppearance(
     return theotokosAppearanceFields(
       'nativity_theotokos',
       'Nativity of the Theotokos',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
+  if (sameLiturgicalDate(liturgical, pokrov)) {
+    return theotokosAppearanceFields(
+      'pokrov',
+      'Protection of the Theotokos',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
+  if (sameLiturgicalDate(liturgical, entryTheotokos)) {
+    return theotokosAppearanceFields(
+      'entry_theotokos',
+      'Entry of the Most-Holy Theotokos into the Temple',
       subtitle,
       gregorianSubtitle,
     );

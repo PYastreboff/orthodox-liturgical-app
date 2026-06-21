@@ -324,6 +324,8 @@ const en = {
       pascha: 'Bright vestments for the Resurrection of Christ — white or gold symbolizes the uncreated Light of Pascha.',
       brightWeek: 'Throughout Bright Week the Church keeps festal white vestments in honour of the Risen Christ.',
       theophany: 'White for Theophany — the Lord’s Baptism and the revelation of the Holy Trinity.',
+      circumcision:
+        'White for the Circumcision of Our Lord and the feast of St Basil the Great (1 January).',
       annunciation: 'Blue for feasts of the Mother of God — here the Annunciation of the Archangel Gabriel.',
       dormition: 'Blue for the Mother of God — the feast of her Dormition and translation to life.',
       nativity: 'White for the Nativity of Christ until the leavetaking.',
@@ -337,6 +339,9 @@ const en = {
       ascensionLeavetaking: 'White for the Leavetaking of Ascension.',
       nativityTheotokos: 'Blue for the Nativity of the Theotokos — a feast of the Mother of God.',
       presentation: 'Blue for the Presentation of the Lord in the Temple.',
+      entryTheotokos:
+        'Blue for the Entry of the Most-Holy Theotokos into the Temple.',
+      pokrov: 'Blue for the Protection (Pokrov) of the Theotokos.',
       peterAndPaul: 'Gold for the feast of the Holy Apostles Peter and Paul.',
       nativityJohnBaptist:
         'Red for the Nativity of St John the Baptist — and his other feast days in general.',
@@ -424,6 +429,7 @@ const en = {
     ascension: 'Ascension of the Lord',
     nativity: 'Nativity of Christ',
     theophany: 'Theophany',
+    circumcision: 'Circumcision of Our Lord; St Basil the Great',
     transfiguration: 'Transfiguration of the Lord',
     dormition: 'Dormition of the Theotokos',
     elevationCross: 'Exaltation of the Cross',
@@ -457,11 +463,14 @@ const en = {
     trinity_day: 'Trinity Day',
     nativity_theotokos: 'Nativity of the Theotokos',
     presentation: 'Presentation of the Lord',
+    entry_theotokos: 'Entry of the Most-Holy Theotokos into the Temple',
+    pokrov: 'Protection of the Theotokos',
     peter_and_paul: 'Saints Peter and Paul',
     nativity_john_baptist: 'Nativity of St John the Baptist',
     beheading_john_baptist: 'Beheading of St John the Baptist',
     nativity: 'Nativity',
     theophany: 'Theophany',
+    circumcision: 'Circumcision of Our Lord; St Basil the Great',
     transfiguration: 'Transfiguration',
     dormition: 'Dormition',
     elevation_cross: 'Elevation of the Cross',
@@ -816,6 +825,8 @@ const ru = {
         'На Светлой седмице Церковь носит праздничные белые ризы в честь Воскресшего Христа.',
       theophany:
         'Белый на Богоявление — Крещение Господне и явление Пресвятой Троицы.',
+      circumcision:
+        'Белый на Обрезание Господне и память святителя Василия Великого (1 января).',
       annunciation:
         'Голубой — цвет праздников Пресвятой Богородицы; здесь Благовещение архангела Гавриила.',
       dormition:
@@ -833,6 +844,9 @@ const ru = {
       ascensionLeavetaking: 'Белый на отдание Вознесения.',
       nativityTheotokos: 'Голубой на Рождество Пресвятой Богородицы — праздник Божией Матери.',
       presentation: 'Голубой на Сретение Господне в храме.',
+      entryTheotokos:
+        'Голубой на Введение Пресвятой Богородицы во храм.',
+      pokrov: 'Голубой на Покров Пресвятой Богородицы.',
       peterAndPaul: 'Золотой на праздник святых апостолов Петра и Павла.',
       nativityJohnBaptist:
         'Красный на Рождество святого Иоанна Предтечи — и на его прочие праздники.',
@@ -925,6 +939,7 @@ const ru = {
     ascension: 'Вознесение Господне',
     nativity: 'Рождество Христово',
     theophany: 'Богоявление',
+    circumcision: 'Обрезание Господне; св. Василий Великий',
     transfiguration: 'Преображение Господне',
     dormition: 'Успение Пресвятой Богородицы',
     elevationCross: 'Воздвижение Креста Господня',
@@ -958,11 +973,14 @@ const ru = {
     trinity_day: 'День Троицы',
     nativity_theotokos: 'Рождество Пресвятой Богородицы',
     presentation: 'Сретение Господне',
+    entry_theotokos: 'Введение Пресвятой Богородицы во храм',
+    pokrov: 'Покров Пресвятой Богородицы',
     peter_and_paul: 'Святые апостолы Петр и Павел',
     nativity_john_baptist: 'Рождество святого Иоанна Предтечи',
     beheading_john_baptist: 'Усекновение главы святого Иоанна Предтечи',
     nativity: 'Рождество',
     theophany: 'Богоявление',
+    circumcision: 'Обрезание Господне; св. Василий Великий',
     transfiguration: 'Преображение',
     dormition: 'Успение',
     elevation_cross: 'Воздвижение Креста',
