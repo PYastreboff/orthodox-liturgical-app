@@ -367,6 +367,18 @@ export function applyOrthocalFeastAppearance(
     );
   }
   if (
+    /\bbeheading of (?:st\.? )?john(?: the)? baptist\b|\bbeheading of the forerunner\b|\bdecollation of (?:st\.? )?john\b/i.test(
+      haystack,
+    )
+  ) {
+    return redFeastAppearanceFields(
+      'beheading_john_baptist',
+      'Beheading of St John the Baptist',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+  if (
     /\bnativity of (?:st\.? )?john(?: the)? baptist\b|\bnativity of the forerunner\b|\bforerunner and baptist\b/i.test(
       haystack,
     )
@@ -454,6 +466,7 @@ export function getLiturgicalDayAppearance(
   const presentation = { year: y, month: 2, day: 2 } satisfies PlainDate;
   const nativityTheotokos = { year: y, month: 9, day: 8 } satisfies PlainDate;
   const nativityJohnBaptist = { year: y, month: 6, day: 24 } satisfies PlainDate;
+  const beheadingJohnBaptist = { year: y, month: 8, day: 29 } satisfies PlainDate;
   const transfiguration = { year: y, month: 8, day: 6 } satisfies PlainDate;
   const dormition = { year: y, month: 8, day: 15 } satisfies PlainDate;
   const elevationCross = { year: y, month: 9, day: 14 } satisfies PlainDate;
@@ -683,6 +696,15 @@ export function getLiturgicalDayAppearance(
     return redFeastAppearanceFields(
       'nativity_john_baptist',
       'Nativity of St John the Baptist',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
+  if (sameLiturgicalDate(liturgical, beheadingJohnBaptist)) {
+    return redFeastAppearanceFields(
+      'beheading_john_baptist',
+      'Beheading of St John the Baptist',
       subtitle,
       gregorianSubtitle,
     );

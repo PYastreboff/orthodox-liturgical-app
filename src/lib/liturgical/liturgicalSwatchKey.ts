@@ -21,7 +21,15 @@ export function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): Liturg
   }
   if (key === 'theophany' || label.includes('theophany')) return 'white';
   if (key === 'transfiguration' || label.includes('transfiguration')) return 'white';
-  if (key === 'nativity_john_baptist' || label.includes('john the baptist')) return 'red';
+  if (
+    key === 'nativity_john_baptist' ||
+    key === 'beheading_john_baptist' ||
+    label.includes('john the baptist') ||
+    label.includes('beheading of st john') ||
+    label.includes('beheading of the forerunner')
+  ) {
+    return 'red';
+  }
 
   if (
     key === 'nativity' ||

@@ -64,6 +64,7 @@ const REASON_KEY_BY_APPEARANCE: Record<string, string> = {
   presentation: 'vestments.reason.presentation',
   peter_and_paul: 'vestments.reason.peterAndPaul',
   nativity_john_baptist: 'vestments.reason.nativityJohnBaptist',
+  beheading_john_baptist: 'vestments.reason.beheadingJohnBaptist',
   pascha: 'vestments.reason.pascha',
   bright_week: 'vestments.reason.brightWeek',
   theophany: 'vestments.reason.theophany',

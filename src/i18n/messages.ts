@@ -340,6 +340,8 @@ const en = {
       peterAndPaul: 'Gold for the feast of the Holy Apostles Peter and Paul.',
       nativityJohnBaptist:
         'Red for the Nativity of St John the Baptist — and his other feast days in general.',
+      beheadingJohnBaptist:
+        'Red for the Beheading of St John the Baptist — a martyric feast of the Forerunner.',
       allSaintsRussia:
         'Gold for All Saints of Russia — the second Sunday after Pentecost, even during the Apostles’ Fast.',
       elevationCross: 'Red for feasts of the Cross — the Precious and Life-giving Cross.',
@@ -457,6 +459,7 @@ const en = {
     presentation: 'Presentation of the Lord',
     peter_and_paul: 'Saints Peter and Paul',
     nativity_john_baptist: 'Nativity of St John the Baptist',
+    beheading_john_baptist: 'Beheading of St John the Baptist',
     nativity: 'Nativity',
     theophany: 'Theophany',
     transfiguration: 'Transfiguration',
@@ -833,6 +836,8 @@ const ru = {
       peterAndPaul: 'Золотой на праздник святых апостолов Петра и Павла.',
       nativityJohnBaptist:
         'Красный на Рождество святого Иоанна Предтечи — и на его прочие праздники.',
+      beheadingJohnBaptist:
+        'Красный на Усекновение главы святого Иоанна Предтечи — мученический праздник.',
       allSaintsRussia:
         'Золотой на всех святых, в земле Русской просиявших — даже в Петров пост.',
       elevationCross:
@@ -955,6 +960,7 @@ const ru = {
     presentation: 'Сретение Господне',
     peter_and_paul: 'Святые апостолы Петр и Павел',
     nativity_john_baptist: 'Рождество святого Иоанна Предтечи',
+    beheading_john_baptist: 'Усекновение главы святого Иоанна Предтечи',
     nativity: 'Рождество',
     theophany: 'Богоявление',
     transfiguration: 'Преображение',
