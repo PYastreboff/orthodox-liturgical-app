@@ -24,7 +24,7 @@ type Props = {
   julianDateLabel?: string | null;
   toneLabel: string;
   feastRank: FeastRankDisplay;
-  heroFastChip?: HeroFastChipDisplay | null;
+  heroFastChip?: HeroFastChipDisplay;
   showFeastRankChip?: boolean;
   isMajorFeastDay?: boolean;
   orthocalFeastLevel?: number;

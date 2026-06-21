@@ -362,7 +362,7 @@ export function fastSummaryKindFromDetail(
   return 'strict';
 }
 
-/** Hero chip: "Fast" with optional fish / wine / oil icons; hidden on non-fast days. */
+/** Hero chip: "Fast" (with optional icons) or "No fast". */
 export type HeroFastChipDisplay = {
   label: string;
   icons: { fish: boolean; wine: boolean; oil: boolean };
@@ -372,9 +372,15 @@ export function heroFastChipDisplay(
   detail: FastingFoodsDetail,
   isFastDay: boolean,
   lang: UiLanguage,
-): HeroFastChipDisplay | null {
-  if (!isFastDay) return null;
-  if (detail.allowed.some((item) => item.kind === 'all')) return null;
+): HeroFastChipDisplay {
+  const noIcons = { fish: false, wine: false, oil: false };
+
+  if (!isFastDay || detail.allowed.some((item) => item.kind === 'all')) {
+    return {
+      label: translate(lang, 'fasting.summaryNoFast'),
+      icons: noIcons,
+    };
+  }
 
   const allowed = new Set(detail.allowed.map((item) => item.kind));
   return {

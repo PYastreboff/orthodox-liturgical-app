@@ -50,7 +50,7 @@ export type DayDashboardData = {
   /** Pill colour: strict, wine & oil, fish, dairy, no fast, total abstinence. */
   fastSummaryKind: FastSummaryKind;
   /** Hero fast chip — null on non-fast days; "Fast" plus allowance icons. */
-  heroFastChip: HeroFastChipDisplay | null;
+  heroFastChip: HeroFastChipDisplay;
   showHeroFeastRankChip: boolean;
   isFastDay: boolean;
   /** "Wednesday fast" / "Friday fast" in the Fasting section (null on other days). */
