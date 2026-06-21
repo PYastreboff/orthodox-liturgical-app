@@ -1,3 +1,5 @@
+import type { OrthocalDay } from '../api/orthocal';
+import { resolveOrthocalTone } from '../lib/liturgical/orthocalTone';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { FEAST_RANK_BY_LEVEL } from '../lib/liturgical/typikonSymbols';
 import { translate } from './translate';
@@ -90,4 +92,13 @@ export function feastRankAccessibilityLabel(rank: FeastRankDisplay, lang: UiLang
 export function localizedToneLabel(tone: number, lang: UiLanguage): string {
   if (tone >= 1 && tone <= 8) return translate(lang, 'typikon.tone', { n: tone });
   return translate(lang, 'typikon.toneUnknown');
+}
+
+export function localizedToneLabelForOrthocalDay(
+  day: OrthocalDay | null | undefined,
+  lang: UiLanguage,
+): string {
+  const resolved = resolveOrthocalTone(day);
+  if (resolved !== null) return localizedToneLabel(resolved, lang);
+  return localizedToneLabel(-1, lang);
 }

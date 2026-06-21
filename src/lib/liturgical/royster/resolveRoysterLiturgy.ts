@@ -1,4 +1,5 @@
 import type { OrthocalDay } from '../../api/orthocal';
+import { resolveOrthocalTone } from '../orthocalTone';
 import { SUNDAY_LITURGY_BY_TONE } from './sundayLiturgy';
 import type { RoysterLiturgySequence, ToneNumber, WeekdayIndex } from './types';
 import { WEEKDAY_LITURGY } from './weekdayLiturgy';
@@ -20,7 +21,8 @@ export function resolveRoysterLiturgySequence(day: OrthocalDay | null): RoysterL
   const weekday = clampWeekday(day.weekday);
 
   if (weekday === 0) {
-    return SUNDAY_LITURGY_BY_TONE[clampTone(day.tone)];
+    const tone = resolveOrthocalTone(day) ?? 1;
+    return SUNDAY_LITURGY_BY_TONE[clampTone(tone)];
   }
 
   return WEEKDAY_LITURGY[weekday];

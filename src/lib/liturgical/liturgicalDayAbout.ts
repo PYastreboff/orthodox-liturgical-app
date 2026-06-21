@@ -3,6 +3,7 @@ import type { LiturgicalDayAppearance } from '../calendar/dayAppearance';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
 import type { CommemorationEntry } from './commemorations';
+import { resolveOrthocalTone } from './orthocalTone';
 
 const MAJOR_FEAST_BY_APPEARANCE: Record<string, string> = {
   nativity: 'dayAbout.majorFeast.nativity',
@@ -109,7 +110,8 @@ function leadParagraph(text: string, maxLen = 520): string {
 }
 
 function toneNumber(day: OrthocalDay | null, toneLabel: string): number | null {
-  if (day && day.tone >= 1 && day.tone <= 8) return day.tone;
+  const resolved = resolveOrthocalTone(day);
+  if (resolved !== null) return resolved;
   const match = toneLabel.match(/(\d)/);
   return match ? Number(match[1]) : null;
 }

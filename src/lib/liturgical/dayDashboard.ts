@@ -11,7 +11,7 @@ import {
   type FastSummaryKind,
   type FastingFoodsDetail,
 } from '../../i18n/fastingLabels';
-import { localizedToneLabel } from '../../i18n/feastRank';
+import { localizedToneLabel, localizedToneLabelForOrthocalDay } from '../../i18n/feastRank';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
 import type { PlainDate } from '../calendar/julianGregorian';
@@ -98,7 +98,7 @@ export function buildDayDashboard(
   const localFallbackTitle = appearance.label || 'Liturgical Day';
 
   const toneLabel = liturgicalDay
-    ? localizedToneLabel(liturgicalDay.tone, lang)
+    ? localizedToneLabelForOrthocalDay(liturgicalDay, lang)
     : localizedToneLabel(4, lang);
   const apiFeastRank = getFeastRankDisplay(
     liturgicalDay?.feast_level,
