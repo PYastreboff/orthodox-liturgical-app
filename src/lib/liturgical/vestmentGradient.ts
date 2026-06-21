@@ -22,7 +22,6 @@ const HERO_GRADIENT_BY_PILL_BG: Record<string, VestmentHeroStyle> = {
   '#8b2e3c': { gradient: ['#b84a58', '#4a1520'], foreground: '#ffffff' },
   '#2d5a3e': { gradient: ['#4a8a62', '#1a3024'], foreground: '#ffffff' },
   '#121010': { gradient: ['#2a2826', '#0a0a0a'], foreground: '#f2ebe2' },
-  '#1f2433': { gradient: ['#3a4558', '#0f141f'], foreground: '#e8eef8' },
   '#5c3d6e': { gradient: ['#7a5a8c', '#2a1838'], foreground: '#f7eef8' },
 };
 
@@ -40,7 +39,6 @@ const DARK_HERO_GRADIENT_BY_PILL_BG: Record<string, VestmentHeroStyle> = {
   '#8b2e3c': { gradient: ['#9a3a48', '#421820'], foreground: '#ffffff' },
   '#2d5a3e': { gradient: ['#3d7254', '#1a3024'], foreground: '#ffffff' },
   '#121010': { gradient: ['#2a2826', '#0a0a0a'], foreground: colors.darkInk },
-  '#1f2433': { gradient: ['#3a4558', '#0f141f'], foreground: '#e8eef8' },
   '#5c3d6e': { gradient: ['#684878', '#2a1838'], foreground: '#f7eef8' },
 };
 

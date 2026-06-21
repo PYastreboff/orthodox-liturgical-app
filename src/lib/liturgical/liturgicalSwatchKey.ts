@@ -6,7 +6,6 @@ export type LiturgicalSwatchKey =
   | 'blue'
   | 'red'
   | 'green'
-  | 'dark'
   | 'black'
   | 'purple';
 
@@ -20,14 +19,19 @@ export function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): Liturg
   if (key === 'ascension' || key === 'ascension_leavetaking' || label.includes('ascension')) {
     return 'white';
   }
+  if (key === 'theophany' || label.includes('theophany')) return 'white';
+  if (key === 'transfiguration' || label.includes('transfiguration')) return 'white';
+  if (key === 'nativity_john_baptist' || label.includes('john the baptist')) return 'red';
+
   if (
     key === 'nativity' ||
-    (label.includes('nativity') && !label.includes('theotokos') && !label.includes('fast'))
+    (label.includes('nativity') &&
+      !label.includes('theotokos') &&
+      !label.includes('fast') &&
+      !label.includes('john'))
   ) {
     return 'white';
   }
-  if (key === 'theophany' || label.includes('theophany')) return 'white';
-  if (key === 'transfiguration' || label.includes('transfiguration')) return 'white';
 
   if (key === 'great_friday' || label.includes('holy friday')) return 'black';
   if (key === 'holy_week') return 'black';
@@ -68,7 +72,7 @@ export function liturgicalSwatchKey(appearance: LiturgicalDayAppearance): Liturg
     return 'red';
   }
 
-  if (key === 'wednesday_fast' || key === 'friday_fast') return 'dark';
+  if (key === 'wednesday_fast' || key === 'friday_fast') return 'purple';
 
   if (key === 'sunday' || key === 'saturday' || key === 'weekday') return 'gold';
 

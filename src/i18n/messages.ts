@@ -338,6 +338,8 @@ const en = {
       nativityTheotokos: 'Blue for the Nativity of the Theotokos — a feast of the Mother of God.',
       presentation: 'Blue for the Presentation of the Lord in the Temple.',
       peterAndPaul: 'Gold for the feast of the Holy Apostles Peter and Paul.',
+      nativityJohnBaptist:
+        'Red for the Nativity of St John the Baptist — and his other feast days in general.',
       allSaintsRussia:
         'Gold for All Saints of Russia — the second Sunday after Pentecost, even during the Apostles’ Fast.',
       elevationCross: 'Red for feasts of the Cross — the Precious and Life-giving Cross.',
@@ -349,8 +351,8 @@ const en = {
       lentSunday: 'Purple for Lenten Sundays — the general Great Lent colour on weekends.',
       lentSaturday:
         'Purple for Lenten Saturdays; wine and oil may be allowed where the rubrics permit.',
-      wednesdayFast: 'Dark vestments on fasting days — Wednesday commemorates the betrayal of Christ.',
-      fridayFast: 'Dark vestments on fasting days — Friday commemorates the Passion of the Lord.',
+      wednesdayFast: 'Purple on Wednesday fast — commemorating the betrayal of Christ.',
+      fridayFast: 'Purple on Friday fast — commemorating the Passion of the Lord.',
       sunday: 'Gold for the Lord’s Day — the weekly feast of the Resurrection.',
       allSaints: 'Gold for the Sunday of All Saints after Pentecost.',
       apostlesFastSeason:
@@ -363,18 +365,17 @@ const en = {
       gold: 'Gold for a Sunday or great feast of the Lord or the saints.',
       white: 'White for a great feast of the Lord — purity and the uncreated Light.',
       blue: 'Blue for a feast of the Mother of God or her icons.',
-      red: 'Red for the Cross, martyrs, angels, and Sundays during the Nativity, Dormition, and Apostles fasts.',
+      red: 'Red for the Cross, martyrs, angels, St John the Baptist, and Sundays during the minor fasts.',
       green: 'Green for the Holy Spirit, Palm Sunday, or Pentecost season.',
-      dark: 'Dark vestments on a fast day or penitential season.',
       black: 'Black for mourning, Passion, or the most solemn services.',
-      purple: 'Purple for Great Lent weekends and for weekdays during the Nativity, Dormition, and Apostles fasts.',
+      purple:
+        'Purple for Great Lent weekends, minor-fast weekdays, and Wednesday/Friday fasts.',
     },
     colorGold: 'Gold',
     colorWhite: 'White',
     colorBlue: 'Blue',
     colorRed: 'Red',
     colorGreen: 'Green',
-    colorDark: 'Dark',
     colorBlack: 'Black',
     colorPurple: 'Purple',
     saintsPlaceholder: 'Commemorations will appear when connected.',
@@ -455,6 +456,7 @@ const en = {
     nativity_theotokos: 'Nativity of the Theotokos',
     presentation: 'Presentation of the Lord',
     peter_and_paul: 'Saints Peter and Paul',
+    nativity_john_baptist: 'Nativity of St John the Baptist',
     nativity: 'Nativity',
     theophany: 'Theophany',
     transfiguration: 'Transfiguration',
@@ -829,6 +831,8 @@ const ru = {
       nativityTheotokos: 'Голубой на Рождество Пресвятой Богородицы — праздник Божией Матери.',
       presentation: 'Голубой на Сретение Господне в храме.',
       peterAndPaul: 'Золотой на праздник святых апостолов Петра и Павла.',
+      nativityJohnBaptist:
+        'Красный на Рождество святого Иоанна Предтечи — и на его прочие праздники.',
       allSaintsRussia:
         'Золотой на всех святых, в земле Русской просиявших — даже в Петров пост.',
       elevationCross:
@@ -843,9 +847,9 @@ const ru = {
       lentSaturday:
         'Фиолетовый в пост; в субботу могут быть разрешены вино и елей — ризы часто остаются покаянными.',
       wednesdayFast:
-        'Тёмные ризы в дни поста — среда в память предательства Христа.',
+        'Фиолетовый в среду — день поста в память предательства Христа.',
       fridayFast:
-        'Тёмные ризы в дни поста — пятница в память Страстей Господних.',
+        'Фиолетовый в пятницу — день поста в память Страстей Господних.',
       sunday:
         'Золотой на Господень день — еженедельный праздник Воскресения.',
       allSaints: 'Золотой в Неделю всех святых после Пятидесятницы.',
@@ -859,19 +863,17 @@ const ru = {
       gold: 'Золотой на воскресенье или великий праздник Господа или святых.',
       white: 'Белый на великий праздник Господень — чистота и небесный свет.',
       blue: 'Голубой на праздник Пресвятой Богородицы или Её икон.',
-      red: 'Красный на Крест, мучеников, ангелов и воскресенья постов Рождества, Успения и апостольского.',
+      red: 'Красный на Крест, мучеников, ангелов, Иоанна Предтечу и воскресенья малых постов.',
       green: 'Зелёный на Духа Святого, Вход Господень или Пятидесятницу.',
-      dark: 'Тёмные ризы в день поста или покаянный период.',
       black: 'Чёрный в трауре, Страстях или на самых торжественных службах печали.',
       purple:
-        'Фиолетовый в воскресенья и субботы Великого поста и в будни малых постов.',
+        'Фиолетовый в воскресенья и субботы Великого поста, в будни малых постов и в среду/пятницу.',
     },
     colorGold: 'Золотой',
     colorWhite: 'Белый',
     colorBlue: 'Голубой',
     colorRed: 'Красный',
     colorGreen: 'Зелёный',
-    colorDark: 'Тёмный',
     colorBlack: 'Чёрный',
     colorPurple: 'Фиолетовый',
     saintsPlaceholder: 'Память святых появится после подключения.',
@@ -952,6 +954,7 @@ const ru = {
     nativity_theotokos: 'Рождество Пресвятой Богородицы',
     presentation: 'Сретение Господне',
     peter_and_paul: 'Святые апостолы Петр и Павел',
+    nativity_john_baptist: 'Рождество святого Иоанна Предтечи',
     nativity: 'Рождество',
     theophany: 'Богоявление',
     transfiguration: 'Преображение',

@@ -124,6 +124,12 @@ const cases: Case[] = [
     expectSwatch: 'red',
   },
   {
+    name: 'Nativity of St John the Baptist (24 Jun Julian 2026)',
+    date: civilFromJulian(2026, 6, 24),
+    expectKey: 'nativity_john_baptist',
+    expectSwatch: 'red',
+  },
+  {
     name: 'SS Peter & Paul (29 Jun Julian 2026)',
     date: civilFromJulian(2026, 6, 29),
     expectKey: 'peter_and_paul',

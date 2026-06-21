@@ -366,6 +366,18 @@ export function applyOrthocalFeastAppearance(
       gregorianSubtitle,
     );
   }
+  if (
+    /\bnativity of (?:st\.? )?john(?: the)? baptist\b|\bnativity of the forerunner\b|\bforerunner and baptist\b/i.test(
+      haystack,
+    )
+  ) {
+    return redFeastAppearanceFields(
+      'nativity_john_baptist',
+      'Nativity of St John the Baptist',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
   if (/\bnativity of (?:the )?(?:holy )?theotokos\b/i.test(haystack)) {
     return theotokosAppearanceFields(
       'nativity_theotokos',
@@ -441,6 +453,7 @@ export function getLiturgicalDayAppearance(
   const theophany = { year: y, month: 1, day: 6 } satisfies PlainDate;
   const presentation = { year: y, month: 2, day: 2 } satisfies PlainDate;
   const nativityTheotokos = { year: y, month: 9, day: 8 } satisfies PlainDate;
+  const nativityJohnBaptist = { year: y, month: 6, day: 24 } satisfies PlainDate;
   const transfiguration = { year: y, month: 8, day: 6 } satisfies PlainDate;
   const dormition = { year: y, month: 8, day: 15 } satisfies PlainDate;
   const elevationCross = { year: y, month: 9, day: 14 } satisfies PlainDate;
@@ -666,6 +679,15 @@ export function getLiturgicalDayAppearance(
     );
   }
 
+  if (sameLiturgicalDate(liturgical, nativityJohnBaptist)) {
+    return redFeastAppearanceFields(
+      'nativity_john_baptist',
+      'Nativity of St John the Baptist',
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
   if (inDormitionFast) {
     return minorFastSeasonAppearance(
       'dormition_fast',
@@ -717,14 +739,9 @@ export function getLiturgicalDayAppearance(
   }
 
   if (isWeeklyFastDay(jdn, civilWeekday, liturgical)) {
-    return {
-      key: civilWeekday === 3 ? 'wednesday_fast' : 'friday_fast',
-      gradient: ['#dfe3ec', '#9aa8bc'],
-      foreground: '#1e1a16',
-      subtitle,
-      gregorianSubtitle,
-      label: civilWeekday === 3 ? 'Wednesday fast' : 'Friday fast',
-    };
+    const key = civilWeekday === 3 ? 'wednesday_fast' : 'friday_fast';
+    const label = civilWeekday === 3 ? 'Wednesday fast' : 'Friday fast';
+    return purpleFastWeekdayAppearanceFields(key, label, subtitle, gregorianSubtitle);
   }
 
   if (wd === 0) return baseSunday;

@@ -37,7 +37,6 @@ const SWATCH_COLOR_KEYS = {
   blue: 'vestments.colorBlue',
   red: 'vestments.colorRed',
   green: 'vestments.colorGreen',
-  dark: 'vestments.colorDark',
   black: 'vestments.colorBlack',
   purple: 'vestments.colorPurple',
 } as const;
@@ -50,7 +49,6 @@ const SWATCH = {
   blue: { pillBg: '#2f4a6f', pillText: '#ffffff' },
   red: { pillBg: '#8b2e3c', pillText: '#ffffff' },
   green: { pillBg: '#2d5a3e', pillText: '#ffffff' },
-  dark: { pillBg: '#1f2433', pillText: '#ffffff' },
   black: { pillBg: '#121010', pillText: '#ffffff' },
   purple: { pillBg: '#5c3d6e', pillText: '#ffffff' },
 } as const satisfies Record<SwatchKey, Omit<VestmentSwatch, 'name'>>;
@@ -65,6 +63,7 @@ const REASON_KEY_BY_APPEARANCE: Record<string, string> = {
   nativity_theotokos: 'vestments.reason.nativityTheotokos',
   presentation: 'vestments.reason.presentation',
   peter_and_paul: 'vestments.reason.peterAndPaul',
+  nativity_john_baptist: 'vestments.reason.nativityJohnBaptist',
   pascha: 'vestments.reason.pascha',
   bright_week: 'vestments.reason.brightWeek',
   theophany: 'vestments.reason.theophany',
@@ -112,7 +111,6 @@ const REASON_BY_SWATCH: Record<SwatchKey, string> = {
   blue: 'vestments.reason.blue',
   red: 'vestments.reason.red',
   green: 'vestments.reason.green',
-  dark: 'vestments.reason.dark',
   black: 'vestments.reason.black',
   purple: 'vestments.reason.purple',
 };
@@ -280,8 +278,8 @@ function layClothingLine(lang: UiLanguage): VestmentLine {
     kind: 'layClothing',
     label: translate(lang, 'vestments.layWhatYouWear'),
     value: translate(lang, 'vestments.layWhatYouWearValue'),
-    pillBg: SWATCH.dark.pillBg,
-    pillText: SWATCH.dark.pillText,
+    pillBg: SWATCH.black.pillBg,
+    pillText: SWATCH.black.pillText,
   };
 }
 
