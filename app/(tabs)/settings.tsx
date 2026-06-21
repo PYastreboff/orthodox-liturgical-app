@@ -191,14 +191,6 @@ export default function SettingsScreen() {
       </SettingsSection>
 
       <SettingsSection
-        title={t('settings.bugReportTitle')}
-        description={t('settings.bugReportHint')}
-        isDark={isDark}
-      >
-        <BugReportLink isDark={isDark} />
-      </SettingsSection>
-
-      <SettingsSection
         title={t('settings.colorsLegend')}
         description={t('settings.colorsLegendHint')}
         isDark={isDark}
@@ -208,6 +200,14 @@ export default function SettingsScreen() {
           mutedColor={isDark ? '#a39e98' : colors.muted}
           variant="settings"
         />
+      </SettingsSection>
+
+      <SettingsSection
+        title={t('settings.bugReportTitle')}
+        description={t('settings.bugReportHint')}
+        isDark={isDark}
+      >
+        <BugReportLink isDark={isDark} />
       </SettingsSection>
 
       <View style={styles.footer}>
