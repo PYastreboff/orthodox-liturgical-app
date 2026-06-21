@@ -90,7 +90,7 @@ const en = {
     legendTitle: 'What the colours mean',
     legendFastingHint:
       'Light grey marks a fasting day — Great Lent, other fast seasons, and most Wednesdays and Fridays.',
-    legendIconsTitle: 'Icons on fast days (top-right of cell)',
+    legendIconsTitle: 'Icons on fast days',
     searchTitle: 'Search',
     searchPlaceholder: 'Search saints and feasts…',
     searchFilterAll: 'All',
@@ -613,7 +613,7 @@ const ru = {
     legendTitle: 'Значение цветов',
     legendFastingHint:
       'Светло-серый — постный день: Великий пост, другие посты и большинство сред и пятниц.',
-    legendIconsTitle: 'Значки в постные дни (в углу ячейки)',
+    legendIconsTitle: 'Значки в постные дни',
     searchTitle: 'Поиск',
     searchPlaceholder: 'Поиск святых и праздников…',
     searchFilterAll: 'Все',
