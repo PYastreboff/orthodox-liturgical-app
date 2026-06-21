@@ -1,5 +1,6 @@
 import type { PrimaryCalendar } from '../calendar/dateDisplay';
 import { fromDayIso } from '../calendar/localDate';
+import { fuzzyNameScore, normalizeSearchText } from './fuzzySearch';
 import type { MonthDayMap } from './orthocalMonthCache';
 import { loadCalendarYear } from './orthocalMonthCache';
 
@@ -16,20 +17,6 @@ export type CalendarSearchResult = {
 };
 
 export type CalendarSearchFilter = 'all' | 'saint' | 'feast';
-
-function normalizeSearchText(value: string): string {
-  return value
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .trim();
-}
-
-function matchesQuery(text: string, query: string): boolean {
-  const needle = normalizeSearchText(query);
-  if (!needle) return false;
-  return normalizeSearchText(text).includes(needle);
-}
 
 function isGreatFeastName(name: string, greatFeastNames: string[]): boolean {
   const norm = (value: string) => normalizeSearchText(value);
@@ -73,6 +60,20 @@ export function buildCalendarSearchIndex(dayByIso: MonthDayMap): CalendarSearchR
   return entries.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
+function relevanceScore(entry: CalendarSearchResult, query: string): number {
+  let score = fuzzyNameScore(entry.name, query);
+  if (score <= 0) return 0;
+
+  if (entry.isGreatFeast && entry.kind === 'feast') {
+    score *= 1.06;
+  }
+
+  // Prefer shorter, more specific names when scores are close.
+  score += Math.max(0, 24 - normalizeSearchText(entry.name).length) * 0.4;
+
+  return score;
+}
+
 export function searchCalendarIndex(
   index: CalendarSearchResult[],
   query: string,
@@ -82,14 +83,21 @@ export function searchCalendarIndex(
   const trimmed = query.trim();
   if (trimmed.length < 2) return [];
 
-  const hits: CalendarSearchResult[] = [];
+  const scored: { entry: CalendarSearchResult; score: number }[] = [];
+
   for (const entry of index) {
     if (filter !== 'all' && entry.kind !== filter) continue;
-    if (!matchesQuery(entry.name, trimmed)) continue;
-    hits.push(entry);
-    if (hits.length >= limit) break;
+    const score = relevanceScore(entry, trimmed);
+    if (score <= 0) continue;
+    scored.push({ entry, score });
   }
-  return hits;
+
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.entry.date.getTime() - b.entry.date.getTime();
+  });
+
+  return scored.slice(0, limit).map((row) => row.entry);
 }
 
 const yearIndexCache = new Map<string, CalendarSearchResult[]>();

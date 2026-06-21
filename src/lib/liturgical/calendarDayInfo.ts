@@ -33,6 +33,8 @@ export type CalendarDayInfo = {
   greatFeastNames: string[];
   /** Blue fish / gold oil icons on fast days when orthocal allows them. */
   fastingFoodIcons: CalendarFastingFoodIcons;
+  /** False for the local appearance shell before orthocal data arrives. */
+  orthocalLoaded: boolean;
 };
 
 /** Max feast/saint lines shown inside a calendar month cell (feasts listed before saints). */
@@ -142,5 +144,6 @@ export function buildCalendarDayInfo(
     appearanceKey,
     greatFeastNames,
     fastingFoodIcons,
+    orthocalLoaded: day !== null,
   };
 }

@@ -1,7 +1,8 @@
 import type { OrthocalDay } from '../lib/api/orthocal';
 import type { PlainDate } from '../lib/calendar/julianGregorian';
-import { isCheesefareWeekPaschaDistance } from '../lib/calendar/meatFast';
-import { localizedWeeklyFastDayLabel } from '../lib/calendar/weeklyFast';
+import { gregorianPlainToJulianPlain, julianCalendarToJulianDayNumber } from '../lib/calendar/julianGregorian';
+import { isCheesefareWeekPaschaDistance, isMeatFastRule } from '../lib/calendar/meatFast';
+import { isInCheesefareWeek, localizedWeeklyFastDayLabel } from '../lib/calendar/weeklyFast';
 import { translate } from './translate';
 import type { UiLanguage } from './types';
 
@@ -136,6 +137,15 @@ function parseFastExceptionDesc(raw: string | undefined | null): FastExceptionPa
     return { kind: 'none' };
   }
 
+  if (normalized.includes('strict fast')) {
+    const paren = normalized.match(/\(([^)]+)\)/);
+    if (paren) {
+      const foods = allowedFoodsInPrefix(paren[1]);
+      if (foods.length > 0) return { kind: 'allow', foods };
+    }
+    return { kind: 'none' };
+  }
+
   if (!normalized.includes('allowed') && !normalized.includes('permitted')) {
     return { kind: 'none' };
   }
@@ -159,6 +169,29 @@ function resolveFastException(day: OrthocalDay): FastExceptionParse {
 }
 
 export { isMeatFastRule } from '../lib/calendar/meatFast';
+
+/** Meat fast from orthocal and/or local Cheesefare week appearance (incl. before API loads). */
+function isMeatFastAppearance(
+  day: OrthocalDay | null,
+  appearanceKey: string,
+  civil: PlainDate,
+): boolean {
+  if (day && isMeatFastRule(day)) return true;
+  if (appearanceKey.startsWith('cheesefare_fast')) return true;
+  const julian = gregorianPlainToJulianPlain(civil);
+  const jdn = julianCalendarToJulianDayNumber(julian.year, julian.month, julian.day);
+  return isInCheesefareWeek(jdn, julian.year);
+}
+
+function isStrictFastAppearanceFallback(appearanceKey: string): boolean {
+  if (appearanceKey.startsWith('cheesefare_fast')) return false;
+  return (
+    appearanceKey === 'great_lent' ||
+    appearanceKey.startsWith('lent_') ||
+    appearanceKey === 'holy_week' ||
+    appearanceKey.endsWith('_fast')
+  );
+}
 
 function detailForMeatFast(lang: UiLanguage): FastingFoodsDetail {
   return {
@@ -244,14 +277,19 @@ function fastExceptionNote(day: OrthocalDay, lang: UiLanguage): string | undefin
   return key ? translate(lang, key) : exception;
 }
 
+function detailForStrictFast(lang: UiLanguage): FastingFoodsDetail {
+  return {
+    ruleLabel: translate(lang, 'fasting.levelStrict'),
+    allowed: foodItems(lang, ['plant']),
+    notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
+  };
+}
+
 function detailForFastLevel(level: number, lang: UiLanguage): FastingFoodsDetail {
   switch (level) {
     case 1:
-      return {
-        ruleLabel: translate(lang, 'fasting.levelStrict'),
-        allowed: foodItems(lang, ['plant']),
-        notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
-      };
+    case 5:
+      return detailForStrictFast(lang);
     case 2:
       return {
         ruleLabel: translate(lang, 'fasting.levelWineOil'),
@@ -269,12 +307,6 @@ function detailForFastLevel(level: number, lang: UiLanguage): FastingFoodsDetail
         ruleLabel: translate(lang, 'fasting.levelDairy'),
         allowed: foodItems(lang, ['plant', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
         notAllowed: foodItems(lang, ['meat']),
-      };
-    case 5:
-      return {
-        ruleLabel: translate(lang, 'fasting.levelStrict'),
-        allowed: foodItems(lang, ['plant']),
-        notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
       };
     default:
       return {
@@ -330,6 +362,39 @@ export function fastSummaryKindFromDetail(
   return 'strict';
 }
 
+/** Hero chip: "Fast" with optional fish / wine / oil icons; hidden on non-fast days. */
+export type HeroFastChipDisplay = {
+  label: string;
+  icons: { fish: boolean; wine: boolean; oil: boolean };
+};
+
+export function heroFastChipDisplay(
+  detail: FastingFoodsDetail,
+  isFastDay: boolean,
+  lang: UiLanguage,
+): HeroFastChipDisplay | null {
+  if (!isFastDay) return null;
+  if (detail.allowed.some((item) => item.kind === 'all')) return null;
+
+  const allowed = new Set(detail.allowed.map((item) => item.kind));
+  return {
+    label: translate(lang, 'fasting.summaryFast'),
+    icons: {
+      fish: allowed.has('fish'),
+      wine: allowed.has('wine'),
+      oil: allowed.has('oil'),
+    },
+  };
+}
+
+export function showHeroFeastRankChip(
+  feastRank: { glyph: string },
+  isMajorFeastDay: boolean,
+): boolean {
+  if (isMajorFeastDay) return true;
+  return feastRank.glyph !== 'ordinary';
+}
+
 /** Allowed / not allowed lists and orthocal rule name for the Fasting section body. */
 export function localizedFastingFoodsDetail(
   day: OrthocalDay | null,
@@ -344,30 +409,31 @@ export function localizedFastingFoodsDetail(
 
   if (day) {
     const exception = resolveFastException(day);
-    if (exception.kind === 'meat_fast') {
-      return detailForMeatFast(lang);
-    }
     if (exception.kind === 'fast_free') {
       return detailForFastLevel(0, lang);
     }
   }
 
+  if (isMeatFastAppearance(day, appearanceKey, civil)) {
+    return detailForMeatFast(lang);
+  }
+
   if (weeklyFast) {
     return {
-      ruleLabel: localizedWeeklyFastDayLabel(civil, lang) ?? translate(lang, 'fasting.levelStrict'),
-      allowed: foodItems(lang, ['plant']),
-      notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
+      ...detailForStrictFast(lang),
+      ruleLabel:
+        localizedWeeklyFastDayLabel(civil, lang) ?? translate(lang, 'fasting.levelStrict'),
     };
   }
 
   if (!day) {
-    if (appearanceKey.includes('lent') || appearanceKey.includes('fast')) {
-      return detailForFastLevel(5, lang);
+    if (isStrictFastAppearanceFallback(appearanceKey)) {
+      return detailForStrictFast(lang);
     }
     return detailForFastLevel(0, lang);
   }
 
-  const detail = detailForFastLevel(day.fast_level, lang);
+  const detail = detailForStrictFast(lang);
   const weeklyLabel = localizedWeeklyFastDayLabel(civil, lang);
   if (weeklyLabel && day.fast_level === 1) {
     detail.ruleLabel = weeklyLabel;
@@ -382,12 +448,36 @@ export function localizedFastingFoodsDetail(
 
 export type CalendarFastingFoodIcons = {
   fish: boolean;
+  wine: boolean;
   oil: boolean;
   /** Black X — total fast (Great and Holy Friday). */
   noEating: boolean;
 };
 
-/** Language-agnostic fish / oil flags for calendar month cells. */
+const MEAT_FAST_CALENDAR_ICONS = { fish: true, wine: true, oil: true } as const;
+
+/** Fish / wine / oil flags from orthocal fast_exception_desc (and related fields), not fast_level alone. */
+function orthocalFastFoodFlags(day: OrthocalDay): {
+  fish: boolean;
+  wine: boolean;
+  oil: boolean;
+} {
+  const parsed = resolveFastException(day);
+  if (parsed.kind === 'meat_fast') {
+    return { ...MEAT_FAST_CALENDAR_ICONS };
+  }
+  if (parsed.kind === 'allow') {
+    const foods = new Set(parsed.foods);
+    return {
+      fish: foods.has('fish'),
+      wine: foods.has('wine'),
+      oil: foods.has('oil'),
+    };
+  }
+  return { fish: false, wine: false, oil: false };
+}
+
+/** Language-agnostic fish / wine / oil flags for calendar month cells. */
 export function calendarFastingFoodIcons(
   day: OrthocalDay | null,
   appearanceKey: string,
@@ -395,16 +485,17 @@ export function calendarFastingFoodIcons(
   civil: PlainDate,
 ): CalendarFastingFoodIcons {
   if (!isOrthocalFastDay(day, appearanceKey, weeklyFast)) {
-    return { fish: false, oil: false, noEating: false };
+    return { fish: false, wine: false, oil: false, noEating: false };
   }
-  const detail = localizedFastingFoodsDetail(day, appearanceKey, weeklyFast, 'en', civil);
-  if (detail.totalAbstinence) {
-    return { fish: false, oil: false, noEating: true };
+  if (isGreatAndHolyFriday(appearanceKey)) {
+    return { fish: false, wine: false, oil: false, noEating: true };
   }
-  const allowed = new Set(detail.allowed.map((item) => item.kind));
-  return {
-    fish: allowed.has('fish'),
-    oil: allowed.has('oil'),
-    noEating: false,
-  };
+  if (isMeatFastAppearance(day, appearanceKey, civil)) {
+    return { ...MEAT_FAST_CALENDAR_ICONS, noEating: false };
+  }
+  if (!day || weeklyFast) {
+    return { fish: false, wine: false, oil: false, noEating: false };
+  }
+  const flags = orthocalFastFoodFlags(day);
+  return { ...flags, noEating: false };
 }

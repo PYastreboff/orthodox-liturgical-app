@@ -12,8 +12,12 @@ import {
 import { useTheme } from '@react-navigation/native';
 
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';
-import { CalendarFastingFoodIcon } from './CalendarFastingFoodIcon';
+import { CalendarFastingFoodIcon, calendarFastingFoodIconColor } from './CalendarFastingFoodIcon';
+import { CALENDAR_FASTING_ICON_SIZE } from './fastingAllowanceIcons';
+import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useOrthocalMonth } from '../hooks/useOrthocalMonth';
+import { toDayIso } from '../lib/calendar/localDate';
+import type { CalendarFastingFoodIcons } from '../i18n/fastingLabels';
 import {
   calendarCellCommemorations,
   CALENDAR_CELL_MAX_COMMEMORATIONS,
@@ -65,12 +69,51 @@ function narrowWeekdayLabel(dowIndex: number, intlLocale: string): string {
   return new Intl.DateTimeFormat(intlLocale, { weekday: 'narrow' }).format(date);
 }
 
-function isAgendaDay(info: CalendarDayInfo): boolean {
-  return (
+function isAgendaDay(info: CalendarDayInfo, phoneLayout: boolean): boolean {
+  if (
     info.feasts.length > 0 ||
     info.saints.length > 0 ||
     info.isFeastCell ||
     info.feastRank !== null
+  ) {
+    return true;
+  }
+  if (!phoneLayout) return false;
+  const icons = info.fastingFoodIcons;
+  return icons.noEating || icons.fish || icons.wine || icons.oil;
+}
+
+function CalendarFastingIconsRow({
+  icons,
+  isDark,
+  textColor,
+}: {
+  icons: CalendarFastingFoodIcons;
+  isDark: boolean;
+  textColor: string;
+}) {
+  const show =
+    icons.noEating || icons.fish || icons.wine || icons.oil;
+  if (!show) return null;
+
+  const iconColor = (kind: 'fish' | 'wine' | 'oil' | 'noEating') =>
+    calendarFastingFoodIconColor(kind, isDark && kind === 'noEating', textColor);
+
+  return (
+    <View style={styles.agendaFastingIcons}>
+      {icons.noEating ? (
+        <CalendarFastingFoodIcon kind="noEating" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('noEating')} />
+      ) : null}
+      {!icons.noEating && icons.fish ? (
+        <CalendarFastingFoodIcon kind="fish" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('fish')} />
+      ) : null}
+      {!icons.noEating && icons.wine ? (
+        <CalendarFastingFoodIcon kind="wine" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('wine')} />
+      ) : null}
+      {!icons.noEating && icons.oil ? (
+        <CalendarFastingFoodIcon kind="oil" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('oil')} />
+      ) : null}
+    </View>
   );
 }
 
@@ -116,6 +159,7 @@ function calendarDayHoverLabel(
   const fastingLabels = [
     dayInfo.fastingFoodIcons.noEating ? t('fasting.levelNoEating') : null,
     dayInfo.fastingFoodIcons.fish ? t('fasting.foodFish') : null,
+    dayInfo.fastingFoodIcons.wine ? t('fasting.foodWine') : null,
     dayInfo.fastingFoodIcons.oil ? t('fasting.foodOil') : null,
   ].filter(Boolean);
   return [
@@ -173,6 +217,7 @@ export function LiturgicalMonthGrid({
   }).format(visibleMonth);
 
   const isCompact = width < CALENDAR_COMPACT_BREAKPOINT;
+  const phoneLayout = usePhoneLayout();
   const horizontalPad = isCompact ? 8 : 12;
   const gap = isCompact ? 3 : 5;
   const contentWidth = width - horizontalPad * 2;
@@ -208,9 +253,18 @@ export function LiturgicalMonthGrid({
             ‹
           </Text>
         </Pressable>
-        <Text style={[styles.monthTitle, isCompact ? styles.monthTitleCompact : null, { color: theme.colors.text }]}>
-          {title}
-        </Text>
+        <View style={styles.monthTitleWrap}>
+          <Text style={[styles.monthTitle, isCompact ? styles.monthTitleCompact : null, { color: theme.colors.text }]}>
+            {title}
+          </Text>
+          {loading ? (
+            <ActivityIndicator
+              size="small"
+              color={colors.accentWine}
+              accessibilityLabel={t('calendar.loading')}
+            />
+          ) : null}
+        </View>
         <Pressable
           onPress={() => onChangeMonth(1)}
           style={({ pressed }) => [
@@ -279,20 +333,25 @@ export function LiturgicalMonthGrid({
           ))}
         </View>
 
-        <View style={loading ? styles.gridLoading : null}>
+        <View>
           {rows.map((week, wi) => (
             <View key={wi} style={[styles.weekRow, { width: contentWidth, gap }]}>
               {week.map((date, di) => (
-                <View key={di} style={[styles.cellSlot, { width: cellWidth, height: cellHeight }]}>
+                <View
+                  key={date ? toDayIso(date) : `empty-${wi}-${di}`}
+                  style={[styles.cellSlot, { width: cellWidth, height: cellHeight }]}
+                >
                   {date ? (
                     <DayCell
                       date={date}
                       today={today}
                       typikonSize={typikonSize}
                       compact={isCompact}
+                      phoneLayout={phoneLayout}
                       onPress={onDayPress}
                       dayInfo={dayInfoForDate(date)}
                       showTypikonForDate={showTypikonForDate}
+                      enriching={loading && !dayInfoForDate(date).orthocalLoaded}
                     />
                   ) : null}
                 </View>
@@ -300,38 +359,22 @@ export function LiturgicalMonthGrid({
             </View>
           ))}
         </View>
-
-        {loading ? (
-          <View
-            style={[
-              styles.loadingOverlay,
-              {
-                backgroundColor: isDark ? 'rgba(18,16,14,0.72)' : 'rgba(232,227,216,0.82)',
-              },
-            ]}
-            accessibilityLiveRegion="polite"
-            accessibilityLabel={t('calendar.loading')}
-          >
-            <ActivityIndicator size="small" color={colors.accentWine} />
-            <Text style={[styles.loadingText, { color: isDark ? colors.darkInk : colors.ink }]}>
-              {t('calendar.loading')}
-            </Text>
-          </View>
-        ) : null}
       </View>
 
-      {isCompact && onDayPress ? (
+      {(isCompact || phoneLayout) && onDayPress ? (
         <CalendarMonthAgenda
           dates={monthDates}
           today={today}
           dayInfoForDate={dayInfoForDate}
           showTypikonForDate={showTypikonForDate}
           onDayPress={onDayPress}
+          phoneLayout={phoneLayout}
           intlLocale={intlLocale}
           textColor={theme.colors.text}
           mutedColor={isDark ? '#a39e98' : colors.muted}
           cardBg={isDark ? colors.darkSurface : colors.card}
           borderColor={theme.colors.border}
+          isDark={isDark}
         />
       ) : null}
     </View>
@@ -356,17 +399,21 @@ function DayCell({
   today,
   typikonSize,
   compact,
+  phoneLayout,
   onPress,
   dayInfo,
   showTypikonForDate,
+  enriching = false,
 }: {
   date: Date;
   today: Date;
   typikonSize: number;
   compact: boolean;
+  phoneLayout: boolean;
   onPress?: (date: Date) => void;
   dayInfo: CalendarDayInfo;
   showTypikonForDate: (date: Date) => boolean;
+  enriching?: boolean;
 }) {
   const { t, lang } = useAppTranslation();
   const scheme = useColorScheme();
@@ -447,9 +494,10 @@ function DayCell({
   const saintCount = displayInfo.saints.length;
   const markerCount = feastCount + saintCount;
   const fastingIcons = dayInfo.fastingFoodIcons;
-  const fastingIconSize = compact ? 12 : typikonSize >= 20 ? 18 : 16;
-  const showFastingIcons =
-    fastingIcons.noEating || fastingIcons.fish || fastingIcons.oil;
+  const fastingIconSize = compact ? 17 : CALENDAR_FASTING_ICON_SIZE;
+  const showFastingIconsInCell =
+    !phoneLayout &&
+    (fastingIcons.noEating || fastingIcons.fish || fastingIcons.wine || fastingIcons.oil);
 
   return (
     <Pressable
@@ -464,7 +512,7 @@ function DayCell({
         styles.cellWrap,
         isWeb ? styles.cellWrapWeb : null,
         {
-          opacity: pressed ? 0.92 : 1,
+          opacity: pressed ? 0.92 : enriching ? 0.88 : 1,
           backgroundColor: cellBackgroundColor,
           borderWidth,
           borderColor: hoverBorderColor,
@@ -481,7 +529,7 @@ function DayCell({
             <TypikonGlyphIcon glyph={feastRank.glyph} size={typikonSize} color={typikonColor} />
           </HoverAccessible>
         ) : null}
-        {showFastingIcons ? (
+        {showFastingIconsInCell ? (
           <View
             style={[styles.fastingCorner, compact ? styles.fastingCornerCompact : null]}
           >
@@ -490,6 +538,9 @@ function DayCell({
             ) : null}
             {!fastingIcons.noEating && fastingIcons.fish ? (
               <CalendarFastingFoodIcon kind="fish" size={fastingIconSize} />
+            ) : null}
+            {!fastingIcons.noEating && fastingIcons.wine ? (
+              <CalendarFastingFoodIcon kind="wine" size={fastingIconSize} />
             ) : null}
             {!fastingIcons.noEating && fastingIcons.oil ? (
               <CalendarFastingFoodIcon kind="oil" size={fastingIconSize} />
@@ -587,25 +638,29 @@ function CalendarMonthAgenda({
   dayInfoForDate,
   showTypikonForDate,
   onDayPress,
+  phoneLayout,
   intlLocale,
   textColor,
   mutedColor,
   cardBg,
   borderColor,
+  isDark,
 }: {
   dates: Date[];
   today: Date;
   dayInfoForDate: (date: Date) => CalendarDayInfo;
   showTypikonForDate: (date: Date) => boolean;
   onDayPress: (date: Date) => void;
+  phoneLayout: boolean;
   intlLocale: string;
   textColor: string;
   mutedColor: string;
   cardBg: string;
   borderColor: string;
+  isDark: boolean;
 }) {
   const { t, lang } = useAppTranslation();
-  const agendaDates = dates.filter((date) => isAgendaDay(dayInfoForDate(date)));
+  const agendaDates = dates.filter((date) => isAgendaDay(dayInfoForDate(date), phoneLayout));
 
   return (
     <View style={styles.agenda}>
@@ -668,6 +723,11 @@ function CalendarMonthAgenda({
               >
                 {info.dayTitle}
               </Text>
+              <CalendarFastingIconsRow
+                icons={info.fastingFoodIcons}
+                isDark={isDark}
+                textColor={textColor}
+              />
               {lines.slice(0, CALENDAR_CELL_MAX_COMMEMORATIONS).map((line, index) => {
                 const lineColor = line.kind === 'feast' ? colors.feastBorder : mutedColor;
                 return (
@@ -752,6 +812,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.2,
   },
+  monthTitleWrap: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: 4,
+  },
   navBtn: {
     paddingHorizontal: 14,
     paddingVertical: 8,
@@ -763,21 +831,6 @@ const styles = StyleSheet.create({
   gridArea: {
     position: 'relative',
     minHeight: 120,
-  },
-  gridLoading: {
-    opacity: 0.45,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    paddingHorizontal: 24,
-  },
-  loadingText: {
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
   },
   weekHeaderRow: {
     flexDirection: 'row',
@@ -937,6 +990,12 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginBottom: 2,
   },
+  agendaFastingIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 4,
+  },
   agendaLine: {
     flex: 1,
     minWidth: 0,
@@ -978,7 +1037,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 1,
+    gap: 2,
   },
   fastingCornerCompact: {
     top: 1,

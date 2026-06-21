@@ -31,10 +31,15 @@ const FASTING_KEYS = new Set([
 ]);
 
 /** Calendar cells always use the light palette (readable on parchment & in dark mode). */
-const CELL_WHITE = '#ffffff';
-const CELL_FASTING = '#c4c1b8';
-const CELL_FEAST = '#f2a0ad';
-const CELL_PALM_SUNDAY = '#c8dcc4';
+export const CALENDAR_CELL_WHITE = '#ffffff';
+export const CALENDAR_CELL_FASTING = '#c4c1b8';
+export const CALENDAR_CELL_FEAST = '#f2a0ad';
+export const CALENDAR_CELL_PALM_SUNDAY = '#c8dcc4';
+
+const CELL_WHITE = CALENDAR_CELL_WHITE;
+const CELL_FASTING = CALENDAR_CELL_FASTING;
+const CELL_FEAST = CALENDAR_CELL_FEAST;
+const CELL_PALM_SUNDAY = CALENDAR_CELL_PALM_SUNDAY;
 
 export function isFeastCellAppearance(appearanceKey: string): boolean {
   return FEAST_CELL_APPEARANCE_KEYS.has(appearanceKey);

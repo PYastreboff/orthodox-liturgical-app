@@ -1,14 +1,13 @@
-import { Platform, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { useFontScale } from '../hooks/useFontScale';
+import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import type { LiturgicalTextCategory, LiturgicalTextItem } from '../lib/liturgical/liturgicalTexts';
 import { noneForDayLabel } from '../lib/liturgical/liturgicalTexts';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { LiturgicalReadingIcon } from './LiturgicalReadingIcon';
 
 const SIDE_BY_SIDE_MIN_WIDTH = 560;
-/** Match tab header breakpoint — centred titles only on wide web. */
-const SIDE_BY_SIDE_CENTER_TITLES_MIN_WIDTH = 768;
 
 function passageTitle(item: LiturgicalTextItem): string {
   const suffix = item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : '';
@@ -102,12 +101,12 @@ export function LiturgicalPassageBlockSideBySide({
   const { t } = useAppTranslation();
   const { text } = useFontScale();
   const { width } = useWindowDimensions();
+  const phoneLayout = usePhoneLayout();
   const headerType = text(14, 20);
   const labelType = text(11, 14);
   const hintType = text(12, 16);
   const horizontal = width >= SIDE_BY_SIDE_MIN_WIDTH;
-  const centerTitles =
-    horizontal && Platform.OS === 'web' && width >= SIDE_BY_SIDE_CENTER_TITLES_MIN_WIDTH;
+  const centerTitles = horizontal && !phoneLayout;
   const slavonic = slavonicItem ?? englishItem;
   const titleStyle = centerTitles ? styles.columnTitleCentered : null;
   const labelStyle = centerTitles ? styles.columnLabelCentered : null;
@@ -309,6 +308,7 @@ const styles = StyleSheet.create({
   },
   columnLabelCentered: {
     textAlign: 'center',
+    alignSelf: 'stretch',
   },
   columnTitle: {
     fontWeight: '700',
@@ -316,6 +316,7 @@ const styles = StyleSheet.create({
   },
   columnTitleCentered: {
     textAlign: 'center',
+    alignSelf: 'stretch',
   },
   loadingHint: {
     fontStyle: 'italic',

@@ -35,3 +35,25 @@ const FAST_PILL_STYLES: Record<FastSummaryKind, FastPillStyle> = {
 export function fastPillStyleForKind(kind: FastSummaryKind): FastPillStyle {
   return FAST_PILL_STYLES[kind];
 }
+
+/** Fasting pill kinds shown in Settings and documentation (order matters). */
+export const FAST_PILL_LEGEND_KINDS = [
+  'strict',
+  'wine_oil',
+  'fish',
+  'dairy',
+  'total_abstinence',
+  'no_fast',
+] as const satisfies readonly FastSummaryKind[];
+
+export const FAST_PILL_LEGEND_LABEL_KEY: Record<
+  (typeof FAST_PILL_LEGEND_KINDS)[number],
+  `fasting.${string}`
+> = {
+  strict: 'fasting.levelStrict',
+  wine_oil: 'fasting.levelWineOil',
+  fish: 'fasting.levelFish',
+  dairy: 'fasting.levelDairy',
+  total_abstinence: 'fasting.levelNoEating',
+  no_fast: 'fasting.summaryNoFast',
+};

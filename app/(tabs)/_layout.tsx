@@ -5,10 +5,12 @@ import { Platform, StyleSheet } from 'react-native';
 import { AppBrandHeader } from '../../src/components/AppBrandHeader';
 import { TabBarBleedBackground } from '../../src/components/TabBarBleedBackground';
 import { TAB_ICON_SIZE, tabBarIconOptions } from '../../src/components/TabBarIcon';
+import { useCalendarPrefetch } from '../../src/hooks/useCalendarPrefetch';
 import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
 import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useLayoutSafeAreaInsets } from '../../src/hooks/useLayoutSafeAreaInsets';
+import { usePreferences } from '../../src/state/PreferencesContext';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { isIosSafariBrowser } from '../../src/theme/webViewport';
 import { TAB_BAR_CONTENT_HEIGHT } from '../../src/theme/layout';
@@ -31,6 +33,8 @@ function tabBarBorderColor(isDark: boolean): string {
 function TabsLayoutContent() {
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
+  const { primaryCalendar } = usePreferences();
+  useCalendarPrefetch(primaryCalendar);
   const sceneBackground = theme.colors.background;
   const insets = useLayoutSafeAreaInsets();
   const { t } = useAppTranslation();

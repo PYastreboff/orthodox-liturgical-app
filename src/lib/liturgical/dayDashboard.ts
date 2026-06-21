@@ -5,6 +5,9 @@ import {
   fastSummaryKindFromDetail,
   localizedFastSummaryLabel,
   localizedFastingFoodsDetail,
+  heroFastChipDisplay,
+  showHeroFeastRankChip,
+  type HeroFastChipDisplay,
   type FastSummaryKind,
   type FastingFoodsDetail,
 } from '../../i18n/fastingLabels';
@@ -13,6 +16,7 @@ import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
 import type { PlainDate } from '../calendar/julianGregorian';
 import type { LiturgicalDayAppearance } from '../calendar/dayAppearance';
+import { isMeatFastRule } from '../calendar/meatFast';
 import {
   isWeeklyFastForCivilDate,
   localizedWeeklyFastDayLabel,
@@ -45,6 +49,9 @@ export type DayDashboardData = {
   fastSummaryLabel: string;
   /** Pill colour: strict, wine & oil, fish, dairy, no fast, total abstinence. */
   fastSummaryKind: FastSummaryKind;
+  /** Hero fast chip — null on non-fast days; "Fast" plus allowance icons. */
+  heroFastChip: HeroFastChipDisplay | null;
+  showHeroFeastRankChip: boolean;
   isFastDay: boolean;
   /** "Wednesday fast" / "Friday fast" in the Fasting section (null on other days). */
   weeklyFastSectionLabel: string | null;
@@ -71,6 +78,9 @@ function buildFastingNote(
   }
   if (isWeeklyFastForCivilDate(civil)) {
     return translate(lang, 'fasting.noteWeekly');
+  }
+  if (appearanceKey.startsWith('cheesefare_fast')) {
+    return translate(lang, 'fasting.noteMeatFast');
   }
   if (appearanceKey.includes('lent')) {
     return translate(lang, 'fasting.noteLent');
@@ -104,7 +114,9 @@ export function buildDayDashboard(
   const weeklyFastSectionLabel =
     isFastDay &&
     !isGreatAndHolyFriday(appearanceKey) &&
-    isWeeklyFastForCivilDate(civil)
+    isWeeklyFastForCivilDate(civil) &&
+    !(liturgicalDay && isMeatFastRule(liturgicalDay)) &&
+    !appearanceKey.startsWith('cheesefare_fast')
       ? localizedWeeklyFastDayLabel(civil, lang)
       : null;
   const fastSummaryLabel = localizedFastSummaryLabel(
@@ -153,6 +165,8 @@ export function buildDayDashboard(
     feastRank,
     fastSummaryLabel,
     fastSummaryKind,
+    heroFastChip: heroFastChipDisplay(fastingFoods, isFastDay, lang),
+    showHeroFeastRankChip: showHeroFeastRankChip(feastRank, isMajorFeastDay),
     isFastDay,
     weeklyFastSectionLabel,
     fastingFoods,

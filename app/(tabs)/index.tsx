@@ -305,7 +305,8 @@ export default function TodayScreen() {
         julianDateLabel={julianDateLabel}
         toneLabel={dashboard.toneLabel}
         feastRank={dashboard.feastRank}
-        fastLabel={dashboard.fastSummaryLabel}
+        heroFastChip={dashboard.heroFastChip}
+        showFeastRankChip={dashboard.showHeroFeastRankChip}
         isMajorFeastDay={dashboard.isMajorFeastDay}
         orthocalFeastLevel={liturgicalDay?.feast_level}
         canGoToToday={canGoToToday}
@@ -451,16 +452,10 @@ export default function TodayScreen() {
               : feastRankServiceLabel(dashboard.feastRank, lang)}
           </Text>
         </View>
-      </CollapsibleSection>
-
-      <CollapsibleSection
-        title={t('dayAbout.sectionTitle')}
-        icon="about-today"
-        expanded={!todayCollapsed.aboutToday}
-        onToggle={() => toggleSection('aboutToday')}
-        themeColors={theme.colors}
-      >
-        <Text style={[styles.aboutTodayBody, type.body, { color: theme.colors.text }]}>
+        <Text style={[styles.dayAboutHeading, type.body, { color: theme.colors.text }]}>
+          {t('dayAbout.sectionTitle')}
+        </Text>
+        <Text style={[styles.dayAboutBody, type.body, { color: theme.colors.text }]}>
           {aboutToday}
         </Text>
       </CollapsibleSection>
@@ -758,7 +753,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     opacity: 0.85,
   },
-  aboutTodayBody: {
+  dayAboutHeading: {
+    marginTop: 12,
+    fontWeight: '700',
+  },
+  dayAboutBody: {
+    marginTop: 4,
     opacity: 0.92,
   },
   dateLineValue: {

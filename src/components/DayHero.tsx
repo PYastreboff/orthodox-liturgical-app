@@ -8,11 +8,13 @@ import { useFontScale } from '../hooks/useFontScale';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
+import type { HeroFastChipDisplay } from '../i18n/fastingLabels';
 import { vestmentHeroGradient } from '../lib/liturgical/vestmentGradient';
 import { typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { colors } from '../theme/tokens';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
+import { FastingFoodIcon } from './FastingFoodIcon';
 import { TypikonSymbol } from './TypikonSymbol';
 
 type Props = {
@@ -22,7 +24,8 @@ type Props = {
   julianDateLabel?: string | null;
   toneLabel: string;
   feastRank: FeastRankDisplay;
-  fastLabel: string;
+  heroFastChip?: HeroFastChipDisplay | null;
+  showFeastRankChip?: boolean;
   isMajorFeastDay?: boolean;
   orthocalFeastLevel?: number;
   canGoToToday: boolean;
@@ -39,7 +42,8 @@ export function DayHero({
   julianDateLabel,
   toneLabel,
   feastRank,
-  fastLabel,
+  heroFastChip = null,
+  showFeastRankChip = true,
   isMajorFeastDay = false,
   orthocalFeastLevel,
   canGoToToday,
@@ -92,6 +96,17 @@ export function DayHero({
     : isDark
       ? 'rgba(255,255,255,0.14)'
       : 'rgba(255,255,255,0.72)';
+
+  const heroFastA11y = heroFastChip
+    ? [
+        heroFastChip.label,
+        heroFastChip.icons.fish ? t('fasting.foodFish') : null,
+        heroFastChip.icons.wine ? t('fasting.foodWine') : null,
+        heroFastChip.icons.oil ? t('fasting.foodOil') : null,
+      ]
+        .filter(Boolean)
+        .join(', ')
+    : null;
 
   return (
     <View
@@ -193,38 +208,59 @@ export function DayHero({
         <View style={[styles.chip, { backgroundColor: chipBg }]}>
           <Text style={[styles.chipText, chipType, { color: fg }]}>{toneLabel}</Text>
         </View>
-        {isMajorFeastDay && majorFeastServiceLabel ? (
-          <View style={[styles.chip, styles.feastChip, { backgroundColor: majorFeastChipBg }]}>
-            <View
-              style={[styles.feastTypikonBackdrop, { backgroundColor: majorFeastTypikonBackdrop }]}
-            >
+        {showFeastRankChip ? (
+          isMajorFeastDay && majorFeastServiceLabel ? (
+            <View style={[styles.chip, styles.feastChip, { backgroundColor: majorFeastChipBg }]}>
+              <View
+                style={[styles.feastTypikonBackdrop, { backgroundColor: majorFeastTypikonBackdrop }]}
+              >
+                <TypikonSymbol
+                  feastRank={feastRank}
+                  variant="chip"
+                  color={majorFeastTypikonColor}
+                  style={styles.chipIcon}
+                />
+              </View>
+              <Text
+                style={[styles.feastChipText, feastChipType, { color: fg }]}
+                numberOfLines={2}
+              >
+                {majorFeastServiceLabel}
+              </Text>
+            </View>
+          ) : (
+            <View style={[styles.chip, { backgroundColor: chipBg }]}>
               <TypikonSymbol
                 feastRank={feastRank}
                 variant="chip"
-                color={majorFeastTypikonColor}
+                color={typikonColor}
                 style={styles.chipIcon}
               />
             </View>
-            <Text
-              style={[styles.feastChipText, feastChipType, { color: fg }]}
-              numberOfLines={2}
-            >
-              {majorFeastServiceLabel}
-            </Text>
+          )
+        ) : null}
+        {heroFastChip ? (
+          <View
+            style={[styles.chip, styles.fastChip, { backgroundColor: chipBg }]}
+            accessibilityLabel={heroFastA11y ?? undefined}
+          >
+            <Text style={[styles.fastChipText, chipType, { color: fg }]}>{heroFastChip.label}</Text>
+            {heroFastChip.icons.fish || heroFastChip.icons.wine || heroFastChip.icons.oil ? (
+              <Text style={[styles.fastChipDash, chipType, { color: fg }]} accessibilityElementsHidden>
+                —
+              </Text>
+            ) : null}
+            {heroFastChip.icons.fish ? (
+              <FastingFoodIcon kind="fish" color={fg} />
+            ) : null}
+            {heroFastChip.icons.wine ? (
+              <FastingFoodIcon kind="wine" color={fg} />
+            ) : null}
+            {heroFastChip.icons.oil ? (
+              <FastingFoodIcon kind="oil" color={fg} />
+            ) : null}
           </View>
-        ) : (
-          <View style={[styles.chip, { backgroundColor: chipBg }]}>
-            <TypikonSymbol
-              feastRank={feastRank}
-              variant="chip"
-              color={typikonColor}
-              style={styles.chipIcon}
-            />
-          </View>
-        )}
-        <View style={[styles.chip, { backgroundColor: chipBg }]}>
-          <Text style={[styles.chipText, chipType, { color: fg }]}>{fastLabel}</Text>
-        </View>
+        ) : null}
       </View>
 
       {canGoToToday ? (
@@ -383,6 +419,24 @@ const styles = StyleSheet.create({
   feastChipText: {
     fontWeight: '700',
     flexShrink: 1,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+  fastChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+  },
+  fastChipDash: {
+    fontWeight: '500',
+    opacity: 0.72,
+    marginHorizontal: 1,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+  fastChipText: {
+    fontWeight: '700',
     includeFontPadding: false,
     textAlignVertical: 'center',
   },

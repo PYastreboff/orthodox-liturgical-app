@@ -59,6 +59,20 @@ const en = {
       'If a feast, fasting day, or reading looks incorrect, tell us in your own words what you expected to see. We read every message.',
     bugReportLink: 'Send feedback',
     bugReportFootnote: 'A free GitHub account may be required.',
+    colorsLegend: 'Colours & fasting',
+    colorsLegendHint:
+      'Pill colours on Today show what kind of fast applies. Calendar cells use grey for fasting days, with icons when fish, oil, or total abstinence is allowed.',
+    legendPillsTitle: 'Fasting pills',
+    legendPillsHint: 'On the Today screen (date row, hero, and Fasting section).',
+    legendPillDesc: {
+      strict: 'Brown — strict fast: plants only; no meat, dairy, eggs, fish, wine, or oil.',
+      wineOil: 'Amber — wine and oil are allowed in addition to plant foods.',
+      fish: 'Blue — fish, wine, and oil are allowed; no meat or dairy.',
+      dairy:
+        'Tan — meat fast or Cheesefare week: dairy, eggs, fish, wine, and oil; no meat.',
+      totalAbstinence: 'Black — total abstinence from food (e.g. Great and Holy Friday).',
+      noFast: 'Green — not a fasting day.',
+    },
   },
   calendar: {
     title: 'Liturgical calendar',
@@ -70,9 +84,13 @@ const en = {
     tapHint: 'Tap a day in the grid or list below to open it on Today.',
     agendaTitle: 'This month',
     legendNonFasting: 'Non-fasting',
-    legendFasting: 'Fasting',
-    legendFeast: 'Feast',
+    legendFasting: 'Fasting day',
+    legendFeast: 'Great feast',
     legendToday: 'Today',
+    legendTitle: 'What the colours mean',
+    legendFastingHint:
+      'Light grey marks a fasting day — Great Lent, other fast seasons, and most Wednesdays and Fridays.',
+    legendIconsTitle: 'Icons on fast days (top-right of cell)',
     searchTitle: 'Search',
     searchPlaceholder: 'Search saints and feasts…',
     searchFilterAll: 'All',
@@ -214,6 +232,7 @@ const en = {
     levelFish: 'Fish allowed',
     levelDairy: 'Dairy allowed',
     levelMeatFast: 'Meat fast — no meat; dairy, eggs, fish, wine, and oil allowed',
+    heroMeatFast: 'Dairy, fish, wine & oil',
     levelStrict: 'Strict fast',
     levelNoEating: 'No eating',
     exceptionWineOil: 'Wine and oil allowed',
@@ -253,6 +272,8 @@ const en = {
         'Cheesefare week — the week before Clean Monday. No meat; dairy, eggs, fish, wine, and oil are allowed (not the usual Wed/Fri strict fast).',
     },
     noteLent: 'Lenten rules may differ on weekends and feasts; confirm with your typikon.',
+    noteMeatFast:
+      'Cheesefare week (meat fast): no meat; dairy, eggs, fish, wine, and oil are allowed.',
     noteGoodFriday:
       'Great and Holy Friday is a day of total fast from food. Some receive Holy Communion at the service; follow your typikon.',
     noteDefault:
@@ -559,6 +580,21 @@ const ru = {
       'Если праздник, пост или чтения отображаются неверно, опишите своими словами, что вы ожидали увидеть. Мы читаем каждое сообщение.',
     bugReportLink: 'Написать нам',
     bugReportFootnote: 'Может понадобиться бесплатный аккаунт GitHub.',
+    colorsLegend: 'Цвета и пост',
+    colorsLegendHint:
+      'Цветные метки на экране «Сегодня» показывают вид поста. В календаре постные дни отмечены серым; значки — когда разрешены рыба, масло или полное воздержание.',
+    legendPillsTitle: 'Метки поста',
+    legendPillsHint: 'На экране «Сегодня» (дата, шапка дня и раздел о посте).',
+    legendPillDesc: {
+      strict:
+        'Коричневый — строгий пост: только постная пища; без мяса, молочного, яиц, рыбы, вина и масла.',
+      wineOil: 'Янтарный — к постной пище разрешены вино и масло.',
+      fish: 'Синий — разрешены рыба, вино и масло; без мяса и молочного.',
+      dairy:
+        'Бежевый — мясной пост или сырная седмица: молочное, яйца, рыба, вино и масло; без мяса.',
+      totalAbstinence: 'Чёрный — полное воздержание от пищи (напр. Великая Пятница).',
+      noFast: 'Зелёный — не постный день.',
+    },
   },
   calendar: {
     title: 'Церковный календарь',
@@ -571,9 +607,13 @@ const ru = {
     tapHint: 'Нажмите день в сетке или в списке ниже, чтобы открыть «Сегодня».',
     agendaTitle: 'В этом месяце',
     legendNonFasting: 'Без поста',
-    legendFasting: 'Пост',
-    legendFeast: 'Праздник',
+    legendFasting: 'Постный день',
+    legendFeast: 'Великий праздник',
     legendToday: 'Сегодня',
+    legendTitle: 'Значение цветов',
+    legendFastingHint:
+      'Светло-серый — постный день: Великий пост, другие посты и большинство сред и пятниц.',
+    legendIconsTitle: 'Значки в постные дни (в углу ячейки)',
     searchTitle: 'Поиск',
     searchPlaceholder: 'Поиск святых и праздников…',
     searchFilterAll: 'Все',
@@ -715,6 +755,7 @@ const ru = {
     levelFish: 'Рыба разрешена',
     levelDairy: 'Молочное разрешено',
     levelMeatFast: 'Мясной пост — без мяса; молочное, яйца, рыба, вино и масло',
+    heroMeatFast: 'Молочное, рыба, вино и масло',
     levelStrict: 'Строгий пост',
     levelNoEating: 'Без пищи',
     exceptionWineOil: 'Разрешены вино и масло',
@@ -755,6 +796,8 @@ const ru = {
         'Сыропустная неделя — перед Чистым понедельником. Без мяса; молочное, яйца, рыба, вино и масло разрешены (не обычный строгий пост среды и пятницы).',
     },
     noteLent: 'В Великий пост правила в воскресенья и на праздники могут отличаться; уточняйте по типику.',
+    noteMeatFast:
+      'Сырная седмица (мясной пост): без мяса; молочное, яйца, рыба, вино и масло разрешены.',
     noteGoodFriday:
       'В Великую и Святую Пятницу — полное воздержание от пищи. Некоторые причащаются на службе; следуйте своему типику.',
     noteDefault:

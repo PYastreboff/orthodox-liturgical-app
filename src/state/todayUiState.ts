@@ -1,6 +1,5 @@
 export const TODAY_COLLAPSIBLE_KEYS = [
   'date',
-  'aboutToday',
   'feasts',
   'saints',
   'fasting',
@@ -15,7 +14,6 @@ export type TodayCollapsedState = Record<TodayCollapsibleKey, boolean>;
 /** `true` = section is collapsed. */
 export const DEFAULT_TODAY_COLLAPSED: TodayCollapsedState = {
   date: false,
-  aboutToday: false,
   feasts: true,
   saints: true,
   fasting: false,

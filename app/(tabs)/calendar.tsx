@@ -110,11 +110,12 @@ export default function CalendarScreen() {
     >
       <View style={[styles.header, { paddingHorizontal: sectionInsetX }]}>
         <Text style={[styles.title, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
-        <Text style={[styles.lede, isCompact ? styles.ledeCompact : null, { color: colors.muted }]}>
-          {t(isCompact ? 'calendar.subtitleShort' : 'calendar.subtitle')}
-        </Text>
       </View>
-      <CalendarColorLegend textColor={theme.colors.text} compact={isCompact} />
+      <CalendarColorLegend
+        textColor={theme.colors.text}
+        mutedColor={theme.dark ? '#a39e98' : colors.muted}
+        compact={isCompact}
+      />
 
       <CalendarSearch
         calendar={primaryCalendar}
@@ -158,16 +159,5 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    marginBottom: 8,
-  },
-  lede: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginBottom: 0,
-  },
-  ledeCompact: {
-    fontSize: 12,
-    lineHeight: 16,
-    marginBottom: 4,
   },
 });

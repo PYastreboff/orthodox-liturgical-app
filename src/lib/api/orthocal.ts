@@ -46,9 +46,44 @@ export type OrthocalDay = {
 };
 
 const dayCache = new Map<string, OrthocalDay>();
+const gregorianMonthCache = new Map<string, OrthocalDay[]>();
 
 function cacheKey(cal: OrthocalCalendar, date: PlainDate) {
   return `${cal}:${date.year}-${date.month}-${date.day}`;
+}
+
+function gregorianMonthKey(year: number, month: number): string {
+  return `${year}-${month}`;
+}
+
+function cacheOrthocalDay(cal: OrthocalCalendar, day: OrthocalDay): void {
+  dayCache.set(cacheKey(cal, { year: day.year, month: day.month, day: day.day }), day);
+}
+
+/** All days in a civil Gregorian month — one HTTP request instead of ~30. */
+export async function fetchOrthocalGregorianMonth(
+  year: number,
+  month: number,
+): Promise<OrthocalDay[]> {
+  const key = gregorianMonthKey(year, month);
+  const hit = gregorianMonthCache.get(key);
+  if (hit) return hit;
+
+  const url = `${API_BASE}/gregorian/${year}/${month}/`;
+  const res = await fetch(url, {
+    headers: { Accept: 'application/json' },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Orthocal API ${res.status} for gregorian ${year}-${month}`);
+  }
+
+  const data = (await res.json()) as OrthocalDay[];
+  gregorianMonthCache.set(key, data);
+  for (const day of data) {
+    cacheOrthocalDay('gregorian', day);
+  }
+  return data;
 }
 
 export async function fetchOrthocalDay(
@@ -71,6 +106,13 @@ export async function fetchOrthocalDay(
   const data = (await res.json()) as OrthocalDay;
   dayCache.set(key, data);
   return data;
+}
+
+export function getCachedOrthocalDay(
+  cal: OrthocalCalendar,
+  date: PlainDate,
+): OrthocalDay | undefined {
+  return dayCache.get(cacheKey(cal, date));
 }
 
 export function stripHtml(html: string): string {

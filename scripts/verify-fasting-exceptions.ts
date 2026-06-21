@@ -1,4 +1,7 @@
-import { localizedFastingFoodsDetail } from '../src/i18n/fastingLabels';
+import {
+  calendarFastingFoodIcons,
+  localizedFastingFoodsDetail,
+} from '../src/i18n/fastingLabels';
 import type { OrthocalDay } from '../src/lib/api/orthocal';
 
 function kinds(detail: ReturnType<typeof localizedFastingFoodsDetail>) {
@@ -35,7 +38,15 @@ function mockDay(partial: Partial<OrthocalDay>): OrthocalDay {
 }
 
 const civil = { year: 2026, month: 3, day: 1 };
-const cases = [
+const cases: Array<{
+  name: string;
+  day: OrthocalDay | null;
+  appearanceKey?: string;
+  civil?: { year: number; month: number; day: number };
+  weeklyFast?: boolean;
+  expect: { allowed: string; notAllowed: string };
+  icons?: { fish: boolean; wine: boolean; oil: boolean };
+}> = [
   {
     name: 'no exception — strict only',
     day: mockDay({ fast_level: 5, fast_exception_desc: '' }),
@@ -93,12 +104,79 @@ const cases = [
       notAllowed: 'meat',
     },
   },
+  {
+    name: 'lenten fast — no exception (strict)',
+    day: mockDay({
+      fast_level: 2,
+      fast_level_desc: 'Lenten Fast',
+      fast_exception_desc: '',
+    }),
+    expect: { allowed: 'plant', notAllowed: 'dairy,eggs,fish,meat,oil,wine' },
+    icons: { fish: false, wine: false, oil: false },
+  },
+  {
+    name: 'lenten fast — wine and oil allowed',
+    day: mockDay({
+      fast_level: 2,
+      fast_level_desc: 'Lenten Fast',
+      fast_exception_desc: 'Wine and Oil are Allowed',
+    }),
+    expect: { allowed: 'oil,plant,wine', notAllowed: 'dairy,eggs,fish,meat' },
+    icons: { fish: false, wine: true, oil: true },
+  },
+  {
+    name: 'lenten fast — fish wine and oil allowed',
+    day: mockDay({
+      fast_level: 2,
+      fast_level_desc: 'Lenten Fast',
+      fast_exception_desc: 'Fish, Wine and Oil are Allowed',
+    }),
+    expect: { allowed: 'fish,oil,plant,wine', notAllowed: 'dairy,eggs,meat' },
+    icons: { fish: true, wine: true, oil: true },
+  },
+  {
+    name: 'lenten fast — no overrides',
+    day: mockDay({
+      fast_level: 2,
+      fast_level_desc: 'Lenten Fast',
+      fast_exception_desc: 'No overrides',
+    }),
+    expect: { allowed: 'plant', notAllowed: 'dairy,eggs,fish,meat,oil,wine' },
+    icons: { fish: false, wine: false, oil: false },
+  },
+  {
+    name: 'cheesefare Tue — no orthocal yet',
+    day: null,
+    appearanceKey: 'cheesefare_fast',
+    civil: { year: 2026, month: 2, day: 17 },
+    expect: {
+      allowed: 'dairy,eggs,fish,oil,plant,wine',
+      notAllowed: 'meat',
+    },
+    icons: { fish: true, wine: true, oil: true },
+  },
+  {
+    name: 'cheesefare Wed — no orthocal yet',
+    day: null,
+    appearanceKey: 'cheesefare_fast',
+    civil: { year: 2026, month: 2, day: 18 },
+    expect: {
+      allowed: 'dairy,eggs,fish,oil,plant,wine',
+      notAllowed: 'meat',
+    },
+  },
 ];
 
 let failed = 0;
 for (const c of cases) {
   const result = kinds(
-    localizedFastingFoodsDetail(c.day, 'great_lent', c.weeklyFast ?? false, 'en', civil),
+    localizedFastingFoodsDetail(
+      c.day,
+      c.appearanceKey ?? 'great_lent',
+      c.weeklyFast ?? false,
+      'en',
+      c.civil ?? civil,
+    ),
   );
   const ok =
     result.allowed === c.expect.allowed && result.notAllowed === c.expect.notAllowed;
@@ -111,6 +189,29 @@ for (const c of cases) {
     '\n  expected',
     c.expect,
   );
+
+  if (c.icons) {
+    const iconResult = calendarFastingFoodIcons(
+      c.day,
+      c.appearanceKey ?? 'great_lent',
+      c.weeklyFast ?? false,
+      c.civil ?? civil,
+    );
+    const iconOk =
+      iconResult.fish === c.icons.fish &&
+      iconResult.wine === c.icons.wine &&
+      iconResult.oil === c.icons.oil &&
+      !iconResult.noEating;
+    if (!iconOk) failed += 1;
+    console.log(
+      iconOk ? 'OK' : 'FAIL',
+      `${c.name} (icons)`,
+      '\n  got',
+      { fish: iconResult.fish, wine: iconResult.wine, oil: iconResult.oil },
+      '\n  expected',
+      c.icons,
+    );
+  }
 }
 
 process.exit(failed === 0 ? 0 : 1);

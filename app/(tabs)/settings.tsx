@@ -15,6 +15,7 @@ import Head from 'expo-router/head';
 import { AppLanguagePicker } from '../../src/components/settings/AppLanguagePicker';
 import { BugReportLink } from '../../src/components/settings/BugReportLink';
 import { CalendarModePicker } from '../../src/components/settings/CalendarModePicker';
+import { LiturgicalLegendGuide } from '../../src/components/LiturgicalLegendGuide';
 import { OrthoDailyLogo } from '../../src/components/OrthoDailyLogo';
 import { SettingsRow } from '../../src/components/settings/SettingsRow';
 import { SettingsSection } from '../../src/components/settings/SettingsSection';
@@ -195,6 +196,18 @@ export default function SettingsScreen() {
         isDark={isDark}
       >
         <BugReportLink isDark={isDark} />
+      </SettingsSection>
+
+      <SettingsSection
+        title={t('settings.colorsLegend')}
+        description={t('settings.colorsLegendHint')}
+        isDark={isDark}
+      >
+        <LiturgicalLegendGuide
+          textColor={theme.colors.text}
+          mutedColor={isDark ? '#a39e98' : colors.muted}
+          variant="settings"
+        />
       </SettingsSection>
 
       <View style={styles.footer}>
