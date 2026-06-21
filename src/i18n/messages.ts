@@ -62,7 +62,7 @@ const en = {
     colorsLegend: 'Colours & fasting',
     colorsLegendHint:
       'Pill colours on Today show what kind of fast applies. Calendar cells use grey for fasting days, with icons when fish, oil, or total abstinence is allowed.',
-    legendPillsTitle: 'Fasting pills',
+    legendPillsTitle: 'Fasting information',
     legendPillsHint: 'On the Today screen (date row, hero, and Fasting section).',
     legendPillDesc: {
       strict: 'Brown — strict fast: plants only; no meat, dairy, eggs, fish, wine, or oil.',
@@ -583,7 +583,7 @@ const ru = {
     colorsLegend: 'Цвета и пост',
     colorsLegendHint:
       'Цветные метки на экране «Сегодня» показывают вид поста. В календаре постные дни отмечены серым; значки — когда разрешены рыба, масло или полное воздержание.',
-    legendPillsTitle: 'Метки поста',
+    legendPillsTitle: 'Информация о посте',
     legendPillsHint: 'На экране «Сегодня» (дата, шапка дня и раздел о посте).',
     legendPillDesc: {
       strict:
