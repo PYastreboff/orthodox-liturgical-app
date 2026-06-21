@@ -213,9 +213,11 @@ const en = {
     levelWineOil: 'Wine and oil',
     levelFish: 'Fish allowed',
     levelDairy: 'Dairy allowed',
+    levelMeatFast: 'Meat fast — no meat; dairy, eggs, fish, wine, and oil allowed',
     levelStrict: 'Strict fast',
     levelNoEating: 'No eating',
     exceptionWineOil: 'Wine and oil allowed',
+    exceptionOil: 'Oil allowed',
     exceptionFishWineOil: 'Fish, wine, and oil allowed',
     exceptionFish: 'Fish allowed',
     exceptionDairy: 'Dairy allowed',
@@ -237,7 +239,7 @@ const en = {
     foodEggs: 'Eggs',
     foodMeat: 'Meat',
     noteWeekly:
-      'Wednesday and Friday are fasting days in the Russian tradition. The only exceptions are Bright Week, the week after Pentecost, the Dodekahemeron (Nativity through Theophany), and the week of the Publican and the Pharisee.',
+      'Wednesday and Friday are fasting days in the Russian tradition. The only exceptions are Bright Week, the week after Pentecost, the Dodekahemeron (Nativity through Theophany), the week of the Publican and the Pharisee, and Cheesefare week (meat fast).',
     weeklySuspension: {
       bright_week:
         'Bright Week — the week immediately after Pascha. Wednesday and Friday fast is not observed.',
@@ -247,6 +249,8 @@ const en = {
         'The Dodekahemeron — from Nativity (25 December) through Theophany (6 January). Wednesday and Friday fast is not observed.',
       publican_pharisee:
         'The week of the Publican and the Pharisee — the preparatory week before Great Lent. Wednesday and Friday fast is not observed.',
+      cheesefare_week:
+        'Cheesefare week — the week before Clean Monday. No meat; dairy, eggs, fish, wine, and oil are allowed (not the usual Wed/Fri strict fast).',
     },
     noteLent: 'Lenten rules may differ on weekends and feasts; confirm with your typikon.',
     noteGoodFriday:
@@ -710,9 +714,11 @@ const ru = {
     levelWineOil: 'Вино и масло',
     levelFish: 'Рыба разрешена',
     levelDairy: 'Молочное разрешено',
+    levelMeatFast: 'Мясной пост — без мяса; молочное, яйца, рыба, вино и масло',
     levelStrict: 'Строгий пост',
     levelNoEating: 'Без пищи',
     exceptionWineOil: 'Разрешены вино и масло',
+    exceptionOil: 'Разрешено масло',
     exceptionFishWineOil: 'Разрешены рыба, вино и масло',
     exceptionFish: 'Рыба разрешена',
     exceptionDairy: 'Молочное разрешено',
@@ -735,7 +741,7 @@ const ru = {
     foodEggs: 'Яйца',
     foodMeat: 'Мясо',
     noteWeekly:
-      'Среда и пятница — дни поста в русской традиции. Исключения: Светлая седмица, седмица после Пятидесятницы, Двенадцатодневие (Рождество — Богоявление) и неделя мытаря и фарисея.',
+      'Среда и пятница — дни поста в русской традиции. Исключения: Светлая седмица, седмица после Пятидесятницы, Двенадцатодневие (Рождество — Богоявление), неделя мытаря и фарисея и сыропустная неделя (мясопуст).',
     weeklySuspension: {
       bright_week:
         'Светлая седмица — сразу после Пасхи. Пост в среду и пятницу не соблюдается.',
@@ -745,6 +751,8 @@ const ru = {
         'Двенадцатодневие — с Рождества (25 декабря) по Богоявление (6 января). Пост в среду и пятницу не соблюдается.',
       publican_pharisee:
         'Неделя мытаря и фарисея — подготовительная неделя перед Великим постом. Пост в среду и пятницу не соблюдается.',
+      cheesefare_week:
+        'Сыропустная неделя — перед Чистым понедельником. Без мяса; молочное, яйца, рыба, вино и масло разрешены (не обычный строгий пост среды и пятницы).',
     },
     noteLent: 'В Великий пост правила в воскресенья и на праздники могут отличаться; уточняйте по типику.',
     noteGoodFriday:

@@ -23,6 +23,10 @@ const FASTING_KEYS = new Set([
   'nativity_fast_sunday',
   'apostles_fast',
   'apostles_fast_sunday',
+  'cheesefare_fast',
+  'cheesefare_fast_sunday',
+  'all_saints',
+  'all_saints_russia',
   ...WEEKLY_FAST_APPEARANCE_KEYS,
 ]);
 

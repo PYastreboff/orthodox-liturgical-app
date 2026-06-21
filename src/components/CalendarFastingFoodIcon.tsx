@@ -1,4 +1,4 @@
-import Svg, { Line, Path } from 'react-native-svg';
+import Svg, { G, Line, Path } from 'react-native-svg';
 
 import { fastingFoodDisplayLabel } from './FastingFoodIcon';
 import { HoverAccessible } from './HoverAccessible';
@@ -10,6 +10,10 @@ export const CALENDAR_FASTING_OIL_COLOR = '#b08d57';
 export const CALENDAR_FASTING_CROSS_COLOR = '#1a1412';
 
 const FISH_VIEWBOX = '0 0 244.16495 240';
+const FISH_VIEWBOX_CX = 244.16495 / 2;
+const FISH_VIEWBOX_CY = 240 / 2;
+/** Compress width only — same height in the calendar slot, shorter silhouette. */
+const FISH_SQUISH_X = 0.75;
 
 const FISH_TAIL_PATH =
   'M14.92701,106.11349c20.45389-15.39068,118.44267-71.36452,211.7862,42.01456.4354.52886,1.29339.23079,1.29339-.45423v-67.96099c0-.70373-.89574-.99968-1.3159-.43514-11.25945,15.12846-93.8409,117.36236-211.67415,32.85306-2.04447-1.46629-2.09991-4.50454-.08954-6.01725Z';
@@ -25,10 +29,12 @@ type Props = {
 /** Illustrator export — see assets/calendar-fish.svg */
 function FishGlyph({ color }: { color: string }) {
   return (
-    <>
+    <G
+      transform={`translate(${FISH_VIEWBOX_CX} ${FISH_VIEWBOX_CY}) scale(${FISH_SQUISH_X} 1) translate(${-FISH_VIEWBOX_CX} ${-FISH_VIEWBOX_CY})`}
+    >
       <Path d={FISH_TAIL_PATH} fill={color} />
       <Path d={FISH_BODY_PATH} fill={color} />
-    </>
+    </G>
   );
 }
 

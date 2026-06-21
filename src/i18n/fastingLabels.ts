@@ -1,5 +1,6 @@
 import type { OrthocalDay } from '../lib/api/orthocal';
 import type { PlainDate } from '../lib/calendar/julianGregorian';
+import { isCheesefareWeekPaschaDistance } from '../lib/calendar/meatFast';
 import { localizedWeeklyFastDayLabel } from '../lib/calendar/weeklyFast';
 import { translate } from './translate';
 import type { UiLanguage } from './types';
@@ -60,6 +61,7 @@ const FAST_DESC_KEYS: Record<string, string> = {
   'fish wine and oil': 'fasting.levelFish',
   'dairy allowed': 'fasting.levelDairy',
   'dairy eggs fish wine and oil': 'fasting.levelDairy',
+  'meat fast': 'fasting.levelMeatFast',
   'strict fast': 'fasting.levelStrict',
 };
 
@@ -69,6 +71,7 @@ const FAST_EXCEPTION_KEYS: Record<string, string> = {
   'fish wine and oil allowed': 'fasting.exceptionFishWineOil',
   'fish wine and oil are allowed': 'fasting.exceptionFishWineOil',
   'fish allowed': 'fasting.exceptionFish',
+  'oil allowed': 'fasting.exceptionOil',
   'dairy allowed': 'fasting.exceptionDairy',
   'meat allowed': 'fasting.exceptionMeat',
   'meat permitted': 'fasting.exceptionMeat',
@@ -84,6 +87,86 @@ const REDUNDANT_FAST_EXCEPTIONS = new Set([
   'fish wine and oil are allowed',
   'fish wine and oil allowed',
 ]);
+
+type AllowableFood = Exclude<FastingFoodKind, 'all' | 'plant'>;
+
+type FastExceptionParse =
+  | { kind: 'none' }
+  | { kind: 'meat_fast' }
+  | { kind: 'fast_free' }
+  | { kind: 'allow'; foods: AllowableFood[] };
+
+/** Text before "allowed" / "permitted" lists which foods orthocal permits that day. */
+function allowancePrefixFromException(normalized: string): string {
+  const match = normalized.match(/^(.+?)\s+(?:are\s+)?(?:allowed|permitted)\b/);
+  if (match) return match[1];
+  return normalized.replace(/\s+(?:allowed|permitted)$/, '').trim();
+}
+
+function allowedFoodsInPrefix(prefix: string): AllowableFood[] {
+  const foods: AllowableFood[] = [];
+  if (/\bmeat\b/.test(prefix)) foods.push('meat');
+  if (/\bdairy\b/.test(prefix)) foods.push('dairy');
+  if (/\bfish\b/.test(prefix)) foods.push('fish');
+  if (/\bwine\b/.test(prefix)) foods.push('wine');
+  if (/\boil\b/.test(prefix)) foods.push('oil');
+  if (/\begg/.test(prefix)) foods.push('eggs');
+  return foods;
+}
+
+function parseFastExceptionDesc(raw: string | undefined | null): FastExceptionParse {
+  const exception = raw?.trim();
+  if (!exception) return { kind: 'none' };
+
+  const normalized = normalizeFastText(exception);
+
+  if (normalized === 'meat fast' || normalized.endsWith(' meat fast')) {
+    return { kind: 'meat_fast' };
+  }
+
+  if (
+    normalized === 'fast free' ||
+    normalized === 'fast free day' ||
+    normalized === 'no fast'
+  ) {
+    return { kind: 'fast_free' };
+  }
+
+  if (normalized === 'no overrides' || normalized === 'no override') {
+    return { kind: 'none' };
+  }
+
+  if (!normalized.includes('allowed') && !normalized.includes('permitted')) {
+    return { kind: 'none' };
+  }
+
+  const prefix = allowancePrefixFromException(normalized);
+  const foods = allowedFoodsInPrefix(prefix);
+  if (foods.length === 0) return { kind: 'none' };
+  return { kind: 'allow', foods };
+}
+
+/** Cheesefare week (Mon–Sun before Clean Monday): no meat; dairy, eggs, fish, wine, oil allowed. */
+function resolveFastException(day: OrthocalDay): FastExceptionParse {
+  const fromException = parseFastExceptionDesc(day.fast_exception_desc);
+  if (fromException.kind !== 'none') return fromException;
+  const fromLevel = parseFastExceptionDesc(day.fast_level_desc);
+  if (fromLevel.kind !== 'none') return fromLevel;
+  if (isCheesefareWeekPaschaDistance(day.pascha_distance)) {
+    return { kind: 'meat_fast' };
+  }
+  return { kind: 'none' };
+}
+
+export { isMeatFastRule } from '../lib/calendar/meatFast';
+
+function detailForMeatFast(lang: UiLanguage): FastingFoodsDetail {
+  return {
+    ruleLabel: translate(lang, 'fasting.levelMeatFast'),
+    allowed: foodItems(lang, ['plant', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
+    notAllowed: foodItems(lang, ['meat']),
+  };
+}
 
 function normalizeFastText(value: string): string {
   return value
@@ -132,6 +215,7 @@ export function isOrthocalFastDay(
   if (day) return day.fast_level >= 1;
   return (
     appearanceKey.includes('lent') ||
+    appearanceKey.startsWith('cheesefare_fast') ||
     appearanceKey === 'wednesday_fast' ||
     appearanceKey === 'friday_fast'
   );
@@ -202,23 +286,18 @@ function detailForFastLevel(level: number, lang: UiLanguage): FastingFoodsDetail
 }
 
 function applyException(detail: FastingFoodsDetail, day: OrthocalDay, lang: UiLanguage): void {
-  const exception = day.fast_exception_desc?.trim();
-  if (!exception) return;
-  const normalized = normalizeFastText(exception);
-  if (isNoFastLevel(day) && REDUNDANT_FAST_EXCEPTIONS.has(normalized)) return;
+  const parsed = resolveFastException(day);
+  if (parsed.kind !== 'allow') return;
 
-  const addAllowed = (kind: Exclude<FastingFoodKind, 'all'>) => {
+  const addAllowed = (kind: AllowableFood) => {
     const item = foodItem(lang, kind);
     if (!detail.allowed.some((entry) => entry.kind === kind)) detail.allowed.push(item);
     detail.notAllowed = detail.notAllowed.filter((entry) => entry.kind !== kind);
   };
 
-  if (normalized.includes('meat')) addAllowed('meat');
-  if (normalized.includes('dairy')) addAllowed('dairy');
-  if (normalized.includes('fish')) addAllowed('fish');
-  if (normalized.includes('wine')) addAllowed('wine');
-  if (normalized.includes('oil')) addAllowed('oil');
-  if (normalized.includes('egg')) addAllowed('eggs');
+  for (const kind of parsed.foods) {
+    addAllowed(kind);
+  }
 }
 
 /** Date row, hero chip, and Fasting section brown pill: "Fast" or "No fast" only. */
@@ -261,6 +340,16 @@ export function localizedFastingFoodsDetail(
 ): FastingFoodsDetail {
   if (isGreatAndHolyFriday(appearanceKey)) {
     return detailForGoodFriday(lang);
+  }
+
+  if (day) {
+    const exception = resolveFastException(day);
+    if (exception.kind === 'meat_fast') {
+      return detailForMeatFast(lang);
+    }
+    if (exception.kind === 'fast_free') {
+      return detailForFastLevel(0, lang);
+    }
   }
 
   if (weeklyFast) {

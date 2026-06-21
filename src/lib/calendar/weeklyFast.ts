@@ -1,5 +1,7 @@
+import { isMeatFastRule } from './meatFast';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
+import type { OrthocalDay } from '../api/orthocal';
 import type { PlainDate } from './julianGregorian';
 import {
   gregorianPlainToJulianPlain,
@@ -19,7 +21,8 @@ export type WeeklyFastSuspension =
   | 'bright_week'
   | 'week_after_pentecost'
   | 'dodekahemeron'
-  | 'publican_pharisee';
+  | 'publican_pharisee'
+  | 'cheesefare_week';
 
 function paschaForJulianYear(julianYear: number): number {
   return orthodoxPaschaJdn(julianYear);
@@ -58,6 +61,13 @@ function isInPublicanPhariseeWeek(jdn: number, julianYear: number): boolean {
   return jdn >= publicanSunday && jdn <= publicanSunday + 6;
 }
 
+/** Cheesefare week (Mon–Sun before Clean Monday) — meat fast, not Wed/Fri strict fast. */
+export function isInCheesefareWeek(jdn: number, julianYear: number): boolean {
+  const cleanMonday = paschaForJulianYear(julianYear) - 48;
+  const cheesefareMonday = cleanMonday - 7;
+  return jdn >= cheesefareMonday && jdn < cleanMonday;
+}
+
 function isWednesdayOrFriday(weekday: number): boolean {
   return weekday === 3 || weekday === 5;
 }
@@ -73,6 +83,7 @@ export function weeklyFastSuspension(
   if (isInWeekAfterPentecost(jdn, y)) return 'week_after_pentecost';
   if (isInDodekahemeron(jdn, julian)) return 'dodekahemeron';
   if (isInPublicanPhariseeWeek(jdn, y)) return 'publican_pharisee';
+  if (isInCheesefareWeek(jdn, y)) return 'cheesefare_week';
   return null;
 }
 
@@ -153,11 +164,12 @@ export function localizedWeeklyFastSuspensionNote(
 
 /** Fallback Wed/Fri strict fast when orthocal reports level 0 without a feast relaxation. */
 export function shouldApplyWeeklyFastOverride(
-  day: { fast_level: number; fast_exception_desc?: string } | null | undefined,
+  day: OrthocalDay | null | undefined,
   civil: PlainDate,
 ): boolean {
   if (!isWeeklyFastForCivilDate(civil)) return false;
   if (!day) return true;
+  if (isMeatFastRule(day)) return false;
   if (day.fast_level >= 1) return false;
   if (orthocalRelaxesWeeklyFast(day)) return false;
   return true;

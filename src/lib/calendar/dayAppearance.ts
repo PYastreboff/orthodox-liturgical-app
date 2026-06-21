@@ -11,7 +11,7 @@ import type { PrimaryCalendar } from './dateDisplay';
 import { formatGregorianReadable, formatJulianReadable } from './formatDate';
 import { appearanceLiturgicalPlainDate, civilPlainDateFromLocal } from './liturgicalCalendar';
 import { orthodoxPaschaJdn } from './pascha';
-import { isWeeklyFastDay } from './weeklyFast';
+import { isInCheesefareWeek, isWeeklyFastDay } from './weeklyFast';
 
 export type LiturgicalDayAppearance = {
   /** Liturgical palette key (for debugging / future pack mapping). */
@@ -262,7 +262,7 @@ export function redFastSundayAppearanceFields(
 }
 
 function minorFastSeasonAppearance(
-  baseKey: 'apostles_fast' | 'nativity_fast' | 'dormition_fast',
+  baseKey: 'apostles_fast' | 'nativity_fast' | 'dormition_fast' | 'cheesefare_fast',
   seasonLabel: string,
   wd: number,
   subtitle: string,
@@ -792,6 +792,16 @@ export function getLiturgicalDayAppearance(
     return minorFastSeasonAppearance(
       'apostles_fast',
       'Apostles’ Fast',
+      wd,
+      subtitle,
+      gregorianSubtitle,
+    );
+  }
+
+  if (isInCheesefareWeek(jdn, y)) {
+    return minorFastSeasonAppearance(
+      'cheesefare_fast',
+      'Cheesefare · Meat fast',
       wd,
       subtitle,
       gregorianSubtitle,
