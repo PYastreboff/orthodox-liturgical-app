@@ -13,7 +13,7 @@ import { useTheme } from '@react-navigation/native';
 
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';
 import { CalendarFastingFoodIcon, calendarFastingFoodIconColor } from './CalendarFastingFoodIcon';
-import { CALENDAR_FASTING_ICON_SIZE } from './fastingAllowanceIcons';
+import { CALENDAR_FASTING_ICON_GAP, CALENDAR_FASTING_ICON_SIZE } from './fastingAllowanceIcons';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useOrthocalMonth } from '../hooks/useOrthocalMonth';
 import { toDayIso } from '../lib/calendar/localDate';
@@ -79,39 +79,55 @@ function isAgendaDay(info: CalendarDayInfo, phoneLayout: boolean): boolean {
     return true;
   }
   if (!phoneLayout) return false;
+  if (isCalendarFastingAppearance(info.appearanceKey)) return true;
   const icons = info.fastingFoodIcons;
   return icons.noEating || icons.fish || icons.wine || icons.oil;
 }
 
 function CalendarFastingIconsRow({
   icons,
+  isFastDay,
   isDark,
   textColor,
+  mutedColor,
 }: {
   icons: CalendarFastingFoodIcons;
+  isFastDay: boolean;
   isDark: boolean;
   textColor: string;
+  mutedColor: string;
 }) {
-  const show =
+  const { t } = useAppTranslation();
+  const showIcons =
     icons.noEating || icons.fish || icons.wine || icons.oil;
-  if (!show) return null;
+  if (!isFastDay) return null;
 
   const iconColor = (kind: 'fish' | 'wine' | 'oil' | 'noEating') =>
     calendarFastingFoodIconColor(kind, isDark && kind === 'noEating', textColor);
 
   return (
-    <View style={styles.agendaFastingIcons}>
-      {icons.noEating ? (
-        <CalendarFastingFoodIcon kind="noEating" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('noEating')} />
-      ) : null}
-      {!icons.noEating && icons.fish ? (
-        <CalendarFastingFoodIcon kind="fish" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('fish')} />
-      ) : null}
-      {!icons.noEating && icons.wine ? (
-        <CalendarFastingFoodIcon kind="wine" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('wine')} />
-      ) : null}
-      {!icons.noEating && icons.oil ? (
-        <CalendarFastingFoodIcon kind="oil" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('oil')} />
+    <View style={styles.agendaFastingRow}>
+      <Text style={[styles.agendaFastLabel, { color: mutedColor }]}>{t('fasting.summaryFast')}</Text>
+      {showIcons ? (
+        <>
+          <Text style={[styles.agendaFastDash, { color: mutedColor }]} accessibilityElementsHidden>
+            —
+          </Text>
+          <View style={styles.agendaFastingIcons}>
+            {icons.noEating ? (
+              <CalendarFastingFoodIcon kind="noEating" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('noEating')} />
+            ) : null}
+            {!icons.noEating && icons.fish ? (
+              <CalendarFastingFoodIcon kind="fish" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('fish')} />
+            ) : null}
+            {!icons.noEating && icons.wine ? (
+              <CalendarFastingFoodIcon kind="wine" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('wine')} />
+            ) : null}
+            {!icons.noEating && icons.oil ? (
+              <CalendarFastingFoodIcon kind="oil" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('oil')} />
+            ) : null}
+          </View>
+        </>
       ) : null}
     </View>
   );
@@ -218,12 +234,19 @@ export function LiturgicalMonthGrid({
 
   const isCompact = width < CALENDAR_COMPACT_BREAKPOINT;
   const phoneLayout = usePhoneLayout();
+  const cellTypography = resolveCalendarCellTypography(width, isCompact);
   const horizontalPad = isCompact ? 8 : 12;
   const gap = isCompact ? 3 : 5;
   const contentWidth = width - horizontalPad * 2;
   const cellWidth = (contentWidth - gap * 6) / 7;
-  const cellHeight = isCompact ? CELL_HEIGHT_COMPACT : CELL_HEIGHT;
-  const typikonSize = isCompact ? 12 : width < 430 ? 14 : 20;
+  const cellHeight = cellTypography.cellHeight;
+  const typikonSize = isCompact
+    ? 12
+    : width >= CALENDAR_FULL_WEEKDAY_MIN_WIDTH
+      ? 22
+      : width < 430
+        ? 14
+        : 20;
   const useFullWeekdayNames = !isCompact && width >= CALENDAR_FULL_WEEKDAY_MIN_WIDTH;
   const monthDates = useMemo(
     () => rows.flat().filter((d): d is Date => d !== null),
@@ -307,8 +330,12 @@ export function LiturgicalMonthGrid({
               key={key}
               style={[
                 styles.weekHeaderCell,
-                useFullWeekdayNames ? styles.weekHeaderCellFull : null,
                 isCompact ? styles.weekHeaderCellCompact : null,
+                !isCompact && !useFullWeekdayNames
+                  ? { fontSize: cellTypography.weekHeaderSize }
+                  : null,
+                useFullWeekdayNames ? styles.weekHeaderCellFull : null,
+                useFullWeekdayNames ? { fontSize: cellTypography.weekHeaderSize } : null,
                 key === 'weekdays.sun' ? styles.weekHeaderCellSunday : styles.weekHeaderCellMuted,
                 {
                   width: cellWidth,
@@ -339,7 +366,7 @@ export function LiturgicalMonthGrid({
               {week.map((date, di) => (
                 <View
                   key={date ? toDayIso(date) : `empty-${wi}-${di}`}
-                  style={[styles.cellSlot, { width: cellWidth, height: cellHeight }]}
+                  style={[styles.cellSlot, { width: cellWidth, minHeight: cellHeight }]}
                 >
                   {date ? (
                     <DayCell
@@ -348,6 +375,7 @@ export function LiturgicalMonthGrid({
                       typikonSize={typikonSize}
                       compact={isCompact}
                       phoneLayout={phoneLayout}
+                      typography={cellTypography}
                       onPress={onDayPress}
                       dayInfo={dayInfoForDate(date)}
                       showTypikonForDate={showTypikonForDate}
@@ -381,17 +409,64 @@ export function LiturgicalMonthGrid({
   );
 }
 
-/** Fixed height so every day in a week row aligns. */
-const CELL_HEIGHT = 120;
+/** Fixed height so every day in a week row aligns (compact uses CELL_HEIGHT_COMPACT). */
 const CELL_HEIGHT_COMPACT = 52;
 const CELL_BORDER_RADIUS = 10;
-const COMM_FONT_SIZE = 6.5;
-const COMM_LINE_HEIGHT = 9.5;
-const COMM_MARKER_SIZE = 8;
-const COMM_ROW_GAP = 1;
 
-function titleLinesForCell(commCount: number): number {
-  return commCount >= 2 ? 1 : 2;
+type CalendarCellTypography = {
+  cellHeight: number;
+  dayNumSize: number;
+  dayLabelSize: number;
+  dayLabelLineHeight: number;
+  commFontSize: number;
+  commLineHeight: number;
+  commMarkerSize: number;
+  commMoreSize: number;
+  commRowGap: number;
+  weekHeaderSize: number;
+};
+
+function resolveCalendarCellTypography(width: number, isCompact: boolean): CalendarCellTypography {
+  if (isCompact) {
+    return {
+      cellHeight: CELL_HEIGHT_COMPACT,
+      dayNumSize: 15,
+      dayLabelSize: 7,
+      dayLabelLineHeight: 9,
+      commFontSize: 6.5,
+      commLineHeight: 9.5,
+      commMarkerSize: 8,
+      commMoreSize: 6.5,
+      commRowGap: 1,
+      weekHeaderSize: 10,
+    };
+  }
+  if (width >= CALENDAR_FULL_WEEKDAY_MIN_WIDTH) {
+    return {
+      cellHeight: 148,
+      dayNumSize: 22,
+      dayLabelSize: 10,
+      dayLabelLineHeight: 13,
+      commFontSize: 10,
+      commLineHeight: 14,
+      commMarkerSize: 11,
+      commMoreSize: 9,
+      commRowGap: 2,
+      weekHeaderSize: 14,
+    };
+  }
+  return {
+    cellHeight: 132,
+    dayNumSize: 19,
+    dayLabelSize: 8.5,
+    dayLabelLineHeight: 11,
+    commFontSize: 8.5,
+    commLineHeight: 12,
+    commMarkerSize: 9,
+    commMoreSize: 7.5,
+    commRowGap: 1,
+    weekHeaderSize: 12,
+  };
 }
 
 function DayCell({
@@ -400,6 +475,7 @@ function DayCell({
   typikonSize,
   compact,
   phoneLayout,
+  typography,
   onPress,
   dayInfo,
   showTypikonForDate,
@@ -410,6 +486,7 @@ function DayCell({
   typikonSize: number;
   compact: boolean;
   phoneLayout: boolean;
+  typography: CalendarCellTypography;
   onPress?: (date: Date) => void;
   dayInfo: CalendarDayInfo;
   showTypikonForDate: (date: Date) => boolean;
@@ -489,12 +566,11 @@ function DayCell({
       ),
     [displayInfo.dayTitle, displayInfo.feasts, displayInfo.saints],
   );
-  const dayTitleLines = titleLinesForCell(commLines.length);
   const feastCount = displayInfo.feasts.length;
   const saintCount = displayInfo.saints.length;
   const markerCount = feastCount + saintCount;
   const fastingIcons = dayInfo.fastingFoodIcons;
-  const fastingIconSize = compact ? 17 : CALENDAR_FASTING_ICON_SIZE;
+  const fastingIconSize = compact ? 20 : CALENDAR_FASTING_ICON_SIZE;
   const showFastingIconsInCell =
     !phoneLayout &&
     (fastingIcons.noEating || fastingIcons.fish || fastingIcons.wine || fastingIcons.oil);
@@ -562,7 +638,7 @@ function DayCell({
           <Text
             style={[
               styles.dayNum,
-              compact ? styles.dayNumCompact : null,
+              compact ? styles.dayNumCompact : { fontSize: typography.dayNumSize },
               { color: dayNumColor },
               isToday ? styles.dayNumToday : null,
             ]}
@@ -587,13 +663,19 @@ function DayCell({
         ) : (
           <>
             <Text
-              style={[styles.dayLabel, { color: titleColor }]}
-              numberOfLines={dayTitleLines}
+              style={[
+                styles.dayLabel,
+                {
+                  color: titleColor,
+                  fontSize: typography.dayLabelSize,
+                  lineHeight: typography.dayLabelLineHeight,
+                },
+              ]}
             >
               {displayInfo.dayTitle}
             </Text>
             {commLines.length > 0 ? (
-              <View style={styles.commArea}>
+              <View style={[styles.commArea, { gap: typography.commRowGap }]}>
                 {commLines.map((line, index) => {
                   const isFeast = line.kind === 'feast';
                   const color = isFeast ? titleColor : subColor;
@@ -605,11 +687,18 @@ function DayCell({
                       <CommemorationListMarker
                         kind={line.kind}
                         color={color}
-                        size={COMM_MARKER_SIZE}
-                        lineHeight={COMM_LINE_HEIGHT}
+                        size={typography.commMarkerSize}
+                        lineHeight={typography.commLineHeight}
                       />
                       <Text
-                        style={[isFeast ? styles.dayFeast : styles.daySaint, { color }]}
+                        style={[
+                          isFeast ? styles.dayFeast : styles.daySaint,
+                          {
+                            color,
+                            fontSize: typography.commFontSize,
+                            lineHeight: typography.commLineHeight,
+                          },
+                        ]}
                         numberOfLines={2}
                         ellipsizeMode="tail"
                       >
@@ -619,7 +708,16 @@ function DayCell({
                   );
                 })}
                 {hiddenCommCount > 0 ? (
-                  <Text style={[styles.commMore, { color: subColor }]}>
+                  <Text
+                    style={[
+                      styles.commMore,
+                      {
+                        color: subColor,
+                        fontSize: typography.commMoreSize,
+                        lineHeight: typography.commMoreSize + 2,
+                      },
+                    ]}
+                  >
                     +{hiddenCommCount}
                   </Text>
                 ) : null}
@@ -719,14 +817,15 @@ function CalendarMonthAgenda({
                   styles.agendaDayTitle,
                   { color: info.isFeastTitleRed ? colors.feastBorder : textColor },
                 ]}
-                numberOfLines={2}
               >
                 {info.dayTitle}
               </Text>
               <CalendarFastingIconsRow
                 icons={info.fastingFoodIcons}
+                isFastDay={isCalendarFastingAppearance(info.appearanceKey)}
                 isDark={isDark}
                 textColor={textColor}
+                mutedColor={mutedColor}
               />
               {lines.slice(0, CALENDAR_CELL_MAX_COMMEMORATIONS).map((line, index) => {
                 const lineColor = line.kind === 'feast' ? colors.feastBorder : mutedColor;
@@ -869,9 +968,9 @@ const styles = StyleSheet.create({
     borderRadius: CELL_BORDER_RADIUS,
   },
   cellWrap: {
-    flex: 1,
     width: '100%',
-    height: '100%',
+    flex: 1,
+    alignSelf: 'stretch',
     borderRadius: CELL_BORDER_RADIUS,
     overflow: 'hidden',
   },
@@ -989,12 +1088,29 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 18,
     marginBottom: 2,
+    alignSelf: 'stretch',
+    ...(Platform.OS === 'web' ? ({ wordBreak: 'break-word' } as const) : null),
+  },
+  agendaFastingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  agendaFastLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    lineHeight: 16,
+  },
+  agendaFastDash: {
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
   },
   agendaFastingIcons: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    marginBottom: 4,
+    gap: CALENDAR_FASTING_ICON_GAP,
   },
   agendaLine: {
     flex: 1,
@@ -1013,7 +1129,6 @@ const styles = StyleSheet.create({
     minHeight: 0,
     marginTop: 2,
     alignSelf: 'stretch',
-    gap: COMM_ROW_GAP,
     overflow: 'hidden',
   },
   commMore: {
@@ -1037,7 +1152,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    gap: CALENDAR_FASTING_ICON_GAP,
   },
   fastingCornerCompact: {
     top: 1,
@@ -1069,10 +1184,11 @@ const styles = StyleSheet.create({
   },
   dayLabel: {
     marginTop: 2,
-    fontSize: 7,
     fontWeight: '700',
     textAlign: 'center',
-    lineHeight: 9,
+    alignSelf: 'stretch',
+    width: '100%',
+    ...(Platform.OS === 'web' ? ({ wordBreak: 'break-word' } as const) : null),
   },
   commRow: {
     flexDirection: 'row',
@@ -1093,10 +1209,8 @@ const styles = StyleSheet.create({
     flexBasis: 0,
     flexShrink: 1,
     minWidth: 0,
-    fontSize: COMM_FONT_SIZE,
     fontWeight: '700',
     textAlign: 'left',
-    lineHeight: COMM_LINE_HEIGHT,
     letterSpacing: 0.1,
     ...(Platform.OS === 'web' ? ({ wordBreak: 'break-word' } as const) : null),
     ...(Platform.OS === 'android' ? { includeFontPadding: false } : null),
@@ -1106,10 +1220,8 @@ const styles = StyleSheet.create({
     flexBasis: 0,
     flexShrink: 1,
     minWidth: 0,
-    fontSize: COMM_FONT_SIZE,
     fontWeight: '500',
     textAlign: 'left',
-    lineHeight: COMM_LINE_HEIGHT,
     letterSpacing: 0.15,
     opacity: 0.95,
     ...(Platform.OS === 'web' ? ({ wordBreak: 'break-word' } as const) : null),

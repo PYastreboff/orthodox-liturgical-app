@@ -2,13 +2,16 @@
 export const FASTING_ALLOWANCE_ICON_SIZE = 16;
 
 /** Calendar cells, month agenda, and icon legend. */
-export const CALENDAR_FASTING_ICON_SIZE = 20;
+export const CALENDAR_FASTING_ICON_SIZE = 24;
+
+/** Even spacing between fish / wine / oil / no-eating glyphs in a row. */
+export const CALENDAR_FASTING_ICON_GAP = 0;
 
 /** MCI fruit-grapes fills more of its em square than fish / oil-drop glyphs. */
 export const FASTING_WINE_ICON_VISUAL_SCALE = 0.82;
 
 /** Teardrop SVG has more padding in its viewBox than MCI fish / grape glyphs. */
-export const FASTING_OIL_ICON_VISUAL_SCALE = 1.2;
+export const FASTING_OIL_ICON_VISUAL_SCALE = 0.81;
 
 export const FASTING_FISH_COLOR = '#3d6878';
 export const FASTING_WINE_COLOR = '#6b3d52';

@@ -1,3 +1,4 @@
+import { StyleSheet, View } from 'react-native';
 import Svg, { Line } from 'react-native-svg';
 
 import { fastingFoodDisplayLabel } from './FastingFoodIcon';
@@ -18,6 +19,7 @@ export {
   FASTING_NO_EATING_COLOR as CALENDAR_FASTING_CROSS_COLOR,
   FASTING_ALLOWANCE_ICON_SIZE,
   CALENDAR_FASTING_ICON_SIZE,
+  CALENDAR_FASTING_ICON_GAP,
 } from './fastingAllowanceIcons';
 
 type Props = {
@@ -77,12 +79,21 @@ export function CalendarFastingFoodIcon({
   if (kind === 'noEating') {
     return (
       <HoverAccessible label={label} accessibilityRole="image">
-        <Svg width={size} height={size} viewBox="0 0 24 24">
-          <NoEatingGlyph color={color} />
-        </Svg>
+        <View style={[styles.iconSlot, { width: size, height: size }]}>
+          <Svg width={size} height={size} viewBox="0 0 24 24">
+            <NoEatingGlyph color={color} />
+          </Svg>
+        </View>
       </HoverAccessible>
     );
   }
 
   return <FastingFoodIcon kind={kind} color={color} size={size} />;
 }
+
+const styles = StyleSheet.create({
+  iconSlot: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
