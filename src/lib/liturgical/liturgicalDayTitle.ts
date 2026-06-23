@@ -1,5 +1,4 @@
 import type { OrthocalDay } from '../api/orthocal';
-import { isFeastCellAppearance } from '../calendar/calendarCellStyle';
 import {
   localizeOrthocalText,
   localizedAppearanceLabel,
@@ -23,12 +22,24 @@ import {
 import type { FeastRankDisplay } from './typikonSymbols';
 import { sanitizeTypikonProse } from './typikonSymbols';
 
-/** Great feast circle and above (orthocal FeastLevels ≥ 6). */
+/** Great feast circle (orthocal FeastLevels ≥ 6) — high-ranked service, not necessarily a major feast. */
 export const ORTHOCAL_GREAT_FEAST_LEVEL_MIN = 6;
 
-/** orthocal feast_level — authoritative for great-feast calendar styling. */
+/** Major feast Lord / Theotokos (orthocal FeastLevels 7–8) — twelve great feasts tier. */
+export const ORTHOCAL_MAJOR_FEAST_LEVEL_MIN = 7;
+
+/** orthocal feast_level ≥ 6 — feast titles, prokeimena, ranked liturgy. */
 export function isOrthocalGreatFeastLevel(day: OrthocalDay | null | undefined): boolean {
-  return (day?.feast_level ?? 0) >= ORTHOCAL_GREAT_FEAST_LEVEL_MIN;
+  if ((day?.feast_level ?? 0) >= ORTHOCAL_GREAT_FEAST_LEVEL_MIN) return true;
+  const desc = day?.feast_level_description?.toLowerCase().trim() ?? '';
+  return desc.includes('red cross circle') || desc.includes('great feast typikon');
+}
+
+/** orthocal feast_level ≥ 7 — hero/calendar major-feast styling (red border, pink cell). */
+export function isOrthocalMajorFeastLevel(day: OrthocalDay | null | undefined): boolean {
+  if ((day?.feast_level ?? 0) >= ORTHOCAL_MAJOR_FEAST_LEVEL_MIN) return true;
+  const desc = day?.feast_level_description?.toLowerCase().trim() ?? '';
+  return desc.includes('major feast theotokos') || desc.includes('major feast lord');
 }
 
 /** orthocal `pascha_distance` for Holy Week (Pascha = 0). */
@@ -376,7 +387,6 @@ export function shouldUseMajorFeastDayTitle(
   appearanceKey: string,
   feastRank: FeastRankDisplay | null | undefined,
 ): boolean {
-  if (isFeastCellAppearance(appearanceKey)) return true;
   if (isOrthocalGreatFeastLevel(day)) return true;
   if (feastRank?.glyph === 'great_feast') return true;
   if (day) {
@@ -402,18 +412,17 @@ export function isHolyWeekWeekdayHeadline(
 
 /**
  * Twelve great feasts and fixed feast cells — major-feast UI (hero, Date block, About Today).
- * Excludes ordinary named feasts (e.g. SS Constantine and Helen) that headline the day.
+ * Level-6 orthocal ranks (e.g. apostle feasts) keep feast titles and typikon chips but not red styling.
  */
 export function isGreatFeastDayForFeastsHighlight(
   day: OrthocalDay | null | undefined,
   appearanceKey: string,
   dayTitle: string,
-  feastRank: FeastRankDisplay | null | undefined,
+  _feastRank: FeastRankDisplay | null | undefined,
 ): boolean {
   if (transferredGreatFeastOnHolyWeekDay(day, appearanceKey, dayTitle)) return true;
-  if (isFeastCellAppearance(appearanceKey)) return true;
   if (isOrthocalGreatFeastLevel(day)) return true;
-  if (feastRank?.glyph === 'great_feast') return true;
+  if (isOrthocalMajorFeastLevel(day)) return true;
   return false;
 }
 
@@ -478,14 +487,6 @@ export function liturgicalDayTitle(
   if (shouldUseMajorFeastDayTitle(day, appearanceKey, feastRank)) {
     const feast = day ? primaryFeastTitle(day, appearanceKey) : null;
     if (feast) return finalizeDisplayTitle(feast, appearanceKey, appearanceLabel, lang);
-    if (isFeastCellAppearance(appearanceKey)) {
-      return finalizeDisplayTitle(
-        sanitizeTypikonProse(appearanceLabel),
-        appearanceKey,
-        appearanceLabel,
-        lang,
-      );
-    }
   }
 
   if (day) {
@@ -548,15 +549,6 @@ export function greatFeastDisplayTitle(
 
   const feast = greatFeastNameFromOrthocal(day, appearanceKey, calendarTitle);
   if (feast) return finalizeDisplayTitle(feast, appearanceKey, appearanceLabel, lang);
-
-  if (isFeastCellAppearance(appearanceKey)) {
-    return finalizeDisplayTitle(
-      sanitizeTypikonProse(appearanceLabel),
-      appearanceKey,
-      appearanceLabel,
-      lang,
-    );
-  }
 
   const fallback = primaryFeastTitle(day, appearanceKey);
   if (fallback) return finalizeDisplayTitle(fallback, appearanceKey, appearanceLabel, lang);

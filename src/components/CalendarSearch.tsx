@@ -30,6 +30,8 @@ type Props = {
   borderColor: string;
   isDark: boolean;
   onSelectDate: (date: Date) => void;
+  /** When false, parent supplies horizontal inset (e.g. calendar intro block). */
+  padded?: boolean;
 };
 
 const FILTERS: CalendarSearchFilter[] = ['all', 'saint', 'feast'];
@@ -127,6 +129,7 @@ export function CalendarSearch({
   borderColor,
   isDark,
   onSelectDate,
+  padded = true,
 }: Props) {
   const { t, lang } = useAppTranslation();
   const intlLocale = intlLocaleForLanguage(lang);
@@ -149,7 +152,7 @@ export function CalendarSearch({
   const placeholderColor = mutedColor;
 
   return (
-    <View style={[styles.wrap, { paddingHorizontal: wrapPaddingX }]}>
+    <View style={[styles.wrap, padded ? { paddingHorizontal: wrapPaddingX } : null]}>
       <Text style={[styles.label, { color: textColor }]}>{t('calendar.searchTitle')}</Text>
       <View style={[styles.inputRow, { backgroundColor: inputBg, borderColor }]}>
         <Feather name="search" size={18} color={mutedColor} style={styles.searchIcon} />
@@ -243,12 +246,13 @@ export function CalendarSearch({
 
 const styles = StyleSheet.create({
   wrap: {
-    marginBottom: 12,
-    gap: 10,
+    gap: 12,
   },
   label: {
     fontSize: 15,
     fontWeight: '700',
+    lineHeight: 20,
+    letterSpacing: 0.15,
   },
   inputRow: {
     flexDirection: 'row',

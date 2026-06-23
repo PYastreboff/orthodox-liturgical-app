@@ -20,9 +20,6 @@ import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 type Props = {
   textColor: string;
   mutedColor?: string;
-  /** Settings card — horizontal padding matches other settings rows. */
-  variant?: 'calendar' | 'settings';
-  compact?: boolean;
 };
 
 const PILL_DESC_KEYS = {
@@ -34,71 +31,49 @@ const PILL_DESC_KEYS = {
   no_fast: 'settings.legendPillDesc.noFast',
 } as const;
 
-export function LiturgicalLegendGuide({
-  textColor,
-  mutedColor,
-  variant = 'calendar',
-  compact = false,
-}: Props) {
+export function LiturgicalLegendGuide({ textColor, mutedColor }: Props) {
   const { t } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
   const phoneLayout = usePhoneLayout();
-  const wrapPaddingX =
-    variant === 'settings'
-      ? phoneLayout
-        ? SECTION_CARD_PADDING_PHONE
-        : SECTION_CARD_PADDING
-      : phoneLayout
-        ? SECTION_CARD_PADDING_PHONE
-        : SECTION_CARD_PADDING;
+  const wrapPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
   const hintColor = mutedColor ?? textColor;
 
   return (
-    <View
-      style={[
-        styles.wrap,
-        { paddingHorizontal: wrapPaddingX },
-        variant === 'settings' ? styles.wrapSettings : null,
-        compact ? styles.wrapCompact : null,
-      ]}
-    >
-      {variant === 'settings' ? (
-        <>
-          <Text style={[styles.subsectionTitle, { color: textColor }]}>
-            {t('settings.legendPillsTitle')}
-          </Text>
-          <Text style={[styles.subsectionHint, { color: hintColor }]}>
-            {t('settings.legendPillsHint')}
-          </Text>
-          <View style={styles.pillList}>
-            {FAST_PILL_LEGEND_KINDS.map((kind) => (
-              <View key={kind} style={[styles.pillRow, phoneLayout ? styles.pillRowPhone : null]}>
+    <View style={[styles.wrap, { paddingHorizontal: wrapPaddingX }]}>
+      <Text style={[styles.subsectionTitle, { color: textColor }]}>
+        {t('settings.legendPillsTitle')}
+      </Text>
+      <Text style={[styles.subsectionHint, { color: hintColor }]}>
+        {t('settings.legendPillsHint')}
+      </Text>
+      <View style={styles.pillTableWrap}>
+        <View style={styles.pillTable}>
+          {FAST_PILL_LEGEND_KINDS.map((kind) => (
+            <View key={kind} style={styles.pillTableRow}>
+              <View style={styles.pillTableLabelCell}>
                 <FastSummaryPill
                   label={t(FAST_PILL_LEGEND_LABEL_KEY[kind])}
                   kind={kind}
                   textStyle={styles.pillText}
-                  style={styles.pill}
+                  style={styles.pillTablePill}
                 />
-                <Text style={[styles.pillDesc, { color: hintColor }]}>{t(PILL_DESC_KEYS[kind])}</Text>
               </View>
-            ))}
-          </View>
-          <View style={[styles.divider, { backgroundColor: colors.border }]} />
-        </>
-      ) : null}
+              <Text style={[styles.pillTableDesc, { color: hintColor }]}>
+                {t(PILL_DESC_KEYS[kind])}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
 
-      <Text
-        style={[
-          variant === 'settings' ? styles.subsectionTitle : styles.title,
-          compact ? styles.titleCompact : null,
-          { color: textColor },
-        ]}
-      >
+      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+      <Text style={[styles.subsectionTitle, { color: textColor }]}>
         {t('calendar.legendTitle')}
       </Text>
-      <View style={[styles.row, compact ? styles.rowCompact : null]}>
+      <View style={styles.swatchRow}>
         {CALENDAR_CELL_LEGEND.map((item) => (
-          <View key={item.key} style={styles.item}>
+          <View key={item.key} style={styles.swatchItem}>
             <View
               style={[
                 styles.swatch,
@@ -108,31 +83,25 @@ export function LiturgicalLegendGuide({
                 'todayRing' in item && item.todayRing ? styles.swatchTodayRing : null,
               ]}
             />
-            <Text style={[styles.label, compact ? styles.labelCompact : null, { color: textColor }]}>
-              {t(item.key)}
-            </Text>
+            <Text style={[styles.label, { color: textColor }]}>{t(item.key)}</Text>
           </View>
         ))}
       </View>
-      {variant === 'settings' ? (
-        <Text style={[styles.fastingHint, compact ? styles.fastingHintCompact : null, { color: hintColor }]}>
-          {t('calendar.legendFastingHint')}
-        </Text>
-      ) : null}
-      <Text style={[styles.iconsTitle, compact ? styles.iconsTitleCompact : null, { color: textColor }]}>
+      <Text style={[styles.fastingHint, { color: hintColor }]}>{t('calendar.legendFastingHint')}</Text>
+
+      <Text style={[styles.subsectionTitle, styles.iconsTitle, { color: textColor }]}>
         {t('calendar.legendIconsTitle')}
       </Text>
-      <View style={[styles.row, compact ? styles.rowCompact : null]}>
+      <Text style={[styles.fastingHint, { color: hintColor }]}>{t('calendar.legendIconsHint')}</Text>
+      <View style={styles.iconRow}>
         {CALENDAR_ICON_LEGEND.map((item) => (
-          <View key={item.key} style={styles.item}>
+          <View key={item.key} style={styles.iconItem}>
             <CalendarFastingFoodIcon
               kind={item.kind}
               size={CALENDAR_FASTING_ICON_SIZE}
               color={calendarFastingFoodIconColor(item.kind, isDark, textColor)}
             />
-            <Text style={[styles.label, compact ? styles.labelCompact : null, { color: textColor }]}>
-              {t(item.key)}
-            </Text>
+            <Text style={[styles.label, { color: textColor }]}>{t(item.key)}</Text>
           </View>
         ))}
       </View>
@@ -142,58 +111,63 @@ export function LiturgicalLegendGuide({
 
 const styles = StyleSheet.create({
   wrap: {
-    paddingVertical: 10,
-    alignItems: 'stretch',
-    gap: 8,
-  },
-  wrapCompact: {
-    marginBottom: 12,
-    alignItems: 'center',
-    gap: 8,
-  },
-  wrapSettings: {
     paddingVertical: 14,
+    alignItems: 'stretch',
     gap: 10,
   },
   subsectionTitle: {
     fontSize: 15,
     fontWeight: '600',
     lineHeight: 20,
+    textAlign: 'center',
+    alignSelf: 'center',
+    width: '100%',
   },
   subsectionHint: {
     fontSize: 13,
     lineHeight: 18,
     opacity: 0.92,
+    textAlign: 'center',
+    alignSelf: 'center',
+    maxWidth: 640,
   },
-  pillList: {
-    gap: 12,
+  pillTableWrap: {
     width: '100%',
+    alignItems: 'center',
   },
-  pillRow: {
+  pillTable: {
+    width: '100%',
+    maxWidth: 640,
+    gap: 10,
+  },
+  pillTableRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
     width: '100%',
   },
-  pillRowPhone: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    gap: 6,
+  pillTableLabelCell: {
+    width: 148,
+    flexShrink: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  pill: {
-    minWidth: 108,
+  pillTablePill: {
+    minWidth: 0,
+    width: '100%',
     paddingVertical: 6,
-    paddingHorizontal: 12,
-    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    alignSelf: 'center',
+  },
+  pillTableDesc: {
+    flex: 1,
+    fontSize: 13,
+    lineHeight: 18,
+    minWidth: 0,
   },
   pillText: {
     fontSize: 12,
     lineHeight: 16,
-  },
-  pillDesc: {
-    flex: 1,
-    fontSize: 13,
-    lineHeight: 18,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
@@ -201,50 +175,43 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     opacity: 0.65,
   },
-  title: {
-    fontSize: 14,
-    fontWeight: '700',
-    alignSelf: 'flex-start',
+  swatchRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 14,
+    rowGap: 8,
     width: '100%',
+    alignSelf: 'center',
   },
-  titleCompact: {
-    fontSize: 13,
+  swatchItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   fastingHint: {
     fontSize: 12,
     lineHeight: 17,
     opacity: 0.88,
-    alignSelf: 'flex-start',
-    width: '100%',
-  },
-  fastingHintCompact: {
-    fontSize: 11,
-    lineHeight: 15,
+    textAlign: 'center',
+    alignSelf: 'center',
+    maxWidth: 640,
   },
   iconsTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    alignSelf: 'flex-start',
-    width: '100%',
     marginTop: 2,
   },
-  iconsTitleCompact: {
-    fontSize: 12,
-  },
-  row: {
+  iconRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
     gap: 14,
     rowGap: 8,
     width: '100%',
+    alignSelf: 'center',
   },
-  rowCompact: {
-    gap: 10,
-    rowGap: 6,
-  },
-  item: {
+  iconItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -270,8 +237,5 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     fontWeight: '500',
-  },
-  labelCompact: {
-    fontSize: 11,
   },
 });

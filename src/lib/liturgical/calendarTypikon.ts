@@ -14,25 +14,8 @@ const CALENDAR_GLYPHS = new Set<TypikonGlyph>([
   'great_feast',
 ]);
 
-/** Local appearance keys → orthocal feast_level when API is unavailable. */
-const APPEARANCE_FEAST_LEVEL: Record<string, number> = {
-  palm_sunday: 6,
-  pascha: 6,
-  pentecost: 6,
-  all_saints: 6,
-  all_saints_russia: 6,
-  ascension: 6,
-  holy_spirit: 6,
-  peter_and_paul: 6,
-  nativity_theotokos: 6,
-  presentation: 6,
-  nativity: 6,
-  theophany: 6,
-  annunciation: 6,
-  transfiguration: 6,
-  dormition: 6,
-  elevation_cross: 6,
-};
+/** Great-feast ranks come from orthocal only (feast_level / feast_level_description). */
+const APPEARANCE_FEAST_LEVEL: Record<string, number> = {};
 
 export function shouldShowCalendarTypikon(glyph: TypikonGlyph): boolean {
   return CALENDAR_GLYPHS.has(glyph);

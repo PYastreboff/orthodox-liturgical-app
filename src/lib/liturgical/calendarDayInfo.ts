@@ -1,6 +1,10 @@
-import { calendarFastingFoodIcons, type CalendarFastingFoodIcons } from '../../i18n/fastingLabels';
+import {
+  calendarFastingFoodIcons,
+  isOrthocalFastDay,
+  type CalendarFastingFoodIcons,
+} from '../../i18n/fastingLabels';
 import type { OrthocalDay } from '../api/orthocal';
-import { isFeastCellAppearance } from '../calendar/calendarCellStyle';
+import { isCalendarFastingAppearance } from '../calendar/calendarCellStyle';
 import type { PlainDate } from '../calendar/julianGregorian';
 import { shouldApplyWeeklyFastOverride } from '../calendar/weeklyFast';
 import { isGreatFridayDay, shouldUseOrthocalFeastRank } from './lectionaryDay';
@@ -24,7 +28,7 @@ export type CalendarDayInfo = {
   feastRank: FeastRankDisplay | null;
   /** Red title / saints line (polyeleos+). */
   isFeastTitleRed: boolean;
-  /** Pink cell + thick red border (Pascha, Pentecost, Transfiguration, or API great feast). */
+  /** Pink or gold feast cell + thick red border (Pascha, Pentecost, Transfiguration, or API great feast). */
   isFeastCell: boolean;
   /** Great and Holy Friday — thick black border on the month grid. */
   isGreatFridayBorder: boolean;
@@ -33,6 +37,8 @@ export type CalendarDayInfo = {
   greatFeastNames: string[];
   /** Blue fish / gold oil icons on fast days when orthocal allows them. */
   fastingFoodIcons: CalendarFastingFoodIcons;
+  /** Wed/Fri fast, lent, or orthocal fast_level — not feast days that lift the fast. */
+  isFastDay: boolean;
   /** False for the local appearance shell before orthocal data arrives. */
   orthocalLoaded: boolean;
 };
@@ -69,18 +75,17 @@ function useOrthocalFeastRank(day: OrthocalDay | null, appearanceKey: string): b
   return shouldUseOrthocalFeastRank(day, appearanceKey);
 }
 
-/** Pink background + red border: Pascha / Pentecost / Transfiguration or orthocal great feast. */
+/** Pink background + red border: Pascha (gold) / Pentecost / Transfiguration or orthocal great feast. */
 export function isCalendarFeastCell(
   day: OrthocalDay | null,
   appearanceKey: string,
-  feastRank: FeastRankDisplay | null,
+  _feastRank: FeastRankDisplay | null,
   dayTitle: string,
 ): boolean {
-  if (isFeastCellAppearance(appearanceKey)) return true;
+  if (appearanceKey === 'pascha') return true;
   if (transferredGreatFeastOnHolyWeekDay(day, appearanceKey, dayTitle)) return true;
   if (isOrthocalGreatFeastForCalendar(day, appearanceKey, dayTitle)) return true;
-  if (!useOrthocalFeastRank(day, appearanceKey)) return false;
-  return feastRank?.glyph === 'great_feast';
+  return false;
 }
 
 /** Red text: polyeleos-ranked services and above (includes great-feast cells). */
@@ -93,6 +98,7 @@ export function isCalendarFeastTitleRed(
   if (isCalendarFeastCell(day, appearanceKey, feastRank, dayTitle)) return true;
   if (!useOrthocalFeastRank(day, appearanceKey)) return false;
   if (feastRank?.glyph === 'polyeleos' || feastRank?.glyph === 'vigil') return true;
+  if (feastRank?.glyph === 'great_feast') return true;
   if ((day?.feast_level ?? 0) >= ORTHOCAL_POLYELEOS_LEVEL_MIN) {
     return Boolean(transferredGreatFeastOnHolyWeekDay(day, appearanceKey, dayTitle));
   }
@@ -132,6 +138,9 @@ export function buildCalendarDayInfo(
   const isFeastTitleRed = isCalendarFeastTitleRed(day, appearanceKey, feastRank, dayTitle);
   const greatFeastNames = greatFeastNamesForCalendarDay(day, appearanceKey, feastRank, dayTitle);
   const weeklyFast = shouldApplyWeeklyFastOverride(day, civil);
+  const isFastDay = day
+    ? isOrthocalFastDay(day, appearanceKey, weeklyFast)
+    : isCalendarFastingAppearance(appearanceKey);
   const fastingFoodIcons = calendarFastingFoodIcons(day, appearanceKey, weeklyFast, civil);
   return {
     dayTitle,
@@ -144,6 +153,7 @@ export function buildCalendarDayInfo(
     appearanceKey,
     greatFeastNames,
     fastingFoodIcons,
+    isFastDay,
     orthocalLoaded: day !== null,
   };
 }

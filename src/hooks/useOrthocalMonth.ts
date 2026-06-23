@@ -103,3 +103,27 @@ export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: Primary
 
   return { dayByIso, dayInfoForDate, feastRankForDate, showTypikonForDate, loading };
 }
+
+export type OrthocalMonthLoading = {
+  loading: boolean;
+  loadedCount: number;
+  totalCount: number;
+  pendingCount: number;
+};
+
+export function orthocalMonthLoadingStats(
+  dates: Date[],
+  dayByIso: MonthDayMap,
+): OrthocalMonthLoading {
+  let loadedCount = 0;
+  for (const date of dates) {
+    if (dayByIso[toDayIso(date)]?.orthocalLoaded) loadedCount += 1;
+  }
+  const totalCount = dates.length;
+  return {
+    loading: loadedCount < totalCount,
+    loadedCount,
+    totalCount,
+    pendingCount: totalCount - loadedCount,
+  };
+}

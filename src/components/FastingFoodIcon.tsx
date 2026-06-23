@@ -35,7 +35,21 @@ type Props = {
   kind: FastingFoodKind;
   color: string;
   size?: number;
+  /** Calendar / hero tooltips — "Fish allowed" instead of the food-list noun. */
+  allowedLabel?: boolean;
 };
+
+function iconA11yKey(kind: FastingFoodKind, allowedLabel: boolean): string {
+  if (allowedLabel && (kind === 'fish' || kind === 'wine' || kind === 'oil')) {
+    const keys = {
+      fish: 'fasting.exceptionFish',
+      wine: 'fasting.exceptionWine',
+      oil: 'fasting.exceptionOil',
+    } as const;
+    return keys[kind];
+  }
+  return FOOD_ICON_META[kind].a11yKey;
+}
 
 function IconSlot({ size, children }: { size: number; children: React.ReactNode }) {
   return (
@@ -49,14 +63,19 @@ export function fastingFoodDisplayLabel(kind: FastingFoodKind, lang: UiLanguage 
   return translate(lang, FOOD_ICON_META[kind].a11yKey);
 }
 
-export function FastingFoodIcon({ kind, color, size = FASTING_ALLOWANCE_ICON_SIZE }: Props) {
+export function FastingFoodIcon({
+  kind,
+  color,
+  size = FASTING_ALLOWANCE_ICON_SIZE,
+  allowedLabel = false,
+}: Props) {
   const { t } = useAppTranslation();
-  const meta = FOOD_ICON_META[kind];
+  const a11yKey = iconA11yKey(kind, allowedLabel);
 
   if (kind === 'oil') {
     const oilSize = Math.round(size * FASTING_OIL_ICON_VISUAL_SCALE);
     return (
-      <HoverAccessible label={t(meta.a11yKey)} accessibilityRole="image">
+      <HoverAccessible label={t(a11yKey)} accessibilityRole="image">
         <IconSlot size={size}>
           <OilDropIcon color={color} size={oilSize} />
         </IconSlot>
@@ -68,9 +87,9 @@ export function FastingFoodIcon({ kind, color, size = FASTING_ALLOWANCE_ICON_SIZ
     kind === 'wine' ? Math.round(size * FASTING_WINE_ICON_VISUAL_SCALE) : size;
 
   return (
-    <HoverAccessible label={t(meta.a11yKey)} accessibilityRole="image">
+    <HoverAccessible label={t(a11yKey)} accessibilityRole="image">
       <IconSlot size={size}>
-        <MaterialCommunityIcons name={meta.icon} size={glyphSize} color={color} />
+        <MaterialCommunityIcons name={FOOD_ICON_META[kind].icon} size={glyphSize} color={color} />
       </IconSlot>
     </HoverAccessible>
   );

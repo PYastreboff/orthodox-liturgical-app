@@ -194,6 +194,7 @@ export default function TodayScreen() {
     () => buildDayDashboard(liturgicalDay, appearance, civilPlain, uiLanguage),
     [appearance, civilPlain, liturgicalDay, uiLanguage],
   );
+  const isGreatFeastRankDay = dashboard.feastRank.glyph === 'great_feast';
   const {
     englishSections,
     slavonicSections,
@@ -440,7 +441,12 @@ export default function TodayScreen() {
             style={[
               styles.serviceRankLabel,
               type.serviceRank,
-              { color: dashboard.isMajorFeastDay ? colors.feastBorder : theme.colors.text },
+              {
+                color:
+                  dashboard.isMajorFeastDay || isGreatFeastRankDay
+                    ? colors.feastBorder
+                    : theme.colors.text,
+              },
             ]}
           >
             {dashboard.isMajorFeastDay

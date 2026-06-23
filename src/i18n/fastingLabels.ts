@@ -32,6 +32,8 @@ export type FastingFoodsDetail = {
   exceptionNote?: string;
   /** Total fast — show a single no-eating message instead of food lists. */
   totalAbstinence?: boolean;
+  /** Cheesefare week / orthocal meat fast — fast only from meat. */
+  meatFast?: boolean;
 };
 
 /** Drives pill colour for Fast / No fast chips. */
@@ -62,7 +64,7 @@ const FAST_DESC_KEYS: Record<string, string> = {
   'fish wine and oil': 'fasting.levelFish',
   'dairy allowed': 'fasting.levelDairy',
   'dairy eggs fish wine and oil': 'fasting.levelDairy',
-  'meat fast': 'fasting.levelMeatFast',
+  'meat fast': 'fasting.levelDairy',
   'strict fast': 'fasting.levelStrict',
 };
 
@@ -195,9 +197,10 @@ function isStrictFastAppearanceFallback(appearanceKey: string): boolean {
 
 function detailForMeatFast(lang: UiLanguage): FastingFoodsDetail {
   return {
-    ruleLabel: translate(lang, 'fasting.levelMeatFast'),
+    ruleLabel: translate(lang, 'fasting.levelDairy'),
     allowed: foodItems(lang, ['plant', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
     notAllowed: foodItems(lang, ['meat']),
+    meatFast: true,
   };
 }
 
@@ -365,7 +368,7 @@ export function fastSummaryKindFromDetail(
 /** Hero chip: "Fast" (with optional icons) or "No fast". */
 export type HeroFastChipDisplay = {
   label: string;
-  icons: { fish: boolean; wine: boolean; oil: boolean };
+  icons: { fish: boolean; wine: boolean; oil: boolean; noMeat: boolean };
 };
 
 export function heroFastChipDisplay(
@@ -373,12 +376,19 @@ export function heroFastChipDisplay(
   isFastDay: boolean,
   lang: UiLanguage,
 ): HeroFastChipDisplay {
-  const noIcons = { fish: false, wine: false, oil: false };
+  const noIcons = { fish: false, wine: false, oil: false, noMeat: false };
 
   if (!isFastDay || detail.allowed.some((item) => item.kind === 'all')) {
     return {
       label: translate(lang, 'fasting.summaryNoFast'),
       icons: noIcons,
+    };
+  }
+
+  if (detail.meatFast) {
+    return {
+      label: translate(lang, 'fasting.summaryFast'),
+      icons: { fish: false, wine: false, oil: false, noMeat: true },
     };
   }
 
@@ -389,6 +399,7 @@ export function heroFastChipDisplay(
       fish: allowed.has('fish'),
       wine: allowed.has('wine'),
       oil: allowed.has('oil'),
+      noMeat: false,
     },
   };
 }
@@ -456,11 +467,13 @@ export type CalendarFastingFoodIcons = {
   fish: boolean;
   wine: boolean;
   oil: boolean;
+  /** Meat fast / Cheesefare: no meat, with dairy-eggs-fish-wine-oil permitted. */
+  noMeat: boolean;
   /** Black X — total fast (Great and Holy Friday). */
   noEating: boolean;
 };
 
-const MEAT_FAST_CALENDAR_ICONS = { fish: true, wine: true, oil: true } as const;
+const MEAT_FAST_CALENDAR_ICONS = { fish: false, wine: false, oil: false, noMeat: true } as const;
 
 /** Fish / wine / oil flags from orthocal fast_exception_desc (and related fields), not fast_level alone. */
 function orthocalFastFoodFlags(day: OrthocalDay): {
@@ -491,17 +504,31 @@ export function calendarFastingFoodIcons(
   civil: PlainDate,
 ): CalendarFastingFoodIcons {
   if (!isOrthocalFastDay(day, appearanceKey, weeklyFast)) {
-    return { fish: false, wine: false, oil: false, noEating: false };
+    return { fish: false, wine: false, oil: false, noMeat: false, noEating: false };
   }
   if (isGreatAndHolyFriday(appearanceKey)) {
-    return { fish: false, wine: false, oil: false, noEating: true };
+    return { fish: false, wine: false, oil: false, noMeat: false, noEating: true };
   }
   if (isMeatFastAppearance(day, appearanceKey, civil)) {
     return { ...MEAT_FAST_CALENDAR_ICONS, noEating: false };
   }
   if (!day || weeklyFast) {
-    return { fish: false, wine: false, oil: false, noEating: false };
+    return { fish: false, wine: false, oil: false, noMeat: false, noEating: false };
   }
   const flags = orthocalFastFoodFlags(day);
-  return { ...flags, noEating: false };
+  return { ...flags, noMeat: false, noEating: false };
+}
+
+export type CalendarFastingIconKind = 'fish' | 'wine' | 'oil' | 'noMeat';
+
+const CALENDAR_FASTING_ICON_LABEL_KEYS: Record<CalendarFastingIconKind, `fasting.${string}`> = {
+  fish: 'fasting.exceptionFish',
+  wine: 'fasting.exceptionWine',
+  oil: 'fasting.exceptionOil',
+  noMeat: 'fasting.iconNoMeat',
+};
+
+/** Short labels for calendar / hero fasting icons — "Fish allowed", not food-list nouns. */
+export function calendarFastingIconLabel(kind: CalendarFastingIconKind, lang: UiLanguage): string {
+  return translate(lang, CALENDAR_FASTING_ICON_LABEL_KEYS[kind]);
 }

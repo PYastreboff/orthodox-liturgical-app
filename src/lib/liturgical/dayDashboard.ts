@@ -47,7 +47,7 @@ export type DayDashboardData = {
   feastRank: FeastRankDisplay;
   /** Short pill: "Fast" / "No fast" (date row, hero, Fasting section). */
   fastSummaryLabel: string;
-  /** Pill colour: strict, wine & oil, fish, dairy, no fast, total abstinence. */
+  /** Pill colour: strict, wine & oil, fish, meat fast (dairy), total abstinence (no eating), no fast. */
   fastSummaryKind: FastSummaryKind;
   /** Hero fast chip — null on non-fast days; "Fast" plus allowance icons. */
   heroFastChip: HeroFastChipDisplay;

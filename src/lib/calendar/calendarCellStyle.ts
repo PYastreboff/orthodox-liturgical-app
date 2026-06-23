@@ -25,8 +25,6 @@ const FASTING_KEYS = new Set([
   'apostles_fast_sunday',
   'cheesefare_fast',
   'cheesefare_fast_sunday',
-  'all_saints',
-  'all_saints_russia',
   ...WEEKLY_FAST_APPEARANCE_KEYS,
 ]);
 
@@ -35,11 +33,14 @@ export const CALENDAR_CELL_WHITE = '#ffffff';
 export const CALENDAR_CELL_FASTING = '#c4c1b8';
 export const CALENDAR_CELL_FEAST = '#f2a0ad';
 export const CALENDAR_CELL_PALM_SUNDAY = '#c8dcc4';
+/** Pascha — royal gold vestments; light enough for ink text, rich enough to read as gold. */
+export const CALENDAR_CELL_PASCHA = '#e8c878';
 
 const CELL_WHITE = CALENDAR_CELL_WHITE;
 const CELL_FASTING = CALENDAR_CELL_FASTING;
 const CELL_FEAST = CALENDAR_CELL_FEAST;
 const CELL_PALM_SUNDAY = CALENDAR_CELL_PALM_SUNDAY;
+const CELL_PASCHA = CALENDAR_CELL_PASCHA;
 
 export function isFeastCellAppearance(appearanceKey: string): boolean {
   return FEAST_CELL_APPEARANCE_KEYS.has(appearanceKey);
@@ -54,8 +55,16 @@ export function isCalendarFastingAppearance(appearanceKey: string): boolean {
  */
 export function getCalendarCellStyle(
   appearanceKey: string,
-  options?: { feastCell?: boolean },
+  options?: {
+    feastCell?: boolean;
+    fastingCell?: boolean;
+    meatFastCell?: boolean;
+  },
 ): CalendarCellStyle {
+  if (appearanceKey === 'pascha') {
+    return { backgroundColor: CELL_PASCHA, foreground: colors.ink };
+  }
+
   if (options?.feastCell) {
     return { backgroundColor: CELL_FEAST, foreground: colors.ink };
   }
@@ -64,7 +73,12 @@ export function getCalendarCellStyle(
     return { backgroundColor: CELL_PALM_SUNDAY, foreground: colors.ink };
   }
 
-  if (FASTING_KEYS.has(appearanceKey)) {
+  // Meat-fast days keep normal feast/weekday backgrounds (not grey fasting cells).
+  if (options?.meatFastCell) {
+    return { backgroundColor: CELL_WHITE, foreground: colors.ink };
+  }
+
+  if (options?.fastingCell || FASTING_KEYS.has(appearanceKey)) {
     return { backgroundColor: CELL_FASTING, foreground: colors.ink };
   }
 

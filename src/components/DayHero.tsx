@@ -15,6 +15,7 @@ import { colors } from '../theme/tokens';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
 import { FastingFoodIcon } from './FastingFoodIcon';
+import { CalendarFastingFoodIcon } from './CalendarFastingFoodIcon';
 import { TypikonSymbol } from './TypikonSymbol';
 
 type Props = {
@@ -100,9 +101,10 @@ export function DayHero({
   const heroFastA11y = heroFastChip
     ? [
         heroFastChip.label,
-        heroFastChip.icons.fish ? t('fasting.foodFish') : null,
-        heroFastChip.icons.wine ? t('fasting.foodWine') : null,
-        heroFastChip.icons.oil ? t('fasting.foodOil') : null,
+        heroFastChip.icons.noMeat ? t('fasting.levelMeatFast') : null,
+        heroFastChip.icons.fish ? t('fasting.exceptionFish') : null,
+        heroFastChip.icons.wine ? t('fasting.exceptionWine') : null,
+        heroFastChip.icons.oil ? t('fasting.exceptionOil') : null,
       ]
         .filter(Boolean)
         .join(', ')
@@ -245,19 +247,25 @@ export function DayHero({
             accessibilityLabel={heroFastA11y ?? undefined}
           >
             <Text style={[styles.fastChipText, chipType, { color: fg }]}>{heroFastChip.label}</Text>
-            {heroFastChip.icons.fish || heroFastChip.icons.wine || heroFastChip.icons.oil ? (
+            {heroFastChip.icons.noMeat ||
+            heroFastChip.icons.fish ||
+            heroFastChip.icons.wine ||
+            heroFastChip.icons.oil ? (
               <Text style={[styles.fastChipDash, chipType, { color: fg }]} accessibilityElementsHidden>
                 —
               </Text>
             ) : null}
+            {heroFastChip.icons.noMeat ? (
+              <CalendarFastingFoodIcon kind="noMeat" color={fg} />
+            ) : null}
             {heroFastChip.icons.fish ? (
-              <FastingFoodIcon kind="fish" color={fg} />
+              <FastingFoodIcon kind="fish" color={fg} allowedLabel />
             ) : null}
             {heroFastChip.icons.wine ? (
-              <FastingFoodIcon kind="wine" color={fg} />
+              <FastingFoodIcon kind="wine" color={fg} allowedLabel />
             ) : null}
             {heroFastChip.icons.oil ? (
-              <FastingFoodIcon kind="oil" color={fg} />
+              <FastingFoodIcon kind="oil" color={fg} allowedLabel />
             ) : null}
           </View>
         ) : null}

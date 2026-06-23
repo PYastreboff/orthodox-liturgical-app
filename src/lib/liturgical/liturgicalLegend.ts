@@ -12,8 +12,9 @@ export const CALENDAR_CELL_LEGEND = [
 ] as const;
 
 export const CALENDAR_ICON_LEGEND = [
-  { kind: 'fish' as const, key: 'fasting.foodFish' },
-  { kind: 'wine' as const, key: 'fasting.foodWine' },
-  { kind: 'oil' as const, key: 'fasting.foodOil' },
+  { kind: 'fish' as const, key: 'fasting.exceptionFish' },
+  { kind: 'wine' as const, key: 'fasting.exceptionWine' },
+  { kind: 'oil' as const, key: 'fasting.exceptionOil' },
+  { kind: 'noMeat' as const, key: 'fasting.levelMeatFast' },
   { kind: 'noEating' as const, key: 'fasting.levelNoEating' },
 ] as const;

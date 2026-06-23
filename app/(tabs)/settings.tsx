@@ -198,7 +198,6 @@ export default function SettingsScreen() {
         <LiturgicalLegendGuide
           textColor={theme.colors.text}
           mutedColor={isDark ? '#a39e98' : colors.muted}
-          variant="settings"
         />
       </SettingsSection>
 

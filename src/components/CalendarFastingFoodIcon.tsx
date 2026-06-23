@@ -1,14 +1,14 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Line } from 'react-native-svg';
 
-import { fastingFoodDisplayLabel } from './FastingFoodIcon';
+import { FastingFoodIcon } from './FastingFoodIcon';
 import {
   FASTING_ALLOWANCE_ICON_SIZE,
   fastingAllowanceColor,
   fastingNoEatingColor,
 } from './fastingAllowanceIcons';
-import { FastingFoodIcon } from './FastingFoodIcon';
 import { HoverAccessible } from './HoverAccessible';
+import { calendarFastingIconLabel } from '../i18n/fastingLabels';
 import { translate } from '../i18n/translate';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 
@@ -23,11 +23,14 @@ export {
 } from './fastingAllowanceIcons';
 
 type Props = {
-  kind: 'fish' | 'wine' | 'oil' | 'noEating';
+  kind: 'fish' | 'wine' | 'oil' | 'noMeat' | 'noEating';
   size?: number;
   /** Override glyph colour (e.g. light cross on a dark legend background). */
   color?: string;
 };
+
+const MEAT_ICON_COLOR = '#b02222';
+const NO_MEAT_SLASH_COLOR = '#5f1717';
 
 export function calendarFastingFoodIconColor(
   kind: Props['kind'],
@@ -35,6 +38,7 @@ export function calendarFastingFoodIconColor(
   foregroundColor = '#f2ebe2',
 ): string {
   if (kind === 'noEating') return fastingNoEatingColor(onDarkBackground, foregroundColor);
+  if (kind === 'noMeat') return MEAT_ICON_COLOR;
   return fastingAllowanceColor(kind);
 }
 
@@ -73,7 +77,7 @@ export function CalendarFastingFoodIcon({
   const label =
     kind === 'noEating'
       ? translate(lang, 'fasting.levelNoEating')
-      : fastingFoodDisplayLabel(kind, lang);
+      : calendarFastingIconLabel(kind, lang);
   const color = colorOverride ?? calendarFastingFoodIconColor(kind, false);
 
   if (kind === 'noEating') {
@@ -88,12 +92,55 @@ export function CalendarFastingFoodIcon({
     );
   }
 
-  return <FastingFoodIcon kind={kind} color={color} size={size} />;
+  if (kind === 'noMeat') {
+    const meatColor = colorOverride ?? MEAT_ICON_COLOR;
+    const slashColor = colorOverride ?? NO_MEAT_SLASH_COLOR;
+    return (
+      <HoverAccessible label={label} accessibilityRole="image">
+        <View style={[styles.iconSlot, { width: size, height: size }]}>
+          <View style={[styles.noMeatBase, { width: size, height: size }]}>
+            <View style={styles.noMeatGlyphWrap}>
+              <Text style={[styles.noMeatM, { color: meatColor }]}>M</Text>
+            </View>
+          </View>
+          <Svg width={size} height={size} viewBox="0 0 24 24" style={styles.noMeatSlash}>
+            <Line
+              x1={4}
+              y1={12}
+              x2={20}
+              y2={12}
+              stroke={slashColor}
+              strokeWidth={2.8}
+              strokeLinecap="round"
+            />
+          </Svg>
+        </View>
+      </HoverAccessible>
+    );
+  }
+
+  return <FastingFoodIcon kind={kind} color={color} size={size} allowedLabel />;
 }
 
 const styles = StyleSheet.create({
   iconSlot: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  noMeatBase: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noMeatGlyphWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noMeatM: {
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 17,
+  },
+  noMeatSlash: {
+    position: 'absolute',
   },
 });

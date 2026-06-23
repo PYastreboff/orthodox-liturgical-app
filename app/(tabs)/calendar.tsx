@@ -4,14 +4,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
 import Head from 'expo-router/head';
 
-import { CalendarColorLegend } from '../../src/components/CalendarColorLegend';
 import { CalendarSearch } from '../../src/components/CalendarSearch';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
 import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
@@ -24,8 +22,6 @@ import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
-
-const CALENDAR_COMPACT_BREAKPOINT = 600;
 
 export default function CalendarScreen() {
   const theme = useTheme();
@@ -77,8 +73,6 @@ export default function CalendarScreen() {
   );
 
   const calendarBg = theme.dark ? colors.darkBg : '#e8e3d8';
-  const { width } = useWindowDimensions();
-  const isCompact = width < CALENDAR_COMPACT_BREAKPOINT;
   const phoneLayout = usePhoneLayout();
   const sectionInsetX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
 
@@ -101,32 +95,27 @@ export default function CalendarScreen() {
       contentContainerStyle={[
         styles.scrollContent,
         {
-          paddingTop: screenSafe.paddingTop + 12,
+          paddingTop: screenSafe.paddingTop + 16,
           paddingLeft: screenSafe.paddingLeft,
           paddingRight: screenSafe.paddingRight,
           paddingBottom: scrollBottomPadding,
         },
       ]}
     >
-      <View style={[styles.header, { paddingHorizontal: sectionInsetX }]}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
+      <View style={[styles.introSection, { paddingHorizontal: sectionInsetX }]}>
+        <Text style={[styles.pageTitle, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
+        <CalendarSearch
+          calendar={primaryCalendar}
+          year={cursor.getFullYear()}
+          textColor={theme.colors.text}
+          mutedColor={theme.dark ? '#a39e98' : colors.muted}
+          cardBg={theme.colors.card}
+          borderColor={theme.colors.border}
+          isDark={theme.dark}
+          onSelectDate={onSearchSelectDate}
+          padded={false}
+        />
       </View>
-      <CalendarColorLegend
-        textColor={theme.colors.text}
-        mutedColor={theme.dark ? '#a39e98' : colors.muted}
-        compact={isCompact}
-      />
-
-      <CalendarSearch
-        calendar={primaryCalendar}
-        year={cursor.getFullYear()}
-        textColor={theme.colors.text}
-        mutedColor={theme.dark ? '#a39e98' : colors.muted}
-        cardBg={theme.colors.card}
-        borderColor={theme.colors.border}
-        isDark={theme.dark}
-        onSelectDate={onSearchSelectDate}
-      />
 
       <LiturgicalMonthGrid
         visibleMonth={cursor}
@@ -150,14 +139,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 12,
     paddingBottom: 32,
   },
-  header: {
+  introSection: {
     width: '100%',
+    gap: 18,
+    marginBottom: 22,
   },
-  title: {
+  pageTitle: {
     fontSize: 22,
     fontWeight: '700',
+    lineHeight: 28,
+    letterSpacing: 0.2,
   },
 });
