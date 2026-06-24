@@ -256,7 +256,7 @@ export function DayHero({
               </Text>
             ) : null}
             {heroFastChip.icons.noMeat ? (
-              <CalendarFastingFoodIcon kind="noMeat" color={fg} />
+              <CalendarFastingFoodIcon kind="noMeat" color={fg} slashColor={fg} />
             ) : null}
             {heroFastChip.icons.fish ? (
               <FastingFoodIcon kind="fish" color={fg} allowedLabel />

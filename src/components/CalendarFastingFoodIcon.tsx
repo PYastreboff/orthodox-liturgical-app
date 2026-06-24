@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Svg, { Line } from 'react-native-svg';
 
 import { FastingFoodIcon } from './FastingFoodIcon';
@@ -8,6 +8,7 @@ import {
   fastingNoEatingColor,
 } from './fastingAllowanceIcons';
 import { HoverAccessible } from './HoverAccessible';
+import { NoMeatIcon, FASTING_NO_MEAT_COLOR } from './NoMeatIcon';
 import { calendarFastingIconLabel } from '../i18n/fastingLabels';
 import { translate } from '../i18n/translate';
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -25,12 +26,11 @@ export {
 type Props = {
   kind: 'fish' | 'wine' | 'oil' | 'noMeat' | 'noEating';
   size?: number;
-  /** Override glyph colour (e.g. light cross on a dark legend background). */
+  /** Override glyph colour (e.g. white on the hero). */
   color?: string;
+  /** Override slash colour for `noMeat` (defaults to calendar dark red). */
+  slashColor?: string;
 };
-
-const MEAT_ICON_COLOR = '#b02222';
-const NO_MEAT_SLASH_COLOR = '#5f1717';
 
 export function calendarFastingFoodIconColor(
   kind: Props['kind'],
@@ -38,7 +38,7 @@ export function calendarFastingFoodIconColor(
   foregroundColor = '#f2ebe2',
 ): string {
   if (kind === 'noEating') return fastingNoEatingColor(onDarkBackground, foregroundColor);
-  if (kind === 'noMeat') return MEAT_ICON_COLOR;
+  if (kind === 'noMeat') return FASTING_NO_MEAT_COLOR;
   return fastingAllowanceColor(kind);
 }
 
@@ -72,6 +72,7 @@ export function CalendarFastingFoodIcon({
   kind,
   size = FASTING_ALLOWANCE_ICON_SIZE,
   color: colorOverride,
+  slashColor,
 }: Props) {
   const { lang } = useAppTranslation();
   const label =
@@ -93,27 +94,11 @@ export function CalendarFastingFoodIcon({
   }
 
   if (kind === 'noMeat') {
-    const meatColor = colorOverride ?? MEAT_ICON_COLOR;
-    const slashColor = colorOverride ?? NO_MEAT_SLASH_COLOR;
+    const meatColor = colorOverride ?? FASTING_NO_MEAT_COLOR;
     return (
       <HoverAccessible label={label} accessibilityRole="image">
         <View style={[styles.iconSlot, { width: size, height: size }]}>
-          <View style={[styles.noMeatBase, { width: size, height: size }]}>
-            <View style={styles.noMeatGlyphWrap}>
-              <Text style={[styles.noMeatM, { color: meatColor }]}>M</Text>
-            </View>
-          </View>
-          <Svg width={size} height={size} viewBox="0 0 24 24" style={styles.noMeatSlash}>
-            <Line
-              x1={4}
-              y1={12}
-              x2={20}
-              y2={12}
-              stroke={slashColor}
-              strokeWidth={2.8}
-              strokeLinecap="round"
-            />
-          </Svg>
+          <NoMeatIcon size={size} color={meatColor} slashColor={slashColor} />
         </View>
       </HoverAccessible>
     );
@@ -126,21 +111,5 @@ const styles = StyleSheet.create({
   iconSlot: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  noMeatBase: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  noMeatGlyphWrap: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  noMeatM: {
-    fontSize: 16,
-    fontWeight: '700',
-    lineHeight: 17,
-  },
-  noMeatSlash: {
-    position: 'absolute',
   },
 });

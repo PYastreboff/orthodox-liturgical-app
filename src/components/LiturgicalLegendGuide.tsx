@@ -79,6 +79,9 @@ export function LiturgicalLegendGuide({ textColor, mutedColor }: Props) {
         <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
           {t('calendar.legendTitle')}
         </Text>
+        <Text style={[styles.legendSubsectionHint, { color: hintColor }]}>
+          {t('calendar.legendFastingHint')}
+        </Text>
         <View style={styles.swatchRow}>
           {CALENDAR_CELL_LEGEND.map((item) => (
             <View key={item.key} style={styles.swatchItem}>
@@ -95,7 +98,6 @@ export function LiturgicalLegendGuide({ textColor, mutedColor }: Props) {
             </View>
           ))}
         </View>
-        <Text style={[styles.legendHint, { color: hintColor }]}>{t('calendar.legendFastingHint')}</Text>
       </View>
 
       <View style={styles.legendSection}>
@@ -144,13 +146,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     opacity: 0.92,
-    textAlign: 'left',
-    width: '100%',
-  },
-  legendHint: {
-    fontSize: 12,
-    lineHeight: 17,
-    opacity: 0.88,
     textAlign: 'left',
     width: '100%',
   },
