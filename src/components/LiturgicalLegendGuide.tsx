@@ -40,70 +40,78 @@ export function LiturgicalLegendGuide({ textColor, mutedColor }: Props) {
 
   return (
     <View style={[styles.wrap, { paddingHorizontal: wrapPaddingX }]}>
-      <Text style={[styles.subsectionTitle, { color: textColor }]}>
-        {t('settings.legendPillsTitle')}
-      </Text>
-      <Text style={[styles.subsectionHint, { color: hintColor }]}>
-        {t('settings.legendPillsHint')}
-      </Text>
-      <View style={styles.pillTableWrap}>
-        <View style={styles.pillTable}>
-          {FAST_PILL_LEGEND_KINDS.map((kind) => (
-            <View key={kind} style={styles.pillTableRow}>
-              <View style={styles.pillTableLabelCell}>
-                <FastSummaryPill
-                  label={t(FAST_PILL_LEGEND_LABEL_KEY[kind])}
-                  kind={kind}
-                  textStyle={styles.pillText}
-                  style={styles.pillTablePill}
-                />
+      <View style={styles.legendSection}>
+        <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
+          {t('settings.legendPillsTitle')}
+        </Text>
+        <Text style={[styles.legendSubsectionHint, { color: hintColor }]}>
+          {t('settings.legendPillsHint')}
+        </Text>
+        <View style={styles.pillTableWrap}>
+          <View style={styles.pillTable}>
+            {FAST_PILL_LEGEND_KINDS.map((kind) => (
+              <View key={kind} style={styles.pillTableRow}>
+                <View style={styles.pillTableLabelCell}>
+                  <FastSummaryPill
+                    label={t(FAST_PILL_LEGEND_LABEL_KEY[kind])}
+                    kind={kind}
+                    textStyle={styles.pillText}
+                    style={styles.pillTablePill}
+                  />
+                </View>
+                <Text style={[styles.pillTableDesc, { color: hintColor }]}>
+                  {t(PILL_DESC_KEYS[kind])}
+                </Text>
               </View>
-              <Text style={[styles.pillTableDesc, { color: hintColor }]}>
-                {t(PILL_DESC_KEYS[kind])}
-              </Text>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
       </View>
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-      <Text style={[styles.subsectionTitle, { color: textColor }]}>
-        {t('calendar.legendTitle')}
-      </Text>
-      <View style={styles.swatchRow}>
-        {CALENDAR_CELL_LEGEND.map((item) => (
-          <View key={item.key} style={styles.swatchItem}>
-            <View
-              style={[
-                styles.swatch,
-                { backgroundColor: item.swatch },
-                'border' in item && item.border ? styles.swatchBorder : null,
-                'feastOutline' in item && item.feastOutline ? styles.swatchFeastOutline : null,
-                'todayRing' in item && item.todayRing ? styles.swatchTodayRing : null,
-              ]}
-            />
-            <Text style={[styles.label, { color: textColor }]}>{t(item.key)}</Text>
-          </View>
-        ))}
+      <View style={styles.legendSection}>
+        <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
+          {t('calendar.legendTitle')}
+        </Text>
+        <View style={styles.swatchRow}>
+          {CALENDAR_CELL_LEGEND.map((item) => (
+            <View key={item.key} style={styles.swatchItem}>
+              <View
+                style={[
+                  styles.swatch,
+                  { backgroundColor: item.swatch },
+                  'border' in item && item.border ? styles.swatchBorder : null,
+                  'feastOutline' in item && item.feastOutline ? styles.swatchFeastOutline : null,
+                  'todayRing' in item && item.todayRing ? styles.swatchTodayRing : null,
+                ]}
+              />
+              <Text style={[styles.label, { color: textColor }]}>{t(item.key)}</Text>
+            </View>
+          ))}
+        </View>
+        <Text style={[styles.legendHint, { color: hintColor }]}>{t('calendar.legendFastingHint')}</Text>
       </View>
-      <Text style={[styles.fastingHint, { color: hintColor }]}>{t('calendar.legendFastingHint')}</Text>
 
-      <Text style={[styles.subsectionTitle, styles.iconsTitle, { color: textColor }]}>
-        {t('calendar.legendIconsTitle')}
-      </Text>
-      <Text style={[styles.fastingHint, { color: hintColor }]}>{t('calendar.legendIconsHint')}</Text>
-      <View style={styles.iconRow}>
-        {CALENDAR_ICON_LEGEND.map((item) => (
-          <View key={item.key} style={styles.iconItem}>
-            <CalendarFastingFoodIcon
-              kind={item.kind}
-              size={CALENDAR_FASTING_ICON_SIZE}
-              color={calendarFastingFoodIconColor(item.kind, isDark, textColor)}
-            />
-            <Text style={[styles.label, { color: textColor }]}>{t(item.key)}</Text>
-          </View>
-        ))}
+      <View style={styles.legendSection}>
+        <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
+          {t('calendar.legendIconsTitle')}
+        </Text>
+        <Text style={[styles.legendSubsectionHint, { color: hintColor }]}>
+          {t('calendar.legendIconsHint')}
+        </Text>
+        <View style={styles.iconRow}>
+          {CALENDAR_ICON_LEGEND.map((item) => (
+            <View key={item.key} style={styles.iconItem}>
+              <CalendarFastingFoodIcon
+                kind={item.kind}
+                size={CALENDAR_FASTING_ICON_SIZE}
+                color={calendarFastingFoodIconColor(item.kind, isDark, textColor)}
+              />
+              <Text style={[styles.label, { color: textColor }]}>{t(item.key)}</Text>
+            </View>
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -115,25 +123,35 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     gap: 10,
   },
-  subsectionTitle: {
+  legendSection: {
+    width: '100%',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  legendSubsectionTitle: {
     fontSize: 15,
     fontWeight: '600',
     lineHeight: 20,
-    textAlign: 'center',
-    alignSelf: 'center',
+    textAlign: 'left',
     width: '100%',
   },
-  subsectionHint: {
+  legendSubsectionHint: {
     fontSize: 13,
     lineHeight: 18,
     opacity: 0.92,
-    textAlign: 'center',
-    alignSelf: 'center',
-    maxWidth: 640,
+    textAlign: 'left',
+    width: '100%',
+  },
+  legendHint: {
+    fontSize: 12,
+    lineHeight: 17,
+    opacity: 0.88,
+    textAlign: 'left',
+    width: '100%',
   },
   pillTableWrap: {
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   pillTable: {
     width: '100%',
@@ -149,7 +167,7 @@ const styles = StyleSheet.create({
   pillTableLabelCell: {
     width: 148,
     flexShrink: 0,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
   },
   pillTablePill: {
@@ -157,7 +175,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 6,
     paddingHorizontal: 10,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
   },
   pillTableDesc: {
     flex: 1,
@@ -178,38 +196,25 @@ const styles = StyleSheet.create({
   swatchRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 14,
     rowGap: 8,
     width: '100%',
-    alignSelf: 'center',
   },
   swatchItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  fastingHint: {
-    fontSize: 12,
-    lineHeight: 17,
-    opacity: 0.88,
-    textAlign: 'center',
-    alignSelf: 'center',
-    maxWidth: 640,
-  },
-  iconsTitle: {
-    marginTop: 2,
-  },
   iconRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 14,
     rowGap: 8,
     width: '100%',
-    alignSelf: 'center',
   },
   iconItem: {
     flexDirection: 'row',

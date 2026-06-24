@@ -1,5 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -30,6 +30,11 @@ import {
   type CommemorationEntry,
 } from '../../src/lib/liturgical/commemorations';
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
+import {
+  LiturgicalTextsCategoryToggle,
+  type LiturgicalTextCategoryFilter,
+} from '../../src/components/LiturgicalTextsCategoryToggle';
+import { LITURGICAL_TEXT_SECTION_ORDER } from '../../src/lib/liturgical/liturgicalTexts';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
 import { useFontScale } from '../../src/hooks/useFontScale';
 import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
@@ -205,6 +210,34 @@ export default function TodayScreen() {
     julianMonthDay,
     appearanceKey: appearance.key,
   });
+  const [readingsCategoryFilter, setReadingsCategoryFilter] =
+    useState<LiturgicalTextCategoryFilter>('all');
+  const readingsSourceSections = sideBySide ? englishSections : displaySections;
+  const readingsAvailableCategories = useMemo(
+    () =>
+      LITURGICAL_TEXT_SECTION_ORDER.filter((id) =>
+        readingsSourceSections.some((section) => section.id === id && section.items.length > 0),
+      ),
+    [readingsSourceSections],
+  );
+  const readingsVisibleSections = useMemo(() => {
+    const nonEmpty = readingsSourceSections.filter((section) => section.items.length > 0);
+    if (readingsCategoryFilter === 'all') return nonEmpty;
+    return nonEmpty.filter((section) => section.id === readingsCategoryFilter);
+  }, [readingsCategoryFilter, readingsSourceSections]);
+
+  useEffect(() => {
+    setReadingsCategoryFilter('all');
+  }, [selectedDate]);
+
+  useEffect(() => {
+    if (
+      readingsCategoryFilter !== 'all' &&
+      !readingsAvailableCategories.includes(readingsCategoryFilter)
+    ) {
+      setReadingsCategoryFilter('all');
+    }
+  }, [readingsAvailableCategories, readingsCategoryFilter]);
   const { feasts, saints } = useMemo(() => {
     const entries = buildCommemorationEntries(
       liturgicalDay,
@@ -473,59 +506,71 @@ export default function TodayScreen() {
         onToggle={() => toggleSection('fasting')}
         themeColors={theme.colors}
       >
-        <View style={styles.rowBetween}>
-          <Text style={[styles.body, type.body, { color: theme.colors.text }]}>{t('today.level')}</Text>
-          <FastSummaryPill
-            label={dashboard.fastSummaryLabel}
-            kind={dashboard.fastSummaryKind}
-            textStyle={type.pill}
-          />
+        <View
+          style={[
+            styles.fastLevelBlock,
+            {
+              backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(43,38,35,0.04)',
+              borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(43,38,35,0.08)',
+            },
+          ]}
+        >
+          <View style={styles.fastLevelRow}>
+            <View style={styles.fastLevelText}>
+              {dashboard.isFastDay ? (
+                <>
+                  {dashboard.weeklyFastSectionLabel ? (
+                    <Text style={[styles.fastLevelSubtitle, type.body, { color: theme.colors.text }]}>
+                      {dashboard.weeklyFastSectionLabel}
+                    </Text>
+                  ) : null}
+                  {dashboard.fastingFoods.totalAbstinence ? (
+                    <Text style={[styles.fastLevelDetail, type.body, { color: theme.colors.text }]}>
+                      {t('fasting.foodsNoEating')}
+                    </Text>
+                  ) : dashboard.fastingFoods.ruleLabel !== dashboard.weeklyFastSectionLabel ? (
+                    <Text style={[styles.fastLevelDetail, type.body, { color: theme.colors.text }]}>
+                      {t('today.fastRule', { rule: dashboard.fastingFoods.ruleLabel })}
+                    </Text>
+                  ) : null}
+                </>
+              ) : (
+                <Text style={[styles.fastLevelDetail, type.body, { color: theme.colors.text }]}>
+                  {t('fasting.foodsAllAllowed')}
+                </Text>
+              )}
+            </View>
+            <FastSummaryPill
+              label={dashboard.fastSummaryLabel}
+              kind={dashboard.fastSummaryKind}
+              textStyle={type.pill}
+              style={styles.fastLevelPill}
+            />
+          </View>
         </View>
-        {dashboard.isFastDay ? (
+        {dashboard.isFastDay && !dashboard.fastingFoods.totalAbstinence ? (
           <>
-            {dashboard.weeklyFastSectionLabel ? (
-              <Text style={[styles.fastWeeklyTitle, type.body, { color: theme.colors.text }]}>
-                {dashboard.weeklyFastSectionLabel}
+            <FastingFoodList
+              heading={t('today.allowedHeading')}
+              items={dashboard.fastingFoods.allowed}
+              textColor={theme.colors.text}
+              iconColor={colors.accentGold}
+              bodyType={type.body}
+            />
+            <FastingFoodList
+              heading={t('today.notAllowedHeading')}
+              items={dashboard.fastingFoods.notAllowed}
+              textColor={theme.colors.text}
+              iconColor={colors.accentWine}
+              bodyType={type.body}
+            />
+            {dashboard.fastingFoods.exceptionNote ? (
+              <Text style={[styles.fastException, type.hint, { color: theme.colors.text }]}>
+                {t('today.fastException', { note: dashboard.fastingFoods.exceptionNote })}
               </Text>
             ) : null}
-            {dashboard.fastingFoods.totalAbstinence ? (
-              <Text style={[styles.fastAllAllowed, type.body, { color: theme.colors.text }]}>
-                {t('fasting.foodsNoEating')}
-              </Text>
-            ) : (
-              <>
-                {dashboard.fastingFoods.ruleLabel !== dashboard.weeklyFastSectionLabel ? (
-                  <Text style={[styles.fastRule, type.body, { color: theme.colors.text }]}>
-                    {t('today.fastRule', { rule: dashboard.fastingFoods.ruleLabel })}
-                  </Text>
-                ) : null}
-                <FastingFoodList
-                  heading={t('today.allowedHeading')}
-                  items={dashboard.fastingFoods.allowed}
-                  textColor={theme.colors.text}
-                  iconColor={colors.accentGold}
-                  bodyType={type.body}
-                />
-                <FastingFoodList
-                  heading={t('today.notAllowedHeading')}
-                  items={dashboard.fastingFoods.notAllowed}
-                  textColor={theme.colors.text}
-                  iconColor={colors.accentWine}
-                  bodyType={type.body}
-                />
-                {dashboard.fastingFoods.exceptionNote ? (
-                  <Text style={[styles.fastException, type.hint, { color: theme.colors.text }]}>
-                    {t('today.fastException', { note: dashboard.fastingFoods.exceptionNote })}
-                  </Text>
-                ) : null}
-              </>
-            )}
           </>
-        ) : (
-          <Text style={[styles.fastAllAllowed, type.body, { color: theme.colors.text }]}>
-            {t('fasting.foodsAllAllowed')}
-          </Text>
-        )}
+        ) : null}
         <Text style={[styles.cardHint, type.hint]}>{dashboard.fastingNote}</Text>
       </CollapsibleSection>
 
@@ -592,6 +637,16 @@ export default function TodayScreen() {
         expanded={!todayCollapsed.readings}
         onToggle={() => toggleSection('readings')}
         themeColors={theme.colors}
+        bodyTopLeading={
+          readingsAvailableCategories.length > 1 ? (
+            <LiturgicalTextsCategoryToggle
+              value={readingsCategoryFilter}
+              onChange={setReadingsCategoryFilter}
+              availableCategories={readingsAvailableCategories}
+              isDark={isDark}
+            />
+          ) : undefined
+        }
         bodyTopTrailing={
           <ReadingsLanguageToggle
             value={defaultTextLang}
@@ -605,9 +660,12 @@ export default function TodayScreen() {
             {loadingSlavonic ? t('today.slavonicLoading') : t('today.slavonicHint')}
           </Text>
         ) : null}
-        {(sideBySide ? englishSections : displaySections)
-          .filter((section) => section.items.length > 0)
-          .map((section, index) => (
+        {readingsVisibleSections.length === 0 ? (
+          <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
+            {t('readings.noneForDay')}
+          </Text>
+        ) : (
+          readingsVisibleSections.map((section, index) => (
             <LiturgicalTextSectionBlock
               key={section.id}
               category={section.id}
@@ -626,7 +684,8 @@ export default function TodayScreen() {
               slavonicLoading={sideBySide ? loadingSlavonic : undefined}
               mutedColor={isDark ? '#a39e98' : colors.muted}
             />
-          ))}
+          ))
+        )}
       </CollapsibleSection>
 
       <CollapsibleSection
@@ -771,17 +830,33 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 2,
   },
-  fastWeeklyTitle: {
-    marginTop: 10,
+  fastLevelBlock: {
+    marginBottom: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  fastLevelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+  },
+  fastLevelPill: {
+    flexShrink: 0,
+    alignSelf: 'center',
+  },
+  fastLevelText: {
+    flex: 1,
+    minWidth: 0,
+    gap: 4,
+    alignSelf: 'center',
+  },
+  fastLevelSubtitle: {
     fontWeight: '700',
   },
-  fastRule: {
-    marginTop: 8,
-    fontWeight: '600',
-    opacity: 0.92,
-  },
-  fastAllAllowed: {
-    marginTop: 10,
+  fastLevelDetail: {
     opacity: 0.92,
   },
   fastException: {

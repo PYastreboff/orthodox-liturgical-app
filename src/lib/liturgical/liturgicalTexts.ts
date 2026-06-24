@@ -41,7 +41,7 @@ export function liturgicalItemHasText(item: LiturgicalTextItem): boolean {
   return item.paragraphs.some((p) => p.some((line) => line.text.trim().length > 0));
 }
 
-const SECTION_ORDER: LiturgicalTextCategory[] = [
+export const LITURGICAL_TEXT_SECTION_ORDER: LiturgicalTextCategory[] = [
   'troparion',
   'kontakion',
   'prokeimenon',
@@ -50,6 +50,8 @@ const SECTION_ORDER: LiturgicalTextCategory[] = [
   'gospel',
   'communion',
 ];
+
+const SECTION_ORDER = LITURGICAL_TEXT_SECTION_ORDER;
 
 const SECTION_TITLE_KEYS: Record<LiturgicalTextCategory, { one: string; many: string }> = {
   troparion: { one: 'readings.troparion', many: 'readings.troparia' },

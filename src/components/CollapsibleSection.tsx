@@ -30,6 +30,8 @@ type Props = {
   onToggle: () => void;
   children: ReactNode;
   themeColors: { card: string; border: string; text: string };
+  /** Top of expandable body, left-aligned (e.g. readings category filter). */
+  bodyTopLeading?: ReactNode;
   /** Top of expandable body, right-aligned (e.g. readings language toggle). */
   bodyTopTrailing?: ReactNode;
 };
@@ -41,6 +43,7 @@ export function CollapsibleSection({
   onToggle,
   children,
   themeColors,
+  bodyTopLeading,
   bodyTopTrailing,
 }: Props) {
   const { t } = useAppTranslation();
@@ -99,7 +102,14 @@ export function CollapsibleSection({
     >
       {headerRow}
       <Animated.View style={[styles.sectionBody, bodyStyle]} pointerEvents={expanded ? 'auto' : 'none'}>
-        {bodyTopTrailing ? <View style={styles.bodyTopTrailing}>{bodyTopTrailing}</View> : null}
+        {bodyTopLeading || bodyTopTrailing ? (
+          <View style={styles.bodyTopRow}>
+            {bodyTopLeading ? <View style={styles.bodyTopLeading}>{bodyTopLeading}</View> : null}
+            {bodyTopTrailing ? (
+              <View style={styles.bodyTopTrailing}>{bodyTopTrailing}</View>
+            ) : null}
+          </View>
+        ) : null}
         {children}
       </Animated.View>
     </View>
@@ -124,11 +134,24 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
   },
+  bodyTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  bodyTopLeading: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    minWidth: 0,
+  },
   bodyTopTrailing: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    marginBottom: 4,
+    flexShrink: 0,
   },
   sectionChevronWrap: {
     width: 32,

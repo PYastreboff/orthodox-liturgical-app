@@ -64,7 +64,7 @@ const FAST_DESC_KEYS: Record<string, string> = {
   'fish wine and oil': 'fasting.levelFish',
   'dairy allowed': 'fasting.levelDairy',
   'dairy eggs fish wine and oil': 'fasting.levelDairy',
-  'meat fast': 'fasting.levelDairy',
+  'meat fast': 'fasting.levelMeatFast',
   'strict fast': 'fasting.levelStrict',
 };
 
@@ -197,7 +197,7 @@ function isStrictFastAppearanceFallback(appearanceKey: string): boolean {
 
 function detailForMeatFast(lang: UiLanguage): FastingFoodsDetail {
   return {
-    ruleLabel: translate(lang, 'fasting.levelDairy'),
+    ruleLabel: translate(lang, 'fasting.levelMeatFast'),
     allowed: foodItems(lang, ['plant', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
     notAllowed: foodItems(lang, ['meat']),
     meatFast: true,
