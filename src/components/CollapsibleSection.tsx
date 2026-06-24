@@ -103,10 +103,16 @@ export function CollapsibleSection({
       {headerRow}
       <Animated.View style={[styles.sectionBody, bodyStyle]} pointerEvents={expanded ? 'auto' : 'none'}>
         {bodyTopLeading || bodyTopTrailing ? (
-          <View style={styles.bodyTopRow}>
-            {bodyTopLeading ? <View style={styles.bodyTopLeading}>{bodyTopLeading}</View> : null}
+          <View style={[styles.bodyTopRow, phoneLayout ? styles.bodyTopRowPhone : null]}>
+            {bodyTopLeading ? (
+              <View style={[styles.bodyTopLeading, phoneLayout ? styles.bodyTopLeadingPhone : null]}>
+                {bodyTopLeading}
+              </View>
+            ) : null}
             {bodyTopTrailing ? (
-              <View style={styles.bodyTopTrailing}>{bodyTopTrailing}</View>
+              <View style={[styles.bodyTopTrailing, phoneLayout ? styles.bodyTopTrailingPhone : null]}>
+                {bodyTopTrailing}
+              </View>
             ) : null}
           </View>
         ) : null}
@@ -140,6 +146,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     marginBottom: 12,
+    zIndex: 100,
+  },
+  bodyTopRowPhone: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   bodyTopLeading: {
     flex: 1,
@@ -147,11 +158,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minWidth: 0,
   },
+  bodyTopLeadingPhone: {
+    width: 'auto',
+    flex: 1,
+  },
   bodyTopTrailing: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
     flexShrink: 0,
+  },
+  bodyTopTrailingPhone: {
+    width: 'auto',
+    justifyContent: 'flex-end',
   },
   sectionChevronWrap: {
     width: 32,
@@ -161,6 +180,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   sectionBody: {
-    overflow: 'hidden',
+    overflow: 'visible',
   },
 });

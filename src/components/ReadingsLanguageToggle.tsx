@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: TRACK_PADDING,
     position: 'relative',
-    minWidth: 108,
+    minWidth: 132,
     height: 28,
   },
   pill: {

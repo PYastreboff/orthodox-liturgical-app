@@ -50,13 +50,18 @@ export function LiturgicalLegendGuide({ textColor, mutedColor }: Props) {
         <View style={styles.pillTableWrap}>
           <View style={styles.pillTable}>
             {FAST_PILL_LEGEND_KINDS.map((kind) => (
-              <View key={kind} style={styles.pillTableRow}>
-                <View style={styles.pillTableLabelCell}>
+              <View key={kind} style={[styles.pillTableRow, phoneLayout ? styles.pillTableRowPhone : null]}>
+                <View
+                  style={[
+                    styles.pillTableLabelCell,
+                    phoneLayout ? styles.pillTableLabelCellPhone : null,
+                  ]}
+                >
                   <FastSummaryPill
                     label={t(FAST_PILL_LEGEND_LABEL_KEY[kind])}
                     kind={kind}
                     textStyle={styles.pillText}
-                    style={styles.pillTablePill}
+                    style={[styles.pillTablePill, phoneLayout ? styles.pillTablePillPhone : null]}
                   />
                 </View>
                 <Text style={[styles.pillTableDesc, { color: hintColor }]}>
@@ -164,11 +169,20 @@ const styles = StyleSheet.create({
     gap: 14,
     width: '100%',
   },
+  pillTableRowPhone: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: 6,
+  },
   pillTableLabelCell: {
     width: 148,
     flexShrink: 0,
     alignItems: 'flex-start',
     justifyContent: 'center',
+  },
+  pillTableLabelCellPhone: {
+    width: '100%',
+    maxWidth: 220,
   },
   pillTablePill: {
     minWidth: 0,
@@ -176,6 +190,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 10,
     alignSelf: 'flex-start',
+  },
+  pillTablePillPhone: {
+    width: 'auto',
+    minWidth: 110,
   },
   pillTableDesc: {
     flex: 1,

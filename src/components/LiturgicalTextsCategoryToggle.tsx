@@ -1,12 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
-import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, {
-  Easing,
-  interpolateColor,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -15,9 +9,6 @@ import {
   type LiturgicalTextCategory,
 } from '../lib/liturgical/liturgicalTexts';
 import { colors } from '../theme/tokens';
-
-const TIMING = { duration: 200, easing: Easing.bezier(0.42, 0, 0.58, 1) };
-const TRACK_PADDING = 2;
 
 export type LiturgicalTextCategoryFilter = LiturgicalTextCategory | 'all';
 
@@ -39,13 +30,13 @@ const A11Y_KEYS: Record<LiturgicalTextCategory, string> = {
 };
 
 const SHORT_LABEL_KEYS: Record<LiturgicalTextCategory, string> = {
-  troparion: 'readings.shortTroparion',
-  kontakion: 'readings.shortKontakion',
-  prokeimenon: 'readings.shortProkeimenon',
-  alleluia: 'readings.shortAlleluia',
-  epistle: 'readings.shortEpistle',
-  gospel: 'readings.shortGospel',
-  communion: 'readings.shortCommunion',
+  troparion: 'readings.troparion',
+  kontakion: 'readings.kontakion',
+  prokeimenon: 'readings.prokeimenon',
+  alleluia: 'readings.alleluia',
+  epistle: 'readings.epistle',
+  gospel: 'readings.gospel',
+  communion: 'readings.communion',
 };
 
 function orderedCategories(available: LiturgicalTextCategory[]): LiturgicalTextCategory[] {
@@ -60,126 +51,151 @@ export function LiturgicalTextsCategoryToggle({
   isDark,
 }: Props) {
   const { t } = useAppTranslation();
-  const trackBg = isDark ? '#2a2724' : '#ebe6de';
-  const inactiveText = isDark ? '#a39e98' : colors.muted;
+  const [open, setOpen] = useState(false);
+  const surfaceBg = isDark ? '#2a2724' : '#ebe6de';
+  const textColor = isDark ? '#e8e3dd' : '#2b2623';
+  const mutedColor = isDark ? '#a39e98' : colors.muted;
+  const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.12)';
   const categories = useMemo(
     () => orderedCategories(availableCategories),
     [availableCategories],
   );
-  const segmentIds = useMemo(
+  const categoryIds = useMemo(
     (): LiturgicalTextCategoryFilter[] => ['all', ...categories],
     [categories],
   );
-  const selectedIndex = Math.max(0, segmentIds.indexOf(value));
-  const progress = useSharedValue(selectedIndex);
-  const [trackWidth, setTrackWidth] = useState(0);
-  const segmentCount = segmentIds.length;
-
-  const segmentWidth =
-    trackWidth > 0 && segmentCount > 0
-      ? (trackWidth - TRACK_PADDING * 2) / segmentCount
-      : 0;
-
-  useEffect(() => {
-    progress.value = withTiming(selectedIndex, TIMING);
-  }, [progress, selectedIndex]);
-
-  const pillStyle = useAnimatedStyle(() => ({
-    width: segmentWidth,
-    transform: [{ translateX: TRACK_PADDING + progress.value * segmentWidth }],
-  }));
-
-  const allLabelStyle = useAnimatedStyle(() => ({
-    color: interpolateColor(
-      Math.max(0, 1 - Math.min(1, Math.abs(progress.value - 0) * 1.4)),
-      [0, 1],
-      [inactiveText, '#ffffff'],
-    ),
-  }));
+  const selectedLabel =
+    value === 'all'
+      ? t('readings.filterAll')
+      : t(SHORT_LABEL_KEYS[value]);
 
   if (categories.length <= 1) {
     return null;
   }
 
   return (
-    <View
-      style={[styles.track, { backgroundColor: trackBg }]}
-      onLayout={(e: LayoutChangeEvent) => setTrackWidth(e.nativeEvent.layout.width)}
-      accessibilityRole="tablist"
-      accessibilityLabel={t('readings.toggleCategory')}
-    >
-      {segmentWidth > 0 ? (
-        <Animated.View style={[styles.pill, pillStyle]} pointerEvents="none" />
-      ) : null}
-
+    <View style={styles.wrap}>
       <Pressable
-        style={styles.segment}
-        onPress={() => onChange('all')}
-        accessibilityRole="tab"
-        accessibilityState={{ selected: value === 'all' }}
-        {...hoverAccessibilityProps(t('readings.filterAll'), { role: 'button' })}
+        style={[
+          styles.trigger,
+          { backgroundColor: surfaceBg, borderColor },
+          open ? styles.triggerOpen : null,
+        ]}
+        onPress={() => setOpen((prev) => !prev)}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+        {...hoverAccessibilityProps(t('readings.toggleCategory'), { role: 'button' })}
       >
-        <Animated.Text style={[styles.segmentLabel, allLabelStyle]}>
-          {t('readings.filterAll')}
-        </Animated.Text>
+        <Text style={[styles.triggerLabel, { color: textColor }]} numberOfLines={1}>
+          {selectedLabel}
+        </Text>
+        <Feather
+          name={open ? 'chevron-up' : 'chevron-down'}
+          size={14}
+          color={mutedColor}
+          style={styles.chevron}
+        />
       </Pressable>
 
-      {categories.map((category) => {
-        const selected = value === category;
-        const shortLabel = t(SHORT_LABEL_KEYS[category]);
-        return (
-          <Pressable
-            key={category}
-            style={styles.segment}
-            onPress={() => onChange(category)}
-            accessibilityRole="tab"
-            accessibilityState={{ selected }}
-            {...hoverAccessibilityProps(t(A11Y_KEYS[category]), { role: 'button' })}
-          >
-            <Text
-              style={[
-                styles.segmentLabel,
-                { color: selected ? '#ffffff' : inactiveText },
-              ]}
-            >
-              {shortLabel}
-            </Text>
-          </Pressable>
-        );
-      })}
+      {open ? (
+        <View style={[styles.menu, { backgroundColor: surfaceBg, borderColor }]}>
+          {categoryIds.map((id) => {
+            const selected = value === id;
+            const optionLabel = id === 'all' ? t('readings.filterAll') : t(SHORT_LABEL_KEYS[id]);
+            const a11yLabel = id === 'all' ? t('readings.filterAll') : t(A11Y_KEYS[id]);
+            return (
+              <Pressable
+                key={id}
+                style={({ hovered, pressed }) => [
+                  styles.menuItem,
+                  selected ? styles.menuItemSelected : null,
+                  !selected && hovered ? styles.menuItemHover : null,
+                  !selected && pressed ? styles.menuItemPressed : null,
+                ]}
+                onPress={() => {
+                  onChange(id);
+                  setOpen(false);
+                }}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                {...hoverAccessibilityProps(a11yLabel, { role: 'button' })}
+              >
+                <Text style={[styles.menuItemLabel, { color: selected ? '#ffffff' : textColor }]}>
+                  {optionLabel}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  track: {
-    flexDirection: 'row',
-    borderRadius: 8,
-    padding: TRACK_PADDING,
+  wrap: {
+    width: '100%',
+    minWidth: 108,
+    maxWidth: 132,
     position: 'relative',
+    zIndex: 999,
+  },
+  trigger: {
     height: 28,
-    flexShrink: 1,
-    maxWidth: '100%',
-  },
-  pill: {
-    position: 'absolute',
-    top: TRACK_PADDING,
-    bottom: TRACK_PADDING,
-    left: 0,
-    borderRadius: 6,
-    backgroundColor: colors.accentWine,
-  },
-  segment: {
-    flex: 1,
+    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1,
-    minWidth: 28,
-    paddingHorizontal: 2,
+    justifyContent: 'space-between',
+    gap: 8,
   },
-  segmentLabel: {
-    fontSize: 11,
+  triggerOpen: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  triggerLabel: {
+    flex: 1,
+    minWidth: 0,
+    fontSize: 12,
     fontWeight: '700',
     letterSpacing: 0.2,
+  },
+  chevron: {
+    lineHeight: 12,
+  },
+  menu: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderTopWidth: 0,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+    overflow: 'hidden',
+    zIndex: 2000,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.16,
+    shadowRadius: 6,
+  },
+  menuItem: {
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  menuItemSelected: {
+    backgroundColor: colors.accentWine,
+  },
+  menuItemHover: {
+    backgroundColor: 'rgba(139,46,60,0.12)',
+  },
+  menuItemPressed: {
+    backgroundColor: 'rgba(139,46,60,0.18)',
+  },
+  menuItemLabel: {
+    fontSize: 12,
+    fontWeight: '600',
   },
 });
