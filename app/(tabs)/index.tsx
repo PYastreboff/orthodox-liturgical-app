@@ -658,11 +658,6 @@ export default function TodayScreen() {
           />
         }
       >
-        {(defaultTextLang === 'chu' || defaultTextLang === 'both') && !sideBySide ? (
-          <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
-            {loadingSlavonic ? t('today.slavonicLoading') : t('today.slavonicHint')}
-          </Text>
-        ) : null}
         {readingsVisibleSections.length === 0 ? (
           <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
             {t('readings.noneForDay')}

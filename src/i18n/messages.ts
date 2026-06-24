@@ -140,8 +140,6 @@ const en = {
     vestmentsHint:
       'Confirm with your diocese or typikon — parish practice may vary.',
     slavonicLoading: 'Loading Church Slavonic scripture…',
-    slavonicHint:
-      'Scripture from Elizabeth Bible (1757). Troparia and kontakia stay in English when orthocal has no Slavonic.',
     loadingFeasts: 'Loading feasts…',
     loadingSaints: 'Loading saints…',
     noFeasts: 'No feasts listed for this day.',
@@ -683,8 +681,6 @@ const ru = {
     vestmentsHint:
       'Уточняйте в своём приходе или по типику — практика может отличаться.',
     slavonicLoading: 'Загрузка церковнославянского писания…',
-    slavonicHint:
-      'Писание — Елизаветинская Библия (1757). Тропари и кондаки остаются по-английски, если нет славянского текста.',
     loadingFeasts: 'Загрузка праздников…',
     loadingSaints: 'Загрузка святых…',
     noFeasts: 'Праздники на этот день не указаны.',
