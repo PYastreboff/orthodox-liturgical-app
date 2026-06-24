@@ -212,6 +212,7 @@ export default function TodayScreen() {
   });
   const [readingsCategoryFilter, setReadingsCategoryFilter] =
     useState<LiturgicalTextCategoryFilter>('all');
+  const [readingsCategoryMenuOpen, setReadingsCategoryMenuOpen] = useState(false);
   const readingsSourceSections = sideBySide ? englishSections : displaySections;
   const readingsAvailableCategories = useMemo(
     () =>
@@ -637,6 +638,7 @@ export default function TodayScreen() {
         expanded={!todayCollapsed.readings}
         onToggle={() => toggleSection('readings')}
         themeColors={theme.colors}
+        elevated={readingsCategoryMenuOpen}
         bodyTopLeading={
           readingsAvailableCategories.length > 1 ? (
             <LiturgicalTextsCategoryToggle
@@ -644,6 +646,7 @@ export default function TodayScreen() {
               onChange={setReadingsCategoryFilter}
               availableCategories={readingsAvailableCategories}
               isDark={isDark}
+              onOpenChange={setReadingsCategoryMenuOpen}
             />
           ) : undefined
         }

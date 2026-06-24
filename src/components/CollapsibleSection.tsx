@@ -30,6 +30,8 @@ type Props = {
   onToggle: () => void;
   children: ReactNode;
   themeColors: { card: string; border: string; text: string };
+  /** Raise above sibling sections (e.g. while a dropdown menu is open). */
+  elevated?: boolean;
   /** Top of expandable body, left-aligned (e.g. readings category filter). */
   bodyTopLeading?: ReactNode;
   /** Top of expandable body, right-aligned (e.g. readings language toggle). */
@@ -43,6 +45,7 @@ export function CollapsibleSection({
   onToggle,
   children,
   themeColors,
+  elevated = false,
   bodyTopLeading,
   bodyTopTrailing,
 }: Props) {
@@ -97,23 +100,21 @@ export function CollapsibleSection({
     <View
       style={[
         styles.card,
+        elevated ? styles.cardElevated : null,
         { backgroundColor: themeColors.card, borderColor: themeColors.border, padding: cardPadding },
       ]}
     >
       {headerRow}
       <Animated.View style={[styles.sectionBody, bodyStyle]} pointerEvents={expanded ? 'auto' : 'none'}>
         {bodyTopLeading || bodyTopTrailing ? (
-          <View style={[styles.bodyTopRow, phoneLayout ? styles.bodyTopRowPhone : null]}>
-            {bodyTopLeading ? (
-              <View style={[styles.bodyTopLeading, phoneLayout ? styles.bodyTopLeadingPhone : null]}>
-                {bodyTopLeading}
-              </View>
-            ) : null}
-            {bodyTopTrailing ? (
-              <View style={[styles.bodyTopTrailing, phoneLayout ? styles.bodyTopTrailingPhone : null]}>
-                {bodyTopTrailing}
-              </View>
-            ) : null}
+          <View
+            style={[
+              styles.bodyTopRow,
+              phoneLayout ? styles.bodyTopRowPhone : styles.bodyTopRowDesktop,
+            ]}
+          >
+            {bodyTopLeading}
+            {bodyTopTrailing}
           </View>
         ) : null}
         {children}
@@ -127,7 +128,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: StyleSheet.hairlineWidth,
-    overflow: 'hidden',
+    overflow: 'visible',
+  },
+  cardElevated: {
+    position: 'relative',
+    zIndex: 1000,
+    elevation: 1000,
   },
   sectionHeaderRow: {
     flexDirection: 'row',
@@ -142,34 +148,18 @@ const styles = StyleSheet.create({
   },
   bodyTopRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 8,
     marginBottom: 12,
-    zIndex: 100,
+    position: 'relative',
+    zIndex: 20,
+    overflow: 'visible',
   },
   bodyTopRowPhone: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  bodyTopLeading: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    minWidth: 0,
-  },
-  bodyTopLeadingPhone: {
-    width: 'auto',
-    flex: 1,
-  },
-  bodyTopTrailing: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    flexShrink: 0,
-  },
-  bodyTopTrailingPhone: {
-    width: 'auto',
+  bodyTopRowDesktop: {
     justifyContent: 'flex-end',
   },
   sectionChevronWrap: {
