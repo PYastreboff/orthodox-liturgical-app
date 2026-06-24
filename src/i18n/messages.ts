@@ -73,6 +73,10 @@ const en = {
       totalAbstinence: 'Black — total abstinence from food (e.g. Great and Holy Friday).',
       noFast: 'Green — not a fasting day.',
     },
+    legendTypikonTitle: 'Service types',
+    legendTypikonHint:
+      'Typikon marks on the calendar and in the Date & Liturgical Day section on Today (from orthocal.info).',
+    legendTypikonGreatFeast: 'Great feast & major feast',
   },
   calendar: {
     title: 'Liturgical calendar',
@@ -611,6 +615,10 @@ const ru = {
       totalAbstinence: 'Чёрный — полное воздержание от пищи (напр. Великая Пятница).',
       noFast: 'Зелёный — не постный день.',
     },
+    legendTypikonTitle: 'Типы богослужений',
+    legendTypikonHint:
+      'Знаки типикона в календаре и в разделе «Дата и литургический день» на экране «Сегодня» (orthocal.info).',
+    legendTypikonGreatFeast: 'Великий праздник / великая праздник',
   },
   calendar: {
     title: 'Церковный календарь',

@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { CalendarFastingFoodIcon, calendarFastingFoodIconColor } from './CalendarFastingFoodIcon';
 import { CALENDAR_FASTING_ICON_SIZE } from './fastingAllowanceIcons';
 import { FastSummaryPill } from './FastSummaryPill';
+import { TypikonGlyphIcon } from './TypikonGlyphIcon';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import {
@@ -12,7 +13,9 @@ import {
 import {
   CALENDAR_CELL_LEGEND,
   CALENDAR_ICON_LEGEND,
+  TYPIKON_LEGEND_ENTRIES,
 } from '../lib/liturgical/liturgicalLegend';
+import { FEAST_RANK_BY_LEVEL, typikonIconColor } from '../lib/liturgical/typikonSymbols';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
 import { colors } from '../theme/tokens';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
@@ -118,6 +121,32 @@ export function LiturgicalLegendGuide({ textColor, mutedColor }: Props) {
               <Text style={[styles.label, { color: textColor }]}>{t(item.key)}</Text>
             </View>
           ))}
+        </View>
+      </View>
+
+      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+      <View style={styles.legendSection}>
+        <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
+          {t('settings.legendTypikonTitle')}
+        </Text>
+        <Text style={[styles.legendSubsectionHint, { color: hintColor }]}>
+          {t('settings.legendTypikonHint')}
+        </Text>
+        <View style={styles.typikonRow}>
+          {TYPIKON_LEGEND_ENTRIES.map((entry) => {
+            const rank = FEAST_RANK_BY_LEVEL[entry.level];
+            return (
+              <View key={entry.level} style={styles.typikonItem}>
+                <TypikonGlyphIcon
+                  glyph={rank.glyph}
+                  size={CALENDAR_FASTING_ICON_SIZE}
+                  color={typikonIconColor(rank, isDark ? 'dark' : 'light')}
+                />
+                <Text style={[styles.label, { color: textColor }]}>{t(entry.labelKey)}</Text>
+              </View>
+            );
+          })}
         </View>
       </View>
     </View>
@@ -255,5 +284,20 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     fontWeight: '500',
+  },
+  typikonRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 14,
+    rowGap: 8,
+    width: '100%',
+  },
+  typikonItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    maxWidth: '100%',
   },
 });
