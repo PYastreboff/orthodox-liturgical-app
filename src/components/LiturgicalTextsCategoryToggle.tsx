@@ -7,10 +7,11 @@ import { useAppTranslation } from '../i18n/useAppTranslation';
 import {
   LITURGICAL_TEXT_SECTION_ORDER,
   type LiturgicalTextCategory,
+  type LiturgicalTextCategoryFilter,
 } from '../lib/liturgical/liturgicalTexts';
 import { colors } from '../theme/tokens';
 
-export type LiturgicalTextCategoryFilter = LiturgicalTextCategory | 'all';
+export type { LiturgicalTextCategoryFilter };
 
 type Props = {
   value: LiturgicalTextCategoryFilter;

@@ -32,7 +32,6 @@ import {
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
 import {
   LiturgicalTextsCategoryToggle,
-  type LiturgicalTextCategoryFilter,
 } from '../../src/components/LiturgicalTextsCategoryToggle';
 import { LITURGICAL_TEXT_SECTION_ORDER } from '../../src/lib/liturgical/liturgicalTexts';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
@@ -157,6 +156,8 @@ export default function TodayScreen() {
     showVestmentGradient,
     defaultTextLang,
     setDefaultTextLang,
+    readingsCategoryFilter,
+    setReadingsCategoryFilter,
     uiLanguage,
     servingRole,
     setServingRole,
@@ -210,8 +211,6 @@ export default function TodayScreen() {
     julianMonthDay,
     appearanceKey: appearance.key,
   });
-  const [readingsCategoryFilter, setReadingsCategoryFilter] =
-    useState<LiturgicalTextCategoryFilter>('all');
   const [readingsCategoryMenuOpen, setReadingsCategoryMenuOpen] = useState(false);
   const readingsSourceSections = sideBySide ? englishSections : displaySections;
   const readingsAvailableCategories = useMemo(
@@ -228,17 +227,13 @@ export default function TodayScreen() {
   }, [readingsCategoryFilter, readingsSourceSections]);
 
   useEffect(() => {
-    setReadingsCategoryFilter('all');
-  }, [selectedDate]);
-
-  useEffect(() => {
     if (
       readingsCategoryFilter !== 'all' &&
       !readingsAvailableCategories.includes(readingsCategoryFilter)
     ) {
       setReadingsCategoryFilter('all');
     }
-  }, [readingsAvailableCategories, readingsCategoryFilter]);
+  }, [readingsAvailableCategories, readingsCategoryFilter, setReadingsCategoryFilter]);
   const { feasts, saints } = useMemo(() => {
     const entries = buildCommemorationEntries(
       liturgicalDay,

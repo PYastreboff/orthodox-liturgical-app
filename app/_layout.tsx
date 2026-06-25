@@ -5,6 +5,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, type Metrics } from 'react-native-safe-area-context';
 
 import { AppThemeProvider } from '../src/components/AppThemeProvider';
+import { SplashGate } from '../src/components/SplashGate';
 import { WebViewportBootstrap } from '../src/components/WebViewportBootstrap';
 import { DayNavigationProvider } from '../src/state/DayNavigationContext';
 import { PreferencesProvider } from '../src/state/PreferencesContext';
@@ -38,9 +39,11 @@ export default function RootLayout() {
         <WebViewportBootstrap />
         <PreferencesProvider>
           <AppThemeProvider>
-            <DayNavigationProvider>
-              <RootStack />
-            </DayNavigationProvider>
+            <SplashGate>
+              <DayNavigationProvider>
+                <RootStack />
+              </DayNavigationProvider>
+            </SplashGate>
           </AppThemeProvider>
         </PreferencesProvider>
       </SafeAreaProvider>

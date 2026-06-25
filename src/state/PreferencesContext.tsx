@@ -10,6 +10,10 @@ import {
 } from 'react';
 
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
+import {
+  isLiturgicalTextCategoryFilter,
+  type LiturgicalTextCategoryFilter,
+} from '../lib/liturgical/liturgicalTexts';
 import type { UiLanguage } from '../i18n/types';
 import type { ClergyRole } from '../types/liturgical';
 import type { FontScalePreference } from '../theme/fontScale';
@@ -43,6 +47,7 @@ type StoredPreferences = {
   showAlternateCalendar?: boolean;
   primaryCalendar?: PrimaryCalendar;
   defaultTextLang?: TextLanguage;
+  readingsCategoryFilter?: LiturgicalTextCategoryFilter;
   colorSchemePreference?: ColorSchemePreference;
   showVestmentGradient?: boolean;
   uiLanguage?: UiLanguage;
@@ -56,6 +61,7 @@ type Preferences = {
   showAlternateCalendar: boolean;
   primaryCalendar: PrimaryCalendar;
   defaultTextLang: TextLanguage;
+  readingsCategoryFilter: LiturgicalTextCategoryFilter;
   colorSchemePreference: ColorSchemePreference;
   /** Subtle liturgical-colour gradient over the black Today background. */
   showVestmentGradient: boolean;
@@ -71,6 +77,7 @@ type PreferencesContextValue = Preferences & {
   setShowAlternateCalendar: (value: boolean) => void;
   setPrimaryCalendar: (value: PrimaryCalendar) => void;
   setDefaultTextLang: (value: TextLanguage) => void;
+  setReadingsCategoryFilter: (value: LiturgicalTextCategoryFilter) => void;
   setColorSchemePreference: (value: ColorSchemePreference) => void;
   setShowVestmentGradient: (value: boolean) => void;
   setUiLanguage: (value: UiLanguage) => void;
@@ -106,6 +113,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [showAlternateCalendar, setShowAlternateCalendarState] = useState(false);
   const [primaryCalendar, setPrimaryCalendarState] = useState<PrimaryCalendar>('julian');
   const [defaultTextLang, setDefaultTextLangState] = useState<TextLanguage>('en');
+  const [readingsCategoryFilter, setReadingsCategoryFilterState] =
+    useState<LiturgicalTextCategoryFilter>('all');
   const [colorSchemePreference, setColorSchemePreferenceState] =
     useState<ColorSchemePreference>('dark');
   const [showVestmentGradient, setShowVestmentGradientState] = useState(false);
@@ -138,6 +147,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
           parsed.defaultTextLang === 'both'
         ) {
           setDefaultTextLangState(parsed.defaultTextLang);
+        }
+        if (isLiturgicalTextCategoryFilter(parsed.readingsCategoryFilter)) {
+          setReadingsCategoryFilterState(parsed.readingsCategoryFilter);
         }
         if (
           parsed.colorSchemePreference === 'system' ||
@@ -200,6 +212,14 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     (value: TextLanguage) => {
       setDefaultTextLangState(value);
       void persist({ defaultTextLang: value });
+    },
+    [persist],
+  );
+
+  const setReadingsCategoryFilter = useCallback(
+    (value: LiturgicalTextCategoryFilter) => {
+      setReadingsCategoryFilterState(value);
+      void persist({ readingsCategoryFilter: value });
     },
     [persist],
   );
@@ -271,6 +291,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       showAlternateCalendar,
       primaryCalendar,
       defaultTextLang,
+      readingsCategoryFilter,
       colorSchemePreference,
       showVestmentGradient,
       uiLanguage,
@@ -281,6 +302,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setShowAlternateCalendar,
       setPrimaryCalendar,
       setDefaultTextLang,
+      setReadingsCategoryFilter,
       setColorSchemePreference,
       setShowVestmentGradient,
       setUiLanguage,
@@ -292,12 +314,14 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     [
       colorSchemePreference,
       defaultTextLang,
+      readingsCategoryFilter,
       fontScale,
       preferencesReady,
       primaryCalendar,
       servingRole,
       setColorSchemePreference,
       setDefaultTextLang,
+      setReadingsCategoryFilter,
       setFontScale,
       setPrimaryCalendar,
       setServingRole,

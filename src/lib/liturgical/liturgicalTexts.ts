@@ -19,6 +19,8 @@ export type LiturgicalTextCategory =
   | 'gospel'
   | 'communion';
 
+export type LiturgicalTextCategoryFilter = LiturgicalTextCategory | 'all';
+
 export type LiturgicalTextItem = LiturgicalReadingView & {
   /** When multiple items share a category (e.g. feast + daily epistle). */
   detail?: string;
@@ -50,6 +52,14 @@ export const LITURGICAL_TEXT_SECTION_ORDER: LiturgicalTextCategory[] = [
   'gospel',
   'communion',
 ];
+
+export function isLiturgicalTextCategoryFilter(value: unknown): value is LiturgicalTextCategoryFilter {
+  return (
+    value === 'all' ||
+    (typeof value === 'string' &&
+      (LITURGICAL_TEXT_SECTION_ORDER as readonly string[]).includes(value))
+  );
+}
 
 const SECTION_ORDER = LITURGICAL_TEXT_SECTION_ORDER;
 

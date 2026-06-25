@@ -12,6 +12,7 @@ const assetsDir = join(__dirname, '..', 'assets');
 
 const WINE = '#6b2d3c';
 const GOLD = '#b08d57';
+/** Keep in sync with src/brand/splash.ts */
 const SPLASH_BG = '#1a1410';
 
 /** Keep in sync with src/brand/orthodoxCrossGeometry.ts */

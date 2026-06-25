@@ -15,10 +15,12 @@ Day content (feasts, saints, fasting, readings) comes from [orthocal.info](https
 - **Date & liturgical day** — fast pill, major-feast highlight, service rank, Julian or Gregorian church date (per Settings).
 - **Fasting** — level, allowed/not allowed foods, weekly fast suspensions (Bright Week, Pentecost week, etc.).
 - **Vestments** — role-specific colours for the day.
-- **Liturgical texts** — troparia, kontakia, prokeimenon, alleluia, epistle, gospel, communion, grouped by type with section icons. Language toggle: **English**, **Church Slavonic (ЧС)**, or **side by side** (scripture only; hymns follow the selected mode).
-- **Feasts** and **Saints commemorated today** — collapsible cards with life accounts when orthocal provides them.
+- **Liturgical texts** — troparia, kontakia, prokeimenon, alleluia, epistle, gospel, communion, grouped by type with section icons. **Category filter** (when more than one type is present) and language toggle: **English**, **Church Slavonic (ЧС)**, or **side by side** (scripture only; hymns follow the selected mode). Your category and language choices are remembered.
+- **Feasts** and **Saints commemorated today** — collapsible cards with **Read more** for life accounts when orthocal provides them.
 
-Long sections (liturgical texts, feasts, saints) start **collapsed**. Your expand/collapse choices, serving role, selected day, and calendar month are **remembered** across refresh (AsyncStorage on device; `localStorage` on web).
+Long sections (liturgical texts, feasts, saints) start **collapsed**. Your expand/collapse choices, serving role, liturgical-text category filter, scripture language (EN / ЧС / side-by-side), selected day, and calendar month are **remembered** across refresh (AsyncStorage on device; `localStorage` on web).
+
+On launch, a branded **splash screen** (wine/gold cross on dark ground) shows until settings load.
 
 ### Calendar
 
@@ -34,7 +36,7 @@ Long sections (liturgical texts, feasts, saints) start **collapsed**. Your expan
 - Optional vestment-colour **background glow** on Today.
 - **Text size** — small, default, or large (Today readings and body text).
 - **Liturgical calendar** — Julian or Gregorian rubrics on orthocal (civil dates always Gregorian).
-- **App language** — **English** or **Русский** for UI labels (orthocal content remains largely in English).
+- **App language** — **English**, **Русский**, or **Ελληνικά** for UI labels (orthocal content remains largely in English).
 
 ### Web & mobile layout
 
@@ -133,9 +135,51 @@ npx expo start --tunnel
 npm run lint                 # ESLint via Expo
 npm run build:web            # production static site → dist/
 npm run generate:brand-assets  # regenerate icon/splash PNGs (needs dev deps)
+npm run build:ios            # cloud iOS build for your device (EAS)
+npm run build:ios:local      # build and install via USB + Xcode
 ```
 
-### 6. Local web preview (production build)
+### 6. Install on iPhone (standalone app)
+
+For a real home-screen app (not Expo Go), use **EAS Build**:
+
+**One-time setup**
+
+```bash
+npm install -g eas-cli
+eas login
+eas init
+eas device:create
+```
+
+Register your iPhone when prompted (open the link on the phone).
+
+**Build and install**
+
+```bash
+npm run build:ios
+```
+
+When the build finishes, open the install link or QR code from the EAS dashboard on your iPhone.
+
+| Requirement | Notes |
+|-------------|--------|
+| **Expo account** | Free — `eas login` |
+| **Apple Developer** | Paid ($99/year) required for ad-hoc install on a physical device via EAS |
+| **EAS** | Configured in `eas.json` (`preview` profile, internal distribution) |
+
+**Alternative — local build (USB + Xcode)**
+
+```bash
+# iPhone connected, unlocked, trusted
+npm run build:ios:local
+```
+
+Sign with your Apple ID in Xcode when prompted. Free personal certificates expire after about seven days.
+
+**Quick test without building** — install [Expo Go](https://expo.dev/go) on your phone, run `npm start`, and scan the QR code.
+
+### 7. Local web preview (production build)
 
 ```bash
 npm run build:web
@@ -150,6 +194,8 @@ Open the URL shown (often `http://localhost:3000`). The app needs network access
 - **`EACCES` / permission errors** — Do not use `sudo npm install`; fix npm permissions or use a Node version manager (`nvm`).
 - **Metro / Expo version mismatch** — Run `npx expo install --fix`, then `npm start` again.
 - **Empty or broken web page on GitHub Pages** — That is deploy configuration; see [Share online](#share-online) below.
+- **`eas: command not found`** — Run `npm install -g eas-cli`, then `eas login`.
+- **iOS build fails signing** — Ensure an Apple Developer account is linked; run `eas device:create` and register your iPhone first.
 
 ### Rebuild menaion typikon index (optional)
 
@@ -183,7 +229,7 @@ Then **Settings → Pages** → **Deploy from branch** → **`gh-pages`** / **(r
 
 **Refresh on Calendar or Settings shows “Page not found”:** redeploy after pulling — `build:web` now copies `index.html` to `/calendar` and `/settings` so GitHub Pages can serve those routes.
 
-For a local production preview after `npm install`, see [§6 Local web preview](#6-local-web-preview-production-build) in **Install from GitHub**.
+For a local production preview after `npm install`, see [§7 Local web preview](#7-local-web-preview-production-build) in **Install from GitHub**.
 
 ## Project layout
 
@@ -194,7 +240,7 @@ For a local production preview after `npm install`, see [§6 Local web preview](
 | `app/(tabs)/settings.tsx` | Theme, calendar mode, language, sources |
 | `app/+html.tsx` | Web viewport / PWA meta |
 | `src/hooks/` | orthocal fetch, liturgical texts, safe area, calendar search |
-| `src/i18n/` | English + Russian UI strings |
+| `src/i18n/` | English, Russian, and Greek UI strings |
 | `src/lib/api/orthocal.ts` | orthocal.info API |
 | `src/lib/calendar/` | Julian/Gregorian, Pascha, appearances, cell styles |
 | `src/lib/liturgical/menaion/` | Typikon index, hymns, feast prokeimena |
@@ -202,7 +248,8 @@ For a local production preview after `npm install`, see [§6 Local web preview](
 | `src/lib/liturgical/` | Dashboard, readings, typikon symbols, vestments |
 | `src/lib/bible/` | Slavonic scripture fetch + citation parsing |
 | `src/state/PreferencesContext.tsx` | Persisted preferences (`@orthodaily/preferences/v1`) |
-| `src/components/` | Hero, grid, collapsible sections, passage blocks |
+| `src/components/` | Hero, grid, collapsible sections, passage blocks, splash |
+| `eas.json` | EAS Build profiles for iOS install |
 | `scripts/build-typikon-index.mjs` | Fetch typikon XML → JSON index |
 
 ## Data notes
@@ -210,7 +257,7 @@ For a local production preview after `npm install`, see [§6 Local web preview](
 - **Network:** first load per day hits orthocal; responses are cached in memory for the session.
 - **Rubrics:** orthocal uses OCA-style data; verify against your typikon where MP practice differs.
 - **UI vs content:** app language affects labels only; saint/feast names and most fast descriptions come from the API in English.
-- **Persistence:** settings, serving role, Today section collapse state, selected day, and calendar month survive refresh; not synced across devices.
+- **Persistence:** settings, serving role, Today section collapse state, liturgical-text category filter, scripture language, selected day, and calendar month survive refresh; not synced across devices.
 
 ## Future direction
 
@@ -219,7 +266,7 @@ For a local production preview after `npm install`, see [§6 Local web preview](
 
 ## Assets
 
-Branded **wine + gold cross** icon, splash, and favicon in `assets/`. Regenerate after changing colours:
+Branded **wine + gold cross** icon, splash, and favicon in `assets/`. The native splash (`expo-splash-screen`) matches the in-app launch screen. Regenerate after changing colours:
 
 ```bash
 npm install

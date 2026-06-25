@@ -16,7 +16,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "church.orthodox.liturgical.dev"
+      "bundleIdentifier": "church.orthodox.liturgical.dev",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -34,7 +35,17 @@
       "description": "OrthoDaily",
       "title": "OrthoDaily"
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#1a1410"
+        }
+      ]
+    ],
     "experiments": {
       "baseUrl": "/orthodox-liturgical-app"
     }
