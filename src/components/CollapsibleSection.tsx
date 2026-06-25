@@ -101,7 +101,12 @@ export function CollapsibleSection({
       style={[
         styles.card,
         elevated ? styles.cardElevated : null,
-        { backgroundColor: themeColors.card, borderColor: themeColors.border, padding: cardPadding },
+        {
+          backgroundColor: themeColors.card,
+          borderColor: themeColors.border,
+          padding: cardPadding,
+          overflow: elevated ? 'visible' : 'hidden',
+        },
       ]}
     >
       {headerRow}
@@ -128,7 +133,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: StyleSheet.hairlineWidth,
-    overflow: 'visible',
   },
   cardElevated: {
     position: 'relative',
@@ -154,7 +158,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     position: 'relative',
     zIndex: 20,
-    overflow: 'visible',
   },
   bodyTopRowPhone: {
     justifyContent: 'space-between',
@@ -170,6 +173,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   sectionBody: {
-    overflow: 'visible',
+    overflow: 'hidden',
   },
 });
