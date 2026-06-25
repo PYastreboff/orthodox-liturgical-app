@@ -11,8 +11,6 @@ import {
 } from '../lib/liturgical/liturgicalTexts';
 import { colors } from '../theme/tokens';
 
-export type { LiturgicalTextCategoryFilter };
-
 type Props = {
   value: LiturgicalTextCategoryFilter;
   onChange: (value: LiturgicalTextCategoryFilter) => void;

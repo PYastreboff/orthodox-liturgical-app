@@ -135,6 +135,7 @@ npx expo start --tunnel
 npm run lint                 # ESLint via Expo
 npm run build:web            # production static site → dist/
 npm run generate:brand-assets  # regenerate icon/splash PNGs (needs dev deps)
+npm run verify:liturgical-colors  # spot-check vestment colours / appearances
 npm run build:ios            # cloud iOS build for your device (EAS)
 npm run build:ios:local      # build and install via USB + Xcode
 ```

@@ -3,11 +3,6 @@ import { localizeOrthocalText } from '../../i18n/orthocalContent';
 import type { UiLanguage } from '../../i18n/types';
 import { stripHtml } from '../api/orthocal';
 
-export type LiturgicalFeastContext = {
-  appearanceKey: string;
-  appearanceLabel: string;
-};
-
 export type CommemorationKind = 'saint' | 'feast';
 
 export type CommemorationEntry = {
@@ -55,7 +50,6 @@ function findStoryForName(
 
 export function buildCommemorationEntries(
   day: OrthocalDay | null,
-  _liturgical?: LiturgicalFeastContext,
   lang: UiLanguage = 'en',
 ): CommemorationEntry[] {
   if (!day) return [];

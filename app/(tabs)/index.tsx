@@ -30,9 +30,7 @@ import {
   type CommemorationEntry,
 } from '../../src/lib/liturgical/commemorations';
 import { ReadingsLanguageToggle } from '../../src/components/ReadingsLanguageToggle';
-import {
-  LiturgicalTextsCategoryToggle,
-} from '../../src/components/LiturgicalTextsCategoryToggle';
+import { LiturgicalTextsCategoryToggle } from '../../src/components/LiturgicalTextsCategoryToggle';
 import { LITURGICAL_TEXT_SECTION_ORDER } from '../../src/lib/liturgical/liturgicalTexts';
 import { VestmentPageBackground } from '../../src/components/VestmentPageBackground';
 import { useFontScale } from '../../src/hooks/useFontScale';
@@ -235,16 +233,9 @@ export default function TodayScreen() {
     }
   }, [readingsAvailableCategories, readingsCategoryFilter, setReadingsCategoryFilter]);
   const { feasts, saints } = useMemo(() => {
-    const entries = buildCommemorationEntries(
-      liturgicalDay,
-      {
-        appearanceKey: appearance.key,
-        appearanceLabel: appearance.label,
-      },
-      uiLanguage,
-    );
+    const entries = buildCommemorationEntries(liturgicalDay, uiLanguage);
     return partitionCommemorations(entries);
-  }, [appearance.key, appearance.label, liturgicalDay, uiLanguage]);
+  }, [liturgicalDay, uiLanguage]);
   const showOrthocalContentNote =
     uiLanguage !== 'en' &&
     [...feasts, ...saints].some((entry) => Boolean(entry.body?.trim()));

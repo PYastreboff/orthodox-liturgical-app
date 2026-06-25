@@ -14,6 +14,14 @@ const ORDINARY_SEASON_WEEK_OR_SUNDAY =
 const ORDINARY_WEEKDAY_OF_SEASON =
   /\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)\s+of\s+the\s+.+?\bafter\s+(?:pentecost|pascha)\b/i;
 
+const LAZARUS_SATURDAY_TITLE = /\blazarus(?:\s+saturday)?\b/i;
+
+const PALM_SUNDAY_TITLE =
+  /\b(?:palm\s+sunday|entry of (?:the )?lord into jerusalem|entrance of (?:our )?lord into jerusalem)\b/i;
+
+const HOLY_MONDAY_TITLE =
+  /\b(?:great\s+(?:and\s+)?holy\s+monday|holy\s+monday)\b/i;
+
 const HOLY_TUESDAY_TITLE =
   /\b(?:great\s+(?:and\s+)?holy\s+tuesday|holy\s+tuesday)\b/i;
 
@@ -71,6 +79,18 @@ export function isSeasonLectionaryTitle(title: string): boolean {
 
 const ASCENSION_TITLE = /\bascension\b/i;
 
+export function isLazarusSaturdayDay(day: OrthocalDay | null | undefined): boolean {
+  return dayTitleStrings(day).some((title) => LAZARUS_SATURDAY_TITLE.test(title));
+}
+
+export function isPalmSundayDay(day: OrthocalDay | null | undefined): boolean {
+  return dayTitleStrings(day).some((title) => PALM_SUNDAY_TITLE.test(title));
+}
+
+export function isHolyMondayDay(day: OrthocalDay | null | undefined): boolean {
+  return dayTitleStrings(day).some((title) => HOLY_MONDAY_TITLE.test(title));
+}
+
 export function isHolyTuesdayDay(day: OrthocalDay | null | undefined): boolean {
   return dayTitleStrings(day).some((title) => HOLY_TUESDAY_TITLE.test(title));
 }
@@ -93,10 +113,13 @@ export function isHolySaturdayDay(day: OrthocalDay | null | undefined): boolean 
 
 export {
   GREAT_FRIDAY_TITLE,
+  HOLY_MONDAY_TITLE,
   HOLY_THURSDAY_TITLE,
   HOLY_TUESDAY_TITLE,
   HOLY_WEDNESDAY_TITLE,
   HOLY_SATURDAY_TITLE,
+  LAZARUS_SATURDAY_TITLE,
+  PALM_SUNDAY_TITLE,
 };
 
 /** Orthocal ranks that must not drive calendar feast styling on non-feast days. */

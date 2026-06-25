@@ -7,15 +7,21 @@ import type { UiLanguage } from '../../i18n/types';
 import {
   dayTitleStrings,
   GREAT_FRIDAY_TITLE,
+  HOLY_MONDAY_TITLE,
   HOLY_SATURDAY_TITLE,
   HOLY_THURSDAY_TITLE,
   HOLY_TUESDAY_TITLE,
   HOLY_WEDNESDAY_TITLE,
+  LAZARUS_SATURDAY_TITLE,
+  PALM_SUNDAY_TITLE,
   isGreatFridayDay,
+  isHolyMondayDay,
   isHolyThursdayDay,
   isHolyTuesdayDay,
   isHolyWednesdayDay,
   isHolySaturdayDay,
+  isLazarusSaturdayDay,
+  isPalmSundayDay,
   isOrdinarySeasonLectionaryTitle,
   isSeasonLectionaryTitle,
 } from './lectionaryDay';
@@ -44,6 +50,9 @@ export function isOrthocalMajorFeastLevel(day: OrthocalDay | null | undefined): 
 
 /** orthocal `pascha_distance` for Holy Week (Pascha = 0). */
 const PASCHA_DISTANCE_HOLY_HEADLINE: Record<number, { pattern: RegExp; fallback: string }> = {
+  [-8]: { pattern: LAZARUS_SATURDAY_TITLE, fallback: 'Lazarus Saturday' },
+  [-7]: { pattern: PALM_SUNDAY_TITLE, fallback: 'Palm Sunday' },
+  [-6]: { pattern: HOLY_MONDAY_TITLE, fallback: 'Great and Holy Monday' },
   [-5]: { pattern: HOLY_TUESDAY_TITLE, fallback: 'Great and Holy Tuesday' },
   [-4]: { pattern: HOLY_WEDNESDAY_TITLE, fallback: 'Great and Holy Wednesday' },
   [-3]: { pattern: HOLY_THURSDAY_TITLE, fallback: 'Great and Holy Thursday' },
@@ -56,6 +65,9 @@ const HOLY_WEEK_TITLE_RULES: {
   fallback: string;
   isDay: (day: OrthocalDay | null | undefined) => boolean;
 }[] = [
+  { pattern: LAZARUS_SATURDAY_TITLE, fallback: 'Lazarus Saturday', isDay: isLazarusSaturdayDay },
+  { pattern: PALM_SUNDAY_TITLE, fallback: 'Palm Sunday', isDay: isPalmSundayDay },
+  { pattern: HOLY_MONDAY_TITLE, fallback: 'Great and Holy Monday', isDay: isHolyMondayDay },
   { pattern: GREAT_FRIDAY_TITLE, fallback: 'Great and Holy Friday', isDay: isGreatFridayDay },
   { pattern: HOLY_THURSDAY_TITLE, fallback: 'Great and Holy Thursday', isDay: isHolyThursdayDay },
   { pattern: HOLY_TUESDAY_TITLE, fallback: 'Great and Holy Tuesday', isDay: isHolyTuesdayDay },
@@ -81,6 +93,7 @@ const ASCENSION_FEAST = /\bascension\b/i;
 /** Fixed-calendar appearance → feast name in orthocal `feasts`. */
 const APPEARANCE_FEAST_PATTERN: Partial<Record<string, RegExp>> = {
   palm_sunday: /\bpalm sunday\b/i,
+  lazarus_saturday: /\blazarus(?:\s+saturday)?\b/i,
   annunciation: /\bannunciation\b/i,
   transfiguration: /\btransfiguration\b/i,
   nativity: /\bnativity\b|\bnativity of christ\b/i,
@@ -96,6 +109,8 @@ const APPEARANCE_FEAST_PATTERN: Partial<Record<string, RegExp>> = {
 };
 
 const HOLY_WEEK_HEADLINE_PATTERNS = [
+  PALM_SUNDAY_TITLE,
+  HOLY_MONDAY_TITLE,
   HOLY_TUESDAY_TITLE,
   HOLY_WEDNESDAY_TITLE,
   HOLY_THURSDAY_TITLE,
@@ -373,7 +388,15 @@ function holyWeekHeadline(day: OrthocalDay, appearanceKey: string): string | nul
   const byTitle = headlineFromHolyWeekTitles(day);
   if (byTitle) return byTitle;
 
-  if (appearanceKey === 'holy_week') {
+  const d = day.pascha_distance;
+  if (d >= -8 && d <= -1) {
+    const primaryTitle = dayTitleStrings(day)[0];
+    if (primaryTitle && !isSeasonLectionaryTitle(primaryTitle)) {
+      return sanitizeTypikonProse(primaryTitle);
+    }
+  }
+
+  if (appearanceKey === 'lazarus_saturday' || appearanceKey === 'palm_sunday' || appearanceKey === 'holy_week') {
     const primaryTitle = dayTitleStrings(day)[0];
     if (primaryTitle) return sanitizeTypikonProse(primaryTitle);
   }
@@ -405,6 +428,7 @@ export function isHolyWeekWeekdayHeadline(
   title: string,
 ): boolean {
   if (!day) return false;
+  if (appearanceKey === 'palm_sunday' || day.pascha_distance === -7) return false;
   const headline = holyWeekHeadline(day, appearanceKey);
   if (!headline || headline.trim() !== title.trim()) return false;
   return feastMatchesHolyWeekDayLabel(headline);
@@ -477,6 +501,13 @@ export function liturgicalDayTitle(
   feastRank: FeastRankDisplay | null | undefined,
   lang: UiLanguage = 'en',
 ): string {
+  if (day && (day.pascha_distance === 0 || appearanceKey === 'pascha')) {
+    const paschaHeadline = orthocalPrimaryTitle(day, appearanceLabel);
+    if (paschaHeadline) {
+      return finalizeDisplayTitle(paschaHeadline, appearanceKey, appearanceLabel, lang);
+    }
+  }
+
   if (day) {
     const holyHeadline = holyWeekHeadline(day, appearanceKey);
     if (holyHeadline) {

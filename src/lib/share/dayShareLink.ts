@@ -52,12 +52,23 @@ export type DayShareTextInput = {
   feastHighlight?: string | null;
 };
 
-export function buildDayShareMessage(input: DayShareTextInput, appName: string): string {
-  const url = buildDayShareUrl(input.dayIso);
+function normalizeShareLine(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+/** Share body without the URL — used when the platform attaches the link separately. */
+export function buildDayShareBody(input: DayShareTextInput, appName: string): string {
   const lines = [appName, input.dayTitle, input.dateLabel, input.fastLabel];
-  if (input.feastHighlight?.trim()) {
-    lines.push(input.feastHighlight.trim());
+  const highlight = input.feastHighlight?.trim();
+  if (
+    highlight &&
+    normalizeShareLine(highlight) !== normalizeShareLine(input.dayTitle)
+  ) {
+    lines.push(highlight);
   }
-  lines.push(url);
   return lines.join('\n');
+}
+
+export function buildDayShareMessage(input: DayShareTextInput, appName: string): string {
+  return `${buildDayShareBody(input, appName)}\n${buildDayShareUrl(input.dayIso)}`;
 }

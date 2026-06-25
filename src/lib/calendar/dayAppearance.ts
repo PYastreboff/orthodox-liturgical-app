@@ -462,6 +462,7 @@ export function getLiturgicalDayAppearance(
   const pascha = orthodoxPaschaJdn(y);
   const cleanMonday = pascha - 48;
   const palmSunday = pascha - 7;
+  const lazarusSaturday = pascha - 8;
   const greatFriday = pascha - 2;
   const holySaturday = pascha - 1;
   const brightEnd = pascha + 7;
@@ -544,19 +545,41 @@ export function getLiturgicalDayAppearance(
     };
   }
 
+  if (jdn === lazarusSaturday) {
+    return {
+      key: 'lazarus_saturday',
+      gradient: ['#ebe4dc', '#b9aa96'],
+      foreground: '#1e1a16',
+      subtitle,
+      gregorianSubtitle,
+      label: 'Lazarus Saturday',
+    };
+  }
+
   /** Annunciation (25 Mar) keeps Theotokos blue even in Great Lent or Holy Week. */
   if (isAnnunciationLiturgicalDate(liturgical)) {
     return annunciationAppearanceFields(subtitle, gregorianSubtitle);
   }
 
   if (inHolyWeek) {
+    const daysBeforePascha = pascha - jdn;
+    const holyWeekLabel =
+      daysBeforePascha === 6
+        ? 'Great and Holy Monday'
+        : daysBeforePascha === 5
+          ? 'Great and Holy Tuesday'
+          : daysBeforePascha === 4
+            ? 'Great and Holy Wednesday'
+            : daysBeforePascha === 3
+              ? 'Great and Holy Thursday'
+              : 'Holy Week';
     return {
       key: 'holy_week',
       gradient: LENT_BLACK_GRADIENT,
       foreground: LENT_BLACK_FG,
       subtitle,
       gregorianSubtitle,
-      label: 'Holy Week',
+      label: holyWeekLabel,
     };
   }
 
@@ -589,7 +612,7 @@ export function getLiturgicalDayAppearance(
       foreground: '#1e1a16',
       subtitle,
     gregorianSubtitle,
-      label: 'Pascha',
+      label: 'Holy Pascha',
     };
   }
 

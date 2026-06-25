@@ -1,4 +1,4 @@
-import type { OrthocalDay } from '../api/orthocal';
+import type { OrthocalDay } from '../lib/api/orthocal';
 import { resolveOrthocalTone } from '../lib/liturgical/orthocalTone';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { FEAST_RANK_BY_LEVEL } from '../lib/liturgical/typikonSymbols';
