@@ -6,7 +6,6 @@ import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { CommemorationEntry } from '../lib/liturgical/commemorations';
 import { colors } from '../theme/tokens';
-import { CollapsibleChevron } from './CollapsibleChevron';
 
 type Props = {
   entry: CommemorationEntry;
@@ -51,19 +50,26 @@ export function CommemorationCard({
   const storyType = text(13, 18);
   const bodyType = text(14, 21);
 
-  const chevronColor = isPrimaryGreatFeast ? colors.feastBorder : mutedColor;
+  const readMoreColor = isDark ? colors.darkInk : textColor;
+  const readMoreBorderColor = isDark ? borderColor : resolvedBorderColor;
+  const readMoreBg = resolvedCardBg;
 
   const headerRow = (
     <View style={styles.headerRow}>
       <Text style={[styles.name, nameType, { color: nameColor }]}>{entry.name}</Text>
       {collapsible ? (
-        <CollapsibleChevron
-          expanded={expanded}
-          color={chevronColor}
-          size={22}
-          boxSize={36}
-          style={styles.headerChevron}
-        />
+        <Text
+          style={[
+            styles.readMoreLabel,
+            {
+              color: readMoreColor,
+              borderColor: readMoreBorderColor,
+              backgroundColor: readMoreBg,
+            },
+          ]}
+        >
+          {expanded ? t('commemorations.readLess') : t('commemorations.readMore')}
+        </Text>
       ) : null}
     </View>
   );
@@ -128,9 +134,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 10,
   },
-  headerChevron: {
+  readMoreLabel: {
     flexShrink: 0,
-    marginRight: -4,
+    fontSize: 12,
+    fontWeight: '600',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    overflow: 'hidden',
   },
   name: {
     flex: 1,

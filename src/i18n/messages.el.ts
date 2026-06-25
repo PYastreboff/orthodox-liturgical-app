@@ -523,6 +523,8 @@ export const el = {
   commemorations: {
     expand: 'Ανάπτυξη: {name}',
     collapse: 'Σύμπτυξη: {name}',
+    readMore: 'Περισσότερα',
+    readLess: 'Λιγότερα',
   },
   a11y: {
     openDay: 'Άνοιγμα ημέρας στο «Σήμερα»',

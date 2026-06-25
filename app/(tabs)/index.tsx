@@ -734,6 +734,7 @@ export default function TodayScreen() {
               cardBg={isDark ? colors.darkSurface : colors.card}
               borderColor={theme.colors.border}
               bodyType={type.body}
+              isDark={isDark}
             />
             {showOrthocalContentNote ? (
               <Text

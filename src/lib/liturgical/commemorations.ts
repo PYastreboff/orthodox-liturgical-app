@@ -119,11 +119,13 @@ function addSaintEntryForFeastStory(
 ): void {
   const saintName = sanitizeTypikonProse(story.title.trim());
   if (!saintName) return;
-  if (saintName.trim().toLowerCase() === feastName.trim().toLowerCase()) return;
-  if (hasSaintNamed(entries, saintName)) return;
+  const apostolicFeast = /\bapostles?\b/i.test(feastName);
+  const displaySaintName = apostolicFeast ? feastName.trim() : saintName;
+  if (!apostolicFeast && saintName.trim().toLowerCase() === feastName.trim().toLowerCase()) return;
+  if (hasSaintNamed(entries, displaySaintName)) return;
   entries.push({
-    id: `saint:${saintName}`,
-    name: saintName,
+    id: `saint:${displaySaintName}`,
+    name: displaySaintName,
     kind: 'saint',
     storyTitle: story.title,
     body: stripHtml(story.story),

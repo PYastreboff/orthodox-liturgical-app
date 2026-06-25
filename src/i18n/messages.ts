@@ -529,6 +529,8 @@ const en = {
   commemorations: {
     expand: 'Expand {name}',
     collapse: 'Collapse {name}',
+    readMore: 'Read more',
+    readLess: 'Read less',
   },
   a11y: {
     openDay: 'Opens this day on Today',
@@ -1083,6 +1085,8 @@ const ru = {
   commemorations: {
     expand: 'Развернуть: {name}',
     collapse: 'Свернуть: {name}',
+    readMore: 'Читать далее',
+    readLess: 'Свернуть',
   },
   a11y: {
     openDay: 'Открыть этот день на «Сегодня»',

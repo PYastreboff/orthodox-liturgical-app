@@ -110,7 +110,14 @@ export function CollapsibleSection({
       ]}
     >
       {headerRow}
-      <Animated.View style={[styles.sectionBody, bodyStyle]} pointerEvents={expanded ? 'auto' : 'none'}>
+      <Animated.View
+        style={[
+          styles.sectionBody,
+          bodyStyle,
+          { overflow: elevated ? 'visible' : 'hidden' },
+        ]}
+        pointerEvents={expanded ? 'auto' : 'none'}
+      >
         {bodyTopLeading || bodyTopTrailing ? (
           <View
             style={[
@@ -172,7 +179,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 0,
   },
-  sectionBody: {
-    overflow: 'hidden',
-  },
+  sectionBody: {},
 });
