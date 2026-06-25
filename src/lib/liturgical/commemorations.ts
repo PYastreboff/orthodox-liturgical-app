@@ -2,14 +2,6 @@ import type { OrthocalDay } from '../api/orthocal';
 import { localizeOrthocalText } from '../../i18n/orthocalContent';
 import type { UiLanguage } from '../../i18n/types';
 import { stripHtml } from '../api/orthocal';
-import {
-  annunciationFeastNameFromOrthocal,
-  liturgicalDayTitle,
-  transferredGreatFeastOnHolyWeekDay,
-} from './liturgicalDayTitle';
-import { sanitizeTypikonProse } from './typikonSymbols';
-
-const PALM_SUNDAY_PATTERN = /\bpalm sunday\b/i;
 
 export type LiturgicalFeastContext = {
   appearanceKey: string;
@@ -61,98 +53,9 @@ function findStoryForName(
   return best;
 }
 
-function nameFromOrthocalHeadlines(day: OrthocalDay | null, pattern: RegExp): string | null {
-  if (!day) return null;
-  const candidates = [
-    ...(day.titles ?? []),
-    day.summary_title ?? '',
-    day.feast_level_description ?? '',
-  ];
-  for (const raw of candidates) {
-    const name = sanitizeTypikonProse(String(raw).trim());
-    if (name && pattern.test(name)) return name;
-  }
-  return null;
-}
-
-/** When orthocal has no `feasts[]` entry but the local calendar marks a feast day. */
-function liturgicalFeastFallbackName(
-  day: OrthocalDay | null,
-  liturgical: LiturgicalFeastContext,
-): string | null {
-  if ((day?.feasts ?? []).some((f) => f.trim())) return null;
-
-  const { appearanceKey, appearanceLabel } = liturgical;
-
-  if (appearanceKey === 'palm_sunday' || day?.pascha_distance === -7) {
-    return (
-      nameFromOrthocalHeadlines(day, PALM_SUNDAY_PATTERN) ??
-      (sanitizeTypikonProse(appearanceLabel.trim()) || 'Palm Sunday')
-    );
-  }
-
-  if (appearanceKey === 'annunciation') {
-    return annunciationFeastNameFromOrthocal(day) ?? sanitizeTypikonProse(appearanceLabel.trim());
-  }
-
-  return null;
-}
-
-function hasFeastNamed(entries: CommemorationEntry[], name: string): boolean {
-  const key = name.trim().toLowerCase();
-  return entries.some((e) => e.kind === 'feast' && e.name.trim().toLowerCase() === key);
-}
-
-function hasSaintNamed(entries: CommemorationEntry[], name: string): boolean {
-  const key = name.trim().toLowerCase();
-  return entries.some((e) => e.kind === 'saint' && e.name.trim().toLowerCase() === key);
-}
-
-/**
- * Great feasts often have a life account only in orthocal `stories[]`, linked from `feasts[]`.
- * Show the liturgical name under Feasts and the hagiography under Saints.
- */
-function addSaintEntryForFeastStory(
-  entries: CommemorationEntry[],
-  feastName: string,
-  story: { title: string; story: string },
-): void {
-  const saintName = sanitizeTypikonProse(story.title.trim());
-  if (!saintName) return;
-  const apostolicFeast = /\bapostles?\b/i.test(feastName);
-  const displaySaintName = apostolicFeast ? feastName.trim() : saintName;
-  if (!apostolicFeast && saintName.trim().toLowerCase() === feastName.trim().toLowerCase()) return;
-  if (hasSaintNamed(entries, displaySaintName)) return;
-  entries.push({
-    id: `saint:${displaySaintName}`,
-    name: displaySaintName,
-    kind: 'saint',
-    storyTitle: story.title,
-    body: stripHtml(story.story),
-  });
-}
-
-function prependFeastIfMissing(
-  entries: CommemorationEntry[],
-  name: string,
-  stories: NonNullable<OrthocalDay['stories']>,
-  usedStoryTitles: Set<string>,
-): void {
-  if (!name.trim() || hasFeastNamed(entries, name)) return;
-  const story = findStoryForName(name, stories);
-  if (story?.title) usedStoryTitles.add(story.title);
-  entries.unshift({
-    id: `feast:${name}`,
-    name,
-    kind: 'feast',
-    storyTitle: story?.title,
-    body: story ? stripHtml(story.story) : undefined,
-  });
-}
-
 export function buildCommemorationEntries(
   day: OrthocalDay | null,
-  liturgical?: LiturgicalFeastContext,
+  _liturgical?: LiturgicalFeastContext,
   lang: UiLanguage = 'en',
 ): CommemorationEntry[] {
   if (!day) return [];
@@ -165,19 +68,12 @@ export function buildCommemorationEntries(
     const trimmed = feast.trim();
     if (!trimmed) continue;
     const story = findStoryForName(trimmed, stories);
-    let linkedSaint = false;
-    if (story?.title) {
-      usedStoryTitles.add(story.title);
-      const countBefore = entries.length;
-      addSaintEntryForFeastStory(entries, trimmed, story);
-      linkedSaint = entries.length > countBefore;
-    }
     entries.push({
       id: `feast:${trimmed}`,
       name: trimmed,
       kind: 'feast',
-      storyTitle: linkedSaint ? undefined : story?.title,
-      body: linkedSaint ? undefined : story ? stripHtml(story.story) : undefined,
+      storyTitle: story?.title,
+      body: story ? stripHtml(story.story) : undefined,
     });
   }
 
@@ -196,50 +92,15 @@ export function buildCommemorationEntries(
   }
 
   for (const story of stories) {
-    if (usedStoryTitles.has(story.title)) continue;
+    const title = story.title?.trim();
+    if (!title || usedStoryTitles.has(story.title)) continue;
     entries.push({
-      id: `story:${story.title}`,
-      name: story.title.trim(),
+      id: `story:${title}`,
+      name: title,
       kind: 'saint',
       storyTitle: story.title,
       body: stripHtml(story.story),
     });
-  }
-
-  if (liturgical && !entries.some((e) => e.kind === 'feast')) {
-    const fallbackName = liturgicalFeastFallbackName(day, liturgical);
-    if (fallbackName) {
-      const story = findStoryForName(fallbackName, stories);
-      if (story?.title) usedStoryTitles.add(story.title);
-      entries.unshift({
-        id: `feast:${fallbackName}`,
-        name: fallbackName,
-        kind: 'feast',
-        storyTitle: story?.title,
-        body: story ? stripHtml(story.story) : undefined,
-      });
-    }
-  }
-
-  const extraFeasts: string[] = [];
-  const annunciation = annunciationFeastNameFromOrthocal(day);
-  if (annunciation) extraFeasts.push(annunciation);
-  if (liturgical) {
-    const dayTitle = liturgicalDayTitle(
-      day,
-      liturgical.appearanceKey,
-      liturgical.appearanceLabel,
-      null,
-    );
-    const transferred = transferredGreatFeastOnHolyWeekDay(
-      day,
-      liturgical.appearanceKey,
-      dayTitle,
-    );
-    if (transferred) extraFeasts.push(transferred);
-  }
-  for (let i = extraFeasts.length - 1; i >= 0; i--) {
-    prependFeastIfMissing(entries, extraFeasts[i], stories, usedStoryTitles);
   }
 
   if (lang === 'en') return entries;
