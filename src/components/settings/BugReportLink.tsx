@@ -3,12 +3,11 @@ import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAppTranslation } from '../../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
+import { SUPPORT_URL } from '../../lib/legal/urls';
 import { SEGMENTED_PICKER_HORIZONTAL_INSET } from './SegmentedPicker';
 import { colors } from '../../theme/tokens';
 
-const GITHUB_ISSUES_URL =
-  'https://github.com/PYastreboff/orthodox-liturgical-app/issues/new';
-
+const GITHUB_ISSUES_URL = SUPPORT_URL;
 type Props = {
   isDark: boolean;
 };

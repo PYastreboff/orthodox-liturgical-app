@@ -2,6 +2,7 @@ import { StyleSheet, Text, type TextStyle, type ViewStyle } from 'react-native';
 
 import type { FastSummaryKind } from '../i18n/fastingLabels';
 import { fastPillStyleForKind } from '../lib/liturgical/fastPillStyle';
+import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 
 type Props = {
   label: string;
@@ -11,7 +12,8 @@ type Props = {
 };
 
 export function FastSummaryPill({ label, kind, textStyle, style }: Props) {
-  const pill = fastPillStyleForKind(kind);
+  const isDark = useResolvedColorScheme() === 'dark';
+  const pill = fastPillStyleForKind(kind, isDark);
 
   return (
     <Text

@@ -32,7 +32,19 @@ const FAST_PILL_STYLES: Record<FastSummaryKind, FastPillStyle> = {
   },
 };
 
-export function fastPillStyleForKind(kind: FastSummaryKind): FastPillStyle {
+/** Dark-mode override — near-black total-abstinence pill vanishes on charcoal cards. */
+const FAST_PILL_STYLES_DARK: Partial<Record<FastSummaryKind, FastPillStyle>> = {
+  total_abstinence: {
+    backgroundColor: '#4a4440',
+    color: '#ffffff',
+  },
+};
+
+export function fastPillStyleForKind(kind: FastSummaryKind, isDark = false): FastPillStyle {
+  if (isDark) {
+    const dark = FAST_PILL_STYLES_DARK[kind];
+    if (dark) return dark;
+  }
   return FAST_PILL_STYLES[kind];
 }
 

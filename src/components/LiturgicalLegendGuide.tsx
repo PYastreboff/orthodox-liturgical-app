@@ -116,7 +116,11 @@ export function LiturgicalLegendGuide({ textColor, mutedColor }: Props) {
               <CalendarFastingFoodIcon
                 kind={item.kind}
                 size={CALENDAR_FASTING_ICON_SIZE}
-                color={calendarFastingFoodIconColor(item.kind, isDark, textColor)}
+                color={
+                  item.kind === 'noEating' && isDark
+                    ? '#ffffff'
+                    : calendarFastingFoodIconColor(item.kind, isDark, textColor)
+                }
               />
               <Text style={[styles.label, { color: textColor }]}>{t(item.key)}</Text>
             </View>

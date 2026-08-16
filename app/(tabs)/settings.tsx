@@ -13,8 +13,8 @@ import Constants from 'expo-constants';
 import Head from 'expo-router/head';
 
 import { AppLanguagePicker } from '../../src/components/settings/AppLanguagePicker';
-import { BugReportLink } from '../../src/components/settings/BugReportLink';
 import { CalendarModePicker } from '../../src/components/settings/CalendarModePicker';
+import { LegalLinks } from '../../src/components/settings/LegalLinks';
 import { LiturgicalLegendGuide } from '../../src/components/LiturgicalLegendGuide';
 import { OrthoDailyLogo } from '../../src/components/OrthoDailyLogo';
 import { SettingsRow } from '../../src/components/settings/SettingsRow';
@@ -202,11 +202,11 @@ export default function SettingsScreen() {
       </SettingsSection>
 
       <SettingsSection
-        title={t('settings.bugReportTitle')}
-        description={t('settings.bugReportHint')}
+        title={t('settings.legalTitle')}
+        description={t('settings.legalHint')}
         isDark={isDark}
       >
-        <BugReportLink isDark={isDark} />
+        <LegalLinks isDark={isDark} />
       </SettingsSection>
 
       <View style={styles.footer}>

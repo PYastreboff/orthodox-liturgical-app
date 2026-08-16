@@ -260,6 +260,8 @@ For a local production preview after `npm install`, see [§7 Local web preview](
 - **UI vs content:** app language affects labels only; saint/feast names and most fast descriptions come from the API in English.
 - **Persistence:** settings, serving role, Today section collapse state, liturgical-text category filter, scripture language, selected day, and calendar month survive refresh; not synced across devices.
 
+**Privacy:** [Privacy Policy](https://pyastreboff.github.io/orthodox-liturgical-app/privacy) (also linked from Settings). Local preferences only; liturgical data loaded from public sources listed in Settings.
+
 ## Future direction
 
 - Versioned offline packs per jurisdiction for typikon and texts without network.

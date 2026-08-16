@@ -59,6 +59,12 @@ const en = {
       'If a feast, fasting day, or reading looks incorrect, tell us in your own words what you expected to see. We read every message.',
     bugReportLink: 'Send feedback',
     bugReportFootnote: 'A free GitHub account may be required.',
+    legalTitle: 'Legal & support',
+    legalHint: 'Privacy details and how to get help.',
+    privacyPolicyLink: 'Privacy Policy',
+    privacyPolicyHint: 'How OrthoDaily handles data on your device and online.',
+    supportLink: 'Support & feedback',
+    supportHint: 'Report a problem or ask a question on GitHub.',
     colorsLegend: 'Colours & fasting',
     colorsLegendHint:
       'Pill colours on Today show what kind of fast applies. On grey fasting cells, icons show meat fast, fish, wine, or oil when allowed, or no eating for a total fast.',
@@ -70,7 +76,8 @@ const en = {
       fish: 'Blue — fish, wine, and oil are allowed; no meat or dairy.',
       dairy:
         'Tan — abstain from meat: fast only from meat.',
-      totalAbstinence: 'Black — total abstinence from food (e.g. Great and Holy Friday).',
+      totalAbstinence:
+        'Charcoal — total abstinence from food (e.g. Great and Holy Friday).',
       noFast: 'Green — not a fasting day.',
     },
     legendTypikonTitle: 'Service types',
@@ -533,6 +540,13 @@ const en = {
     readMore: 'Read more',
     readLess: 'Read less',
   },
+  privacy: {
+    title: 'Privacy Policy',
+    back: 'Back',
+    lastUpdated: 'Last updated: {date}',
+    intro:
+      'This page is the English Privacy Policy for OrthoDaily. It applies to the iOS, Android, and web apps.',
+  },
   a11y: {
     openDay: 'Opens this day on Today',
     expandSection: 'Expand section',
@@ -601,6 +615,12 @@ const ru = {
       'Если праздник, пост или чтения отображаются неверно, опишите своими словами, что вы ожидали увидеть. Мы читаем каждое сообщение.',
     bugReportLink: 'Написать нам',
     bugReportFootnote: 'Может понадобиться бесплатный аккаунт GitHub.',
+    legalTitle: 'Правовая информация',
+    legalHint: 'Конфиденциальность и помощь.',
+    privacyPolicyLink: 'Политика конфиденциальности',
+    privacyPolicyHint: 'Как OrthoDaily обрабатывает данные на устройстве и в сети.',
+    supportLink: 'Поддержка и отзывы',
+    supportHint: 'Сообщить о проблеме или задать вопрос на GitHub.',
     colorsLegend: 'Цвета и пост',
     colorsLegendHint:
       'Цветные метки на экране «Сегодня» показывают вид поста. На серых постных ячейках значки означают мясной пост, разрешённые рыбу, вино или масло, либо полное воздержание (без пищи).',
@@ -613,7 +633,8 @@ const ru = {
       fish: 'Синий — разрешены рыба, вино и масло; без мяса и молочного.',
       dairy:
         'Бежевый — воздержание от мяса: пост только от мяса.',
-      totalAbstinence: 'Чёрный — полное воздержание от пищи (напр. Великая Пятница).',
+      totalAbstinence:
+        'Тёмно-серый — полное воздержание от пищи (напр. Великая Пятница).',
       noFast: 'Зелёный — не постный день.',
     },
     legendTypikonTitle: 'Типы богослужений',
@@ -1089,6 +1110,13 @@ const ru = {
     collapse: 'Свернуть: {name}',
     readMore: 'Читать далее',
     readLess: 'Свернуть',
+  },
+  privacy: {
+    title: 'Политика конфиденциальности',
+    back: 'Назад',
+    lastUpdated: 'Обновлено: {date}',
+    intro:
+      'Ниже — политика конфиденциальности OrthoDaily на английском. Она действует для приложений iOS, Android и веб-версии.',
   },
   a11y: {
     openDay: 'Открыть этот день на «Сегодня»',

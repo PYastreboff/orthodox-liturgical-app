@@ -14,13 +14,13 @@ const root = join(__dirname, '..');
 const dist = join(root, 'dist');
 const indexPath = join(dist, 'index.html');
 
-/** Expo Router tab paths (group segments like (tabs) are omitted from URLs). */
-const TAB_ROUTES = ['calendar', 'settings'];
+/** Expo Router paths that need a copied index.html for GitHub Pages deep links. */
+const SPA_ROUTES = ['calendar', 'settings', 'privacy'];
 
 function main() {
   const indexHtml = readFileSync(indexPath, 'utf8');
 
-  for (const route of TAB_ROUTES) {
+  for (const route of SPA_ROUTES) {
     const dir = join(dist, route);
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, 'index.html'), indexHtml);
@@ -29,7 +29,7 @@ function main() {
   // GitHub Pages: custom 404 page loads the app for unmapped deep links.
   writeFileSync(join(dist, '404.html'), indexHtml);
 
-  console.log(`Prepared SPA fallbacks: ${TAB_ROUTES.map((r) => `${r}/index.html`).join(', ')}, 404.html`);
+  console.log(`Prepared SPA fallbacks: ${SPA_ROUTES.map((r) => `${r}/index.html`).join(', ')}, 404.html`);
 }
 
 try {

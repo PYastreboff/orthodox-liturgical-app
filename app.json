@@ -1,14 +1,16 @@
 {
   "expo": {
     "name": "OrthoDaily",
-    "description": "OrthoDaily",
+    "description": "Orthodox liturgical daybook — feasts, fasting, vestments, and readings oriented toward Moscow Patriarchate practice.",
     "slug": "orthodox-liturgical-app",
     "version": "0.1.0",
     "orientation": "portrait",
     "scheme": "orthodox-liturgical",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "githubUrl": "https://github.com/PYastreboff/orthodox-liturgical-app",
+    "primaryColor": "#6b2d3c",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -17,7 +19,24 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "church.orthodox.liturgical.dev",
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "infoPlist": {
+        "CFBundleDisplayName": "OrthoDaily"
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "privacyManifests": {
+        "NSPrivacyTracking": false,
+        "NSPrivacyTrackingDomains": [],
+        "NSPrivacyCollectedDataTypes": [],
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -25,14 +44,15 @@
         "backgroundColor": "#1a1410"
       },
       "edgeToEdgeEnabled": true,
-      "package": "church.orthodox.liturgical.dev"
+      "package": "church.orthodox.liturgical.dev",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
       "name": "OrthoDaily",
       "shortName": "OrthoDaily",
-      "description": "OrthoDaily",
+      "description": "Orthodox liturgical daybook — feasts, fasting, vestments, and readings.",
       "title": "OrthoDaily"
     },
     "plugins": [
@@ -48,6 +68,10 @@
     ],
     "experiments": {
       "baseUrl": "/orthodox-liturgical-app"
+    },
+    "extra": {
+      "privacyPolicyUrl": "https://pyastreboff.github.io/orthodox-liturgical-app/privacy",
+      "supportUrl": "https://github.com/PYastreboff/orthodox-liturgical-app/issues/new"
     }
   }
 }

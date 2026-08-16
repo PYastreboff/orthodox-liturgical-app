@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import Svg, { Line } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
 import { FastingFoodIcon } from './FastingFoodIcon';
 import {
@@ -35,36 +35,24 @@ type Props = {
 export function calendarFastingFoodIconColor(
   kind: Props['kind'],
   onDarkBackground: boolean,
-  foregroundColor = '#f2ebe2',
+  foregroundColor = '#ffffff',
 ): string {
   if (kind === 'noEating') return fastingNoEatingColor(onDarkBackground, foregroundColor);
   if (kind === 'noMeat') return FASTING_NO_MEAT_COLOR;
   return fastingAllowanceColor(kind);
 }
 
-/** X mark — total fast (no eating). */
+/**
+ * Filled X — total fast (no eating).
+ * Uses a path fill (not stroked lines) so the mark stays visible on dark UI
+ * when react-native-svg stroke colouring is unreliable on web.
+ */
 function NoEatingGlyph({ color }: { color: string }) {
   return (
-    <>
-      <Line
-        x1={6}
-        y1={6}
-        x2={18}
-        y2={18}
-        stroke={color}
-        strokeWidth={3.2}
-        strokeLinecap="round"
-      />
-      <Line
-        x1={18}
-        y1={6}
-        x2={6}
-        y2={18}
-        stroke={color}
-        strokeWidth={3.2}
-        strokeLinecap="round"
-      />
-    </>
+    <Path
+      fill={color}
+      d="M7.05 5.34a1.6 1.6 0 0 0-2.26 2.26L9.74 12l-4.95 4.95a1.6 1.6 0 1 0 2.26 2.26L12 14.26l4.95 4.95a1.6 1.6 0 0 0 2.26-2.26L14.26 12l4.95-4.95a1.6 1.6 0 1 0-2.26-2.26L12 9.74 7.05 5.34z"
+    />
   );
 }
 

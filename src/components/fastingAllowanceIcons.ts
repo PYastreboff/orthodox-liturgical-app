@@ -26,7 +26,7 @@ export function fastingAllowanceColor(kind: FastingAllowanceKind): string {
   return FASTING_OIL_COLOR;
 }
 
-/** noEating cross — light on dark legend backgrounds. */
-export function fastingNoEatingColor(onDarkBackground: boolean, foregroundColor: string): string {
-  return onDarkBackground ? foregroundColor : FASTING_NO_EATING_COLOR;
+/** noEating cross — white on dark UI; near-black on light grey calendar cells. */
+export function fastingNoEatingColor(onDarkBackground: boolean, _foregroundColor: string): string {
+  return onDarkBackground ? '#ffffff' : FASTING_NO_EATING_COLOR;
 }
