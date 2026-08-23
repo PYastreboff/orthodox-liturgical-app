@@ -10,9 +10,11 @@ type Props = {
   value: ColorSchemePreference;
   onChange: (value: ColorSchemePreference) => void;
   isDark: boolean;
+  /** Remove card inset when nested in SettingsField. */
+  flush?: boolean;
 };
 
-export function ThemeModePicker({ value, onChange, isDark }: Props) {
+export function ThemeModePicker({ value, onChange, isDark, flush = false }: Props) {
   const { t } = useAppTranslation();
   const options: SegmentedOption<ColorSchemePreference>[] = [
     { id: 'system', label: t('settings.themeSystem') },
@@ -26,6 +28,7 @@ export function ThemeModePicker({ value, onChange, isDark }: Props) {
       value={value}
       onChange={onChange}
       isDark={isDark}
+      flush={flush}
       optionStyle="column"
       renderLeading={(option, { inactiveColor, index, progress }) => (
         <ThemeOptionIcon

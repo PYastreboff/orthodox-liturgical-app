@@ -10,9 +10,10 @@ type Props = {
   value: PrimaryCalendar;
   onChange: (value: PrimaryCalendar) => void;
   isDark: boolean;
+  flush?: boolean;
 };
 
-export function CalendarModePicker({ value, onChange, isDark }: Props) {
+export function CalendarModePicker({ value, onChange, isDark, flush = false }: Props) {
   const { t } = useAppTranslation();
   const options: SegmentedOption<PrimaryCalendar>[] = [
     { id: 'julian', label: t('settings.calendarJulian') },
@@ -25,6 +26,7 @@ export function CalendarModePicker({ value, onChange, isDark }: Props) {
       value={value}
       onChange={onChange}
       isDark={isDark}
+      flush={flush}
       optionStyle="row"
       renderLeading={(option, { inactiveColor, index, progress }) => (
         <AnimatedSegmentIcon

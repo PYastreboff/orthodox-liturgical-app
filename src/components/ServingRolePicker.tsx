@@ -20,10 +20,12 @@ type Props = {
   value: ClergyRole;
   onChange: (value: ClergyRole) => void;
   isDark: boolean;
+  /** Remove card inset when nested in SettingsField. */
+  flush?: boolean;
 };
 
 /** Serving-role dropdown for Settings — overlays content instead of expanding the card. */
-export function ServingRolePicker({ value, onChange, isDark }: Props) {
+export function ServingRolePicker({ value, onChange, isDark, flush = false }: Props) {
   const { t } = useAppTranslation();
   const [open, setOpen] = useState(false);
   const [hoveredId, setHoveredId] = useState<ClergyRole | null>(null);
@@ -49,8 +51,8 @@ export function ServingRolePicker({ value, onChange, isDark }: Props) {
   };
 
   return (
-    <View style={styles.wrap}>
-      <View ref={triggerRef} collapsable={false}>
+    <View style={[styles.wrap, flush ? styles.wrapFlush : null]}>
+      <View ref={triggerRef} collapsable={false} style={styles.triggerAnchor}>
         <Pressable
           style={[styles.trigger, { backgroundColor: surfaceBg, borderColor }]}
           onPress={() => {
@@ -144,10 +146,21 @@ const styles = StyleSheet.create({
     marginHorizontal: SEGMENTED_PICKER_HORIZONTAL_INSET,
     marginVertical: 12,
     alignSelf: 'stretch',
+    maxWidth: 400,
+    width: '100%',
+  },
+  wrapFlush: {
+    marginHorizontal: 0,
+    marginTop: 0,
+    marginBottom: 10,
+  },
+  triggerAnchor: {
+    width: '100%',
   },
   trigger: {
     minHeight: 44,
-    borderRadius: 10,
+    width: '100%',
+    borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
     paddingLeft: 12,
     paddingRight: 10,

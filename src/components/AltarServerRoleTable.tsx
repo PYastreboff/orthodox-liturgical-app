@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useFontScale } from '../hooks/useFontScale';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import {
-  ALTAR_LITURGY_FORMS,
   ALTAR_ROLE_SOURCE_KEYS,
   ALTAR_SERVER_ROLE_ROWS,
+  availableAltarForms,
+  defaultAltarForm,
+  type AltarGuideDayContext,
   type AltarLiturgyForm,
 } from '../lib/liturgical/altarServerRoles';
 import { colors } from '../theme/tokens';
@@ -15,52 +17,68 @@ type Props = {
   textColor: string;
   mutedColor: string;
   isDark: boolean;
+  dayContext: AltarGuideDayContext;
 };
 
-export function AltarServerRoleTable({ textColor, mutedColor, isDark }: Props) {
+export function AltarServerRoleTable({ textColor, mutedColor, isDark, dayContext }: Props) {
   const { t } = useAppTranslation();
   const { text } = useFontScale();
   const bodyType = text(14, 20);
   const hintType = text(12, 17);
   const headerType = text(12, 16);
-  const [form, setForm] = useState<AltarLiturgyForm>('priest');
+  const forms = availableAltarForms(dayContext);
+  const [form, setForm] = useState<AltarLiturgyForm>(() => defaultAltarForm(dayContext));
+
+  useEffect(() => {
+    const nextForms = availableAltarForms(dayContext);
+    const next = defaultAltarForm(dayContext);
+    setForm((prev) => (nextForms.includes(prev) ? prev : next));
+  }, [
+    dayContext.appearanceKey,
+    dayContext.feastLevel,
+    dayContext.weekday,
+    dayContext.isPresanctified,
+  ]);
 
   const surfaceBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)';
-  const activeBg = isDark ? colors.accentWine : colors.accentWine;
-  const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.12)';
-
   const rows = ALTAR_SERVER_ROLE_ROWS[form];
 
   return (
     <View>
-      <View style={[styles.toggleRow, { borderColor }]}>
-        {ALTAR_LITURGY_FORMS.map((id) => {
-          const selected = form === id;
-          return (
-            <Pressable
-              key={id}
-              style={[
-                styles.toggleBtn,
-                { backgroundColor: selected ? activeBg : surfaceBg },
-              ]}
-              onPress={() => setForm(id)}
-              accessibilityRole="button"
-              accessibilityState={{ selected }}
-            >
-              <Text
+      {forms.length > 1 ? (
+        <View style={styles.toggleRow}>
+          {forms.map((id) => {
+            const selected = form === id;
+            return (
+              <Pressable
+                key={id}
                 style={[
-                  styles.toggleLabel,
-                  headerType,
-                  { color: selected ? '#fff' : textColor },
+                  styles.toggleBtn,
+                  { backgroundColor: selected ? colors.accentWine : surfaceBg },
                 ]}
-                numberOfLines={2}
+                onPress={() => setForm(id)}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
               >
-                {t(`altarRoles.form.${id}`)}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+                <Text
+                  style={[
+                    styles.toggleLabel,
+                    headerType,
+                    { color: selected ? '#fff' : textColor },
+                  ]}
+                  numberOfLines={2}
+                >
+                  {t(`altarRoles.form.${id}`)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : (
+        <Text style={[styles.singleFormLabel, headerType, { color: mutedColor }]}>
+          {t(`altarRoles.form.${form}`)}
+        </Text>
+      )}
 
       {rows.map((row, index) => (
         <View
@@ -101,14 +119,13 @@ export function AltarServerRoleTable({ textColor, mutedColor, isDark }: Props) {
 const styles = StyleSheet.create({
   toggleRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
     marginBottom: 14,
-    borderRadius: 10,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 4,
   },
   toggleBtn: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: '40%',
     minHeight: 40,
     borderRadius: 8,
     alignItems: 'center',
@@ -119,6 +136,12 @@ const styles = StyleSheet.create({
   toggleLabel: {
     fontWeight: '700',
     textAlign: 'center',
+  },
+  singleFormLabel: {
+    fontWeight: '700',
+    marginBottom: 12,
+    letterSpacing: 0.3,
+    textTransform: 'uppercase',
   },
   momentBlock: {
     paddingVertical: 10,

@@ -5,6 +5,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, type Metrics } from 'react-native-safe-area-context';
 
 import { AppThemeProvider } from '../src/components/AppThemeProvider';
+import { LiturgicalRemindersSync } from '../src/components/LiturgicalRemindersSync';
 import { SplashGate } from '../src/components/SplashGate';
 import { WebViewportBootstrap } from '../src/components/WebViewportBootstrap';
 import { DayNavigationProvider } from '../src/state/DayNavigationContext';
@@ -41,6 +42,7 @@ export default function RootLayout() {
           <AppThemeProvider>
             <SplashGate>
               <DayNavigationProvider>
+                <LiturgicalRemindersSync />
                 <RootStack />
               </DayNavigationProvider>
             </SplashGate>

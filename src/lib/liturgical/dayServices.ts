@@ -87,7 +87,7 @@ function isHolyThursday(appearanceKey: string, paschaDistance: number | undefine
   return appearanceKey === 'holy_week' && paschaDistance === -3;
 }
 
-function isPresanctifiedDay(
+export function isPresanctifiedDay(
   appearanceKey: string,
   feastLevel: number | undefined,
   weekday: number | undefined,

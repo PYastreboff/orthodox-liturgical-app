@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useFontScale } from '../hooks/useFontScale';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import {
+  availableReaderForms,
+  defaultReaderForm,
   READER_GUIDE_ROWS,
   READER_GUIDE_SOURCE_KEYS,
-  READER_LITURGY_FORMS,
+  type ReaderGuideDayContext,
   type ReaderLiturgyForm,
 } from '../lib/liturgical/readerGuide';
 import { colors } from '../theme/tokens';
@@ -15,50 +17,68 @@ type Props = {
   textColor: string;
   mutedColor: string;
   isDark: boolean;
+  dayContext: ReaderGuideDayContext;
 };
 
-export function ReaderGuideTable({ textColor, mutedColor, isDark }: Props) {
+export function ReaderGuideTable({ textColor, mutedColor, isDark, dayContext }: Props) {
   const { t } = useAppTranslation();
   const { text } = useFontScale();
   const bodyType = text(14, 20);
   const hintType = text(12, 17);
   const headerType = text(12, 16);
-  const [form, setForm] = useState<ReaderLiturgyForm>('priest');
+  const forms = availableReaderForms(dayContext);
+  const [form, setForm] = useState<ReaderLiturgyForm>(() => defaultReaderForm(dayContext));
+
+  useEffect(() => {
+    const nextForms = availableReaderForms(dayContext);
+    const next = defaultReaderForm(dayContext);
+    setForm((prev) => (nextForms.includes(prev) ? prev : next));
+  }, [
+    dayContext.appearanceKey,
+    dayContext.feastLevel,
+    dayContext.weekday,
+    dayContext.isPresanctified,
+  ]);
 
   const surfaceBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)';
-  const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.12)';
   const rows = READER_GUIDE_ROWS[form];
 
   return (
     <View>
-      <View style={[styles.toggleRow, { borderColor }]}>
-        {READER_LITURGY_FORMS.map((id) => {
-          const selected = form === id;
-          return (
-            <Pressable
-              key={id}
-              style={[
-                styles.toggleBtn,
-                { backgroundColor: selected ? colors.accentWine : surfaceBg },
-              ]}
-              onPress={() => setForm(id)}
-              accessibilityRole="button"
-              accessibilityState={{ selected }}
-            >
-              <Text
+      {forms.length > 1 ? (
+        <View style={styles.toggleRow}>
+          {forms.map((id) => {
+            const selected = form === id;
+            return (
+              <Pressable
+                key={id}
                 style={[
-                  styles.toggleLabel,
-                  headerType,
-                  { color: selected ? '#fff' : textColor },
+                  styles.toggleBtn,
+                  { backgroundColor: selected ? colors.accentWine : surfaceBg },
                 ]}
-                numberOfLines={2}
+                onPress={() => setForm(id)}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
               >
-                {t(`readerGuide.form.${id}`)}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+                <Text
+                  style={[
+                    styles.toggleLabel,
+                    headerType,
+                    { color: selected ? '#fff' : textColor },
+                  ]}
+                  numberOfLines={2}
+                >
+                  {t(`readerGuide.form.${id}`)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : (
+        <Text style={[styles.singleFormLabel, headerType, { color: mutedColor }]}>
+          {t(`readerGuide.form.${form}`)}
+        </Text>
+      )}
 
       {rows.map((row, index) => (
         <View
@@ -99,14 +119,13 @@ export function ReaderGuideTable({ textColor, mutedColor, isDark }: Props) {
 const styles = StyleSheet.create({
   toggleRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
     marginBottom: 14,
-    borderRadius: 10,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 4,
   },
   toggleBtn: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: '40%',
     minHeight: 40,
     borderRadius: 8,
     alignItems: 'center',
@@ -117,6 +136,12 @@ const styles = StyleSheet.create({
   toggleLabel: {
     fontWeight: '700',
     textAlign: 'center',
+  },
+  singleFormLabel: {
+    fontWeight: '700',
+    marginBottom: 12,
+    letterSpacing: 0.3,
+    textTransform: 'uppercase',
   },
   momentBlock: {
     paddingVertical: 10,

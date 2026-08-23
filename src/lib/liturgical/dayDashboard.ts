@@ -35,6 +35,7 @@ import {
   sanitizeTypikonProse,
   type FeastRankDisplay,
 } from './typikonSymbols';
+import { localizeServiceNotes } from '../../i18n/orthocalContent';
 
 export type DayDashboardData = {
   /** Primary feast name on great feasts; otherwise orthocal title. */
@@ -67,7 +68,8 @@ function buildFastingNote(
   lang: UiLanguage,
 ): string {
   if (day?.service_notes?.length) {
-    return sanitizeTypikonProse(day.service_notes.join(' '));
+    const localized = localizeServiceNotes(day.service_notes, lang);
+    return sanitizeTypikonProse(localized || day.service_notes.join(' '));
   }
   if (isGreatAndHolyFriday(appearanceKey)) {
     return translate(lang, 'fasting.noteGoodFriday');

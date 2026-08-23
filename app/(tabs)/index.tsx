@@ -53,6 +53,7 @@ import { buildLiturgicalDayAbout } from '../../src/lib/liturgical/liturgicalDayA
 import { vestmentGuidanceForRole } from '../../src/lib/liturgical/vestments';
 import {
   buildDayServices,
+  isPresanctifiedDay,
   localizeDayServices,
 } from '../../src/lib/liturgical/dayServices';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
@@ -280,6 +281,19 @@ export default function TodayScreen() {
     tomorrowDate,
     uiLanguage,
   ]);
+  const guideDayContext = useMemo(
+    () => ({
+      appearanceKey: appearance.key,
+      feastLevel: liturgicalDay?.feast_level,
+      weekday: liturgicalDay?.weekday,
+      isPresanctified: isPresanctifiedDay(
+        appearance.key,
+        liturgicalDay?.feast_level,
+        liturgicalDay?.weekday,
+      ),
+    }),
+    [appearance.key, liturgicalDay?.feast_level, liturgicalDay?.weekday],
+  );
   const { shareDay } = useShareDay();
   const shareFeastHighlight = dashboard.feastsHighlightTitle?.trim() || feasts[0]?.name?.trim() || null;
 
@@ -657,6 +671,7 @@ export default function TodayScreen() {
             textColor={theme.colors.text}
             mutedColor={isDark ? '#a39e98' : colors.muted}
             isDark={isDark}
+            dayContext={guideDayContext}
           />
         </CollapsibleSection>
       ) : null}
@@ -673,6 +688,7 @@ export default function TodayScreen() {
             textColor={theme.colors.text}
             mutedColor={isDark ? '#a39e98' : colors.muted}
             isDark={isDark}
+            dayContext={guideDayContext}
           />
         </CollapsibleSection>
       ) : null}

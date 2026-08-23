@@ -54,6 +54,10 @@ type StoredPreferences = {
   fontScale?: FontScalePreference;
   servingRole?: ClergyRole;
   todayCollapsed?: Partial<TodayCollapsedState>;
+  notifyFastingReminder?: boolean;
+  notifyLiturgyMorning?: boolean;
+  notifyVespersEve?: boolean;
+  notifyPresanctified?: boolean;
 };
 
 type Preferences = {
@@ -70,6 +74,14 @@ type Preferences = {
   fontScale: FontScalePreference;
   servingRole: ClergyRole;
   todayCollapsed: TodayCollapsedState;
+  /** Native: morning reminder on fasting days. */
+  notifyFastingReminder: boolean;
+  /** Native: morning reminder when Typical Services includes Liturgy. */
+  notifyLiturgyMorning: boolean;
+  /** Native: afternoon reminder when Vespers/Vigil is expected before tomorrow’s Liturgy. */
+  notifyVespersEve: boolean;
+  /** Native: afternoon reminder on Presanctified evenings. */
+  notifyPresanctified: boolean;
   preferencesReady: boolean;
 };
 
@@ -85,6 +97,10 @@ type PreferencesContextValue = Preferences & {
   setServingRole: (value: ClergyRole) => void;
   setTodaySectionCollapsed: (key: TodayCollapsibleKey, collapsed: boolean) => void;
   toggleTodaySection: (key: TodayCollapsibleKey) => void;
+  setNotifyFastingReminder: (value: boolean) => void;
+  setNotifyLiturgyMorning: (value: boolean) => void;
+  setNotifyVespersEve: (value: boolean) => void;
+  setNotifyPresanctified: (value: boolean) => void;
 };
 
 export const PREFERENCES_STORAGE_KEY = '@orthodaily/preferences/v1';
@@ -124,6 +140,10 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [todayCollapsed, setTodayCollapsedState] = useState<TodayCollapsedState>(
     DEFAULT_TODAY_COLLAPSED,
   );
+  const [notifyFastingReminder, setNotifyFastingReminderState] = useState(false);
+  const [notifyLiturgyMorning, setNotifyLiturgyMorningState] = useState(false);
+  const [notifyVespersEve, setNotifyVespersEveState] = useState(false);
+  const [notifyPresanctified, setNotifyPresanctifiedState] = useState(false);
   const [preferencesReady, setPreferencesReady] = useState(false);
 
   useEffect(() => {
@@ -175,6 +195,18 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         }
         if (isClergyRole(parsed.servingRole)) {
           setServingRoleState(parsed.servingRole);
+        }
+        if (typeof parsed.notifyFastingReminder === 'boolean') {
+          setNotifyFastingReminderState(parsed.notifyFastingReminder);
+        }
+        if (typeof parsed.notifyLiturgyMorning === 'boolean') {
+          setNotifyLiturgyMorningState(parsed.notifyLiturgyMorning);
+        }
+        if (typeof parsed.notifyVespersEve === 'boolean') {
+          setNotifyVespersEveState(parsed.notifyVespersEve);
+        }
+        if (typeof parsed.notifyPresanctified === 'boolean') {
+          setNotifyPresanctifiedState(parsed.notifyPresanctified);
         }
         setTodayCollapsedState(mergeTodayCollapsed(parsed.todayCollapsed));
       } catch {
@@ -264,6 +296,38 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     [persist],
   );
 
+  const setNotifyFastingReminder = useCallback(
+    (value: boolean) => {
+      setNotifyFastingReminderState(value);
+      void persist({ notifyFastingReminder: value });
+    },
+    [persist],
+  );
+
+  const setNotifyLiturgyMorning = useCallback(
+    (value: boolean) => {
+      setNotifyLiturgyMorningState(value);
+      void persist({ notifyLiturgyMorning: value });
+    },
+    [persist],
+  );
+
+  const setNotifyVespersEve = useCallback(
+    (value: boolean) => {
+      setNotifyVespersEveState(value);
+      void persist({ notifyVespersEve: value });
+    },
+    [persist],
+  );
+
+  const setNotifyPresanctified = useCallback(
+    (value: boolean) => {
+      setNotifyPresanctifiedState(value);
+      void persist({ notifyPresanctified: value });
+    },
+    [persist],
+  );
+
   const setTodaySectionCollapsed = useCallback(
     (key: TodayCollapsibleKey, collapsed: boolean) => {
       setTodayCollapsedState((prev) => {
@@ -298,6 +362,10 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       fontScale,
       servingRole,
       todayCollapsed,
+      notifyFastingReminder,
+      notifyLiturgyMorning,
+      notifyVespersEve,
+      notifyPresanctified,
       preferencesReady,
       setShowAlternateCalendar,
       setPrimaryCalendar,
@@ -310,12 +378,20 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setServingRole,
       setTodaySectionCollapsed,
       toggleTodaySection,
+      setNotifyFastingReminder,
+      setNotifyLiturgyMorning,
+      setNotifyVespersEve,
+      setNotifyPresanctified,
     }),
     [
       colorSchemePreference,
       defaultTextLang,
       readingsCategoryFilter,
       fontScale,
+      notifyFastingReminder,
+      notifyLiturgyMorning,
+      notifyPresanctified,
+      notifyVespersEve,
       preferencesReady,
       primaryCalendar,
       servingRole,
@@ -323,6 +399,10 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setDefaultTextLang,
       setReadingsCategoryFilter,
       setFontScale,
+      setNotifyFastingReminder,
+      setNotifyLiturgyMorning,
+      setNotifyPresanctified,
+      setNotifyVespersEve,
       setPrimaryCalendar,
       setServingRole,
       setShowAlternateCalendar,

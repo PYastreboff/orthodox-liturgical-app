@@ -125,7 +125,7 @@ function TabsLayoutContent() {
         name="calendar"
         options={{
           title: t('tabs.browserTitleCalendar'),
-          headerTitle: t('tabs.calendarHeader'),
+          headerTitle: t('calendar.title'),
           tabBarLabel: t('tabs.calendar'),
           sceneStyle: { backgroundColor: sceneBackground },
           ...tabBarIconOptions('calendar'),
@@ -135,7 +135,7 @@ function TabsLayoutContent() {
         name="settings"
         options={{
           title: t('tabs.browserTitleSettings'),
-          headerTitle: t('tabs.settings'),
+          headerTitle: t('settings.title'),
           tabBarLabel: t('tabs.settings'),
           sceneStyle: { backgroundColor: sceneBackground },
           ...tabBarIconOptions('settings'),

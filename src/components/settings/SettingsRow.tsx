@@ -1,8 +1,7 @@
 import { Pressable, StyleSheet, Text, View, type PressableProps } from 'react-native';
 
-import { usePhoneLayout } from '../../hooks/usePhoneLayout';
-import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../../theme/layout';
 import { colors } from '../../theme/tokens';
+import { SEGMENTED_PICKER_HORIZONTAL_INSET } from './SegmentedPicker';
 
 type Props = Omit<PressableProps, 'style'> & {
   label: string;
@@ -12,6 +11,7 @@ type Props = Omit<PressableProps, 'style'> & {
   showDivider?: boolean;
 };
 
+/** Label + hint row with trailing control — matches Legal / SettingsLinkRow type. */
 export function SettingsRow({
   label,
   hint,
@@ -20,20 +20,19 @@ export function SettingsRow({
   showDivider = true,
   ...rest
 }: Props) {
-  const phoneLayout = usePhoneLayout();
-  const rowPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
   const labelColor = isDark ? colors.darkInk : colors.ink;
   const hintColor = isDark ? '#a39e98' : colors.muted;
   const divider = isDark ? colors.darkBorder : colors.border;
+  const interactive = rest.onPress != null;
 
   return (
     <Pressable
       style={({ pressed }) => [
         styles.row,
-        { paddingHorizontal: rowPaddingX },
-        showDivider ? { ...styles.rowDivider, borderBottomColor: divider } : undefined,
-        pressed ? styles.rowPressed : undefined,
+        showDivider ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: divider } : null,
+        interactive && pressed ? styles.rowPressed : null,
       ]}
+      disabled={!interactive}
       {...rest}
     >
       <View style={styles.labelWrap}>
@@ -50,31 +49,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
+    paddingVertical: 12,
+    paddingHorizontal: SEGMENTED_PICKER_HORIZONTAL_INSET + 4,
     minHeight: 52,
-  },
-  rowDivider: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    gap: 12,
   },
   rowPressed: {
     opacity: 0.72,
   },
   labelWrap: {
     flex: 1,
-    paddingRight: 12,
+    minWidth: 0,
+    gap: 3,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '500',
-    lineHeight: 22,
+    fontSize: 15,
+    fontWeight: '600',
+    lineHeight: 20,
   },
   hint: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 3,
+    fontSize: 12,
+    lineHeight: 16,
   },
   trailing: {
     alignItems: 'flex-end',
     justifyContent: 'center',
+    flexShrink: 0,
   },
 });

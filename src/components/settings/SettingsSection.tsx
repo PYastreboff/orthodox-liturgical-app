@@ -48,7 +48,7 @@ export function SettingsSection({
 
   const bodyStyle = useAnimatedStyle(() => ({
     opacity: progress.value,
-    maxHeight: interpolate(progress.value, [0, 1], [0, 400]),
+    maxHeight: interpolate(progress.value, [0, 1], [0, 1200]),
     marginTop: interpolate(progress.value, [0, 1], [0, 0]),
   }));
 
@@ -99,7 +99,7 @@ export function SettingsSection({
 
 const styles = StyleSheet.create({
   wrap: {
-    marginBottom: 22,
+    marginBottom: 18,
   },
   headerPressable: {
     marginBottom: 0,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.6,
     textTransform: 'uppercase',
-    marginBottom: 6,
+    marginBottom: 8,
     paddingHorizontal: 2,
   },
   headingInRow: {
@@ -124,9 +124,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   description: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginBottom: 10,
+    fontSize: 12,
+    lineHeight: 16,
+    marginBottom: 8,
     paddingHorizontal: 2,
   },
   card: {

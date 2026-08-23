@@ -64,16 +64,13 @@ export function feastRankServiceLabelForMajorFeastDay(
   return translate(lang, 'typikon.majorFeast');
 }
 
-/** Shorter typikon label for the Today hero chip (no “ranked service”). */
+/** Shorter typikon label for the Today hero chip (no “ranked service” / Theotokos qualifier). */
 export function feastRankHeroLabelForMajorFeastDay(
   rank: FeastRankDisplay,
   orthocalFeastLevel: number | undefined,
   lang: UiLanguage,
 ): string {
-  if (orthocalFeastLevel === 7) {
-    return translate(lang, 'typikon.majorFeastTheotokosHero');
-  }
-  if (orthocalFeastLevel === 8) {
+  if (orthocalFeastLevel === 7 || orthocalFeastLevel === 8) {
     return translate(lang, 'typikon.majorFeastHero');
   }
   if (orthocalFeastLevel !== undefined && orthocalFeastLevel >= 6) {

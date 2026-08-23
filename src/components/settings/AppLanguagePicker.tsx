@@ -9,6 +9,7 @@ type Props = {
   value: UiLanguage;
   onChange: (value: UiLanguage) => void;
   isDark: boolean;
+  flush?: boolean;
 };
 
 const LANGUAGE_A11Y: Record<UiLanguage, string> = {
@@ -17,7 +18,7 @@ const LANGUAGE_A11Y: Record<UiLanguage, string> = {
   el: 'Ελληνικά',
 };
 
-export function AppLanguagePicker({ value, onChange, isDark }: Props) {
+export function AppLanguagePicker({ value, onChange, isDark, flush = false }: Props) {
   const { t } = useAppTranslation();
   const options: SegmentedOption<UiLanguage>[] = [
     { id: 'en', label: t('settings.languageEnglish') },
@@ -31,6 +32,7 @@ export function AppLanguagePicker({ value, onChange, isDark }: Props) {
       value={value}
       onChange={onChange}
       isDark={isDark}
+      flush={flush}
       optionStyle="row"
       renderLeading={(option, { inactiveColor, index, progress }) => (
         <AnimatedSegmentIcon

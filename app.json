@@ -45,7 +45,8 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "church.orthodox.liturgical.dev",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": ["POST_NOTIFICATIONS"]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -63,6 +64,13 @@
           "image": "./assets/splash.png",
           "resizeMode": "contain",
           "backgroundColor": "#1a1410"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#6b2d3c",
+          "defaultChannel": "liturgical-reminders"
         }
       ]
     ],

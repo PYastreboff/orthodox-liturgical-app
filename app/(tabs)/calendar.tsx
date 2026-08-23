@@ -15,6 +15,7 @@ import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
 import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
+import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
@@ -74,6 +75,7 @@ export default function CalendarScreen() {
 
   const calendarBg = theme.dark ? colors.darkBg : '#e8e3d8';
   const phoneLayout = usePhoneLayout();
+  const showTabHeader = useTabHeaderShown();
   const sectionInsetX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
 
   useFocusEffect(
@@ -103,7 +105,9 @@ export default function CalendarScreen() {
       ]}
     >
       <View style={[styles.introSection, { paddingHorizontal: sectionInsetX }]}>
-        <Text style={[styles.pageTitle, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
+        {!showTabHeader ? (
+          <Text style={[styles.pageTitle, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
+        ) : null}
         <CalendarSearch
           calendar={primaryCalendar}
           year={cursor.getFullYear()}

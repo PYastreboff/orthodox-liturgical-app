@@ -10,11 +10,12 @@ type Props = {
   value: FontScalePreference;
   onChange: (value: FontScalePreference) => void;
   isDark: boolean;
+  flush?: boolean;
 };
 
 const ICON_SIZE = 17;
 
-export function FontScalePicker({ value, onChange, isDark }: Props) {
+export function FontScalePicker({ value, onChange, isDark, flush = false }: Props) {
   const { t } = useAppTranslation();
   const options: SegmentedOption<FontScalePreference>[] = [
     { id: 'small', label: t('settings.fontScaleSmall') },
@@ -28,6 +29,7 @@ export function FontScalePicker({ value, onChange, isDark }: Props) {
       value={value}
       onChange={onChange}
       isDark={isDark}
+      flush={flush}
       optionStyle="row"
       renderLeading={(option, { inactiveColor, index, progress }) => (
         <FontScaleOptionIcon

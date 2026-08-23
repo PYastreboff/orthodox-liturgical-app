@@ -1,23 +1,39 @@
 /**
- * Altar-server role outlines for Divine Liturgy — typical Russian Orthodox parish practice.
+ * Altar-server role outlines — typical Russian Orthodox parish practice.
  *
- * Priest's liturgy: azbyka.ru «Обязанности алтарников за литургией» (ponomar / altar server duties).
- * Hierarchical liturgy: ierod. Konstantin (Ostrovsky), «Порядок архиерейских богослужений» (2002),
- *   deacon.ru — Moscow / Novodevichy practice; ipodiakon (subdeacon) positions at entrances.
+ * Priest / Presanctified / Great Friday: azbyka.ru ponomar duties (+ Lenten adaptations).
+ * Hierarchical: ierod. Konstantin (Ostrovsky), «Порядок архиерейских богослужений» (2002).
  */
 
-export type AltarLiturgyForm = 'priest' | 'hierarchical';
+export type AltarLiturgyForm = 'priest' | 'hierarchical' | 'presanctified' | 'great_friday';
 
 export type AltarRoleRow = {
-  /** i18n key for the moment (e.g. small entrance) */
   momentKey: string;
-  /** i18n keys for each assigned role / position */
   roleKeys: string[];
-  /** optional i18n note */
   noteKey?: string;
 };
 
-export const ALTAR_LITURGY_FORMS: AltarLiturgyForm[] = ['priest', 'hierarchical'];
+export type AltarGuideDayContext = {
+  appearanceKey: string;
+  feastLevel?: number;
+  weekday?: number;
+  /** Day has evening Presanctified Liturgy. */
+  isPresanctified: boolean;
+};
+
+export function availableAltarForms(ctx: AltarGuideDayContext): AltarLiturgyForm[] {
+  if (ctx.appearanceKey === 'great_friday') {
+    return ['great_friday'];
+  }
+  if (ctx.isPresanctified) {
+    return ['presanctified', 'hierarchical'];
+  }
+  return ['priest', 'hierarchical'];
+}
+
+export function defaultAltarForm(ctx: AltarGuideDayContext): AltarLiturgyForm {
+  return availableAltarForms(ctx)[0]!;
+}
 
 export const ALTAR_SERVER_ROLE_ROWS: Record<AltarLiturgyForm, AltarRoleRow[]> = {
   priest: [
@@ -91,7 +107,7 @@ export const ALTAR_SERVER_ROLE_ROWS: Record<AltarLiturgyForm, AltarRoleRow[]> = 
         'altarRoles.hierarchical.greatStaff',
         'altarRoles.hierarchical.greatDeaconCensers',
         'altarRoles.hierarchical.greatSubdeaconLights',
-        'altarRoles.hierarchical.greatProtodeaconDiskos',
+        'altarRoles.hierarchical.greatProtodeaconGospel',
         'altarRoles.hierarchical.greatFirstPriestChalice',
       ],
       noteKey: 'altarRoles.hierarchical.greatEntranceNote',
@@ -109,6 +125,56 @@ export const ALTAR_SERVER_ROLE_ROWS: Record<AltarLiturgyForm, AltarRoleRow[]> = 
         'altarRoles.hierarchical.communionDrink',
         'altarRoles.hierarchical.communionPlatter',
       ],
+    },
+  ],
+  presanctified: [
+    {
+      momentKey: 'altarRoles.moment.hours',
+      roleKeys: [
+        'altarRoles.presanctified.hoursPrep',
+        'altarRoles.presanctified.hoursCandle',
+      ],
+    },
+    {
+      momentKey: 'altarRoles.moment.vespers',
+      roleKeys: [
+        'altarRoles.presanctified.vespersCenser',
+        'altarRoles.presanctified.vespersDoors',
+      ],
+    },
+    {
+      momentKey: 'altarRoles.moment.greatEntrance',
+      roleKeys: [
+        'altarRoles.presanctified.entranceCandles',
+        'altarRoles.presanctified.entranceCenser',
+      ],
+      noteKey: 'altarRoles.presanctified.entranceNote',
+    },
+    {
+      momentKey: 'altarRoles.moment.communion',
+      roleKeys: [
+        'altarRoles.presanctified.communionZeon',
+        'altarRoles.presanctified.communionPlatter',
+      ],
+    },
+  ],
+  great_friday: [
+    {
+      momentKey: 'altarRoles.moment.royalHours',
+      roleKeys: [
+        'altarRoles.greatFriday.hoursCandle',
+        'altarRoles.greatFriday.hoursCenser',
+        'altarRoles.greatFriday.hoursBooks',
+      ],
+    },
+    {
+      momentKey: 'altarRoles.moment.vespers',
+      roleKeys: [
+        'altarRoles.greatFriday.vespersShroud',
+        'altarRoles.greatFriday.vespersCandles',
+        'altarRoles.greatFriday.vespersCenser',
+      ],
+      noteKey: 'altarRoles.greatFriday.vespersNote',
     },
   ],
 };

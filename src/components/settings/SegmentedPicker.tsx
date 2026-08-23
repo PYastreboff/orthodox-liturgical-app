@@ -45,6 +45,8 @@ type Props<T extends string> = {
   onChange: (value: T) => void;
   isDark: boolean;
   optionStyle?: 'column' | 'row';
+  /** Drop horizontal margin when nested in SettingsField. */
+  flush?: boolean;
   renderLeading?: (option: SegmentedOption<T>, ctx: SegmentRenderContext) => React.ReactNode;
   style?: StyleProp<ViewStyle>;
 };
@@ -55,6 +57,7 @@ export function SegmentedPicker<T extends string>({
   onChange,
   isDark,
   optionStyle = 'column',
+  flush = false,
   renderLeading,
   style,
 }: Props<T>) {
@@ -81,7 +84,12 @@ export function SegmentedPicker<T extends string>({
 
   return (
     <View
-      style={[styles.track, { backgroundColor: trackBg }, style]}
+      style={[
+        styles.track,
+        flush ? styles.trackFlush : null,
+        { backgroundColor: trackBg },
+        style,
+      ]}
       onLayout={(event: LayoutChangeEvent) => {
         setTrackWidth(event.nativeEvent.layout.width);
       }}
@@ -176,6 +184,13 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     maxWidth: 400,
     position: 'relative',
+  },
+  trackFlush: {
+    marginHorizontal: 0,
+    marginTop: 0,
+    marginBottom: 10,
+    maxWidth: 400,
+    width: '100%',
   },
   pill: {
     position: 'absolute',

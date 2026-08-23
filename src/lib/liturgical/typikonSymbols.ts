@@ -35,6 +35,10 @@ const RED_RANK_GLYPHS = new Set<TypikonGlyph>([
   'great_feast',
 ]);
 
+export function isRedTypikonRank(rank: FeastRankDisplay): boolean {
+  return RED_RANK_GLYPHS.has(rank.glyph);
+}
+
 /** Background the typikon icon sits on — adjusts stroke for contrast. */
 export type TypikonIconSurface = 'light' | 'dark' | 'muted';
 

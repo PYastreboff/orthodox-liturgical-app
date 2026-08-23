@@ -23,6 +23,8 @@ import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 type Props = {
   textColor: string;
   mutedColor?: string;
+  /** Full-page layout (less inset padding than Settings card). */
+  pageLayout?: boolean;
 };
 
 const PILL_DESC_KEYS = {
@@ -34,15 +36,19 @@ const PILL_DESC_KEYS = {
   no_fast: 'settings.legendPillDesc.noFast',
 } as const;
 
-export function LiturgicalLegendGuide({ textColor, mutedColor }: Props) {
+export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = false }: Props) {
   const { t } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
   const phoneLayout = usePhoneLayout();
-  const wrapPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
+  const wrapPaddingX = pageLayout
+    ? 0
+    : phoneLayout
+      ? SECTION_CARD_PADDING_PHONE
+      : SECTION_CARD_PADDING;
   const hintColor = mutedColor ?? textColor;
 
   return (
-    <View style={[styles.wrap, { paddingHorizontal: wrapPaddingX }]}>
+    <View style={[styles.wrap, { paddingHorizontal: wrapPaddingX }, pageLayout ? styles.wrapPage : null]}>
       <View style={styles.legendSection}>
         <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
           {t('settings.legendPillsTitle')}
@@ -162,6 +168,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'stretch',
     gap: 10,
+  },
+  wrapPage: {
+    paddingVertical: 12,
   },
   legendSection: {
     width: '100%',

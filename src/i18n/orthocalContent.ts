@@ -37,6 +37,29 @@ const FEAST_KEY_BY_ENGLISH: Record<string, string> = {
   'Great and Holy Thursday': 'orthocalFeasts.holyThursday',
   'Great and Holy Friday': 'orthocalFeasts.holyFriday',
   'Great and Holy Saturday': 'orthocalFeasts.holySaturday',
+  'Protection of the Most Holy Theotokos': 'appearance.pokrov',
+  'Protection of the Theotokos': 'appearance.pokrov',
+  'Entry of the Most Holy Theotokos into the Temple': 'appearance.entry_theotokos',
+  'Entrance of the Theotokos into the Temple': 'appearance.entry_theotokos',
+  'Nativity of St John the Baptist': 'appearance.nativity_john_baptist',
+  'Nativity of the Holy Glorious Prophet, Forerunner, and Baptist John':
+    'appearance.nativity_john_baptist',
+  'Beheading of the Holy Glorious Prophet, Forerunner, and Baptist John':
+    'appearance.beheading_john_baptist',
+  'Beheading of St John the Baptist': 'appearance.beheading_john_baptist',
+  'Circumcision of Our Lord': 'appearance.circumcision',
+  'Circumcision of Our Lord Jesus Christ': 'appearance.circumcision',
+  'Circumcision of Our Lord; St Basil the Great': 'orthocalFeasts.circumcision',
+  'Afterfeast of the Nativity of Christ': 'orthocalFeasts.afterfeastNativity',
+  'Afterfeast of Theophany': 'orthocalFeasts.afterfeastTheophany',
+  'Leavetaking of the Nativity of Christ': 'orthocalFeasts.leavetakingNativity',
+  'Leavetaking of Theophany': 'orthocalFeasts.leavetakingTheophany',
+  'Beginning of the Apostles Fast': 'appearance.apostles_fast',
+  'Synaxis of the Most Holy Theotokos': 'orthocalFeasts.synaxisTheotokos',
+  'Synaxis of the Archangel Michael': 'orthocalFeasts.synaxisMichael',
+  'Forefeast of the Nativity of Christ': 'orthocalFeasts.forefeastNativity',
+  'Forefeast of Theophany': 'orthocalFeasts.forefeastTheophany',
+  'Great and Holy Monday': 'orthocalFeasts.holyMonday',
   Pascha: 'appearance.pascha',
   'Holy Pascha': 'appearance.pascha',
   'Bright Week': 'appearance.bright_week',
@@ -148,12 +171,50 @@ function translateExactFeast(text: string, lang: UiLanguage): string | null {
   return null;
 }
 
+/** Common Orthocal service_notes → i18n keys (English source strings). */
+const SERVICE_NOTE_KEY_BY_ENGLISH: Record<string, string> = {
+  'wine and oil allowed': 'fasting.exceptionWineOil',
+  'fish, wine and oil allowed': 'fasting.exceptionFishWineOil',
+  'fish, wine, and oil allowed': 'fasting.exceptionFishWineOil',
+  'fish allowed': 'fasting.exceptionFish',
+  'no liturgy': 'typikon.noLiturgy',
+  'strict fast': 'fasting.levelStrict',
+  'total fast': 'fasting.noteGoodFriday',
+  'fast free': 'fasting.noFast',
+  'fast-free': 'fasting.noFast',
+};
+
+function normalizeNoteFragment(text: string): string {
+  return text.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
 /** Localize orthocal feast / saint name for display (canonical source stays English). */
 export function localizeOrthocalText(text: string, lang: UiLanguage): string {
   if (lang === 'en' || !text.trim()) return text;
   const exact = translateExactFeast(text, lang);
   if (exact) return exact;
   return translateHonorifics(text, lang);
+}
+
+/**
+ * Localize Orthocal `service_notes` joined into one fasting/day note.
+ * Exact phrase map first; otherwise honorific / feast rewrite of the prose.
+ */
+export function localizeServiceNotes(notes: string[], lang: UiLanguage): string {
+  if (!notes.length) return '';
+  if (lang === 'en') return notes.join(' ').trim();
+
+  const localizedParts = notes.map((note) => {
+    const trimmed = note.trim();
+    if (!trimmed) return '';
+    const key = SERVICE_NOTE_KEY_BY_ENGLISH[normalizeNoteFragment(trimmed)];
+    if (key) {
+      const translated = translate(lang, key);
+      if (translated !== key) return translated;
+    }
+    return localizeOrthocalText(trimmed, lang);
+  });
+  return localizedParts.filter(Boolean).join(' ');
 }
 
 export function localizeOrthocalTexts(texts: string[], lang: UiLanguage): string[] {

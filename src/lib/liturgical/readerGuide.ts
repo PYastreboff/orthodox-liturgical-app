@@ -1,13 +1,12 @@
 /**
- * Reader (чтец) guide for Divine Liturgy — typical Russian Orthodox parish practice.
+ * Reader (чтец) guide — typical Russian Orthodox parish practice.
  *
- * Priest’s Liturgy: Slavonic Apostol dialogue (orthodox.net translation);
- *   ROCOR Europe blessing / posture notes; OrthodoxWiki Reader duties.
- * Hierarchical Liturgy: azbyka.ru «Указания… при архиерейском служении»
- *   (Hours at the cathedra; first deacon usually reads the Epistle; prokeimenon “по обычаю”).
+ * Priest’s Liturgy: Slavonic Apostol dialogue; ROCOR Europe blessing notes.
+ * Hierarchical: azbyka.ru hierarchical directions (Hours; Epistle often by first deacon).
+ * Presanctified / Great Friday: Lenten reader duties (paremia / Hours).
  */
 
-export type ReaderLiturgyForm = 'priest' | 'hierarchical';
+export type ReaderLiturgyForm = 'priest' | 'hierarchical' | 'presanctified' | 'great_friday';
 
 export type ReaderGuideRow = {
   momentKey: string;
@@ -15,7 +14,26 @@ export type ReaderGuideRow = {
   noteKey?: string;
 };
 
-export const READER_LITURGY_FORMS: ReaderLiturgyForm[] = ['priest', 'hierarchical'];
+export type ReaderGuideDayContext = {
+  appearanceKey: string;
+  feastLevel?: number;
+  weekday?: number;
+  isPresanctified: boolean;
+};
+
+export function availableReaderForms(ctx: ReaderGuideDayContext): ReaderLiturgyForm[] {
+  if (ctx.appearanceKey === 'great_friday') {
+    return ['great_friday'];
+  }
+  if (ctx.isPresanctified) {
+    return ['presanctified', 'hierarchical'];
+  }
+  return ['priest', 'hierarchical'];
+}
+
+export function defaultReaderForm(ctx: ReaderGuideDayContext): ReaderLiturgyForm {
+  return availableReaderForms(ctx)[0]!;
+}
 
 export const READER_GUIDE_ROWS: Record<ReaderLiturgyForm, ReaderGuideRow[]> = {
   priest: [
@@ -116,6 +134,45 @@ export const READER_GUIDE_ROWS: Record<ReaderLiturgyForm, ReaderGuideRow[]> = {
       roleKeys: [
         'readerGuide.hierarchical.afterReturn',
         'readerGuide.hierarchical.afterBooks',
+      ],
+    },
+  ],
+  presanctified: [
+    {
+      momentKey: 'readerGuide.moment.prepare',
+      roleKeys: [
+        'readerGuide.presanctified.prepareHours',
+        'readerGuide.presanctified.prepareParemia',
+      ],
+    },
+    {
+      momentKey: 'readerGuide.moment.hours',
+      roleKeys: ['readerGuide.presanctified.hoursRead'],
+    },
+    {
+      momentKey: 'readerGuide.moment.paremia',
+      roleKeys: [
+        'readerGuide.presanctified.paremiaAnnounce',
+        'readerGuide.presanctified.paremiaRead',
+      ],
+      noteKey: 'readerGuide.presanctified.paremiaNote',
+    },
+  ],
+  great_friday: [
+    {
+      momentKey: 'readerGuide.moment.royalHours',
+      roleKeys: [
+        'readerGuide.greatFriday.hoursPsalms',
+        'readerGuide.greatFriday.hoursTroparia',
+        'readerGuide.greatFriday.hoursScripture',
+      ],
+      noteKey: 'readerGuide.greatFriday.hoursNote',
+    },
+    {
+      momentKey: 'readerGuide.moment.vespers',
+      roleKeys: [
+        'readerGuide.greatFriday.vespersParemia',
+        'readerGuide.greatFriday.vespersEpistle',
       ],
     },
   ],

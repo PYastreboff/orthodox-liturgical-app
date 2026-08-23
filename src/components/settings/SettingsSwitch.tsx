@@ -26,10 +26,17 @@ type Props = {
   onValueChange: (value: boolean) => void;
   isDark: boolean;
   accessibilityLabel: string;
+  disabled?: boolean;
 };
 
 /** Custom toggle — avoids system green on iOS/Android Switch. */
-export function SettingsSwitch({ value, onValueChange, isDark, accessibilityLabel }: Props) {
+export function SettingsSwitch({
+  value,
+  onValueChange,
+  isDark,
+  accessibilityLabel,
+  disabled = false,
+}: Props) {
   const progress = useSharedValue(value ? 1 : 0);
   const trackOff = isDark ? '#4a4640' : '#d4cfc6';
 
@@ -43,6 +50,7 @@ export function SettingsSwitch({ value, onValueChange, isDark, accessibilityLabe
       [0, 1],
       [trackOff, colors.accentWine],
     ),
+    opacity: disabled ? 0.45 : 1,
   }));
 
   const thumbStyle = useAnimatedStyle(() => ({
@@ -51,8 +59,11 @@ export function SettingsSwitch({ value, onValueChange, isDark, accessibilityLabe
 
   return (
     <Pressable
-      onPress={() => onValueChange(!value)}
-      accessibilityState={{ checked: value }}
+      onPress={() => {
+        if (!disabled) onValueChange(!value);
+      }}
+      disabled={disabled}
+      accessibilityState={{ checked: value, disabled }}
       hitSlop={8}
       {...hoverAccessibilityProps(
         `${accessibilityLabel}: ${value ? 'on' : 'off'}`,

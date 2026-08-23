@@ -21,7 +21,7 @@ import {
   SERVING_ROLE_IDS,
   SERVING_ROLE_LABEL_KEYS,
 } from '../lib/liturgical/servingRoles';
-import { typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import { isRedTypikonRank, typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import type { ClergyRole } from '../types/liturgical';
 import { colors } from '../theme/tokens';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
@@ -84,10 +84,13 @@ export function DayHero({
     [appearance.key, appearance.label, isDark],
   );
   const fg = heroStyle.foreground;
+  const fgLower = fg.toLowerCase();
   const lightHeroText =
-    fg.toLowerCase() === '#ffffff' ||
-    fg.toLowerCase() === '#f7eef8' ||
-    fg.toLowerCase() === '#e8eef8';
+    fgLower === '#ffffff' ||
+    fgLower === '#f7eef8' ||
+    fgLower === '#e8eef8' ||
+    fgLower === colors.darkInk.toLowerCase() ||
+    fgLower === '#f2ebe2';
   const chipBg = lightHeroText
     ? 'rgba(255,255,255,0.14)'
     : isDark
@@ -102,8 +105,12 @@ export function DayHero({
   const feastChipType = text(12, 16);
   const todayBtnType = text(13, 18);
   const menuLabelType = text(14, 18);
-  const typikonSurface = lightHeroText ? 'light' : isDark ? 'dark' : 'light';
-  const typikonColor = typikonIconColor(feastRank, typikonSurface);
+  // Light hero text → dark surface so black typikon ranks render light (match chip text).
+  const typikonSurface = lightHeroText ? 'dark' : 'light';
+  const typikonColor =
+    lightHeroText && !isRedTypikonRank(feastRank)
+      ? fg
+      : typikonIconColor(feastRank, typikonSurface);
   const majorFeastServiceLabel = isMajorFeastDay
     ? feastRankHeroLabelForMajorFeastDay(feastRank, orthocalFeastLevel, lang)
     : null;
@@ -491,7 +498,7 @@ const styles = StyleSheet.create({
     minWidth: 200,
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
-    paddingVertical: 6,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.18,
@@ -502,7 +509,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 14,
   },
   roleMenuItemLabel: {
