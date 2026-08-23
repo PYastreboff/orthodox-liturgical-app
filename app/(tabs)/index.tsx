@@ -7,6 +7,8 @@ import { FastingFoodList } from '../../src/components/FastingFoodList';
 import { FastSummaryPill } from '../../src/components/FastSummaryPill';
 import { SectionTitleRow } from '../../src/components/SectionTitleRow';
 import { DayHero } from '../../src/components/DayHero';
+import { AltarServerRoleTable } from '../../src/components/AltarServerRoleTable';
+import { ReaderGuideTable } from '../../src/components/ReaderGuideTable';
 import { TypikonSymbol } from '../../src/components/TypikonSymbol';
 import { VestmentIcon } from '../../src/components/VestmentIcon';
 import { useOrthocalDay } from '../../src/hooks/useOrthocalDay';
@@ -642,6 +644,38 @@ export default function TodayScreen() {
           {dayServices.footnote}
         </Text>
       </CollapsibleSection>
+
+      {servingRole === 'altar_server' ? (
+        <CollapsibleSection
+          title={t('today.sectionAltarRoles')}
+          icon="altar-roles"
+          expanded={!todayCollapsed.altarRoles}
+          onToggle={() => toggleSection('altarRoles')}
+          themeColors={theme.colors}
+        >
+          <AltarServerRoleTable
+            textColor={theme.colors.text}
+            mutedColor={isDark ? '#a39e98' : colors.muted}
+            isDark={isDark}
+          />
+        </CollapsibleSection>
+      ) : null}
+
+      {servingRole === 'reader' ? (
+        <CollapsibleSection
+          title={t('today.sectionReaderGuide')}
+          icon="reader-guide"
+          expanded={!todayCollapsed.readerGuide}
+          onToggle={() => toggleSection('readerGuide')}
+          themeColors={theme.colors}
+        >
+          <ReaderGuideTable
+            textColor={theme.colors.text}
+            mutedColor={isDark ? '#a39e98' : colors.muted}
+            isDark={isDark}
+          />
+        </CollapsibleSection>
+      ) : null}
 
       <CollapsibleSection
         title={t('today.sectionReadings')}

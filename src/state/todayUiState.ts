@@ -5,6 +5,8 @@ export const TODAY_COLLAPSIBLE_KEYS = [
   'fasting',
   'vestments',
   'services',
+  'altarRoles',
+  'readerGuide',
   'readings',
 ] as const;
 
@@ -20,6 +22,8 @@ export const DEFAULT_TODAY_COLLAPSED: TodayCollapsedState = {
   fasting: false,
   vestments: false,
   services: false,
+  altarRoles: true,
+  readerGuide: true,
   readings: true,
 };
 

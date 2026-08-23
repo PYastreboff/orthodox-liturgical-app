@@ -140,9 +140,11 @@ const en = {
     sectionVestments: 'Vestments',
     sectionChurchDress: 'Church Clothing',
     sectionServices: 'Services',
+    sectionAltarRoles: 'Server Guide',
+    sectionReaderGuide: 'Reader Guide',
     sectionReadings: 'Liturgical Texts',
     sectionFeasts: 'Feasts',
-    sectionSaints: 'Saints Commemorated Today',
+    sectionSaints: "Today's Commemorations",
     level: 'Level',
     fastRule: 'Fasting Rule: {rule}',
     allowedHeading: 'Allowed',
@@ -349,6 +351,158 @@ const en = {
       liturgyChrysostom: 'Liturgy of St John Chrysostom',
       liturgyBasil: 'Liturgy of St Basil the Great',
       liturgyPresanctified: 'Liturgy of the Presanctified Gifts',
+    },
+  },
+  altarRoles: {
+    form: {
+      priest: 'Priest’s Liturgy',
+      hierarchical: 'Hierarchical Liturgy',
+    },
+    footnote:
+      'Typical Russian Orthodox parish assignments — follow your rector and senior server on the day.',
+    sourceAzbyka: 'Priest’s Liturgy: azbyka.ru altar-server duties (ponomar).',
+    sourceOstrovsky:
+      'Hierarchical Liturgy: Hieromonk Konstantin (Ostrovsky), Order of Hierarchical Services (2002), deacon.ru.',
+    moment: {
+      proskomedia: 'Proskomedia',
+      smallEntrance: 'Small Entrance',
+      epistle: 'Epistle',
+      gospel: 'Gospel',
+      greatEntrance: 'Great Entrance',
+      consecration: 'Consecration',
+      communion: 'Communion',
+    },
+    priest: {
+      proskomediaCenser: 'Hand censer to priest at the end of proskomedia (cover held with left hand).',
+      proskomediaPrep: 'Prepare wine, water, prosphora, and commemoration lists.',
+      smallEntranceCandle:
+        'Light the ponomar candle on the high place; at the entrance carry it through the north door, re-enter the south door, extinguish the candle.',
+      smallEntranceDoors: 'Open the royal doors when censing begins; close after the Great Entrance.',
+      smallEntranceNote:
+        'With two servers: both carry candles and precede the Gospel through the north door.',
+      epistleCenser: 'Hand censer to priest (or deacon) during the Epistle.',
+      epistleReader: 'Read the Epistle if blessed as reader.',
+      gospelCandle: 'Carry candle to the ambon for the Gospel; extinguish after the reading.',
+      gospelNote: 'If alone, leave the candle burning at the Saviour icon from the Small Entrance.',
+      greatEntranceCandles: 'Candles first in procession.',
+      greatEntranceCross: 'Cross follows the candles.',
+      greatEntranceFans: 'Ripidia (fans) after the cross.',
+      greatEntranceCenser: 'Censer last — cense the Gifts; re-enter through both deacon doors (censer, cross, fans, candles).',
+      greatEntranceNote:
+        'Procession order: candles → cross → fans → censer. Stand on either side of the royal doors until clergy enter.',
+      consecrationVeil: 'Open the veil at “Let us love one another”; close at “Take heed! Holy things for the holy!”',
+      consecrationCenser: 'Hand censer after the consecration for censing the Holy Gifts.',
+      consecrationZeon: 'Bring hot water (zeon) on a tray immediately after “Take heed!”',
+      communionPlatter: 'Hold the communion cloth and wipe lips.',
+      communionCenser: 'Hand censer for censing the altar and prothesis after communion.',
+    },
+    hierarchical: {
+      smallCandle: 'Candle bearer (sveschenosets) — first in the procession.',
+      smallStaff: 'Staff bearer (pososhnik) — follows the candle bearer.',
+      smallDeaconCensers: 'First and second deacons with censers.',
+      smallSubdeaconLights:
+        'Subdeacons (ipodiakons): dikiri, ripidia, and trikiri; open the royal doors.',
+      smallProtodeaconGospel: 'Protodeacon with the Gospel — after the lights.',
+      smallEntranceNote:
+        'Procession from the altar to the cathedra; subdeacons flank the bishop on the ambon.',
+      gospelSubdeaconIncense:
+        'Subdeacon with the incense boat while the protodeacon censes before the Gospel.',
+      gospelOmophor:
+        'Subdeacon holds the omophorion on the deacon’s shoulders during the Gospel.',
+      greatCandle: 'Candle bearer — leads the Great Entrance.',
+      greatStaff: 'Staff bearer — second.',
+      greatDeaconCensers: 'Second and first deacons with censers.',
+      greatSubdeaconLights:
+        'Subdeacons: dikiri, trikiri, ripidia; third deacon carries the mitre on a paten.',
+      greatProtodeaconGospel: 'Protodeacon with the diskos on the solea.',
+      greatFirstPriestChalice: 'First priest with the chalice; remaining clergy follow by rank.',
+      greatEntranceNote:
+        'On the solea the bishop receives the diskos and chalice with commemorations before entering through the royal doors.',
+      consecrationVeil: 'Subdeacons assist with the veil at the usual times.',
+      consecrationSubdeaconIncense: 'Subdeacon receives censer from the bishop during the anaphora.',
+      communionDrink: 'Bring drink to the bishop after his communion.',
+      communionPlatter: 'Hold the communion cloth for the faithful.',
+    },
+  },
+  readerGuide: {
+    form: {
+      priest: 'Priest’s Liturgy',
+      hierarchical: 'Hierarchical Liturgy',
+    },
+    footnote:
+      'Typical Russian Orthodox reader practice — confirm tones and assignments with your rector or choir director.',
+    sourceApostol:
+      'Priest’s Liturgy: Slavonic Apostol dialogue (orthodox.net English translation of the Apostol rubrics).',
+    sourceRocor:
+      'Blessing and posture: ROCOR Europe notes for readers (how to receive a blessing and stand while reading).',
+    sourceAzbykaHier:
+      'Hierarchical Liturgy: azbyka.ru “Directions for clergy at a hierarchical service” (Hours at the cathedra; Epistle usually by the first deacon).',
+    moment: {
+      prepare: 'Before the service',
+      blessing: 'Blessing and place',
+      hours: 'Hours',
+      prokeimenon: 'Prokeimenon',
+      epistle: 'Epistle',
+      alleluia: 'Alleluia',
+      after: 'After the reading',
+    },
+    priest: {
+      prepareMark: 'Mark today’s Epistle, prokeimenon, and alleluia verses in the Apostol.',
+      prepareTone: 'Note the appointed tone(s) for the prokeimenon and alleluia.',
+      prepareHours: 'If appointed, prepare the Third Hour (and other Hours) from the Horologion.',
+      blessingAsk:
+        'Ask blessing with the closed Apostol held upright in both hands: “Bless, Master, the holy Apostle to read.”',
+      blessingCarry:
+        'Carry the book vertically with both hands (never under the arm); exit by a deacon’s door to the ambon or centre.',
+      blessingStand:
+        'Stand straight with the book closed until the Trisagion ends; open only when the prokeimenon begins.',
+      blessingNote:
+        'While holding the book, do not bow or cross yourself during the dialogues — keep both hands on the Apostol.',
+      prokeimenonPeace: 'After “Peace be unto all,” answer: “And to thy spirit.”',
+      prokeimenonAnnounce:
+        'At “Wisdom!” announce: “The prokeimenon in the ___ tone,” then intone the prokeimenon; choir responds.',
+      prokeimenonVerse:
+        'Intone the verse; choir repeats the prokeimenon. Then intone the first half; choir finishes the second half.',
+      prokeimenonTwo:
+        'If two prokeimena: after the first cycle, announce the second in its tone (usually without a verse).',
+      epistleAnnounce:
+        'At the next “Wisdom!” announce the reading (Acts / Epistle of Paul to … / Catholic Epistle of …).',
+      epistleRead: 'At “Let us attend!” read the Epistle clearly, raising the tone gradually.',
+      epistleTwo:
+        'If two readings: begin the second at once with its title phrase — do not repeat “Wisdom!” between them.',
+      epistlePeace: 'After the priest’s “Peace be unto thee,” answer: “And to thy spirit.”',
+      alleluiaAnnounce: 'At “Wisdom!” announce: “Alleluia in the ___ tone”; choir sings Alleluia.',
+      alleluiaVerses: 'Intone each alleluia verse; choir answers Alleluia after each.',
+      alleluiaTwo: 'If two alleluias: announce the second tone and its verses the same way.',
+      afterReturn: 'Return to the altar (or choir) after the Gospel begins, unless otherwise directed.',
+      afterThanksgiving: 'In many parishes the reader also leads the thanksgiving prayers after Communion.',
+    },
+    hierarchical: {
+      hoursPlace:
+        'During vesting, exit the north door and stand at the bishop’s left by the cathedra (priest who served proskomedia on the right).',
+      hoursAmen: 'After the priest’s “Blessed is our God…,” answer “Amen,” then read the Hours as usual.',
+      hoursBless:
+        'Say “In the name of the Lord, Master, bless” (not “Father, bless”) at the appointed places.',
+      hoursBow: 'Bow to the bishop together with the priest after each exclamation.',
+      hoursNote:
+        'The bishop remains seated for most of the Hours, rising at Alleluia, Trisagion, and “More honourable.”',
+      prepareMark: 'Mark the day’s readings, prokeimenon, and alleluia even if a deacon will read.',
+      prepareReady: 'Be ready if the rector assigns you the Epistle instead of the first deacon.',
+      prokeimenonCustom:
+        'The Epistle reader announces the prokeimenon and related verses “according to custom.”',
+      prokeimenonSame: 'Use the same priest’s-liturgy dialogue when you are the one announcing.',
+      prokeimenonNote:
+        'On a hierarchical Liturgy the first deacon often both announces and reads — follow the day’s assignment.',
+      epistleDeacon:
+        'Usual practice: first deacon receives the bishop’s blessing with the Apostol and reads from the ambon.',
+      epistleIfAssigned:
+        'If you are assigned: take blessing from the bishop the same way, then read as at a priest’s Liturgy.',
+      epistleNote:
+        'azbyka.ru: “The reader of the Apostle announces the prokeimenon… The first deacon reads the Apostle.”',
+      alleluiaCustom: 'Alleluia verses are sung according to custom after the Epistle.',
+      alleluiaStand: 'Stand for the alleluia and Gospel unless directed otherwise.',
+      afterReturn: 'After the Epistle, return to your place when the Gospel procession forms.',
+      afterBooks: 'Keep the Apostol and service books ready for any further readings that day.',
     },
   },
   calendarHover: {
@@ -732,9 +886,11 @@ const ru = {
     sectionVestments: 'Облачения',
     sectionChurchDress: 'Церковная одежда',
     sectionServices: 'Богослужения',
+    sectionAltarRoles: 'Памятка алтарника',
+    sectionReaderGuide: 'Памятка чтеца',
     sectionReadings: 'Литургические тексты',
     sectionFeasts: 'Праздники',
-    sectionSaints: 'Память святых сегодня',
+    sectionSaints: 'Память сегодня',
     level: 'Степень',
     fastRule: 'Правило: {rule}',
     allowedHeading: 'Разрешено',
@@ -942,6 +1098,159 @@ const ru = {
       liturgyChrysostom: 'Литургия св. Иоанна Златоуста',
       liturgyBasil: 'Литургия св. Василия Великого',
       liturgyPresanctified: 'Литургия Преждеосвященных Даров',
+    },
+  },
+  altarRoles: {
+    form: {
+      priest: 'Иерейская литургия',
+      hierarchical: 'Архиерейская литургия',
+    },
+    footnote:
+      'Типичное распределение в русской православной практике — на службе руководствуйтесь указаниями настоятеля и старшего алтарника.',
+    sourceAzbyka: 'Иерейская: «Обязанности алтарников за литургией», azbyka.ru.',
+    sourceOstrovsky:
+      'Архиерейская: иерод. Константин (Островский), «Порядок архиерейских богослужений» (2002), deacon.ru.',
+    moment: {
+      proskomedia: 'Проскомидия',
+      smallEntrance: 'Малый вход',
+      epistle: 'Апостол',
+      gospel: 'Евангелие',
+      greatEntrance: 'Великий вход',
+      consecration: 'Освящение',
+      communion: 'Причащение',
+    },
+    priest: {
+      proskomediaCenser:
+        'Подать кадило в конце проскомидии (левой рукой держать нижнюю чашку под покровцом).',
+      proskomediaPrep: 'Приготовить вино, воду, просфоры и записки.',
+      smallEntranceCandle:
+        'Зажечь пономарскую свечу на горнем месте; на входе выйти с северных врат, вернуться в южные, погасить свечу.',
+      smallEntranceDoors: 'Открыть завесу при кажении; закрыть после Великого входа.',
+      smallEntranceNote: 'Если двое: оба несут свечи и предшествуют Евангелию.',
+      epistleCenser: 'Подать кадило во время чтения Апостола.',
+      epistleReader: 'Читать Апостол, если дано благословение.',
+      gospelCandle: 'Вынести свечу на амвон для Евангелия; после чтения занести и погасить.',
+      gospelNote: 'Если один алтарник — свечу можно оставить у иконы Спасителя после Малого входа.',
+      greatEntranceCandles: 'Свечи — в начале шествия.',
+      greatEntranceCross: 'Крест — после свечей.',
+      greatEntranceFans: 'Рипиды — после креста.',
+      greatEntranceCenser:
+        'Кадило — в конце; каждить Дары; войти через обе диаконские двери (кадило, крест, рипиды, свечи).',
+      greatEntranceNote:
+        'Порядок: свечи → крест → рипиды → кадило. Стоять по сторонам царских врат до входа духовенства.',
+      consecrationVeil:
+        'Открыть завесу на «Возлюбим друг друга»; закрыть на «Вонмем! Святая святым».',
+      consecrationCenser: 'Подать кадило после освящения для кажения Святых Даров.',
+      consecrationZeon: 'Поднести чайник с теплотой сразу после «Вонмем!»',
+      communionPlatter: 'Держать плат и отирать уста.',
+      communionCenser: 'Подать кадило для кажения престола и жертвенника после причащения.',
+    },
+    hierarchical: {
+      smallCandle: 'Свещеносец — первый в шествии.',
+      smallStaff: 'Посошник — второй.',
+      smallDeaconCensers: '1-й и 2-й диаконы с кадилами.',
+      smallSubdeaconLights:
+        'Иподиаконы: дикирий, рипиды, трикирий; отворяют царские врата.',
+      smallProtodeaconGospel: 'Протодиакон с Евангелием — после огней.',
+      smallEntranceNote:
+        'Шествие к кафедре; на амвоне иподиаконы сопровождают архиерея.',
+      gospelSubdeaconIncense:
+        'Иподиакон с ладанницей, пока протодиакон кажит перед Евангелием.',
+      gospelOmophor: 'Иподиакон держит омофор на плечах диакона при чтении Евангелия.',
+      greatCandle: 'Свещеносец — в начале Великого входа.',
+      greatStaff: 'Посошник — второй.',
+      greatDeaconCensers: '2-й и 1-й диаконы с кадилами.',
+      greatSubdeaconLights:
+        'Иподиаконы: дикирий, трикирий, рипиды; 3-й диакон с подносом для митры.',
+      greatProtodeaconGospel: 'Протодиакон с дискосом на солее.',
+      greatFirstPriestChalice: '1-й священник с потиром; остальное духовенство по старшинству.',
+      greatEntranceNote:
+        'На солее архиерей принимает дискос и потир с поминовениями, затем вход через царские врата.',
+      consecrationVeil: 'Иподиаконы помогают с завесой в положенные моменты.',
+      consecrationSubdeaconIncense: 'Иподиакон принимает кадило у архиерея во время анафоры.',
+      communionDrink: 'Поднести запивку архиерею после его причащения.',
+      communionPlatter: 'Держать плат для мирян.',
+    },
+  },
+  readerGuide: {
+    form: {
+      priest: 'Иерейская литургия',
+      hierarchical: 'Архиерейская литургия',
+    },
+    footnote:
+      'Типичная практика чтеца в русской традиции — гласы и назначения уточняйте у настоятеля или регента.',
+    sourceApostol:
+      'Иерейская: диалог по Служебному Апостолу (английский перевод рубрик на orthodox.net).',
+    sourceRocor:
+      'Благословение и стояние: указания ROCOR Europe для чтецов.',
+    sourceAzbykaHier:
+      'Архиерейская: «Указания… при архиерейском служении», azbyka.ru (часы у кафедры; Апостол обычно читает 1-й диакон).',
+    moment: {
+      prepare: 'Перед службой',
+      blessing: 'Благословение и место',
+      hours: 'Часы',
+      prokeimenon: 'Прокимен',
+      epistle: 'Апостол',
+      alleluia: 'Аллилуиа',
+      after: 'После чтения',
+    },
+    priest: {
+      prepareMark: 'Отметить в Апостоле чтение дня, прокимен и стихи аллилуиария.',
+      prepareTone: 'Записать назначенный глас (гласы) прокимна и аллилуиа.',
+      prepareHours: 'Если поручено — приготовить Третий час (и другие часы) по Часослову.',
+      blessingAsk:
+        'Просить благословение с закрытым Апостолом вертикально в обеих руках: «Благослови, владыко, святый Апостол прочести».',
+      blessingCarry:
+        'Нести книгу вертикально обеими руками (не под мышкой); выйти диаконской дверью на амвон или средину.',
+      blessingStand:
+        'Стоять прямо с закрытой книгой до конца Трисвятого; открыть только к началу прокимна.',
+      blessingNote:
+        'Пока держите книгу, не кланяйтесь и не креститесь на возгласах — обе руки на Апостоле.',
+      prokeimenonPeace: 'После «Мир всем» ответить: «И духови твоему».',
+      prokeimenonAnnounce:
+        'На «Премудрость» объявить: «Прокимен, глас …», затем произнести прокимен; хор повторяет.',
+      prokeimenonVerse:
+        'Произнести стих; хор снова поёт прокимен. Затем первую половину; хор допевает вторую.',
+      prokeimenonTwo:
+        'Если два прокимна: после первого цикла объявить второй на своём гласе (обычно без стиха).',
+      epistleAnnounce:
+        'На следующем «Премудрость» объявить чтение (Деяния / к … послание святого апостола Павла / соборное …).',
+      epistleRead: 'На «Вонмем» читать Апостол ясно, постепенно повышая тон.',
+      epistleTwo:
+        'Если два чтения: сразу начать второе с заголовка — без повторного «Премудрость» между ними.',
+      epistlePeace: 'После «Мир ти» ответить: «И духови твоему».',
+      alleluiaAnnounce: 'На «Премудрость» объявить: «Аллилуиа, глас …»; хор поёт Аллилуиа.',
+      alleluiaVerses: 'Произнести каждый стих аллилуиария; хор отвечает Аллилуиа.',
+      alleluiaTwo: 'Если два аллилуиария: объявить второй глас и его стихи так же.',
+      afterReturn: 'Вернуться в алтарь (или на клирос) после начала Евангелия, если нет иных указаний.',
+      afterThanksgiving: 'Во многих приходах чтец также читает благодарственные молитвы после Причастия.',
+    },
+    hierarchical: {
+      hoursPlace:
+        'При облачении выйти северной дверью и стать слева у архиерейской кафедры (справа — иерей, совершавший проскомидию).',
+      hoursAmen: 'После «Благословен Бог наш…» ответить «Аминь» и читать часы по обычаю.',
+      hoursBless:
+        'Говорить «Именем Господним, Владыко, благослови» (не «отче, благослови») в положенных местах.',
+      hoursBow: 'Кланяться архиерею вместе со священником после каждого возгласа.',
+      hoursNote:
+        'Архиерей сидит на часах и встаёт на Аллилуиа, Трисвятое и «Честнейшую».',
+      prepareMark: 'Отметить чтения, прокимен и аллилуиа, даже если читать будет диакон.',
+      prepareReady: 'Быть готовым, если настоятель поручит Апостол вам, а не 1-му диакону.',
+      prokeimenonCustom:
+        'Чтец Апостола произносит прокимен и прочее «по обычаю».',
+      prokeimenonSame: 'Если объявляете вы — тот же диалог, что на иерейской литургии.',
+      prokeimenonNote:
+        'На архиерейской часто прокимен и Апостол берёт 1-й диакон — смотрите назначение дня.',
+      epistleDeacon:
+        'Обычная практика: 1-й диакон берёт благословение у архиерея с Апостолом и читает на амвоне.',
+      epistleIfAssigned:
+        'Если поручено вам: так же взять благословение у архиерея и читать, как на иерейской.',
+      epistleNote:
+        'azbyka.ru: «Чтец Апостола произносит прокимен… Первый диакон читает Апостол».',
+      alleluiaCustom: 'Аллилуиарии поются по обычаю после Апостола.',
+      alleluiaStand: 'Стоять на аллилуиа и Евангелии, если нет иных указаний.',
+      afterReturn: 'После Апостола отойти на своё место, когда готовится шествие с Евангелием.',
+      afterBooks: 'Держать Апостол и служебные книги наготове для дальнейших чтений дня.',
     },
   },
   calendarHover: {

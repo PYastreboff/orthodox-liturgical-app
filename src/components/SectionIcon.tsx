@@ -13,6 +13,8 @@ export type SectionIconName =
   | 'vestments'
   | 'church-clothing'
   | 'services'
+  | 'altar-roles'
+  | 'reader-guide'
   | 'readings';
 
 const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
@@ -25,6 +27,8 @@ const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
   vestments: 'today.sectionVestments',
   'church-clothing': 'today.sectionChurchDress',
   services: 'today.sectionServices',
+  'altar-roles': 'today.sectionAltarRoles',
+  'reader-guide': 'today.sectionReaderGuide',
   readings: 'today.sectionReadings',
 };
 
@@ -61,6 +65,16 @@ export function SectionIcon({ name, color }: Props) {
         );
       case 'services':
         return <MaterialCommunityIcons name="church" size={SECTION_ICON_SIZE} color={color} />;
+      case 'altar-roles':
+        return <MaterialCommunityIcons name="candle" size={SECTION_ICON_SIZE} color={color} />;
+      case 'reader-guide':
+        return (
+          <MaterialCommunityIcons
+            name="book-open-page-variant-outline"
+            size={SECTION_ICON_SIZE}
+            color={color}
+          />
+        );
       case 'readings':
         return (
           <MaterialCommunityIcons
