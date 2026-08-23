@@ -1,6 +1,12 @@
-import { Feather } from '@expo/vector-icons';
-import { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useMemo, useRef, useState } from 'react';
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { feastRankHeroLabelForMajorFeastDay } from '../i18n/feastRank';
@@ -10,13 +16,21 @@ import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
 import type { HeroFastChipDisplay } from '../i18n/fastingLabels';
 import { vestmentHeroGradient } from '../lib/liturgical/vestmentGradient';
+import {
+  SERVING_ROLE_ICON_NAMES,
+  SERVING_ROLE_IDS,
+  SERVING_ROLE_LABEL_KEYS,
+} from '../lib/liturgical/servingRoles';
 import { typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
+import type { ClergyRole } from '../types/liturgical';
 import { colors } from '../theme/tokens';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
 import { FastingFoodIcon } from './FastingFoodIcon';
 import { CalendarFastingFoodIcon } from './CalendarFastingFoodIcon';
 import { TypikonSymbol } from './TypikonSymbol';
+
+const ROLE_MENU_ITEM_PRESSED = 'rgba(139,46,60,0.22)';
 
 type Props = {
   appearance: LiturgicalDayAppearance;
@@ -29,6 +43,8 @@ type Props = {
   showFeastRankChip?: boolean;
   isMajorFeastDay?: boolean;
   orthocalFeastLevel?: number;
+  servingRole: ClergyRole;
+  onServingRoleChange: (role: ClergyRole) => void;
   canGoToToday: boolean;
   onPrevious: () => void;
   onNext: () => void;
@@ -43,10 +59,12 @@ export function DayHero({
   julianDateLabel,
   toneLabel,
   feastRank,
-  heroFastChip = null,
+  heroFastChip,
   showFeastRankChip = true,
   isMajorFeastDay = false,
   orthocalFeastLevel,
+  servingRole,
+  onServingRoleChange,
   canGoToToday,
   onPrevious,
   onNext,
@@ -58,6 +76,9 @@ export function DayHero({
   const phoneLayout = usePhoneLayout();
   const heroPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
   const { text } = useFontScale();
+  const [roleMenuOpen, setRoleMenuOpen] = useState(false);
+  const [roleMenuPos, setRoleMenuPos] = useState({ top: 0, left: 0 });
+  const roleBtnRef = useRef<View>(null);
   const heroStyle = useMemo(
     () => vestmentHeroGradient(appearance, isDark),
     [appearance.key, appearance.label, isDark],
@@ -80,6 +101,7 @@ export function DayHero({
   const chipType = text(12, 16);
   const feastChipType = text(12, 16);
   const todayBtnType = text(13, 18);
+  const menuLabelType = text(14, 18);
   const typikonSurface = lightHeroText ? 'light' : isDark ? 'dark' : 'light';
   const typikonColor = typikonIconColor(feastRank, typikonSurface);
   const majorFeastServiceLabel = isMajorFeastDay
@@ -97,6 +119,21 @@ export function DayHero({
     : isDark
       ? 'rgba(255,255,255,0.14)'
       : 'rgba(255,255,255,0.72)';
+  const roleMenuSurface = isDark ? '#2a2724' : '#fffcf7';
+  const roleMenuText = isDark ? '#e8e3dd' : colors.ink;
+  const roleMenuBorder = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(43,38,35,0.12)';
+  const servingRoleLabel = t(SERVING_ROLE_LABEL_KEYS[servingRole]);
+
+  const openRoleMenu = () => {
+    if (roleMenuOpen) {
+      setRoleMenuOpen(false);
+      return;
+    }
+    roleBtnRef.current?.measureInWindow((x, y, _w, h) => {
+      setRoleMenuPos({ top: y + h + 6, left: Math.max(8, x) });
+      setRoleMenuOpen(true);
+    });
+  };
 
   const heroFastA11y = heroFastChip
     ? [
@@ -128,13 +165,32 @@ export function DayHero({
         style={[styles.heroGradient, { paddingHorizontal: heroPaddingX }]}
       >
       <View style={styles.titleRow}>
+        <Pressable
+          ref={roleBtnRef}
+          style={({ pressed }) => [
+            styles.roleBtn,
+            { backgroundColor: navBtnBg },
+            pressed && styles.navBtnPressed,
+          ]}
+          onPress={openRoleMenu}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: roleMenuOpen }}
+          accessibilityLabel={`${t('settings.servingRole')}: ${servingRoleLabel}`}
+          hitSlop={6}
+        >
+          <MaterialCommunityIcons
+            name={SERVING_ROLE_ICON_NAMES[servingRole]}
+            size={18}
+            color={fg}
+          />
+        </Pressable>
         <Text
           style={[
             styles.dayTitle,
             dayTitleType,
             { color: fg },
             isMajorFeastDay ? styles.dayTitleFeast : null,
-            onShare ? styles.dayTitleWithShare : null,
+            styles.dayTitleWithCorners,
           ]}
           numberOfLines={3}
         >
@@ -154,8 +210,80 @@ export function DayHero({
           >
             <Feather name="share-2" size={16} color={fg} />
           </Pressable>
-        ) : null}
+        ) : (
+          <View style={styles.cornerSpacer} />
+        )}
       </View>
+
+      <Modal
+        visible={roleMenuOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setRoleMenuOpen(false)}
+      >
+        <View style={styles.roleMenuRoot} pointerEvents="box-none">
+          <Pressable
+            style={styles.roleMenuBackdrop}
+            onPress={() => setRoleMenuOpen(false)}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          />
+          <View
+            style={[
+              styles.roleMenu,
+              {
+                top: roleMenuPos.top,
+                left: roleMenuPos.left,
+                backgroundColor: roleMenuSurface,
+                borderColor: roleMenuBorder,
+              },
+            ]}
+          >
+            {SERVING_ROLE_IDS.map((id) => {
+              const selected = servingRole === id;
+              const label = t(SERVING_ROLE_LABEL_KEYS[id]);
+              return (
+                <Pressable
+                  key={id}
+                  style={({ pressed }) => [
+                    styles.roleMenuItem,
+                    {
+                      backgroundColor: selected
+                        ? colors.accentWine
+                        : pressed
+                          ? ROLE_MENU_ITEM_PRESSED
+                          : 'transparent',
+                    },
+                  ]}
+                  onPress={() => {
+                    onServingRoleChange(id);
+                    setRoleMenuOpen(false);
+                  }}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  accessibilityLabel={label}
+                >
+                  <MaterialCommunityIcons
+                    name={SERVING_ROLE_ICON_NAMES[id]}
+                    size={18}
+                    color={selected ? '#fff' : roleMenuText}
+                  />
+                  <Text
+                    style={[
+                      styles.roleMenuItemLabel,
+                      menuLabelType,
+                      { color: selected ? '#fff' : roleMenuText },
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+      </Modal>
 
       <View style={styles.navRow}>
         <Pressable
@@ -251,9 +379,7 @@ export function DayHero({
             heroFastChip.icons.fish ||
             heroFastChip.icons.wine ||
             heroFastChip.icons.oil ? (
-              <Text style={[styles.fastChipDash, chipType, { color: fg }]} accessibilityElementsHidden>
-                —
-              </Text>
+              <View style={styles.fastChipIconSpacer} />
             ) : null}
             {heroFastChip.icons.noMeat ? (
               <CalendarFastingFoodIcon kind="noMeat" color={fg} slashColor={fg} />
@@ -322,18 +448,66 @@ const styles = StyleSheet.create({
   dayTitleFeast: {
     letterSpacing: 0.35,
   },
-  dayTitleWithShare: {
-    paddingHorizontal: 36,
+  dayTitleWithCorners: {
+    paddingHorizontal: 40,
   },
-  shareBtn: {
+  roleBtn: {
     position: 'absolute',
     top: 0,
-    right: 0,
+    left: 0,
+    zIndex: 2,
     width: 30,
     height: 30,
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  shareBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    zIndex: 2,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cornerSpacer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 30,
+    height: 30,
+  },
+  roleMenuRoot: {
+    flex: 1,
+  },
+  roleMenuBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  roleMenu: {
+    position: 'absolute',
+    minWidth: 200,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  roleMenuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  roleMenuItemLabel: {
+    fontWeight: '600',
+    flexShrink: 1,
   },
   navRow: {
     flexDirection: 'row',
@@ -436,12 +610,8 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 12,
   },
-  fastChipDash: {
-    fontWeight: '500',
-    opacity: 0.72,
-    marginHorizontal: 1,
-    includeFontPadding: false,
-    textAlignVertical: 'center',
+  fastChipIconSpacer: {
+    width: 6,
   },
   fastChipText: {
     fontWeight: '700',

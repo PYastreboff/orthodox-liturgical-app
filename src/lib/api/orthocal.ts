@@ -1,4 +1,10 @@
 import type { PlainDate } from '../calendar/julianGregorian';
+import {
+  hydrateOrthocalMemoryCache,
+  readPersistedOrthocalDay,
+  writePersistedOrthocalDay,
+  writePersistedOrthocalDays,
+} from './orthocalPersistentCache';
 
 const API_BASE = 'https://orthocal.info/api';
 
@@ -56,8 +62,32 @@ function gregorianMonthKey(year: number, month: number): string {
   return `${year}-${month}`;
 }
 
-function cacheOrthocalDay(cal: OrthocalCalendar, day: OrthocalDay): void {
-  dayCache.set(cacheKey(cal, { year: day.year, month: day.month, day: day.day }), day);
+/** Restore previously saved days into the in-memory cache (app launch). */
+export function primeOrthocalDayCache(
+  cal: OrthocalCalendar,
+  queryDate: PlainDate,
+  day: OrthocalDay,
+): void {
+  dayCache.set(cacheKey(cal, queryDate), day);
+}
+
+export async function hydrateOrthocalFromPersistentCache(): Promise<number> {
+  return hydrateOrthocalMemoryCache((key, day) => {
+    dayCache.set(key, day);
+  });
+}
+
+export async function loadOrthocalDayFromPersistentCache(
+  cal: OrthocalCalendar,
+  queryDate: PlainDate,
+): Promise<OrthocalDay | null> {
+  const hit = dayCache.get(cacheKey(cal, queryDate));
+  if (hit) return hit;
+  const persisted = await readPersistedOrthocalDay(cal, queryDate);
+  if (persisted) {
+    primeOrthocalDayCache(cal, queryDate, persisted);
+  }
+  return persisted;
 }
 
 /** All days in a civil Gregorian month — one HTTP request instead of ~30. */
@@ -80,19 +110,26 @@ export async function fetchOrthocalGregorianMonth(
 
   const data = (await res.json()) as OrthocalDay[];
   gregorianMonthCache.set(key, data);
+  const persistBatch: Array<{ queryDate: PlainDate; day: OrthocalDay }> = [];
   for (const day of data) {
-    cacheOrthocalDay('gregorian', day);
+    const queryDate: PlainDate = { year: day.year, month: day.month, day: day.day };
+    dayCache.set(cacheKey('gregorian', queryDate), day);
+    persistBatch.push({ queryDate, day });
   }
+  void writePersistedOrthocalDays('gregorian', persistBatch);
   return data;
 }
 
 export async function fetchOrthocalDay(
   cal: OrthocalCalendar,
   date: PlainDate,
+  options?: { refresh?: boolean },
 ): Promise<OrthocalDay> {
   const key = cacheKey(cal, date);
-  const hit = dayCache.get(key);
-  if (hit) return hit;
+  if (!options?.refresh) {
+    const hit = dayCache.get(key);
+    if (hit) return hit;
+  }
 
   const url = `${API_BASE}/${cal}/${date.year}/${date.month}/${date.day}/`;
   const res = await fetch(url, {
@@ -105,6 +142,7 @@ export async function fetchOrthocalDay(
 
   const data = (await res.json()) as OrthocalDay;
   dayCache.set(key, data);
+  void writePersistedOrthocalDay(cal, date, data);
   return data;
 }
 

@@ -335,6 +335,6 @@ export function vestmentGuidanceForRole(
   return {
     colorReason: vestmentColorReason(appearance, lang),
     lines,
-    footnote: translate(lang, role === 'layperson' ? 'vestments.layFootnote' : 'vestments.footnote'),
+    footnote: '',
   };
 }

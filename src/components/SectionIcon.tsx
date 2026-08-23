@@ -12,6 +12,7 @@ export type SectionIconName =
   | 'fasting'
   | 'vestments'
   | 'church-clothing'
+  | 'services'
   | 'readings';
 
 const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
@@ -23,6 +24,7 @@ const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
   fasting: 'today.sectionFasting',
   vestments: 'today.sectionVestments',
   'church-clothing': 'today.sectionChurchDress',
+  services: 'today.sectionServices',
   readings: 'today.sectionReadings',
 };
 
@@ -57,6 +59,8 @@ export function SectionIcon({ name, color }: Props) {
         return (
           <MaterialCommunityIcons name="tshirt-crew-outline" size={SECTION_ICON_SIZE} color={color} />
         );
+      case 'services':
+        return <MaterialCommunityIcons name="church" size={SECTION_ICON_SIZE} color={color} />;
       case 'readings':
         return (
           <MaterialCommunityIcons

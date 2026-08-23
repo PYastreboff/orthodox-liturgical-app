@@ -22,6 +22,7 @@ import { SettingsSection } from '../../src/components/settings/SettingsSection';
 import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
 import { FontScalePicker } from '../../src/components/settings/FontScalePicker';
 import { ThemeModePicker } from '../../src/components/settings/ThemeModePicker';
+import { ServingRolePicker } from '../../src/components/ServingRolePicker';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
@@ -97,6 +98,8 @@ export default function SettingsScreen() {
     setUiLanguage,
     fontScale,
     setFontScale,
+    servingRole,
+    setServingRole,
   } = usePreferences();
 
   const version = Constants.expoConfig?.version ?? '0.1.0';
@@ -136,6 +139,14 @@ export default function SettingsScreen() {
           {t('settings.subtitle')}
         </Text>
       </View>
+
+      <SettingsSection
+        title={t('settings.servingRole')}
+        description={t('settings.servingRoleHint')}
+        isDark={isDark}
+      >
+        <ServingRolePicker value={servingRole} onChange={setServingRole} isDark={isDark} />
+      </SettingsSection>
 
       <SettingsSection
         title={t('settings.appearance')}

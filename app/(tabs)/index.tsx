@@ -1,7 +1,6 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { CollapsibleSection } from '../../src/components/CollapsibleSection';
 import { FastingFoodList } from '../../src/components/FastingFoodList';
@@ -18,9 +17,12 @@ import {
 import { gregorianPlainToJulianPlain } from '../../src/lib/calendar/julianGregorian';
 import { getLiturgicalAppearanceForLocalDate } from '../../src/lib/calendar/dayAppearance';
 import {
+  appearanceLiturgicalPlainDate,
   civilPlainDateFromLocal,
+  orthocalQueryDate,
 } from '../../src/lib/calendar/liturgicalCalendar';
 import { startOfLocalDay, toDayIso } from '../../src/lib/calendar/localDate';
+import { getCachedOrthocalDay } from '../../src/lib/api/orthocal';
 import { useShareDay } from '../../src/hooks/useShareDay';
 import { CommemorationCard } from '../../src/components/CommemorationCard';
 import { LiturgicalTextSectionBlock } from '../../src/components/LiturgicalPassageBlock';
@@ -47,37 +49,16 @@ import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { buildDayDashboard } from '../../src/lib/liturgical/dayDashboard';
 import { buildLiturgicalDayAbout } from '../../src/lib/liturgical/liturgicalDayAbout';
 import { vestmentGuidanceForRole } from '../../src/lib/liturgical/vestments';
+import {
+  buildDayServices,
+  localizeDayServices,
+} from '../../src/lib/liturgical/dayServices';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 
-import type { ClergyRole } from '../../src/types/liturgical';
 import type { TodayCollapsibleKey } from '../../src/state/todayUiState';
-
-const ROLE_IDS: ClergyRole[] = ['layperson', 'altar_server', 'reader', 'deacon', 'priest', 'bishop'];
-
-// One distinct icon per role (used only in the role picker).
-const ROLE_ICON_NAMES: Record<ClergyRole, string> = {
-  layperson: 'account-outline',
-  reader: 'book-open-page-variant-outline',
-  altar_server: 'candle',
-  deacon: 'account-tie-outline',
-  priest: 'cross',
-  bishop: 'crown-outline',
-};
-
-function roleLabel(t: (path: string) => string, id: ClergyRole): string {
-  const keys: Record<ClergyRole, string> = {
-    layperson: 'today.roleLayperson',
-    reader: 'today.roleReader',
-    altar_server: 'today.roleAltarServer',
-    deacon: 'today.roleDeacon',
-    priest: 'today.rolePriest',
-    bishop: 'today.roleBishop',
-  };
-  return t(keys[id]);
-}
 
 function addDays(d: Date, days: number) {
   const next = new Date(d);
@@ -189,7 +170,8 @@ export default function TodayScreen() {
     const julian = gregorianPlainToJulianPlain(civilPlain);
     return `${String(julian.month).padStart(2, '0')}-${String(julian.day).padStart(2, '0')}`;
   }, [civilPlain]);
-  const { liturgicalDay, loading, error } = useOrthocalDay(selectedDate, primaryCalendar);
+  const { liturgicalDay, loading, refreshing, error } = useOrthocalDay(selectedDate, primaryCalendar);
+  const waitingForDay = loading && !liturgicalDay;
   const appearance = useMemo(
     () => getLiturgicalAppearanceForLocalDate(selectedDate, primaryCalendar, liturgicalDay),
     [liturgicalDay, primaryCalendar, selectedDate],
@@ -268,6 +250,34 @@ export default function TodayScreen() {
     () => vestmentGuidanceForRole(servingRole, appearance, uiLanguage),
     [servingRole, appearance, uiLanguage],
   );
+  const liturgicalPlain = useMemo(
+    () => appearanceLiturgicalPlainDate(civilPlain, primaryCalendar),
+    [civilPlain, primaryCalendar],
+  );
+  const tomorrowDate = useMemo(() => addDays(selectedDate, 1), [selectedDate]);
+  const tomorrowAppearance = useMemo(
+    () => getLiturgicalAppearanceForLocalDate(tomorrowDate, primaryCalendar, null),
+    [primaryCalendar, tomorrowDate],
+  );
+  const dayServices = useMemo(() => {
+    const tomorrowCivil = civilPlainDateFromLocal(tomorrowDate);
+    const tomorrowQuery = orthocalQueryDate(tomorrowCivil);
+    const tomorrowCached = getCachedOrthocalDay(primaryCalendar, tomorrowQuery);
+    const raw = buildDayServices(appearance, liturgicalPlain, liturgicalDay, {
+      appearance: tomorrowAppearance,
+      feastLevel: tomorrowCached?.feast_level,
+      weekday: tomorrowCached?.weekday ?? tomorrowDate.getDay(),
+    });
+    return localizeDayServices(raw, uiLanguage);
+  }, [
+    appearance,
+    liturgicalDay,
+    liturgicalPlain,
+    primaryCalendar,
+    tomorrowAppearance,
+    tomorrowDate,
+    uiLanguage,
+  ]);
   const { shareDay } = useShareDay();
   const shareFeastHighlight = dashboard.feastsHighlightTitle?.trim() || feasts[0]?.name?.trim() || null;
 
@@ -293,7 +303,6 @@ export default function TodayScreen() {
     body: text(14, 20),
     hint: text(13, 20),
     status: text(13, 18),
-    roleButton: text(phoneLayout ? 10 : 13, phoneLayout ? 12 : 18),
     serviceRank: text(13, 18),
     dateLine: text(17, 22),
     pill: text(12, 16),
@@ -330,15 +339,21 @@ export default function TodayScreen() {
         showFeastRankChip={dashboard.showHeroFeastRankChip}
         isMajorFeastDay={dashboard.isMajorFeastDay}
         orthocalFeastLevel={liturgicalDay?.feast_level}
+        servingRole={servingRole}
+        onServingRoleChange={setServingRole}
         canGoToToday={canGoToToday}
         onPrevious={() => setSelectedDate(addDays(selectedDate, -1))}
         onNext={() => setSelectedDate(addDays(selectedDate, 1))}
         onToday={() => setSelectedDate(today)}
         onShare={handleShareDay}
       />
-      {loading ? (
+      {waitingForDay ? (
         <Text style={[styles.statusLine, type.status, { color: colors.muted }]}>
           {t('today.loading')}
+        </Text>
+      ) : refreshing ? (
+        <Text style={[styles.statusLine, type.status, { color: colors.muted }]}>
+          {t('today.refreshing')}
         </Text>
       ) : null}
       {error ? (
@@ -346,61 +361,6 @@ export default function TodayScreen() {
           {t('today.offline', { error })}
         </Text>
       ) : null}
-
-      <View
-        style={[
-          styles.card,
-          { backgroundColor: theme.colors.card, borderColor: theme.colors.border, padding: sectionCardPadding },
-        ]}
-      >
-        <SectionTitleRow
-          title={t('today.servingRole')}
-          icon="serving-role"
-          color={theme.colors.text}
-          marginBottom={10}
-        />
-        <View style={[styles.roleRow, phoneLayout ? styles.roleRowPhone : null]}>
-          {ROLE_IDS.map((id) => {
-            const active = id === servingRole;
-            const label = roleLabel(t, id);
-            return (
-              <Pressable
-                key={id}
-                style={[
-                  styles.roleButton,
-                  phoneLayout ? styles.roleButtonPhone : null,
-                  active
-                    ? { backgroundColor: colors.accentWine, borderColor: colors.accentWine }
-                    : { backgroundColor: 'transparent', borderColor: theme.colors.border },
-                ]}
-                onPress={() => setServingRole(id)}
-                accessibilityLabel={roleLabel(t, id)}
-                accessibilityRole="button"
-                accessibilityState={{ selected: active }}
-              >
-                <View style={[styles.roleButtonInner, phoneLayout ? styles.roleButtonInnerPhone : null]}>
-                  <MaterialCommunityIcons
-                    // Cast: MaterialCommunityIcons uses a string union for `name`.
-                    name={ROLE_ICON_NAMES[id] as any}
-                    size={phoneLayout ? 14 : 18}
-                    color={active ? '#fff' : theme.colors.text}
-                  />
-                  <Text
-                    style={[
-                      styles.roleButtonText,
-                      type.roleButton,
-                      { color: active ? '#fff' : theme.colors.text },
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {label}
-                  </Text>
-                </View>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
 
       <CollapsibleSection
         title={t('today.sectionDate')}
@@ -614,8 +574,73 @@ export default function TodayScreen() {
             </View>
           );
         })}
-        <Text style={[styles.cardHint, type.hint]}>{vestmentGuidance.footnote}</Text>
+        {vestmentGuidance.footnote ? (
+          <Text style={[styles.cardHint, type.hint]}>{vestmentGuidance.footnote}</Text>
+        ) : null}
         <Text style={[styles.cardHint, type.hint]}>{t('today.vestmentsHint')}</Text>
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        title={t('today.sectionServices')}
+        icon="services"
+        expanded={!todayCollapsed.services}
+        onToggle={() => toggleSection('services')}
+        themeColors={theme.colors}
+      >
+        {dayServices.items.length === 0 ? (
+          <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
+            {t('services.noneForDay')}
+          </Text>
+        ) : (
+          dayServices.items.map((entry, index) => {
+            const prevSlot = dayServices.items[index - 1]?.slot;
+            const showSlotHeader = entry.slot !== prevSlot;
+            return (
+              <View key={`${entry.kind}-${index}`}>
+                {showSlotHeader ? (
+                  <Text
+                    style={[
+                      styles.serviceSlotHeader,
+                      type.hint,
+                      { color: theme.colors.text },
+                      index > 0 ? styles.serviceSlotHeaderSpaced : null,
+                    ]}
+                  >
+                    {entry.slotLabel}
+                  </Text>
+                ) : null}
+                <View style={styles.rowBetween}>
+                  <Text
+                    style={[
+                      styles.body,
+                      type.body,
+                      styles.serviceLabelCol,
+                      { color: theme.colors.text },
+                    ]}
+                  >
+                    {entry.title}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.pill,
+                      type.pill,
+                      styles.serviceTypePill,
+                      {
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.08)',
+                        color: theme.colors.text,
+                      },
+                    ]}
+                  >
+                    {entry.categoryLabel}
+                  </Text>
+                </View>
+              </View>
+            );
+          })
+        )}
+        <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
+          {dayServices.footnote}
+        </Text>
       </CollapsibleSection>
 
       <CollapsibleSection
@@ -679,7 +704,7 @@ export default function TodayScreen() {
         onToggle={() => toggleSection('feasts')}
         themeColors={theme.colors}
       >
-        {loading ? (
+        {waitingForDay ? (
           <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
             {t('today.loadingFeasts')}
           </Text>
@@ -706,7 +731,7 @@ export default function TodayScreen() {
         onToggle={() => toggleSection('saints')}
         themeColors={theme.colors}
       >
-        {loading ? (
+        {waitingForDay ? (
           <Text style={[styles.cardHint, type.hint, { color: isDark ? '#a39e98' : colors.muted }]}>
             {t('today.loadingSaints')}
           </Text>
@@ -757,38 +782,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: StyleSheet.hairlineWidth,
-  },
-  roleRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginTop: 6,
-  },
-  roleRowPhone: {
-    gap: 6,
-    justifyContent: 'center',
-  },
-  roleButton: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 999,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-  },
-  roleButtonPhone: {
-    paddingVertical: 5,
-    paddingHorizontal: 9,
-  },
-  roleButtonInner: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 2,
-  },
-  roleButtonInnerPhone: {
-    gap: 1,
-  },
-  roleButtonText: {
-    fontWeight: '700',
   },
   serviceRankRow: {
     flexDirection: 'row',
@@ -913,6 +906,24 @@ const styles = StyleSheet.create({
     gap: 10,
     flex: 1,
     paddingRight: 8,
+  },
+  serviceLabelCol: {
+    flex: 1,
+    minWidth: 0,
+  },
+  serviceSlotHeader: {
+    fontWeight: '700',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase',
+    opacity: 0.7,
+    marginBottom: 6,
+  },
+  serviceSlotHeaderSpaced: {
+    marginTop: 10,
+  },
+  serviceTypePill: {
+    flexShrink: 0,
+    alignSelf: 'center',
   },
   vestmentWhiteSetStart: {
     marginTop: 10,

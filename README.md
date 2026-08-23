@@ -255,7 +255,8 @@ For a local production preview after `npm install`, see [§7 Local web preview](
 
 ## Data notes
 
-- **Network:** first load per day hits orthocal; responses are cached in memory for the session.
+- **Network:** first load per day hits orthocal; responses are cached in memory for the session and saved on device (AsyncStorage / `localStorage` on web) for the next launch.
+- **Prefetch:** on open, the app warms today ±1 day and the visible calendar month in the background.
 - **Rubrics:** orthocal uses OCA-style data; verify against your typikon where MP practice differs.
 - **UI vs content:** app language affects labels only; saint/feast names and most fast descriptions come from the API in English.
 - **Persistence:** settings, serving role, Today section collapse state, liturgical-text category filter, scripture language, selected day, and calendar month survive refresh; not synced across devices.

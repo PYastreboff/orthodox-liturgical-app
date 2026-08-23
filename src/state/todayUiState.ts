@@ -4,6 +4,7 @@ export const TODAY_COLLAPSIBLE_KEYS = [
   'saints',
   'fasting',
   'vestments',
+  'services',
   'readings',
 ] as const;
 
@@ -18,6 +19,7 @@ export const DEFAULT_TODAY_COLLAPSED: TodayCollapsedState = {
   saints: true,
   fasting: false,
   vestments: false,
+  services: false,
   readings: true,
 };
 
