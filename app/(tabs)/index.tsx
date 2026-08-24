@@ -8,6 +8,9 @@ import { FastSummaryPill } from '../../src/components/FastSummaryPill';
 import { SectionTitleRow } from '../../src/components/SectionTitleRow';
 import { DayHero } from '../../src/components/DayHero';
 import { AltarServerRoleTable } from '../../src/components/AltarServerRoleTable';
+import { ChoirGuideTable } from '../../src/components/ChoirGuideTable';
+import { DeaconGuideTable } from '../../src/components/DeaconGuideTable';
+import { PriestGuideTable } from '../../src/components/PriestGuideTable';
 import { ReaderGuideTable } from '../../src/components/ReaderGuideTable';
 import { TypikonSymbol } from '../../src/components/TypikonSymbol';
 import { VestmentIcon } from '../../src/components/VestmentIcon';
@@ -539,15 +542,21 @@ export default function TodayScreen() {
 
       <CollapsibleSection
         title={
-          servingRole === 'layperson' ? t('today.sectionChurchDress') : t('today.sectionVestments')
+          servingRole === 'layperson' || servingRole === 'chorister'
+            ? t('today.sectionChurchDress')
+            : t('today.sectionVestments')
         }
-        icon={servingRole === 'layperson' ? 'church-clothing' : 'vestments'}
+        icon={
+          servingRole === 'layperson' || servingRole === 'chorister'
+            ? 'church-clothing'
+            : 'vestments'
+        }
         expanded={!todayCollapsed.vestments}
         onToggle={() => toggleSection('vestments')}
         themeColors={theme.colors}
       >
         <Text style={[styles.vestmentWhyHeading, type.body, { color: theme.colors.text }]}>
-          {servingRole === 'layperson'
+          {servingRole === 'layperson' || servingRole === 'chorister'
             ? t('today.churchClothingWhyHeading')
             : t('today.vestmentsWhyHeading')}
         </Text>
@@ -659,6 +668,23 @@ export default function TodayScreen() {
         </Text>
       </CollapsibleSection>
 
+      {servingRole === 'chorister' ? (
+        <CollapsibleSection
+          title={t('today.sectionChoirGuide')}
+          icon="choir-guide"
+          expanded={!todayCollapsed.choirGuide}
+          onToggle={() => toggleSection('choirGuide')}
+          themeColors={theme.colors}
+        >
+          <ChoirGuideTable
+            textColor={theme.colors.text}
+            mutedColor={isDark ? '#a39e98' : colors.muted}
+            isDark={isDark}
+            dayContext={guideDayContext}
+          />
+        </CollapsibleSection>
+      ) : null}
+
       {servingRole === 'altar_server' ? (
         <CollapsibleSection
           title={t('today.sectionAltarRoles')}
@@ -685,6 +711,40 @@ export default function TodayScreen() {
           themeColors={theme.colors}
         >
           <ReaderGuideTable
+            textColor={theme.colors.text}
+            mutedColor={isDark ? '#a39e98' : colors.muted}
+            isDark={isDark}
+            dayContext={guideDayContext}
+          />
+        </CollapsibleSection>
+      ) : null}
+
+      {servingRole === 'deacon' ? (
+        <CollapsibleSection
+          title={t('today.sectionDeaconGuide')}
+          icon="deacon-guide"
+          expanded={!todayCollapsed.deaconGuide}
+          onToggle={() => toggleSection('deaconGuide')}
+          themeColors={theme.colors}
+        >
+          <DeaconGuideTable
+            textColor={theme.colors.text}
+            mutedColor={isDark ? '#a39e98' : colors.muted}
+            isDark={isDark}
+            dayContext={guideDayContext}
+          />
+        </CollapsibleSection>
+      ) : null}
+
+      {servingRole === 'priest' || servingRole === 'bishop' ? (
+        <CollapsibleSection
+          title={t('today.sectionPriestGuide')}
+          icon="priest-guide"
+          expanded={!todayCollapsed.priestGuide}
+          onToggle={() => toggleSection('priestGuide')}
+          themeColors={theme.colors}
+        >
+          <PriestGuideTable
             textColor={theme.colors.text}
             mutedColor={isDark ? '#a39e98' : colors.muted}
             isDark={isDark}

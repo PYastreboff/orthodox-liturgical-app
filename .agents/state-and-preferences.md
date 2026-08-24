@@ -17,7 +17,7 @@
 | `colorSchemePreference` | `'system' \| 'light' \| 'dark'` | |
 | `showVestmentGradient` | boolean | Background gradient on Today |
 | `fontScale` | `'small' \| 'default' \| 'large'` | |
-| `servingRole` | `ClergyRole` | layperson, reader, altar_server, deacon, priest, bishop |
+| `servingRole` | `ClergyRole` | layperson, chorister, altar_server, reader, deacon, priest, bishop |
 | `todayCollapsed` | partial collapsible state | Per-section expand on Today |
 | `notifyFastingReminder` | boolean | |
 | `notifyLiturgyMorning` | boolean | |

@@ -49,6 +49,9 @@
 | Services list | `src/lib/liturgical/dayServices.ts` |
 | Altar server roles / forms | `src/lib/liturgical/altarServerRoles.ts` |
 | Reader guide / forms | `src/lib/liturgical/readerGuide.ts` |
+| Deacon guide / forms | `src/lib/liturgical/deaconGuide.ts` |
+| Choir guide / forms | `src/lib/liturgical/choirGuide.ts` |
+| Priest guide / forms | `src/lib/liturgical/priestGuide.ts` |
 | Typikon symbols | `src/lib/liturgical/typikonSymbols.ts` |
 | Vestments | `src/lib/liturgical/vestments.ts` |
 | Orthocal API + cache | `src/lib/api/orthocal.ts`, `orthocalPersistentCache.ts` |
@@ -60,6 +63,9 @@
 |-----------|------|
 | Server guide table | `src/components/AltarServerRoleTable.tsx` |
 | Reader guide table | `src/components/ReaderGuideTable.tsx` |
+| Deacon guide table | `src/components/DeaconGuideTable.tsx` |
+| Choir guide table | `src/components/ChoirGuideTable.tsx` |
+| Priest guide table | `src/components/PriestGuideTable.tsx` |
 
 Forms: `priest | hierarchical | presanctified | great_friday` — auto-selected from day context.
 

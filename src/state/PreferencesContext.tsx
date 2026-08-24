@@ -31,8 +31,9 @@ export type { PrimaryCalendar };
 
 const CLERGY_ROLES: ClergyRole[] = [
   'layperson',
-  'reader',
+  'chorister',
   'altar_server',
+  'reader',
   'deacon',
   'priest',
   'bishop',

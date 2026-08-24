@@ -8,8 +8,8 @@ import type { RoysterCommunion, RoysterLiturgySequence, RoysterSticheron } from 
 
 function sticheronParagraphs(sticheron: RoysterSticheron, lang: UiLanguage) {
   return [
+    [{ verse: 0, text: sticheron.lines[0] }],
     [
-      { verse: 0, text: sticheron.lines[0] },
       {
         verse: 0,
         text: translate(lang, 'readings.versePrefix', { text: sticheron.lines[1] }),
@@ -19,19 +19,21 @@ function sticheronParagraphs(sticheron: RoysterSticheron, lang: UiLanguage) {
 }
 
 function communionParagraphs(communion: RoysterCommunion, lang: UiLanguage) {
-  const lines: { verse: number; text: string }[] = [
-    { verse: 0, text: communion.lines[0] },
+  const paragraphs: { verse: number; text: string }[][] = [
+    [{ verse: 0, text: communion.lines[0] }],
   ];
   if (communion.alternate) {
-    lines.push({
-      verse: 0,
-      text: translate(lang, 'readings.anotherPrefix', {
-        citation: communion.alternate.citation,
-        text: communion.alternate.lines[0],
-      }),
-    });
+    paragraphs.push([
+      {
+        verse: 0,
+        text: translate(lang, 'readings.anotherPrefix', {
+          citation: communion.alternate.citation,
+          text: communion.alternate.lines[0],
+        }),
+      },
+    ]);
   }
-  return [lines];
+  return paragraphs;
 }
 
 function sticheronDetail(

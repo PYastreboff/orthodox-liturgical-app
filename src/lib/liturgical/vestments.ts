@@ -228,7 +228,7 @@ function holySaturdayGuidance(
   const vespersHeader = translate(lang, 'vestments.groupHolySaturdayVespers');
   const liturgyHeader = translate(lang, 'vestments.groupHolySaturdayLiturgy');
 
-  if (role === 'layperson') {
+  if (role === 'layperson' || role === 'chorister') {
     return [
       layLiturgicalColourLine(black, lang, vespersHeader),
       layLiturgicalColourLine(white, lang, liturgyHeader),
@@ -330,7 +330,9 @@ export function vestmentGuidanceForRole(
   lang: UiLanguage = 'en',
 ): VestmentGuidance {
   const lines =
-    role === 'layperson' ? laypersonLines(appearance, lang) : clergyGuidance(role, appearance, lang);
+    role === 'layperson' || role === 'chorister'
+      ? laypersonLines(appearance, lang)
+      : clergyGuidance(role, appearance, lang);
 
   return {
     colorReason: vestmentColorReason(appearance, lang),

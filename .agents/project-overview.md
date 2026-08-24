@@ -28,7 +28,7 @@ app/
 
 ## Tabs
 
-1. **Today** — day hero, fasting, vestments, services, server/reader guides, readings, feasts, saints
+1. **Today** — day hero, fasting, vestments, services, role guides (choir/server/reader/deacon/priest), readings, feasts, saints
 2. **Calendar** — month grid, saint/feast search, tap day → open on Today
 3. **Settings** — appearance, calendar, language, notifications, about links
 

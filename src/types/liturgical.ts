@@ -1,7 +1,8 @@
 export type ClergyRole =
   | 'layperson'
-  | 'reader'
+  | 'chorister'
   | 'altar_server'
+  | 'reader'
   | 'deacon'
   | 'priest'
   | 'bishop';

@@ -6,30 +6,21 @@
 - **Data source:** orthocal.info (OCA rubrics) — disclaimer in Settings footer
 - User selects **Julian vs Gregorian** calendar mode for rubrics; civil dates always Gregorian
 
-## Day-aware guides (Server & Reader)
+## Day-aware guides
 
-### Altar server forms
+Same form pattern for all roles: `priest | hierarchical | presanctified | great_friday`
 
-**File:** `src/lib/liturgical/altarServerRoles.ts`
+| Role | Data | UI |
+|------|------|-----|
+| Altar server | `altarServerRoles.ts` | `AltarServerRoleTable.tsx` |
+| Reader | `readerGuide.ts` | `ReaderGuideTable.tsx` |
+| Deacon | `deaconGuide.ts` | `DeaconGuideTable.tsx` |
+| Chorister | `choirGuide.ts` | `ChoirGuideTable.tsx` |
+| Priest (also bishop) | `priestGuide.ts` | `PriestGuideTable.tsx` |
 
-```typescript
-type AltarForm = 'priest' | 'hierarchical' | 'presanctified' | 'great_friday';
-```
-
-- `availableAltarForms(dayContext)` — which forms apply
-- `defaultAltarForm(dayContext)` — auto-select on day change
-- UI: `AltarServerRoleTable.tsx` — manual form toggle **without outer border**
-
-### Reader guide forms
-
-**File:** `src/lib/liturgical/readerGuide.ts` — same form pattern  
-**UI:** `ReaderGuideTable.tsx`
-
-### Day context passed from Today
-
-**File:** `app/(tabs)/index.tsx` → `guideDayContext` from orthocal day + appearance
-
-Exports used: `isPresanctifiedDay` from `dayServices.ts`
+- `available*Forms(dayContext)` / `default*Form(dayContext)` — auto-select on day change
+- Manual form toggle **without outer border**
+- Day context from Today: `guideDayContext` (`isPresanctifiedDay` from `dayServices.ts`)
 
 ## Hero / feast display
 
@@ -46,9 +37,12 @@ Replaced old `LegalLinks.tsx` / separate colours link.
 
 ## Serving roles
 
-**IDs:** layperson, altar_server, reader, deacon, priest, bishop  
+**IDs:** layperson, chorister, altar_server, reader, deacon, priest, bishop  
 **Icons/labels:** `src/lib/liturgical/servingRoles.ts`  
 Affects vestments on Today and which guide sections appear.
+
+- Chorister: church-clothing (like layperson) + Choir Guide
+- Priest guide also shown when role is **bishop**
 
 ## Readings
 

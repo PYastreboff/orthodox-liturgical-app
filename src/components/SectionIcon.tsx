@@ -13,8 +13,11 @@ export type SectionIconName =
   | 'vestments'
   | 'church-clothing'
   | 'services'
+  | 'choir-guide'
   | 'altar-roles'
   | 'reader-guide'
+  | 'deacon-guide'
+  | 'priest-guide'
   | 'readings';
 
 const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
@@ -27,8 +30,11 @@ const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
   vestments: 'today.sectionVestments',
   'church-clothing': 'today.sectionChurchDress',
   services: 'today.sectionServices',
+  'choir-guide': 'today.sectionChoirGuide',
   'altar-roles': 'today.sectionAltarRoles',
   'reader-guide': 'today.sectionReaderGuide',
+  'deacon-guide': 'today.sectionDeaconGuide',
+  'priest-guide': 'today.sectionPriestGuide',
   readings: 'today.sectionReadings',
 };
 
@@ -65,6 +71,10 @@ export function SectionIcon({ name, color }: Props) {
         );
       case 'services':
         return <MaterialCommunityIcons name="church" size={SECTION_ICON_SIZE} color={color} />;
+      case 'choir-guide':
+        return (
+          <MaterialCommunityIcons name="music-note-outline" size={SECTION_ICON_SIZE} color={color} />
+        );
       case 'altar-roles':
         return <MaterialCommunityIcons name="candle" size={SECTION_ICON_SIZE} color={color} />;
       case 'reader-guide':
@@ -75,6 +85,12 @@ export function SectionIcon({ name, color }: Props) {
             color={color}
           />
         );
+      case 'deacon-guide':
+        return (
+          <MaterialCommunityIcons name="account-tie-outline" size={SECTION_ICON_SIZE} color={color} />
+        );
+      case 'priest-guide':
+        return <MaterialCommunityIcons name="cross" size={SECTION_ICON_SIZE} color={color} />;
       case 'readings':
         return (
           <MaterialCommunityIcons

@@ -42,7 +42,10 @@ function PassageBody({ item, textColor, verseNumberColor }: PassageBodyProps) {
         >
           {paragraph.map((line, li) =>
             item.plainText || line.verse === 0 ? (
-              <Text key={li}>{line.text}</Text>
+              <Text key={li}>
+                {line.text}
+                {li < paragraph.length - 1 ? ' ' : ''}
+              </Text>
             ) : (
               <Text key={`${line.verse}-${li}`}>
                 <Text style={[styles.verseNumber, verseType, { color: verseNumberColor }]}>

@@ -38,7 +38,8 @@ Use this to avoid re-proposing finished work or contradicting decisions.
 - Pascha / Lent countdown (`pascha_distance` already on orthocal day)
 - Liturgical week strip under hero
 - Fasting year overview screen
-- Deacon guide section
+- [x] Deacon guide section
+- [x] Choir + Priest guides; chorister role (before altar server)
 - Hierarchical form auto-detect
 
 ### Localization
