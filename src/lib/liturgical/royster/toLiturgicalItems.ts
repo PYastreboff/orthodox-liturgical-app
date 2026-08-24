@@ -6,23 +6,29 @@ import type {
 } from '../liturgicalTexts';
 import type { RoysterCommunion, RoysterLiturgySequence, RoysterSticheron } from './types';
 
-function sticheronParagraphs(sticheron: RoysterSticheron) {
+function sticheronParagraphs(sticheron: RoysterSticheron, lang: UiLanguage) {
   return [
     [
       { verse: 0, text: sticheron.lines[0] },
-      { verse: 0, text: `Verse: ${sticheron.lines[1]}` },
+      {
+        verse: 0,
+        text: translate(lang, 'readings.versePrefix', { text: sticheron.lines[1] }),
+      },
     ],
   ];
 }
 
-function communionParagraphs(communion: RoysterCommunion) {
+function communionParagraphs(communion: RoysterCommunion, lang: UiLanguage) {
   const lines: { verse: number; text: string }[] = [
     { verse: 0, text: communion.lines[0] },
   ];
   if (communion.alternate) {
     lines.push({
       verse: 0,
-      text: `Another (${communion.alternate.citation}): ${communion.alternate.lines[0]}`,
+      text: translate(lang, 'readings.anotherPrefix', {
+        citation: communion.alternate.citation,
+        text: communion.alternate.lines[0],
+      }),
     });
   }
   return [lines];
@@ -70,7 +76,7 @@ function toSticheronItem(
   return {
     label,
     citation: sticheron.citation,
-    paragraphs: sticheronParagraphs(sticheron),
+    paragraphs: sticheronParagraphs(sticheron, lang),
     detail: sticheronDetail(sticheron, lang, feastNote, menaionFeast),
     plainText: !sticheron.scriptureCitation,
     scriptureCitation: sticheron.scriptureCitation,
@@ -88,7 +94,7 @@ function toCommunionItem(
   return {
     label: translate(lang, 'readings.communion'),
     citation: communion.citation,
-    paragraphs: communionParagraphs(communion),
+    paragraphs: communionParagraphs(communion, lang),
     detail: communionDetail(communion, lang, feastNote, sundayNote, menaionFeast),
     plainText: !communion.scriptureCitation,
     scriptureCitation: communion.scriptureCitation,

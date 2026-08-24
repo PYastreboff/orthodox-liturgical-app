@@ -16,6 +16,9 @@ Use this to avoid re-proposing finished work or contradicting decisions.
 - [x] Web desktop double-title fix
 - [x] Major feast hero pill (Theotokos)
 - [x] Hero typikon contrast on dark mode
+- [x] First-launch tips (calendar, role, notifications)
+- [x] Calendar search RU/EL (Unicode tokens + name aliases)
+- [x] Localize Orthocal/Royster reading labels (`Verse:`, Matins Gospel, etc.)
 
 ## Planned (user chose direction)
 

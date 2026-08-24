@@ -148,28 +148,33 @@ function readingDetail(r: OrthocalReading): string | undefined {
   return parts.length ? parts.join(' · ') : undefined;
 }
 
-function readingLabel(category: LiturgicalTextCategory, r: OrthocalReading): string {
-  if (category === 'epistle') return 'Epistle';
+function readingLabel(
+  category: LiturgicalTextCategory,
+  r: OrthocalReading,
+  lang: UiLanguage,
+): string {
+  if (category === 'epistle') return translate(lang, 'readings.epistle');
   if (category === 'gospel') {
-    if (norm(r.source) === 'matins gospel') return 'Matins Gospel';
-    return 'Gospel';
+    if (norm(r.source) === 'matins gospel') return translate(lang, 'readings.matinsGospel');
+    return translate(lang, 'readings.gospel');
   }
-  if (category === 'troparion') return 'Troparion';
-  if (category === 'kontakion') return 'Kontakion';
-  if (category === 'prokeimenon') return 'Prokeimenon';
-  if (category === 'alleluia') return 'Alleluia';
-  if (category === 'communion') return 'Communion';
+  if (category === 'troparion') return translate(lang, 'readings.troparion');
+  if (category === 'kontakion') return translate(lang, 'readings.kontakion');
+  if (category === 'prokeimenon') return translate(lang, 'readings.prokeimenon');
+  if (category === 'alleluia') return translate(lang, 'readings.alleluia');
+  if (category === 'communion') return translate(lang, 'readings.communion');
   if (r.description?.trim()) return r.description.trim();
-  return r.book || r.source || 'Reading';
+  return r.book || r.source || translate(lang, 'readings.readingFallback');
 }
 
 function readingToItem(
   r: OrthocalReading,
   category: LiturgicalTextCategory,
+  lang: UiLanguage,
 ): LiturgicalTextItem {
   const plain = isHymnPassage(r.passage);
   return {
-    label: readingLabel(category, r),
+    label: readingLabel(category, r, lang),
     citation: r.display || r.short_display || r.description || r.source,
     paragraphs: passageToParagraphs(r.passage ?? []),
     source: r.source,
@@ -249,7 +254,7 @@ export function buildLiturgicalTextSections(
     for (const reading of day.readings) {
       const category = classifyReading(reading);
       if (!category) continue;
-      buckets[category].push(readingToItem(reading, category));
+      buckets[category].push(readingToItem(reading, category, lang));
     }
   }
 

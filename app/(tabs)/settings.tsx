@@ -16,6 +16,7 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 import { OrthoDailyLogo } from '../../src/components/OrthoDailyLogo';
+import { PhonePageHeader } from '../../src/components/PhonePageHeader';
 import {
   SettingsLinkRow,
   settingsLinkListInset,
@@ -391,7 +392,14 @@ export default function SettingsScreen() {
           ]}
         >
           {!showTabHeader ? (
-            <Text style={[styles.title, { color: theme.colors.text }]}>{t('settings.title')}</Text>
+            <View style={styles.pageHeader}>
+              <PhonePageHeader
+                title={t('settings.title')}
+                subtitle={t('settings.subtitleShort')}
+                textColor={theme.colors.text}
+                mutedColor={muted}
+              />
+            </View>
           ) : null}
 
           <View style={settingsListCard(isDark)}>
@@ -619,11 +627,8 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: 0.2,
-    marginBottom: 22,
+  pageHeader: {
+    marginBottom: 20,
   },
   footer: {
     marginTop: 8,

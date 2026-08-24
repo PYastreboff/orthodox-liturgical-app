@@ -143,7 +143,7 @@ export function CalendarSearch({
     showMinCharsHint,
     showNoResults,
     clear,
-  } = useCalendarSearch(calendar, year);
+  } = useCalendarSearch(calendar, year, lang);
 
   const phoneLayout = usePhoneLayout();
   const wrapPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;

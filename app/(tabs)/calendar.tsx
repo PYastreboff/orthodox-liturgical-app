@@ -3,7 +3,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
@@ -12,7 +11,7 @@ import Head from 'expo-router/head';
 
 import { CalendarSearch } from '../../src/components/CalendarSearch';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
-import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
+import { PhonePageHeader } from '../../src/components/PhonePageHeader';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
@@ -20,7 +19,6 @@ import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
-import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 
@@ -35,8 +33,9 @@ export default function CalendarScreen() {
     return new Date(n.getFullYear(), n.getMonth(), 1);
   }, []);
 
-  const screenSafe = useScreenSafePadding({ calendar: true });
+  const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
+  const showTabHeader = useTabHeaderShown();
   const [cursor, setCursor] = useState(thisMonth);
 
   const setCursorMonth = useCallback((date: Date) => {
@@ -74,9 +73,6 @@ export default function CalendarScreen() {
   );
 
   const calendarBg = theme.dark ? colors.darkBg : '#e8e3d8';
-  const phoneLayout = usePhoneLayout();
-  const showTabHeader = useTabHeaderShown();
-  const sectionInsetX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
 
   useFocusEffect(
     useCallback(() => {
@@ -104,9 +100,14 @@ export default function CalendarScreen() {
         },
       ]}
     >
-      <View style={[styles.introSection, { paddingHorizontal: sectionInsetX }]}>
+      <View style={styles.introSection}>
         {!showTabHeader ? (
-          <Text style={[styles.pageTitle, { color: theme.colors.text }]}>{t('calendar.title')}</Text>
+          <PhonePageHeader
+            title={t('calendar.title')}
+            subtitle={t('calendar.subtitleShort')}
+            textColor={theme.colors.text}
+            mutedColor={theme.dark ? '#a39e98' : colors.muted}
+          />
         ) : null}
         <CalendarSearch
           calendar={primaryCalendar}
@@ -149,11 +150,5 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 18,
     marginBottom: 22,
-  },
-  pageTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    lineHeight: 28,
-    letterSpacing: 0.2,
   },
 });

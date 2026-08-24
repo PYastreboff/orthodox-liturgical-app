@@ -58,6 +58,8 @@ type StoredPreferences = {
   notifyLiturgyMorning?: boolean;
   notifyVespersEve?: boolean;
   notifyPresanctified?: boolean;
+  /** First-launch tips dismissed. */
+  onboardingCompleted?: boolean;
 };
 
 type Preferences = {
@@ -82,6 +84,8 @@ type Preferences = {
   notifyVespersEve: boolean;
   /** Native: afternoon reminder on Presanctified evenings. */
   notifyPresanctified: boolean;
+  /** First-launch tip sheet has been completed or skipped. */
+  onboardingCompleted: boolean;
   preferencesReady: boolean;
 };
 
@@ -101,6 +105,7 @@ type PreferencesContextValue = Preferences & {
   setNotifyLiturgyMorning: (value: boolean) => void;
   setNotifyVespersEve: (value: boolean) => void;
   setNotifyPresanctified: (value: boolean) => void;
+  setOnboardingCompleted: (value: boolean) => void;
 };
 
 export const PREFERENCES_STORAGE_KEY = '@orthodaily/preferences/v1';
@@ -144,6 +149,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [notifyLiturgyMorning, setNotifyLiturgyMorningState] = useState(false);
   const [notifyVespersEve, setNotifyVespersEveState] = useState(false);
   const [notifyPresanctified, setNotifyPresanctifiedState] = useState(false);
+  const [onboardingCompleted, setOnboardingCompletedState] = useState(false);
   const [preferencesReady, setPreferencesReady] = useState(false);
 
   useEffect(() => {
@@ -207,6 +213,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         }
         if (typeof parsed.notifyPresanctified === 'boolean') {
           setNotifyPresanctifiedState(parsed.notifyPresanctified);
+        }
+        if (typeof parsed.onboardingCompleted === 'boolean') {
+          setOnboardingCompletedState(parsed.onboardingCompleted);
         }
         setTodayCollapsedState(mergeTodayCollapsed(parsed.todayCollapsed));
       } catch {
@@ -328,6 +337,14 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     [persist],
   );
 
+  const setOnboardingCompleted = useCallback(
+    (value: boolean) => {
+      setOnboardingCompletedState(value);
+      void persist({ onboardingCompleted: value });
+    },
+    [persist],
+  );
+
   const setTodaySectionCollapsed = useCallback(
     (key: TodayCollapsibleKey, collapsed: boolean) => {
       setTodayCollapsedState((prev) => {
@@ -366,6 +383,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       notifyLiturgyMorning,
       notifyVespersEve,
       notifyPresanctified,
+      onboardingCompleted,
       preferencesReady,
       setShowAlternateCalendar,
       setPrimaryCalendar,
@@ -382,6 +400,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setNotifyLiturgyMorning,
       setNotifyVespersEve,
       setNotifyPresanctified,
+      setOnboardingCompleted,
     }),
     [
       colorSchemePreference,
@@ -392,6 +411,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       notifyLiturgyMorning,
       notifyPresanctified,
       notifyVespersEve,
+      onboardingCompleted,
       preferencesReady,
       primaryCalendar,
       servingRole,
@@ -403,6 +423,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setNotifyLiturgyMorning,
       setNotifyPresanctified,
       setNotifyVespersEve,
+      setOnboardingCompleted,
       setPrimaryCalendar,
       setServingRole,
       setShowAlternateCalendar,

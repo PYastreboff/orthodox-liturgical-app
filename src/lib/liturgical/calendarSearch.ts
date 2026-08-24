@@ -1,5 +1,7 @@
 import type { PrimaryCalendar } from '../calendar/dateDisplay';
 import { fromDayIso } from '../calendar/localDate';
+import { searchHaystacksForName } from '../../i18n/orthocalContent';
+import type { UiLanguage } from '../../i18n/types';
 import { fuzzyNameScore, normalizeSearchText } from './fuzzySearch';
 import type { MonthDayMap } from './orthocalMonthCache';
 import { loadCalendarYear } from './orthocalMonthCache';
@@ -60,8 +62,11 @@ export function buildCalendarSearchIndex(dayByIso: MonthDayMap): CalendarSearchR
   return entries.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-function relevanceScore(entry: CalendarSearchResult, query: string): number {
-  let score = fuzzyNameScore(entry.name, query);
+function relevanceScore(entry: CalendarSearchResult, query: string, lang: UiLanguage): number {
+  let score = 0;
+  for (const hay of searchHaystacksForName(entry.name, lang)) {
+    score = Math.max(score, fuzzyNameScore(hay, query));
+  }
   if (score <= 0) return 0;
 
   if (entry.isGreatFeast && entry.kind === 'feast') {
@@ -79,6 +84,7 @@ export function searchCalendarIndex(
   query: string,
   filter: CalendarSearchFilter,
   limit = 40,
+  lang: UiLanguage = 'en',
 ): CalendarSearchResult[] {
   const trimmed = query.trim();
   if (trimmed.length < 2) return [];
@@ -87,7 +93,7 @@ export function searchCalendarIndex(
 
   for (const entry of index) {
     if (filter !== 'all' && entry.kind !== filter) continue;
-    const score = relevanceScore(entry, trimmed);
+    const score = relevanceScore(entry, trimmed, lang);
     if (score <= 0) continue;
     scored.push({ entry, score });
   }
@@ -133,6 +139,7 @@ export function searchCachedCalendarIndex(
   dayByIso: MonthDayMap,
   query: string,
   filter: CalendarSearchFilter,
+  lang: UiLanguage = 'en',
 ): CalendarSearchResult[] {
-  return searchCalendarIndex(buildCalendarSearchIndex(dayByIso), query, filter, 20);
+  return searchCalendarIndex(buildCalendarSearchIndex(dayByIso), query, filter, 20, lang);
 }

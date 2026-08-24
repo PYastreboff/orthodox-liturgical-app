@@ -1000,12 +1000,10 @@ function CalendarMonthAgenda({
 
 const styles = StyleSheet.create({
   outer: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 0,
     paddingBottom: 24,
   },
-  outerCompact: {
-    paddingHorizontal: 4,
-  },
+  outerCompact: {},
   monthNav: {
     flexDirection: 'row',
     alignItems: 'center',

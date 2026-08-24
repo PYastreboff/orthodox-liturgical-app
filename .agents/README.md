@@ -20,6 +20,7 @@ This folder captures **project context, conventions, and decisions** so Cursor a
 | [liturgical-features.md](./liturgical-features.md) | Guides, vestments, orthocal, day-aware forms |
 | [web-and-layout.md](./web-and-layout.md) | Desktop tab headers, breakpoints, GH Pages |
 | [firebase-plan.md](./firebase-plan.md) | **Planned** auth + profile sync — **not implemented** |
+| [firebase-setup.md](./firebase-setup.md) | **Step-by-step Firebase Console + .env setup** |
 | [roadmap.md](./roadmap.md) | Ideas discussed; not committed |
 
 ## Current status (Aug 2026)
@@ -35,6 +36,9 @@ This folder captures **project context, conventions, and decisions** so Cursor a
 - Partial RU/EL localization for day content (`orthocalContent.ts`)
 - Legend page (`app/legend.tsx`); About links in Settings list
 - Web desktop: hide duplicate in-page titles when tab header shows (≥768px)
+- **First-launch tips** (`FirstLaunchTips` after splash; `onboardingCompleted` pref)
+- **Calendar search RU/EL** — Unicode tokens + given-name aliases (Николай / Νικόλαος)
+- **Reading labels** — Orthocal category labels + Royster `Verse:` / `Another:` localized
 
 ### Not implemented
 - Firebase auth / profile / cloud settings sync (see [firebase-plan.md](./firebase-plan.md))

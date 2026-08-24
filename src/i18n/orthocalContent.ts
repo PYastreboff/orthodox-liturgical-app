@@ -245,3 +245,57 @@ export function localizedAppearanceLabel(
   if (translated !== key) return translated;
   return localizeOrthocalText(fallback, lang);
 }
+
+/**
+ * English given names → RU/EL forms for calendar search.
+ * Matched when the English name appears in the orthocal entry.
+ */
+const GIVEN_NAME_SEARCH_ALIASES: Record<string, string[]> = {
+  nicholas: ['николай', 'николая', 'νικόλαος', 'νικολάου'],
+  nicolas: ['николай', 'николая', 'νικόλαος', 'νικολάου'],
+  george: ['георгий', 'георгия', 'γεώργιος', 'γεωργίου'],
+  john: ['иоанн', 'иоанна', 'ιωάννης', 'ιωάννου'],
+  mary: ['мария', 'марии', 'μαρία', 'μαρίας'],
+  michael: ['михаил', 'михаила', 'μιχαήλ'],
+  basil: ['василий', 'василия', 'βασίλειος', 'βασιλείου'],
+  andrew: ['андрея', 'андрей', 'ανδρέας', 'ανδρέου'],
+  peter: ['петр', 'пётр', 'петра', 'πέτρος', 'πέτρου'],
+  paul: ['павел', 'павла', 'παύλος', 'παύλου'],
+  sergius: ['сергий', 'сергия', 'σέργιος'],
+  sergei: ['сергий', 'сергия'],
+  demetrius: ['димитрий', 'дмитрий', 'δημήτριος', 'δημητρίου'],
+  dmitri: ['димитрий', 'дмитрий'],
+  anthony: ['антоний', 'антония', 'αντώνιος'],
+  theodore: ['феодор', 'феодора', 'θεόδωρος'],
+  timothy: ['тимофей', 'τιμόθεος'],
+  luke: ['лука', 'λούκας'],
+  mark: ['марк', 'μάρκος'],
+  matthew: ['матфей', 'ματθαίος'],
+  james: ['иаков', 'ιάκωβος'],
+  joseph: ['иосиф', 'ιωσήφ'],
+  stephen: ['стефан', 'στέφανος'],
+  catherine: ['екатерина', 'αικατερίνη'],
+  barbara: ['варвара', 'βαρβάρα'],
+};
+
+/**
+ * Search haystacks for an orthocal name: English, localized display, and
+ * common given-name aliases so RU/EL queries can match Latin orthocal text.
+ */
+export function searchHaystacksForName(name: string, lang: UiLanguage): string[] {
+  const haystacks = new Set<string>([name]);
+  if (lang !== 'en') {
+    const localized = localizeOrthocalText(name, lang);
+    if (localized) haystacks.add(localized);
+  }
+
+  const lower = name.toLowerCase();
+  for (const [en, aliases] of Object.entries(GIVEN_NAME_SEARCH_ALIASES)) {
+    if (!aliases.length) continue;
+    if (!lower.includes(en)) continue;
+    for (const alias of aliases) haystacks.add(alias);
+    haystacks.add(`${name} ${aliases.join(' ')}`);
+  }
+
+  return [...haystacks];
+}

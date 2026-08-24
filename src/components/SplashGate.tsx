@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { usePreferences } from '../state/PreferencesContext';
 import { AppSplashScreen } from './AppSplashScreen';
+import { FirstLaunchTips } from './FirstLaunchTips';
 
 SplashScreen.preventAutoHideAsync().catch(() => {
   // Web or dev reload — splash may already be hidden.
@@ -36,6 +37,7 @@ export function SplashGate({ children }: Props) {
   return (
     <>
       {children}
+      {!overlayVisible ? <FirstLaunchTips /> : null}
       {overlayVisible ? (
         <View style={styles.overlay} pointerEvents="auto">
           <AppSplashScreen />

@@ -5,6 +5,26 @@ const en = {
   app: {
     name: 'OrthoDaily',
   },
+  onboarding: {
+    welcome: 'Welcome!',
+    welcomeTitle: 'Welcome to OrthoDaily!',
+    welcomeBody:
+      'Your Orthodox daybook for feasts, fasting, vestments, and readings — oriented toward Moscow Patriarchate practice.',
+    progress: '{current} of {total}',
+    next: 'Next',
+    prev: 'Previous',
+    done: 'Get started',
+    skip: 'Skip',
+    calendarTitle: 'Choose your calendar',
+    calendarBody:
+      'Julian or Gregorian rubrics live in Settings. Civil dates stay Gregorian — only feasts and fasting change.',
+    roleTitle: 'Serving role',
+    roleBody:
+      'Layperson, altar server, reader, deacon, priest, or bishop. This controls vestments and guides on Today.',
+    notificationsTitle: 'Phone notifications',
+    notificationsBody:
+      'Optional fasting and liturgy alerts run on the iOS or Android app only — not on the website. Turn them on in Settings anytime.',
+  },
   tabs: {
     today: 'Today',
     calendar: 'Calendar',
@@ -16,6 +36,7 @@ const en = {
   settings: {
     title: 'Settings',
     subtitle: 'Appearance and liturgical display preferences for OrthoDaily.',
+    subtitleShort: 'Theme, calendar, language, and notifications.',
     sectionDisplay: 'Display',
     sectionNotifications: 'Notifications',
     sectionAbout: 'About',
@@ -117,7 +138,7 @@ const en = {
     legendTypikonGreatFeast: 'Great feast & major feast',
   },
   calendar: {
-    title: 'Liturgical calendar',
+    title: 'Liturgical Calendar',
     goToThisMonth: 'Go to this month',
     loading: 'Loading calendar days…',
     loadingProgress: '{loaded} of {total} days loaded',
@@ -125,7 +146,7 @@ const en = {
     dayLoading: 'Loading feasts and fasts',
     subtitle:
       'Day numbers are civil (Gregorian). Cell labels and colours follow your liturgical calendar setting (Settings).',
-    subtitleShort: 'Tap a day for feasts, fasting, and readings. Colours follow your calendar in Settings.',
+    subtitleShort: 'Tap a day for feasts, fasting, and readings.',
     tapHint: 'Tap a day in the grid or list below to open it on Today.',
     agendaTitle: 'This month',
     legendNonFasting: 'Non-fasting',
@@ -729,6 +750,10 @@ const en = {
     roysterTone: 'Tone {tone}',
     roysterFeastNote: 'Feast days may use Menaion texts instead',
     roysterSundayCommunionNote: 'Sunday communion varies by season; typical verse shown',
+    matinsGospel: 'Matins Gospel',
+    readingFallback: 'Reading',
+    versePrefix: 'Verse: {text}',
+    anotherPrefix: 'Another ({citation}): {text}',
   },
   orthocalFeasts: {
     holyPentecost: 'Holy Pentecost',
@@ -857,6 +882,26 @@ const ru = {
   app: {
     name: 'OrthoDaily',
   },
+  onboarding: {
+    welcome: 'Добро пожаловать!',
+    welcomeTitle: 'Добро пожаловать в OrthoDaily!',
+    welcomeBody:
+      'Ваш православный дневник: праздники, пост, облачения и чтения — с ориентиром на практику Московской Патриархии.',
+    progress: '{current} из {total}',
+    next: 'Далее',
+    prev: 'Назад',
+    done: 'Начать',
+    skip: 'Пропустить',
+    calendarTitle: 'Выберите календарь',
+    calendarBody:
+      'Юлианский или григорианский календарь — в Настройках. Гражданские даты всегда григорианские; меняются праздники и пост.',
+    roleTitle: 'Служение',
+    roleBody:
+      'Мирянин, алтарник, чтец, диакон, священник или епископ. Это задаёт облачения и руководства на экране «Сегодня».',
+    notificationsTitle: 'Уведомления на телефоне',
+    notificationsBody:
+      'Опциональные напоминания о посте и литургии работают только в приложении iOS или Android — не на сайте. Включить можно в Настройках.',
+  },
   tabs: {
     today: 'Сегодня',
     calendar: 'Календарь',
@@ -868,6 +913,7 @@ const ru = {
   settings: {
     title: 'Настройки',
     subtitle: 'Внешний вид и литургические параметры OrthoDaily.',
+    subtitleShort: 'Тема, календарь, язык и уведомления.',
     sectionDisplay: 'Отображение',
     sectionNotifications: 'Уведомления',
     sectionAbout: 'Справка',
@@ -980,7 +1026,7 @@ const ru = {
     subtitle:
       'Числа месяца — гражданские (григорианские). Подписи и цвета ячеек — по выбранному церковному календарю (Настройки).',
     subtitleShort:
-      'Нажмите на день, чтобы открыть праздники, пост и чтения. Цвета — по календарю в Настройках.',
+      'Нажмите на день, чтобы открыть праздники, пост и чтения.',
     tapHint: 'Нажмите день в сетке или в списке ниже, чтобы открыть «Сегодня».',
     agendaTitle: 'В этом месяце',
     legendNonFasting: 'Без поста',
@@ -1598,6 +1644,10 @@ const ru = {
     roysterTone: 'Глас {tone}',
     roysterFeastNote: 'В дни праздников могут быть тексты из Минеи',
     roysterSundayCommunionNote: 'Причастен в воскресенье зависит от сезона',
+    matinsGospel: 'Евангелие на утрене',
+    readingFallback: 'Чтение',
+    versePrefix: 'Стих: {text}',
+    anotherPrefix: 'Другой ({citation}): {text}',
   },
   orthocalFeasts: {
     holyPentecost: 'Святая Пятидесятница',

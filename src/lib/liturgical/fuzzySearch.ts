@@ -98,7 +98,7 @@ export function fuzzyMatchScore(text: string, query: string): number {
     return 850 + (needle.length / hay.length) * 100;
   }
 
-  const words = hay.split(/[^a-z0-9]+/).filter(Boolean);
+  const words = hay.split(/[^\p{L}\p{N}]+/u).filter(Boolean);
   let bestWordPrefix = 0;
   let bestWordExact = 0;
   let bestTypo = 0;

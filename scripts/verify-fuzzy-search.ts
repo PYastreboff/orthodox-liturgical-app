@@ -10,6 +10,8 @@ assert(fuzzyMatchScore('Saint Nicholas', 'nick') > 0, 'prefix matches');
 assert(fuzzyMatchScore('John the Baptist', 'baptist') > 0, 'word match');
 assert(fuzzyMatchScore('Basil the Great', 'basill') > 0, 'typo tolerance');
 assert(fuzzyNameScore('Saint Nicholas the Wonderworker', 'nicholas wonder') > 0, 'multi-token');
+assert(fuzzyMatchScore('Св. Николай', 'николай') > 0, 'cyrillic word match');
+assert(fuzzyMatchScore('Ἅγ. Νικόλαος', 'νικόλαος') > 0, 'greek word match');
 
 const index: CalendarSearchResult[] = [
   {
@@ -40,5 +42,11 @@ const index: CalendarSearchResult[] = [
 
 const ranked = searchCalendarIndex(index, 'nicholas', 'all', 10);
 assert(ranked[0]?.name.includes('Nicholas'), 'most relevant nicholas result first');
+
+const ruHits = searchCalendarIndex(index, 'николай', 'all', 10, 'ru');
+assert(ruHits.length > 0 && ruHits[0]?.name.includes('Nicholas'), 'russian alias finds nicholas');
+
+const elHits = searchCalendarIndex(index, 'νικόλαος', 'all', 10, 'el');
+assert(elHits.length > 0 && elHits[0]?.name.includes('Nicholas'), 'greek alias finds nicholas');
 
 console.log('OK fuzzy search verification passed');

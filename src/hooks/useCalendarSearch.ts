@@ -11,8 +11,13 @@ import {
 import {
   getCachedDaysForCalendar,
 } from '../lib/liturgical/orthocalMonthCache';
+import type { UiLanguage } from '../i18n/types';
 
-export function useCalendarSearch(calendar: PrimaryCalendar, year: number) {
+export function useCalendarSearch(
+  calendar: PrimaryCalendar,
+  year: number,
+  lang: UiLanguage = 'en',
+) {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<CalendarSearchFilter>('all');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -56,17 +61,17 @@ export function useCalendarSearch(calendar: PrimaryCalendar, year: number) {
 
   const cachedResults = useMemo(() => {
     if (debouncedQuery.length < 2) return [];
-    return searchCachedCalendarIndex(cachedDays, debouncedQuery, filter);
-  }, [cachedDays, debouncedQuery, filter]);
+    return searchCachedCalendarIndex(cachedDays, debouncedQuery, filter, lang);
+  }, [cachedDays, debouncedQuery, filter, lang]);
 
   const results = useMemo(() => {
     if (debouncedQuery.length < 2) return [];
 
-    const merged = searchCalendarIndex(yearIndex, debouncedQuery, filter);
+    const merged = searchCalendarIndex(yearIndex, debouncedQuery, filter, 40, lang);
     if (merged.length > 0) return merged;
 
     return cachedResults;
-  }, [cachedResults, debouncedQuery, filter, yearIndex]);
+  }, [cachedResults, debouncedQuery, filter, lang, yearIndex]);
 
   const showMinCharsHint = query.trim().length > 0 && query.trim().length < 2;
   const showNoResults = debouncedQuery.length >= 2 && !loadingYear && results.length === 0;

@@ -6,12 +6,9 @@ export const SCROLL_EXTRA_BOTTOM_PADDING = 12;
 /** Extra pixels past the layout box to hide sub-pixel seams at the screen bottom. */
 export const SAFARI_TAB_BAR_BLEED_PX = 8;
 
-/** Horizontal gutter outside safe area on scroll screens. */
+/** Horizontal gutter outside safe area on scroll screens (Settings, Calendar, etc.). */
 export const SCREEN_GUTTER_X = 20;
 export const SCREEN_GUTTER_X_PHONE = 10;
-
-export const SCREEN_GUTTER_X_CALENDAR = 16;
-export const SCREEN_GUTTER_X_CALENDAR_PHONE = 8;
 
 /** Padding inside collapsible / settings-style section cards. */
 export const SECTION_CARD_PADDING = 16;
