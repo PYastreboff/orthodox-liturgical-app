@@ -15,6 +15,7 @@ import { isOrthocalFastDay } from '../../i18n/fastingLabels';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
 import { hasMorningLiturgy, isPresanctifiedDay } from '../liturgical/dayServices';
+import { personalDaysOnCivilDate, type PersonalDay } from '../personalDays';
 
 const ID_PREFIX = 'orthodaily:';
 const SCHEDULE_DAYS = 14;
@@ -24,7 +25,8 @@ export type NotificationReminderKind =
   | 'fasting'
   | 'liturgy'
   | 'vespers'
-  | 'presanctified';
+  | 'presanctified'
+  | 'personal_day_eve';
 
 type ChannelDef = {
   id: string;
@@ -39,6 +41,10 @@ const CHANNELS: Record<NotificationReminderKind, ChannelDef> = {
     id: 'orthodaily-presanctified',
     nameKey: 'notifications.channelPresanctified',
   },
+  personal_day_eve: {
+    id: 'orthodaily-personal-day-eve',
+    nameKey: 'notifications.channelPersonalDayEve',
+  },
 };
 
 const TIMES: Record<NotificationReminderKind, { hour: number; minute: number }> = {
@@ -46,6 +52,7 @@ const TIMES: Record<NotificationReminderKind, { hour: number; minute: number }> 
   liturgy: { hour: 7, minute: 0 },
   vespers: { hour: 16, minute: 0 },
   presanctified: { hour: 16, minute: 30 },
+  personal_day_eve: { hour: 18, minute: 0 },
 };
 
 export type ReminderPrefs = {
@@ -53,6 +60,7 @@ export type ReminderPrefs = {
   notifyLiturgyMorning: boolean;
   notifyVespersEve: boolean;
   notifyPresanctified: boolean;
+  personalDays: PersonalDay[];
   primaryCalendar: PrimaryCalendar;
   uiLanguage: UiLanguage;
 };
@@ -78,7 +86,8 @@ function anyReminderEnabled(prefs: ReminderPrefs): boolean {
     prefs.notifyFastingReminder ||
     prefs.notifyLiturgyMorning ||
     prefs.notifyVespersEve ||
-    prefs.notifyPresanctified
+    prefs.notifyPresanctified ||
+    prefs.personalDays.some((day) => day.remindEve)
   );
 }
 
@@ -265,6 +274,22 @@ export async function syncLiturgicalReminders(prefs: ReminderPrefs): Promise<voi
         now,
         translate(lang, 'notifications.presanctifiedTitle'),
         translate(lang, 'notifications.presanctifiedBody'),
+      );
+    }
+
+    const tomorrowPersonalDays = personalDaysOnCivilDate(
+      prefs.personalDays,
+      tomorrow,
+    ).filter((day) => day.remindEve);
+    for (const personalDay of tomorrowPersonalDays) {
+      await scheduleOne(
+        'personal_day_eve',
+        day,
+        now,
+        translate(lang, 'notifications.personalDayEveTitle'),
+        translate(lang, 'notifications.personalDayEveBody', {
+          title: personalDay.title,
+        }),
       );
     }
   }

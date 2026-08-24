@@ -15,6 +15,7 @@ export function LiturgicalRemindersSync() {
     notifyLiturgyMorning,
     notifyVespersEve,
     notifyPresanctified,
+    personalDays,
     primaryCalendar,
     uiLanguage,
   } = usePreferences();
@@ -30,6 +31,7 @@ export function LiturgicalRemindersSync() {
         notifyLiturgyMorning,
         notifyVespersEve,
         notifyPresanctified,
+        personalDays,
         primaryCalendar,
         uiLanguage,
       });
@@ -51,6 +53,7 @@ export function LiturgicalRemindersSync() {
     notifyLiturgyMorning,
     notifyVespersEve,
     notifyPresanctified,
+    personalDays,
     primaryCalendar,
     uiLanguage,
   ]);

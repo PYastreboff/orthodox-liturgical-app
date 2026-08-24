@@ -1,6 +1,13 @@
 import { Feather } from '@expo/vector-icons';
-import type { ReactNode } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+
+const SELECTED_FG = '#fff';
+
+function tintLeading(node: ReactNode, selected: boolean): ReactNode {
+  if (!selected || !isValidElement(node)) return node;
+  return cloneElement(node as ReactElement<{ color?: string }>, { color: SELECTED_FG });
+}
 
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import { colors } from '../../theme/tokens';
@@ -34,13 +41,20 @@ export function SettingsOptionModal<T extends string>({
   const surfaceBg = isDark ? '#2a2724' : '#ebe6de';
   const textColor = isDark ? '#e8e3dd' : '#2b2623';
   const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.12)';
+  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
+  const sheetHeight = Math.round(windowHeight * (windowWidth < 600 ? 2 / 3 : 0.6));
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.root}>
         <Pressable style={styles.backdrop} onPress={onClose} accessibilityElementsHidden />
-        <View style={[styles.sheet, { backgroundColor: surfaceBg, borderColor }]}>
+        <View style={[styles.sheet, { backgroundColor: surfaceBg, borderColor, height: sheetHeight }]}>
           <Text style={[styles.title, { color: textColor }]}>{title}</Text>
+          <ScrollView
+            style={styles.optionsScroll}
+            contentContainerStyle={styles.optionsContent}
+            keyboardShouldPersistTaps="handled"
+          >
           {options.map((option) => {
             const selected = option.id === value;
             return (
@@ -65,22 +79,23 @@ export function SettingsOptionModal<T extends string>({
                 {...hoverAccessibilityProps(option.label, { role: 'button' })}
               >
                 {option.leading ? (
-                  <View style={styles.leading}>{option.leading}</View>
+                  <View style={styles.leading}>{tintLeading(option.leading, selected)}</View>
                 ) : null}
                 <Text
-                  style={[styles.optionLabel, { color: selected ? '#fff' : textColor }]}
+                  style={[styles.optionLabel, { color: selected ? SELECTED_FG : textColor }]}
                   numberOfLines={2}
                 >
                   {option.label}
                 </Text>
                 {selected ? (
-                  <Feather name="check" size={18} color="#fff" />
+                  <Feather name="check" size={18} color={SELECTED_FG} />
                 ) : (
                   <View style={styles.checkPlaceholder} />
                 )}
               </Pressable>
             );
           })}
+          </ScrollView>
         </View>
       </View>
     </Modal>
@@ -111,6 +126,14 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 10,
   },
+  optionsScroll: {
+    flex: 1,
+  },
+  optionsContent: {
+    paddingBottom: 12,
+    flexGrow: 1,
+    justifyContent: 'flex-start',
+  },
   title: {
     fontSize: 13,
     fontWeight: '700',
@@ -125,8 +148,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     paddingHorizontal: 16,
-    paddingVertical: 13,
-    minHeight: 48,
+    paddingVertical: 16,
+    minHeight: 56,
   },
   leading: {
     width: 22,

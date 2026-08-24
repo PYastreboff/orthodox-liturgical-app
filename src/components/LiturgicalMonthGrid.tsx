@@ -36,8 +36,10 @@ import { intlLocaleForLanguage } from '../i18n/locale';
 import { localizeCalendarDayInfo } from '../i18n/orthocalContent';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
+import { personalDaysOnCivilDate } from '../lib/personalDays';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { typikonIconColor } from '../lib/liturgical/typikonSymbols';
+import { usePreferences } from '../state/PreferencesContext';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { CommemorationListMarker } from './CommemorationListMarker';
 import { HoverAccessible } from './HoverAccessible';
@@ -80,7 +82,12 @@ function narrowWeekdayLabel(dowIndex: number, intlLocale: string): string {
   return new Intl.DateTimeFormat(intlLocale, { weekday: 'narrow' }).format(date);
 }
 
-function isAgendaDay(info: CalendarDayInfo, phoneLayout: boolean): boolean {
+function isAgendaDay(
+  info: CalendarDayInfo,
+  phoneLayout: boolean,
+  hasPersonalDay = false,
+): boolean {
+  if (hasPersonalDay) return true;
   if (
     info.feasts.length > 0 ||
     info.saints.length > 0 ||
@@ -250,6 +257,7 @@ export function LiturgicalMonthGrid({
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
   const { t, lang } = useAppTranslation();
+  const { personalDays } = usePreferences();
   const intlLocale = intlLocaleForLanguage(lang);
   const { width: windowWidth } = useWindowDimensions();
   const [layoutWidth, setLayoutWidth] = useState(0);
@@ -460,6 +468,12 @@ export function LiturgicalMonthGrid({
                       typography={cellTypography}
                       onPress={onDayPress}
                       dayInfo={dayInfoForDate(date)}
+                      personalFeasts={personalDaysOnCivilDate(personalDays, date).filter(
+                        (d) => d.kind === 'parish_feast' || d.kind === 'custom_event',
+                      )}
+                      personalNamedays={personalDaysOnCivilDate(personalDays, date).filter(
+                        (d) => d.kind === 'nameday',
+                      )}
                       showTypikonForDate={showTypikonForDate}
                       orthocalPending={loading && !dayInfoForDate(date).orthocalLoaded}
                       loadingBorderColor={loadingBorderColor}
@@ -477,6 +491,7 @@ export function LiturgicalMonthGrid({
           dates={monthDates}
           today={today}
           dayInfoForDate={dayInfoForDate}
+          personalDays={personalDays}
           showTypikonForDate={showTypikonForDate}
           onDayPress={onDayPress}
           phoneLayout={phoneLayout}
@@ -563,6 +578,8 @@ function DayCell({
   typography,
   onPress,
   dayInfo,
+  personalFeasts,
+  personalNamedays,
   showTypikonForDate,
   orthocalPending = false,
   loadingBorderColor,
@@ -575,6 +592,8 @@ function DayCell({
   typography: CalendarCellTypography;
   onPress?: (date: Date) => void;
   dayInfo: CalendarDayInfo;
+  personalFeasts: { title: string }[];
+  personalNamedays: { title: string }[];
   showTypikonForDate: (date: Date) => boolean;
   orthocalPending?: boolean;
   loadingBorderColor: string;
@@ -658,14 +677,15 @@ function DayCell({
     () =>
       calendarCellCommemorations(
         displayInfo.dayTitle,
-        displayInfo.feasts,
-        displayInfo.saints,
+        // Personal days first so they stay visible in the cell/agenda budget.
+        [...personalFeasts.map((d) => d.title), ...displayInfo.feasts],
+        [...personalNamedays.map((d) => d.title), ...displayInfo.saints],
         CALENDAR_CELL_MAX_COMMEMORATIONS,
       ),
-    [displayInfo.dayTitle, displayInfo.feasts, displayInfo.saints],
+    [displayInfo.dayTitle, displayInfo.feasts, displayInfo.saints, personalFeasts, personalNamedays],
   );
-  const feastCount = displayInfo.feasts.length;
-  const saintCount = displayInfo.saints.length;
+  const feastCount = displayInfo.feasts.length + personalFeasts.length;
+  const saintCount = displayInfo.saints.length + personalNamedays.length;
   const markerCount = feastCount + saintCount;
   const fastingIcons = dayInfo.fastingFoodIcons;
   const fastingIconSize = compact ? 20 : CALENDAR_FASTING_ICON_SIZE;
@@ -766,10 +786,27 @@ function DayCell({
           markerCount > 0 ? (
             <View style={styles.compactMarkers} accessibilityElementsHidden>
               {feastCount > 0 ? (
-                <View style={[styles.compactDot, { backgroundColor: titleColor }]} />
+                <View
+                  style={[
+                    styles.compactDot,
+                    {
+                      backgroundColor:
+                        personalFeasts.length > 0 ? colors.accentWine : titleColor,
+                    },
+                  ]}
+                />
               ) : null}
               {saintCount > 0 ? (
-                <View style={[styles.compactDot, styles.compactDotSaint, { backgroundColor: subColor }]} />
+                <View
+                  style={[
+                    styles.compactDot,
+                    styles.compactDotSaint,
+                    {
+                      backgroundColor:
+                        personalNamedays.length > 0 ? colors.accentWine : subColor,
+                    },
+                  ]}
+                />
               ) : null}
               {markerCount > 2 ? (
                 <Text style={[styles.compactMore, { color: subColor }]}>+{markerCount - 2}</Text>
@@ -793,8 +830,15 @@ function DayCell({
             {commLines.length > 0 ? (
               <View style={[styles.commArea, { gap: typography.commRowGap }]}>
                 {commLines.map((line, index) => {
+                  const isPersonal =
+                    personalFeasts.some((d) => d.title === line.name) ||
+                    personalNamedays.some((d) => d.title === line.name);
                   const isFeast = line.kind === 'feast';
-                  const color = isFeast ? titleColor : subColor;
+                  const color = isPersonal
+                    ? colors.accentWine
+                    : isFeast
+                      ? titleColor
+                      : subColor;
                   return (
                     <View
                       key={`${line.kind}-${index}-${line.name}`}
@@ -813,6 +857,7 @@ function DayCell({
                             color,
                             fontSize: typography.commFontSize,
                             lineHeight: typography.commLineHeight,
+                            fontWeight: isPersonal ? '700' : undefined,
                           },
                         ]}
                         numberOfLines={2}
@@ -850,6 +895,7 @@ function CalendarMonthAgenda({
   dates,
   today,
   dayInfoForDate,
+  personalDays,
   showTypikonForDate,
   onDayPress,
   phoneLayout,
@@ -865,6 +911,7 @@ function CalendarMonthAgenda({
   dates: Date[];
   today: Date;
   dayInfoForDate: (date: Date) => CalendarDayInfo;
+  personalDays: import('../lib/personalDays').PersonalDay[];
   showTypikonForDate: (date: Date) => boolean;
   onDayPress: (date: Date) => void;
   phoneLayout: boolean;
@@ -878,7 +925,10 @@ function CalendarMonthAgenda({
   isDark: boolean;
 }) {
   const { t, lang } = useAppTranslation();
-  const agendaDates = dates.filter((date) => isAgendaDay(dayInfoForDate(date), phoneLayout));
+  const agendaDates = dates.filter((date) => {
+    const hasPersonal = personalDaysOnCivilDate(personalDays, date).length > 0;
+    return isAgendaDay(dayInfoForDate(date), phoneLayout, hasPersonal);
+  });
 
   return (
     <View style={styles.agenda}>
@@ -891,9 +941,16 @@ function CalendarMonthAgenda({
         const isToday = isSameLocalDay(date, today);
         const orthocalPending = monthLoading && !info.orthocalLoaded;
         const weekday = new Intl.DateTimeFormat(intlLocale, { weekday: 'short' }).format(date);
+        const personalOnDay = personalDaysOnCivilDate(personalDays, date);
         const lines = [
-          ...info.feasts.map((name) => ({ kind: 'feast' as const, name })),
-          ...info.saints.map((name) => ({ kind: 'saint' as const, name })),
+          ...personalOnDay
+            .filter((d) => d.kind === 'parish_feast' || d.kind === 'custom_event')
+            .map((d) => ({ kind: 'feast' as const, name: d.title, personal: true })),
+          ...personalOnDay
+            .filter((d) => d.kind === 'nameday')
+            .map((d) => ({ kind: 'saint' as const, name: d.title, personal: true })),
+          ...info.feasts.map((name) => ({ kind: 'feast' as const, name, personal: false })),
+          ...info.saints.map((name) => ({ kind: 'saint' as const, name, personal: false })),
         ];
 
         return (
@@ -960,7 +1017,11 @@ function CalendarMonthAgenda({
                 mutedColor={mutedColor}
               />
               {lines.slice(0, CALENDAR_CELL_MAX_COMMEMORATIONS).map((line, index) => {
-                const lineColor = line.kind === 'feast' ? colors.feastBorder : mutedColor;
+                const lineColor = line.personal
+                  ? colors.accentWine
+                  : line.kind === 'feast'
+                    ? colors.feastBorder
+                    : mutedColor;
                 return (
                   <View key={`${line.kind}-${index}`} style={styles.agendaCommRow}>
                     <CommemorationListMarker
@@ -970,7 +1031,11 @@ function CalendarMonthAgenda({
                       lineHeight={16}
                     />
                     <Text
-                      style={[styles.agendaLine, { color: lineColor }]}
+                      style={[
+                        styles.agendaLine,
+                        line.personal ? styles.agendaLinePersonal : null,
+                        { color: lineColor },
+                      ]}
                       numberOfLines={1}
                     >
                       {line.name}
@@ -1308,6 +1373,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     fontWeight: '500',
+  },
+  agendaLinePersonal: {
+    fontWeight: '700',
   },
   agendaMore: {
     fontSize: 11,

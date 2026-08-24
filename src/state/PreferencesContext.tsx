@@ -16,6 +16,7 @@ import {
 } from '../lib/liturgical/liturgicalTexts';
 import type { UiLanguage } from '../i18n/types';
 import type { ClergyRole } from '../types/liturgical';
+import { parsePersonalDays, type PersonalDay } from '../lib/personalDays';
 import type { FontScalePreference } from '../theme/fontScale';
 import {
   DEFAULT_TODAY_COLLAPSED,
@@ -59,6 +60,7 @@ type StoredPreferences = {
   notifyLiturgyMorning?: boolean;
   notifyVespersEve?: boolean;
   notifyPresanctified?: boolean;
+  personalDays?: PersonalDay[];
   /** First-launch tips dismissed. */
   onboardingCompleted?: boolean;
 };
@@ -85,6 +87,8 @@ type Preferences = {
   notifyVespersEve: boolean;
   /** Native: afternoon reminder on Presanctified evenings. */
   notifyPresanctified: boolean;
+  /** Parish feast days, namedays, and custom events (Gregorian or Julian month/day). */
+  personalDays: PersonalDay[];
   /** First-launch tip sheet has been completed or skipped. */
   onboardingCompleted: boolean;
   preferencesReady: boolean;
@@ -106,6 +110,7 @@ type PreferencesContextValue = Preferences & {
   setNotifyLiturgyMorning: (value: boolean) => void;
   setNotifyVespersEve: (value: boolean) => void;
   setNotifyPresanctified: (value: boolean) => void;
+  setPersonalDays: (value: PersonalDay[]) => void;
   setOnboardingCompleted: (value: boolean) => void;
 };
 
@@ -150,6 +155,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [notifyLiturgyMorning, setNotifyLiturgyMorningState] = useState(false);
   const [notifyVespersEve, setNotifyVespersEveState] = useState(false);
   const [notifyPresanctified, setNotifyPresanctifiedState] = useState(false);
+  const [personalDays, setPersonalDaysState] = useState<PersonalDay[]>([]);
   const [onboardingCompleted, setOnboardingCompletedState] = useState(false);
   const [preferencesReady, setPreferencesReady] = useState(false);
 
@@ -215,6 +221,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         if (typeof parsed.notifyPresanctified === 'boolean') {
           setNotifyPresanctifiedState(parsed.notifyPresanctified);
         }
+        setPersonalDaysState(parsePersonalDays(parsed.personalDays));
         if (typeof parsed.onboardingCompleted === 'boolean') {
           setOnboardingCompletedState(parsed.onboardingCompleted);
         }
@@ -338,6 +345,15 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     [persist],
   );
 
+  const setPersonalDays = useCallback(
+    (value: PersonalDay[]) => {
+      const next = parsePersonalDays(value);
+      setPersonalDaysState(next);
+      void persist({ personalDays: next });
+    },
+    [persist],
+  );
+
   const setOnboardingCompleted = useCallback(
     (value: boolean) => {
       setOnboardingCompletedState(value);
@@ -384,6 +400,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       notifyLiturgyMorning,
       notifyVespersEve,
       notifyPresanctified,
+      personalDays,
       onboardingCompleted,
       preferencesReady,
       setShowAlternateCalendar,
@@ -401,6 +418,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setNotifyLiturgyMorning,
       setNotifyVespersEve,
       setNotifyPresanctified,
+      setPersonalDays,
       setOnboardingCompleted,
     }),
     [
@@ -412,6 +430,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       notifyLiturgyMorning,
       notifyPresanctified,
       notifyVespersEve,
+      personalDays,
       onboardingCompleted,
       preferencesReady,
       primaryCalendar,
@@ -425,6 +444,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setNotifyPresanctified,
       setNotifyVespersEve,
       setOnboardingCompleted,
+      setPersonalDays,
       setPrimaryCalendar,
       setServingRole,
       setShowAlternateCalendar,

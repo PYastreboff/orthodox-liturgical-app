@@ -27,6 +27,8 @@ import {
   SettingsNotificationsModal,
   type NotificationToggleOption,
 } from '../../src/components/settings/SettingsNotificationsModal';
+import { SettingsPersonalDaysModal } from '../../src/components/settings/SettingsPersonalDaysModal';
+import type { PersonalDayKind } from '../../src/lib/personalDays';
 import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
 import { LanguageGlyphIcon } from '../../src/components/settings/LanguageGlyphIcon';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
@@ -40,6 +42,7 @@ import {
   SERVING_ROLE_LABEL_KEYS,
 } from '../../src/lib/liturgical/servingRoles';
 import {
+  type NotificationReminderKind,
   requestNotificationPermissions,
   supportsLocalNotifications,
 } from '../../src/lib/notifications/liturgicalReminders';
@@ -139,10 +142,13 @@ export default function SettingsScreen() {
     setNotifyVespersEve,
     notifyPresanctified,
     setNotifyPresanctified,
+    personalDays,
+    setPersonalDays,
   } = usePreferences();
 
   const [activePicker, setActivePicker] = useState<SettingsPicker>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [personalDaysKind, setPersonalDaysKind] = useState<PersonalDayKind | null>(null);
   const [permissionHint, setPermissionHint] = useState(false);
   const nativeReminders = supportsLocalNotifications();
   const muted = isDark ? '#a39e98' : colors.muted;
@@ -190,6 +196,30 @@ export default function SettingsScreen() {
     notificationsEnabledCount === 0
       ? t('settings.notificationsOff')
       : t('settings.notificationsOnCount', { count: notificationsEnabledCount });
+  const parishFeastDays = useMemo(
+    () => personalDays.filter((d) => d.kind === 'parish_feast'),
+    [personalDays],
+  );
+  const namedays = useMemo(
+    () => personalDays.filter((d) => d.kind === 'nameday'),
+    [personalDays],
+  );
+  const customEvents = useMemo(
+    () => personalDays.filter((d) => d.kind === 'custom_event'),
+    [personalDays],
+  );
+  const parishFeastValueLabel =
+    parishFeastDays.length === 0
+      ? t('settings.personalDaysNone')
+      : t('settings.personalDaysOnCount', { count: parishFeastDays.length });
+  const namedayValueLabel =
+    namedays.length === 0
+      ? t('settings.personalDaysNone')
+      : t('settings.personalDaysOnCount', { count: namedays.length });
+  const customEventValueLabel =
+    customEvents.length === 0
+      ? t('settings.personalDaysNone')
+      : t('settings.personalDaysOnCount', { count: customEvents.length });
 
   const notificationOptions = useMemo(
     (): NotificationToggleOption[] => [
@@ -320,14 +350,14 @@ export default function SettingsScreen() {
 
   const toggleReminder = useCallback(
     async (
-      kind: 'fasting' | 'liturgy' | 'vespers' | 'presanctified',
+      kind: NotificationReminderKind,
       next: boolean,
     ) => {
       const apply = (value: boolean) => {
         if (kind === 'fasting') setNotifyFastingReminder(value);
         else if (kind === 'liturgy') setNotifyLiturgyMorning(value);
         else if (kind === 'vespers') setNotifyVespersEve(value);
-        else setNotifyPresanctified(value);
+        else if (kind === 'presanctified') setNotifyPresanctified(value);
       };
 
       if (!next) {
@@ -358,6 +388,18 @@ export default function SettingsScreen() {
       uiLanguage,
     ],
   );
+
+  const ensureReminderPermission = useCallback(async () => {
+    if (!nativeReminders) return true;
+    const ok = await requestNotificationPermissions(uiLanguage);
+    if (!ok) {
+      setPermissionHint(true);
+      Alert.alert(t('settings.sectionNotifications'), t('settings.notifyPermissionDenied'));
+      return false;
+    }
+    setPermissionHint(false);
+    return true;
+  }, [nativeReminders, t, uiLanguage]);
 
   const version = Constants.expoConfig?.version ?? '0.1.0';
   const screenSafe = useScreenSafePadding();
@@ -477,6 +519,33 @@ export default function SettingsScreen() {
                 hint={t('settings.notificationsRowHint')}
                 valueLabel={notificationsValueLabel}
                 onPress={() => setNotificationsOpen(true)}
+                showDivider
+              />
+              <SettingsLinkRow
+                isDark={isDark}
+                icon="home"
+                label={t('settings.parishFeast')}
+                hint={t('settings.parishFeastRowHint')}
+                valueLabel={parishFeastValueLabel}
+                onPress={() => setPersonalDaysKind('parish_feast')}
+                showDivider
+              />
+              <SettingsLinkRow
+                isDark={isDark}
+                icon="user"
+                label={t('settings.nameday')}
+                hint={t('settings.namedayRowHint')}
+                valueLabel={namedayValueLabel}
+                onPress={() => setPersonalDaysKind('nameday')}
+                showDivider
+              />
+              <SettingsLinkRow
+                isDark={isDark}
+                icon="star"
+                label={t('settings.customEvent')}
+                hint={t('settings.customEventRowHint')}
+                valueLabel={customEventValueLabel}
+                onPress={() => setPersonalDaysKind('custom_event')}
                 showDivider
               />
 
@@ -613,6 +682,18 @@ export default function SettingsScreen() {
         isDark={isDark}
         footerNote={notificationsFooterNote}
       />
+      {personalDaysKind ? (
+        <SettingsPersonalDaysModal
+          visible
+          kind={personalDaysKind}
+          days={personalDays}
+          onChange={setPersonalDays}
+          onClose={() => setPersonalDaysKind(null)}
+          isDark={isDark}
+          defaultCalendar={primaryCalendar}
+          onEnableEveReminder={ensureReminderPermission}
+        />
+      ) : null}
     </>
   );
 }

@@ -1,6 +1,13 @@
 import { Feather } from '@expo/vector-icons';
-import type { ReactNode } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+
+const SELECTED_FG = '#fff';
+
+function tintLeading(node: ReactNode, selected: boolean): ReactNode {
+  if (!selected || !isValidElement(node)) return node;
+  return cloneElement(node as ReactElement<{ color?: string }>, { color: SELECTED_FG });
+}
 
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import type { NotificationReminderKind } from '../../lib/notifications/liturgicalReminders';
@@ -40,59 +47,67 @@ export function SettingsNotificationsModal({
   const textColor = isDark ? '#e8e3dd' : '#2b2623';
   const mutedColor = isDark ? '#a39e98' : colors.muted;
   const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.12)';
+  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
+  const sheetHeight = Math.round(windowHeight * (windowWidth < 600 ? 2 / 3 : 0.62));
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.root}>
         <Pressable style={styles.backdrop} onPress={onClose} accessibilityElementsHidden />
-        <View style={[styles.sheet, { backgroundColor: surfaceBg, borderColor }]}>
+        <View style={[styles.sheet, { backgroundColor: surfaceBg, borderColor, height: sheetHeight }]}>
           <Text style={[styles.title, { color: textColor }]}>{title}</Text>
           {subtitle ? (
             <Text style={[styles.subtitle, { color: mutedColor }]}>{subtitle}</Text>
           ) : null}
-          {options.map((option) => {
-            const selected = option.enabled;
-            return (
-              <Pressable
-                key={option.id}
-                style={({ pressed }) => [
-                  styles.option,
-                  {
-                    backgroundColor: selected
-                      ? colors.accentWine
-                      : pressed
-                        ? 'rgba(139,46,60,0.14)'
-                        : 'transparent',
-                  },
-                ]}
-                onPress={() => onToggle(option.id, !selected)}
-                accessibilityRole="switch"
-                accessibilityState={{ checked: selected }}
-                {...hoverAccessibilityProps(option.label, { role: 'switch' })}
-              >
-                <View style={styles.leading}>{option.leading}</View>
-                <View style={styles.textCol}>
-                  <Text
-                    style={[styles.optionLabel, { color: selected ? '#fff' : textColor }]}
-                    numberOfLines={2}
-                  >
-                    {option.label}
-                  </Text>
-                  <Text
-                    style={[styles.optionHint, { color: selected ? 'rgba(255,255,255,0.82)' : mutedColor }]}
-                    numberOfLines={2}
-                  >
-                    {option.hint}
-                  </Text>
-                </View>
-                {selected ? (
-                  <Feather name="check" size={18} color="#fff" />
-                ) : (
-                  <View style={styles.checkPlaceholder} />
-                )}
-              </Pressable>
-            );
-          })}
+          <ScrollView
+            style={styles.optionsScroll}
+            contentContainerStyle={styles.optionsContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            {options.map((option) => {
+              const selected = option.enabled;
+              return (
+                <Pressable
+                  key={option.id}
+                  style={({ pressed }) => [
+                    styles.option,
+                    {
+                      backgroundColor: selected
+                        ? colors.accentWine
+                        : pressed
+                          ? 'rgba(139,46,60,0.14)'
+                          : 'transparent',
+                    },
+                  ]}
+                  onPress={() => onToggle(option.id, !selected)}
+                  accessibilityRole="switch"
+                  accessibilityState={{ checked: selected }}
+                  {...hoverAccessibilityProps(option.label, { role: 'switch' })}
+                >
+                  <View style={styles.leading}>{tintLeading(option.leading, selected)}</View>
+                  <View style={styles.textCol}>
+                    <Text
+                      style={[styles.optionLabel, { color: selected ? SELECTED_FG : textColor }]}
+                      numberOfLines={2}
+                    >
+                      {option.label}
+                    </Text>
+                    <Text
+                      style={[styles.optionHint, { color: selected ? 'rgba(255,255,255,0.82)' : mutedColor }]}
+                      numberOfLines={2}
+                    >
+                      {option.hint}
+                    </Text>
+                  </View>
+                  {selected ? (
+                    <Feather name="check" size={18} color={SELECTED_FG} />
+                  ) : (
+                    <View style={styles.checkPlaceholder} />
+                  )}
+                </Pressable>
+              );
+            })}
+          </ScrollView>
           {footerNote ? (
             <Text style={[styles.footerNote, { color: mutedColor }]}>{footerNote}</Text>
           ) : null}
@@ -125,6 +140,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 20,
     elevation: 10,
+  },
+  optionsScroll: {
+    flex: 1,
+  },
+  optionsContent: {
+    paddingBottom: 8,
+    flexGrow: 1,
   },
   title: {
     fontSize: 13,

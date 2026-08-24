@@ -88,9 +88,11 @@ function TabsLayoutContent() {
           <TabBarBleedBackground color={tabBarBg} bleedPx={tabBarBleedHeight} />
         ),
         tabBarItemStyle: {
-          height: TAB_BAR_CONTENT_HEIGHT,
+          flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
+          paddingTop: 0,
+          paddingBottom: 0,
           paddingVertical: 0,
         },
         tabBarIconStyle: {
@@ -102,7 +104,7 @@ function TabsLayoutContent() {
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '500',
-          marginTop: 4,
+          marginTop: 2,
           marginBottom: 0,
           includeFontPadding: false,
           textAlignVertical: 'center',
