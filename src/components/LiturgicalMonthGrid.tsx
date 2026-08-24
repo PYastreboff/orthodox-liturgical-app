@@ -36,7 +36,7 @@ import { intlLocaleForLanguage } from '../i18n/locale';
 import { localizeCalendarDayInfo } from '../i18n/orthocalContent';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
-import { personalDaysOnCivilDate } from '../lib/personalDays';
+import { personalDaysOnCivilDate, type PersonalDayKind } from '../lib/personalDays';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { typikonIconColor } from '../lib/liturgical/typikonSymbols';
 import { usePreferences } from '../state/PreferencesContext';
@@ -100,6 +100,24 @@ function isAgendaDay(
   if (info.isFastDay) return true;
   const icons = info.fastingFoodIcons;
   return icons.noEating || icons.noMeat || icons.fish || icons.wine || icons.oil;
+}
+
+function personalKindForName(
+  name: string,
+  feasts: { title: string }[],
+  namedays: { title: string }[],
+  events: { title: string }[],
+): PersonalDayKind | null {
+  if (feasts.some((d) => d.title === name)) return 'parish_feast';
+  if (namedays.some((d) => d.title === name)) return 'nameday';
+  if (events.some((d) => d.title === name)) return 'custom_event';
+  return null;
+}
+
+function personalLineColor(kind: PersonalDayKind | null, isDark: boolean): string | null {
+  if (!kind) return null;
+  if (kind === 'custom_event') return isDark ? colors.personalEventDark : colors.personalEvent;
+  return colors.accentWine;
 }
 
 function CalendarFastingIconsRow({
@@ -469,10 +487,13 @@ export function LiturgicalMonthGrid({
                       onPress={onDayPress}
                       dayInfo={dayInfoForDate(date)}
                       personalFeasts={personalDaysOnCivilDate(personalDays, date).filter(
-                        (d) => d.kind === 'parish_feast' || d.kind === 'custom_event',
+                        (d) => d.kind === 'parish_feast',
                       )}
                       personalNamedays={personalDaysOnCivilDate(personalDays, date).filter(
                         (d) => d.kind === 'nameday',
+                      )}
+                      personalEvents={personalDaysOnCivilDate(personalDays, date).filter(
+                        (d) => d.kind === 'custom_event',
                       )}
                       showTypikonForDate={showTypikonForDate}
                       orthocalPending={loading && !dayInfoForDate(date).orthocalLoaded}
@@ -580,6 +601,7 @@ function DayCell({
   dayInfo,
   personalFeasts,
   personalNamedays,
+  personalEvents,
   showTypikonForDate,
   orthocalPending = false,
   loadingBorderColor,
@@ -594,6 +616,7 @@ function DayCell({
   dayInfo: CalendarDayInfo;
   personalFeasts: { title: string }[];
   personalNamedays: { title: string }[];
+  personalEvents: { title: string }[];
   showTypikonForDate: (date: Date) => boolean;
   orthocalPending?: boolean;
   loadingBorderColor: string;
@@ -677,14 +700,24 @@ function DayCell({
     () =>
       calendarCellCommemorations(
         displayInfo.dayTitle,
-        // Personal days first so they stay visible in the cell/agenda budget.
-        [...personalFeasts.map((d) => d.title), ...displayInfo.feasts],
+        [
+          ...personalFeasts.map((d) => d.title),
+          ...personalEvents.map((d) => d.title),
+          ...displayInfo.feasts,
+        ],
         [...personalNamedays.map((d) => d.title), ...displayInfo.saints],
         CALENDAR_CELL_MAX_COMMEMORATIONS,
       ),
-    [displayInfo.dayTitle, displayInfo.feasts, displayInfo.saints, personalFeasts, personalNamedays],
+    [
+      displayInfo.dayTitle,
+      displayInfo.feasts,
+      displayInfo.saints,
+      personalFeasts,
+      personalNamedays,
+      personalEvents,
+    ],
   );
-  const feastCount = displayInfo.feasts.length + personalFeasts.length;
+  const feastCount = displayInfo.feasts.length + personalFeasts.length + personalEvents.length;
   const saintCount = displayInfo.saints.length + personalNamedays.length;
   const markerCount = feastCount + saintCount;
   const fastingIcons = dayInfo.fastingFoodIcons;
@@ -791,7 +824,23 @@ function DayCell({
                     styles.compactDot,
                     {
                       backgroundColor:
-                        personalFeasts.length > 0 ? colors.accentWine : titleColor,
+                        personalFeasts.length > 0
+                          ? colors.accentWine
+                          : personalEvents.length > 0
+                            ? isDark
+                              ? colors.personalEventDark
+                              : colors.personalEvent
+                            : titleColor,
+                    },
+                  ]}
+                />
+              ) : null}
+              {personalEvents.length > 0 && personalFeasts.length > 0 ? (
+                <View
+                  style={[
+                    styles.compactDot,
+                    {
+                      backgroundColor: isDark ? colors.personalEventDark : colors.personalEvent,
                     },
                   ]}
                 />
@@ -830,15 +879,16 @@ function DayCell({
             {commLines.length > 0 ? (
               <View style={[styles.commArea, { gap: typography.commRowGap }]}>
                 {commLines.map((line, index) => {
-                  const isPersonal =
-                    personalFeasts.some((d) => d.title === line.name) ||
-                    personalNamedays.some((d) => d.title === line.name);
+                  const personalKind = personalKindForName(
+                    line.name,
+                    personalFeasts,
+                    personalNamedays,
+                    personalEvents,
+                  );
                   const isFeast = line.kind === 'feast';
-                  const color = isPersonal
-                    ? colors.accentWine
-                    : isFeast
-                      ? titleColor
-                      : subColor;
+                  const color =
+                    personalLineColor(personalKind, isDark) ??
+                    (isFeast ? titleColor : subColor);
                   return (
                     <View
                       key={`${line.kind}-${index}-${line.name}`}
@@ -849,6 +899,7 @@ function DayCell({
                         color={color}
                         size={typography.commMarkerSize}
                         lineHeight={typography.commLineHeight}
+                        personalKind={personalKind}
                       />
                       <Text
                         style={[
@@ -857,7 +908,7 @@ function DayCell({
                             color,
                             fontSize: typography.commFontSize,
                             lineHeight: typography.commLineHeight,
-                            fontWeight: isPersonal ? '700' : undefined,
+                            fontWeight: personalKind ? '700' : undefined,
                           },
                         ]}
                         numberOfLines={2}
@@ -944,13 +995,36 @@ function CalendarMonthAgenda({
         const personalOnDay = personalDaysOnCivilDate(personalDays, date);
         const lines = [
           ...personalOnDay
-            .filter((d) => d.kind === 'parish_feast' || d.kind === 'custom_event')
-            .map((d) => ({ kind: 'feast' as const, name: d.title, personal: true })),
+            .filter((d) => d.kind === 'parish_feast')
+            .map((d) => ({
+              kind: 'feast' as const,
+              name: d.title,
+              personalKind: 'parish_feast' as const,
+            })),
+          ...personalOnDay
+            .filter((d) => d.kind === 'custom_event')
+            .map((d) => ({
+              kind: 'feast' as const,
+              name: d.title,
+              personalKind: 'custom_event' as const,
+            })),
           ...personalOnDay
             .filter((d) => d.kind === 'nameday')
-            .map((d) => ({ kind: 'saint' as const, name: d.title, personal: true })),
-          ...info.feasts.map((name) => ({ kind: 'feast' as const, name, personal: false })),
-          ...info.saints.map((name) => ({ kind: 'saint' as const, name, personal: false })),
+            .map((d) => ({
+              kind: 'saint' as const,
+              name: d.title,
+              personalKind: 'nameday' as const,
+            })),
+          ...info.feasts.map((name) => ({
+            kind: 'feast' as const,
+            name,
+            personalKind: null as PersonalDayKind | null,
+          })),
+          ...info.saints.map((name) => ({
+            kind: 'saint' as const,
+            name,
+            personalKind: null as PersonalDayKind | null,
+          })),
         ];
 
         return (
@@ -1017,11 +1091,9 @@ function CalendarMonthAgenda({
                 mutedColor={mutedColor}
               />
               {lines.slice(0, CALENDAR_CELL_MAX_COMMEMORATIONS).map((line, index) => {
-                const lineColor = line.personal
-                  ? colors.accentWine
-                  : line.kind === 'feast'
-                    ? colors.feastBorder
-                    : mutedColor;
+                const lineColor =
+                  personalLineColor(line.personalKind, isDark) ??
+                  (line.kind === 'feast' ? colors.feastBorder : mutedColor);
                 return (
                   <View key={`${line.kind}-${index}`} style={styles.agendaCommRow}>
                     <CommemorationListMarker
@@ -1029,11 +1101,12 @@ function CalendarMonthAgenda({
                       color={lineColor}
                       size={13}
                       lineHeight={16}
+                      personalKind={line.personalKind}
                     />
                     <Text
                       style={[
                         styles.agendaLine,
-                        line.personal ? styles.agendaLinePersonal : null,
+                        line.personalKind ? styles.agendaLinePersonal : null,
                         { color: lineColor },
                       ]}
                       numberOfLines={1}

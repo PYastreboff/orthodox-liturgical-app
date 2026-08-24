@@ -690,7 +690,6 @@ export default function SettingsScreen() {
           onChange={setPersonalDays}
           onClose={() => setPersonalDaysKind(null)}
           isDark={isDark}
-          defaultCalendar={primaryCalendar}
           onEnableEveReminder={ensureReminderPermission}
         />
       ) : null}

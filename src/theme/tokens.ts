@@ -24,6 +24,9 @@ export const colors = {
   greatFridayHoverBorderDark: '#8f3d4a',
   accentGold: '#b08d57',
   accentTheotokos: '#2f4a6f',
+  /** Custom calendar events (namedays/feasts use accentWine). */
+  personalEvent: '#052850',
+  personalEventDark: '#24588f',
   /** Tab bar active — high contrast on parchment / dark surfaces */
   tabActiveLight: '#1e1a16',
   tabActiveDark: '#e8c97a',

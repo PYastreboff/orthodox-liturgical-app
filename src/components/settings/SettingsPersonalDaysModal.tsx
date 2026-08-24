@@ -16,7 +16,6 @@ import {
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../../i18n/useAppTranslation';
 import { intlLocaleForLanguage } from '../../i18n/locale';
-import type { PrimaryCalendar } from '../../lib/calendar/dateDisplay';
 import { dateToJulianPlainDate } from '../../lib/calendar/julianGregorian';
 import {
   clampPersonalDate,
@@ -39,7 +38,6 @@ type Props = {
   onChange: (next: PersonalDay[]) => void;
   onClose: () => void;
   isDark: boolean;
-  defaultCalendar: PrimaryCalendar;
   onEnableEveReminder?: () => Promise<boolean>;
 };
 
@@ -123,7 +121,6 @@ export function SettingsPersonalDaysModal({
   onChange,
   onClose,
   isDark,
-  defaultCalendar,
   onEnableEveReminder,
 }: Props) {
   const { t, lang } = useAppTranslation();
@@ -137,8 +134,8 @@ export function SettingsPersonalDaysModal({
       return;
     }
     const hasItems = days.some((d) => d.kind === kind);
-    setDraft(hasItems ? null : emptyDraft(kind, defaultCalendar));
-  }, [visible, kind, defaultCalendar]);
+    setDraft(hasItems ? null : emptyDraft(kind, 'gregorian'));
+  }, [visible, kind]);
 
   const setDraftCalendar = (calendar: PersonalDayCalendar) => {
     if (!draft) return;
@@ -238,7 +235,7 @@ export function SettingsPersonalDaysModal({
       )}
       <Pressable
         style={styles.addBtn}
-        onPress={() => setDraft(emptyDraft(kind, defaultCalendar))}
+        onPress={() => setDraft(emptyDraft(kind, 'gregorian'))}
         disabled={days.length >= MAX_PERSONAL_DAYS}
         accessibilityRole="button"
         {...hoverAccessibilityProps(addLabel, { role: 'button' })}
