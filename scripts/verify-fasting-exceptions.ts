@@ -145,6 +145,41 @@ const cases: Array<{
     icons: { fish: false, wine: false, oil: false },
   },
   {
+    name: 'dormition fast forefeast — strict weekday',
+    day: mockDay({
+      fast_level: 4,
+      fast_level_desc: 'Dormition Fast',
+      fast_exception_desc: '',
+      fast_abstentions: ['meat', 'fish', 'dairy', 'eggs', 'wine', 'oil'],
+    }),
+    appearanceKey: 'dormition_fast',
+    expect: { allowed: 'plant', notAllowed: 'dairy,eggs,fish,meat,oil,wine' },
+  },
+  {
+    name: 'dormition fast — wine and oil allowed',
+    day: mockDay({
+      fast_level: 4,
+      fast_level_desc: 'Dormition Fast',
+      fast_exception_desc: 'Wine and Oil are Allowed',
+      fast_abstentions: ['meat', 'fish', 'dairy', 'eggs'],
+    }),
+    appearanceKey: 'dormition_fast',
+    expect: { allowed: 'oil,plant,wine', notAllowed: 'dairy,eggs,fish,meat' },
+    icons: { fish: false, wine: true, oil: true },
+  },
+  {
+    name: 'dormition fast — fish wine and oil allowed',
+    day: mockDay({
+      fast_level: 4,
+      fast_level_desc: 'Dormition Fast',
+      fast_exception_desc: 'Fish, Wine and Oil are Allowed',
+      fast_abstentions: ['meat', 'dairy', 'eggs'],
+    }),
+    appearanceKey: 'dormition_fast',
+    expect: { allowed: 'fish,oil,plant,wine', notAllowed: 'dairy,eggs,meat' },
+    icons: { fish: true, wine: true, oil: true },
+  },
+  {
     name: 'cheesefare Tue — no orthocal yet',
     day: null,
     appearanceKey: 'cheesefare_fast',
@@ -153,7 +188,6 @@ const cases: Array<{
       allowed: 'dairy,eggs,fish,oil,plant,wine',
       notAllowed: 'meat',
     },
-    icons: { fish: true, wine: true, oil: true },
   },
   {
     name: 'cheesefare Wed — no orthocal yet',

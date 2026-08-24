@@ -11,7 +11,7 @@ import {
   FAST_PILL_LEGEND_LABEL_KEY,
 } from '../lib/liturgical/fastPillStyle';
 import {
-  CALENDAR_CELL_LEGEND,
+  calendarCellLegend,
   CALENDAR_ICON_LEGEND,
   TYPIKON_LEGEND_ENTRIES,
 } from '../lib/liturgical/liturgicalLegend';
@@ -46,6 +46,8 @@ export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = fals
       ? SECTION_CARD_PADDING_PHONE
       : SECTION_CARD_PADDING;
   const hintColor = mutedColor ?? textColor;
+  const legendBorder = isDark ? colors.darkBorder : colors.border;
+  const cellLegend = calendarCellLegend(isDark);
 
   return (
     <View style={[styles.wrap, { paddingHorizontal: wrapPaddingX }, pageLayout ? styles.wrapPage : null]}>
@@ -82,7 +84,7 @@ export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = fals
         </View>
       </View>
 
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <View style={[styles.divider, { backgroundColor: legendBorder }]} />
 
       <View style={styles.legendSection}>
         <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
@@ -92,13 +94,15 @@ export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = fals
           {t('calendar.legendFastingHint')}
         </Text>
         <View style={styles.swatchRow}>
-          {CALENDAR_CELL_LEGEND.map((item) => (
+          {cellLegend.map((item) => (
             <View key={item.key} style={styles.swatchItem}>
               <View
                 style={[
                   styles.swatch,
                   { backgroundColor: item.swatch },
-                  'border' in item && item.border ? styles.swatchBorder : null,
+                  'border' in item && item.border
+                    ? [styles.swatchBorder, { borderColor: legendBorder }]
+                    : null,
                   'feastOutline' in item && item.feastOutline ? styles.swatchFeastOutline : null,
                   'todayRing' in item && item.todayRing ? styles.swatchTodayRing : null,
                 ]}
@@ -134,7 +138,7 @@ export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = fals
         </View>
       </View>
 
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <View style={[styles.divider, { backgroundColor: legendBorder }]} />
 
       <View style={styles.legendSection}>
         <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
@@ -283,7 +287,6 @@ const styles = StyleSheet.create({
   },
   swatchBorder: {
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
   },
   swatchFeastOutline: {
     borderWidth: 2,

@@ -9,7 +9,7 @@ export type CalendarCellStyle = {
 /** Fixed great feasts that always use pink cell + red border on the month grid. */
 export const FEAST_CELL_APPEARANCE_KEYS = new Set(['pascha', 'pentecost', 'transfiguration']);
 
-/** Fasting seasons — very light grey cell. */
+/** Fasting seasons — muted cell on the month grid. */
 const FASTING_KEYS = new Set([
   'holy_week',
   'great_friday',
@@ -28,7 +28,7 @@ const FASTING_KEYS = new Set([
   ...WEEKLY_FAST_APPEARANCE_KEYS,
 ]);
 
-/** Calendar cells always use the light palette (readable on parchment & in dark mode). */
+/** Light mode month grid cells. */
 export const CALENDAR_CELL_WHITE = '#ffffff';
 export const CALENDAR_CELL_FASTING = '#c4c1b8';
 export const CALENDAR_CELL_FEAST = '#f2a0ad';
@@ -36,11 +36,42 @@ export const CALENDAR_CELL_PALM_SUNDAY = '#c8dcc4';
 /** Pascha — royal gold vestments; light enough for ink text, rich enough to read as gold. */
 export const CALENDAR_CELL_PASCHA = '#e8c878';
 
-const CELL_WHITE = CALENDAR_CELL_WHITE;
-const CELL_FASTING = CALENDAR_CELL_FASTING;
-const CELL_FEAST = CALENDAR_CELL_FEAST;
-const CELL_PALM_SUNDAY = CALENDAR_CELL_PALM_SUNDAY;
-const CELL_PASCHA = CALENDAR_CELL_PASCHA;
+/** Dark mode month grid cells. */
+export const CALENDAR_CELL_DARK_NORMAL = '#2c2822';
+export const CALENDAR_CELL_DARK_FASTING = '#181614';
+export const CALENDAR_CELL_DARK_FEAST = '#3a2228';
+export const CALENDAR_CELL_DARK_PALM_SUNDAY = '#243028';
+/** Pascha — warm darker gold on the dark grid. */
+export const CALENDAR_CELL_DARK_PASCHA = '#5a4824';
+
+export type CalendarCellLegendItem = {
+  key:
+    | 'calendar.legendNonFasting'
+    | 'calendar.legendFasting'
+    | 'calendar.legendFeast'
+    | 'calendar.legendToday';
+  swatch: string;
+  border?: true;
+  feastOutline?: true;
+  todayRing?: true;
+};
+
+export function calendarCellLegend(isDark: boolean): readonly CalendarCellLegendItem[] {
+  if (isDark) {
+    return [
+      { key: 'calendar.legendNonFasting', swatch: CALENDAR_CELL_DARK_NORMAL, border: true },
+      { key: 'calendar.legendFasting', swatch: CALENDAR_CELL_DARK_FASTING },
+      { key: 'calendar.legendFeast', swatch: CALENDAR_CELL_DARK_FEAST, feastOutline: true },
+      { key: 'calendar.legendToday', swatch: CALENDAR_CELL_DARK_NORMAL, todayRing: true },
+    ];
+  }
+  return [
+    { key: 'calendar.legendNonFasting', swatch: CALENDAR_CELL_WHITE, border: true },
+    { key: 'calendar.legendFasting', swatch: CALENDAR_CELL_FASTING },
+    { key: 'calendar.legendFeast', swatch: CALENDAR_CELL_FEAST, feastOutline: true },
+    { key: 'calendar.legendToday', swatch: CALENDAR_CELL_WHITE, todayRing: true },
+  ];
+}
 
 export function isFeastCellAppearance(appearanceKey: string): boolean {
   return FEAST_CELL_APPEARANCE_KEYS.has(appearanceKey);
@@ -51,7 +82,7 @@ export function isCalendarFastingAppearance(appearanceKey: string): boolean {
 }
 
 /**
- * Calendar month cells: white · light grey (fast) · reddish pink (selected great feasts only).
+ * Calendar month cells: normal · fasting grey · feast pink (light) or muted dark tints (dark mode).
  */
 export function getCalendarCellStyle(
   appearanceKey: string,
@@ -60,29 +91,51 @@ export function getCalendarCellStyle(
     fastingCell?: boolean;
     meatFastCell?: boolean;
   },
+  isDark = false,
 ): CalendarCellStyle {
+  const foreground = isDark ? colors.darkInk : colors.ink;
+
+  if (isDark) {
+    if (appearanceKey === 'pascha') {
+      return { backgroundColor: CALENDAR_CELL_DARK_PASCHA, foreground };
+    }
+    if (options?.feastCell) {
+      return { backgroundColor: CALENDAR_CELL_DARK_FEAST, foreground };
+    }
+    if (appearanceKey === 'palm_sunday') {
+      return { backgroundColor: CALENDAR_CELL_DARK_PALM_SUNDAY, foreground };
+    }
+    if (options?.meatFastCell) {
+      return { backgroundColor: CALENDAR_CELL_DARK_NORMAL, foreground };
+    }
+    if (options?.fastingCell || FASTING_KEYS.has(appearanceKey)) {
+      return { backgroundColor: CALENDAR_CELL_DARK_FASTING, foreground };
+    }
+    return { backgroundColor: CALENDAR_CELL_DARK_NORMAL, foreground };
+  }
+
   if (appearanceKey === 'pascha') {
-    return { backgroundColor: CELL_PASCHA, foreground: colors.ink };
+    return { backgroundColor: CALENDAR_CELL_PASCHA, foreground: colors.ink };
   }
 
   if (options?.feastCell) {
-    return { backgroundColor: CELL_FEAST, foreground: colors.ink };
+    return { backgroundColor: CALENDAR_CELL_FEAST, foreground: colors.ink };
   }
 
   if (appearanceKey === 'palm_sunday') {
-    return { backgroundColor: CELL_PALM_SUNDAY, foreground: colors.ink };
+    return { backgroundColor: CALENDAR_CELL_PALM_SUNDAY, foreground: colors.ink };
   }
 
   // Meat-fast days keep normal feast/weekday backgrounds (not grey fasting cells).
   if (options?.meatFastCell) {
-    return { backgroundColor: CELL_WHITE, foreground: colors.ink };
+    return { backgroundColor: CALENDAR_CELL_WHITE, foreground: colors.ink };
   }
 
   if (options?.fastingCell || FASTING_KEYS.has(appearanceKey)) {
-    return { backgroundColor: CELL_FASTING, foreground: colors.ink };
+    return { backgroundColor: CALENDAR_CELL_FASTING, foreground: colors.ink };
   }
 
-  return { backgroundColor: CELL_WHITE, foreground: colors.ink };
+  return { backgroundColor: CALENDAR_CELL_WHITE, foreground: colors.ink };
 }
 
 function parseHex(hex: string): { r: number; g: number; b: number } | null {
@@ -120,6 +173,14 @@ export function calendarCellHoverBackground(
   if (!hovered) return backgroundColor;
   const rgb = parseHex(backgroundColor);
   if (!rgb) return backgroundColor;
-  const factor = isDark ? 1.07 : 0.93;
-  return toHex(rgb.r * factor, rgb.g * factor, rgb.b * factor);
+  if (isDark) {
+    // Multiply-by-1.07 was imperceptible on dark cells — mix toward white instead.
+    const mix = 0.14;
+    return toHex(
+      rgb.r + (255 - rgb.r) * mix,
+      rgb.g + (255 - rgb.g) * mix,
+      rgb.b + (255 - rgb.b) * mix,
+    );
+  }
+  return toHex(rgb.r * 0.93, rgb.g * 0.93, rgb.b * 0.93);
 }

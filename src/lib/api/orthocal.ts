@@ -44,6 +44,8 @@ export type OrthocalDay = {
   fast_level_desc: string;
   fast_exception: number;
   fast_exception_desc: string;
+  /** Foods to abstain from that day (orthocal.info). */
+  fast_abstentions?: string[];
   saints: string[];
   service_notes: string[];
   abbreviated_reading_indices: number[];
@@ -171,7 +173,7 @@ const FAST_FOODS_BY_LEVEL: Record<number, string> = {
   1: 'All standard foods are allowed.',
   2: 'Wine and oil permitted; follow your typikon for other foods.',
   3: 'Fish, wine, and oil are generally permitted; no meat or dairy.',
-  4: 'Dairy, eggs, fish, wine, and oil may be permitted; no meat.',
+  4: 'Strict fast: no meat, dairy, eggs, fish, wine, or oil (typical weekday rule).',
   5: 'Strict fast: no meat, dairy, eggs, fish, wine, or oil (typical weekday rule).',
 };
 

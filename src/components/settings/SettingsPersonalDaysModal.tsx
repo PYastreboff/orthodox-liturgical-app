@@ -78,6 +78,14 @@ function copyForKind(kind: PersonalDayKind, t: (key: string) => string) {
         add: t('settings.addNameday'),
         placeholder: t('settings.namedayPlaceholder'),
       };
+    case 'birthday':
+      return {
+        title: t('settings.birthday'),
+        hint: t('settings.birthdayHint'),
+        empty: t('settings.birthdayEmpty'),
+        add: t('settings.addBirthday'),
+        placeholder: t('settings.birthdayPlaceholder'),
+      };
     default:
       return {
         title: t('settings.customEvent'),
@@ -202,7 +210,7 @@ export function SettingsPersonalDaysModal({
       return;
     }
     onChange(days.filter((d) => d.id !== draft.id));
-    setDraft(null);
+    closeAll();
   };
 
   const renderList = () => (

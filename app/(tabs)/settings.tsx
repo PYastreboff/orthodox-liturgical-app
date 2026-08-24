@@ -204,6 +204,10 @@ export default function SettingsScreen() {
     () => personalDays.filter((d) => d.kind === 'nameday'),
     [personalDays],
   );
+  const birthdays = useMemo(
+    () => personalDays.filter((d) => d.kind === 'birthday'),
+    [personalDays],
+  );
   const customEvents = useMemo(
     () => personalDays.filter((d) => d.kind === 'custom_event'),
     [personalDays],
@@ -216,6 +220,10 @@ export default function SettingsScreen() {
     namedays.length === 0
       ? t('settings.personalDaysNone')
       : t('settings.personalDaysOnCount', { count: namedays.length });
+  const birthdayValueLabel =
+    birthdays.length === 0
+      ? t('settings.personalDaysNone')
+      : t('settings.personalDaysOnCount', { count: birthdays.length });
   const customEventValueLabel =
     customEvents.length === 0
       ? t('settings.personalDaysNone')
@@ -537,6 +545,15 @@ export default function SettingsScreen() {
                 hint={t('settings.namedayRowHint')}
                 valueLabel={namedayValueLabel}
                 onPress={() => setPersonalDaysKind('nameday')}
+                showDivider
+              />
+              <SettingsLinkRow
+                isDark={isDark}
+                icon="gift"
+                label={t('settings.birthday')}
+                hint={t('settings.birthdayRowHint')}
+                valueLabel={birthdayValueLabel}
+                onPress={() => setPersonalDaysKind('birthday')}
                 showDivider
               />
               <SettingsLinkRow

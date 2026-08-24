@@ -4,7 +4,7 @@ import { translate } from '../i18n/translate';
 import { intlLocaleForLanguage } from '../i18n/locale';
 import type { UiLanguage } from '../i18n/types';
 
-export type PersonalDayKind = 'parish_feast' | 'nameday' | 'custom_event';
+export type PersonalDayKind = 'parish_feast' | 'nameday' | 'birthday' | 'custom_event';
 export type PersonalDayCalendar = PrimaryCalendar;
 
 export type PersonalDay = {
@@ -21,7 +21,7 @@ export type PersonalDay = {
 
 export const MAX_PERSONAL_DAYS = 24;
 
-const KINDS: PersonalDayKind[] = ['parish_feast', 'nameday', 'custom_event'];
+const KINDS: PersonalDayKind[] = ['parish_feast', 'nameday', 'birthday', 'custom_event'];
 
 export function newPersonalDayId(): string {
   return `pd_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
@@ -49,7 +49,7 @@ export function parsePersonalDays(raw: unknown): PersonalDay[] {
     if (!item || typeof item !== 'object') continue;
     const rec = item as Record<string, unknown>;
     if (typeof rec.id !== 'string' || !rec.id.trim()) continue;
-    if (rec.kind !== 'parish_feast' && rec.kind !== 'nameday' && rec.kind !== 'custom_event') continue;
+    if (!isPersonalDayKind(rec.kind)) continue;
     if (typeof rec.title !== 'string') continue;
     const title = rec.title.trim();
     if (!title) continue;

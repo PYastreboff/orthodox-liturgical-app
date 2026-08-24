@@ -45,12 +45,11 @@ export type FastSummaryKind =
   | 'dairy'
   | 'total_abstinence';
 
+/** Orthocal `fast_level` fallbacks when abstentions / exceptions are missing. */
 const FAST_LEVEL_KEYS: Record<number, string> = {
   0: 'fasting.noFast',
   1: 'fasting.levelStrict',
-  2: 'fasting.levelWineOil',
-  3: 'fasting.levelFish',
-  4: 'fasting.levelDairy',
+  4: 'fasting.levelStrict',
   5: 'fasting.levelStrict',
 };
 
@@ -257,17 +256,62 @@ export function isOrthocalFastDay(
   );
 }
 
-function fastLevelLabel(day: OrthocalDay, lang: UiLanguage): string {
-  const byLevel = FAST_LEVEL_KEYS[day.fast_level];
-  if (byLevel) return translate(lang, byLevel);
+function ruleLabelFromDetail(detail: FastingFoodsDetail, lang: UiLanguage): string {
+  if (detail.meatFast) return translate(lang, 'fasting.levelMeatFast');
+  if (detail.totalAbstinence) return translate(lang, 'fasting.levelNoEating');
 
-  const desc = day.fast_level_desc?.trim();
-  if (desc) {
-    const key = FAST_DESC_KEYS[normalizeFastText(desc)];
-    if (key) return translate(lang, key);
+  const allowed = new Set(detail.allowed.map((item) => item.kind));
+  if (allowed.has('all')) return translate(lang, 'fasting.noFast');
+
+  const notAllowed = new Set(detail.notAllowed.map((item) => item.kind));
+  const isStrict =
+    allowed.has('plant') &&
+    (['meat', 'dairy', 'eggs', 'fish', 'wine', 'oil'] as const).every((kind) =>
+      notAllowed.has(kind),
+    );
+  if (isStrict) return translate(lang, 'fasting.levelStrict');
+
+  if (allowed.has('fish') && allowed.has('wine') && allowed.has('oil')) {
+    return translate(lang, 'fasting.levelFish');
+  }
+  if (allowed.has('wine') && allowed.has('oil')) {
+    return translate(lang, 'fasting.levelWineOil');
   }
 
-  return translate(lang, 'fasting.noFast');
+  return translate(lang, 'fasting.levelStrict');
+}
+
+const ABSTENTION_KINDS: Partial<Record<string, FastingFoodKind>> = {
+  meat: 'meat',
+  dairy: 'dairy',
+  eggs: 'eggs',
+  fish: 'fish',
+  wine: 'wine',
+  oil: 'oil',
+};
+
+const ALL_FAST_FOODS: FastingFoodKind[] = ['meat', 'dairy', 'eggs', 'fish', 'wine', 'oil'];
+
+function detailFromAbstentions(
+  abstentions: readonly string[],
+  lang: UiLanguage,
+): FastingFoodsDetail {
+  const notAllowedKinds = abstentions
+    .map((entry) => ABSTENTION_KINDS[entry.toLowerCase()])
+    .filter((kind): kind is FastingFoodKind => kind !== undefined);
+  const notAllowedSet = new Set(notAllowedKinds);
+  const allowedKinds: FastingFoodKind[] = ['plant'];
+  for (const kind of ALL_FAST_FOODS) {
+    if (!notAllowedSet.has(kind)) allowedKinds.push(kind);
+  }
+  const detail: FastingFoodsDetail = {
+    ruleLabel: '',
+    allowed: foodItems(lang, allowedKinds),
+    notAllowed: foodItems(lang, notAllowedKinds),
+    meatFast: notAllowedSet.has('meat') && !notAllowedSet.has('dairy') && !notAllowedSet.has('eggs'),
+  };
+  detail.ruleLabel = ruleLabelFromDetail(detail, lang);
+  return detail;
 }
 
 function fastExceptionNote(day: OrthocalDay, lang: UiLanguage): string | undefined {
@@ -289,35 +333,12 @@ function detailForStrictFast(lang: UiLanguage): FastingFoodsDetail {
 }
 
 function detailForFastLevel(level: number, lang: UiLanguage): FastingFoodsDetail {
-  switch (level) {
-    case 1:
-    case 5:
-      return detailForStrictFast(lang);
-    case 2:
-      return {
-        ruleLabel: translate(lang, 'fasting.levelWineOil'),
-        allowed: foodItems(lang, ['plant', 'wine', 'oil']),
-        notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs', 'fish']),
-      };
-    case 3:
-      return {
-        ruleLabel: translate(lang, 'fasting.levelFish'),
-        allowed: foodItems(lang, ['plant', 'fish', 'wine', 'oil']),
-        notAllowed: foodItems(lang, ['meat', 'dairy', 'eggs']),
-      };
-    case 4:
-      return {
-        ruleLabel: translate(lang, 'fasting.levelDairy'),
-        allowed: foodItems(lang, ['plant', 'dairy', 'eggs', 'fish', 'wine', 'oil']),
-        notAllowed: foodItems(lang, ['meat']),
-      };
-    default:
-      return {
-        ruleLabel: translate(lang, 'fasting.noFast'),
-        allowed: foodItems(lang, ['all']),
-        notAllowed: [],
-      };
-  }
+  if (level >= 1) return detailForStrictFast(lang);
+  return {
+    ruleLabel: translate(lang, 'fasting.noFast'),
+    allowed: foodItems(lang, ['all']),
+    notAllowed: [],
+  };
 }
 
 function applyException(detail: FastingFoodsDetail, day: OrthocalDay, lang: UiLanguage): void {
@@ -450,14 +471,22 @@ export function localizedFastingFoodsDetail(
     return detailForFastLevel(0, lang);
   }
 
-  const detail = detailForStrictFast(lang);
   const weeklyLabel = localizedWeeklyFastDayLabel(civil, lang);
+  let detail =
+    day.fast_abstentions && day.fast_abstentions.length > 0
+      ? detailFromAbstentions(day.fast_abstentions, lang)
+      : detailForStrictFast(lang);
+
+  if (!day.fast_abstentions?.length) {
+    applyException(detail, day, lang);
+  }
+
   if (weeklyLabel && day.fast_level === 1) {
     detail.ruleLabel = weeklyLabel;
-  } else if (day.fast_level >= 1) {
-    detail.ruleLabel = fastLevelLabel(day, lang);
+  } else {
+    detail.ruleLabel = ruleLabelFromDetail(detail, lang);
   }
-  applyException(detail, day, lang);
+
   const exceptionNote = fastExceptionNote(day, lang);
   if (exceptionNote) detail.exceptionNote = exceptionNote;
   return detail;
@@ -475,12 +504,24 @@ export type CalendarFastingFoodIcons = {
 
 const MEAT_FAST_CALENDAR_ICONS = { fish: false, wine: false, oil: false, noMeat: true } as const;
 
-/** Fish / wine / oil flags from orthocal fast_exception_desc (and related fields), not fast_level alone. */
+/** Fish / wine / oil flags from orthocal abstentions or fast_exception_desc. */
 function orthocalFastFoodFlags(day: OrthocalDay): {
   fish: boolean;
   wine: boolean;
   oil: boolean;
 } {
+  if (day.fast_abstentions?.length) {
+    const abstained = new Set(day.fast_abstentions.map((entry) => entry.toLowerCase()));
+    if (abstained.size === 1 && abstained.has('meat')) {
+      return { ...MEAT_FAST_CALENDAR_ICONS };
+    }
+    return {
+      fish: !abstained.has('fish'),
+      wine: !abstained.has('wine'),
+      oil: !abstained.has('oil'),
+    };
+  }
+
   const parsed = resolveFastException(day);
   if (parsed.kind === 'meat_fast') {
     return { ...MEAT_FAST_CALENDAR_ICONS };

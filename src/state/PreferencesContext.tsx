@@ -87,7 +87,7 @@ type Preferences = {
   notifyVespersEve: boolean;
   /** Native: afternoon reminder on Presanctified evenings. */
   notifyPresanctified: boolean;
-  /** Parish feast days, namedays, and custom events (Gregorian or Julian month/day). */
+  /** Parish feast days, namedays, birthdays, and custom events. */
   personalDays: PersonalDay[];
   /** First-launch tip sheet has been completed or skipped. */
   onboardingCompleted: boolean;

@@ -5,7 +5,6 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  useColorScheme,
   useWindowDimensions,
   View,
 } from 'react-native';
@@ -26,7 +25,6 @@ import {
   type CalendarDayInfo,
 } from '../lib/liturgical/calendarDayInfo';
 import {
-  CALENDAR_CELL_WHITE,
   calendarCellHoverBackground,
   getCalendarCellStyle,
 } from '../lib/calendar/calendarCellStyle';
@@ -64,9 +62,13 @@ const CALENDAR_RED_TYPIKON_GLYPHS = new Set(['doxology', 'polyeleos', 'vigil', '
 
 function calendarTypikonColor(
   feastRank: FeastRankDisplay,
-  surface: 'light' | 'muted' = 'light',
+  isDark: boolean,
+  onFastingCell: boolean,
 ): string {
-  if (CALENDAR_RED_TYPIKON_GLYPHS.has(feastRank.glyph)) return colors.feastBorder;
+  if (CALENDAR_RED_TYPIKON_GLYPHS.has(feastRank.glyph)) {
+    return isDark ? '#f08a9a' : colors.feastBorder;
+  }
+  const surface = isDark ? 'dark' : onFastingCell ? 'muted' : 'light';
   return typikonIconColor(feastRank, surface);
 }
 
@@ -107,9 +109,11 @@ function personalKindForName(
   feasts: { title: string }[],
   namedays: { title: string }[],
   events: { title: string }[],
+  birthdays: { title: string }[],
 ): PersonalDayKind | null {
   if (feasts.some((d) => d.title === name)) return 'parish_feast';
   if (namedays.some((d) => d.title === name)) return 'nameday';
+  if (birthdays.some((d) => d.title === name)) return 'birthday';
   if (events.some((d) => d.title === name)) return 'custom_event';
   return null;
 }
@@ -117,6 +121,7 @@ function personalKindForName(
 function personalLineColor(kind: PersonalDayKind | null, isDark: boolean): string | null {
   if (!kind) return null;
   if (kind === 'custom_event') return isDark ? colors.personalEventDark : colors.personalEvent;
+  if (kind === 'birthday') return isDark ? colors.personalBirthdayDark : colors.personalBirthday;
   return colors.accentWine;
 }
 
@@ -326,6 +331,7 @@ export function LiturgicalMonthGrid({
     [isDark, theme.colors.border],
   );
   const monthNavButtonShadow = useMemo(() => monthNavButtonElevation(isDark), [isDark]);
+  const loadingCellBg = getCalendarCellStyle('weekday', undefined, isDark).backgroundColor;
 
   return (
     <View
@@ -459,7 +465,7 @@ export function LiturgicalMonthGrid({
             <View
               style={[
                 styles.loadingSwatch,
-                { borderColor: loadingBorderColor, backgroundColor: CALENDAR_CELL_WHITE },
+                { borderColor: loadingBorderColor, backgroundColor: loadingCellBg },
               ]}
             />
             <Text style={[styles.loadingKeyText, { color: mutedColor }]} numberOfLines={2}>
@@ -492,12 +498,16 @@ export function LiturgicalMonthGrid({
                       personalNamedays={personalDaysOnCivilDate(personalDays, date).filter(
                         (d) => d.kind === 'nameday',
                       )}
+                      personalBirthdays={personalDaysOnCivilDate(personalDays, date).filter(
+                        (d) => d.kind === 'birthday',
+                      )}
                       personalEvents={personalDaysOnCivilDate(personalDays, date).filter(
                         (d) => d.kind === 'custom_event',
                       )}
                       showTypikonForDate={showTypikonForDate}
                       orthocalPending={loading && !dayInfoForDate(date).orthocalLoaded}
                       loadingBorderColor={loadingBorderColor}
+                      isDark={isDark}
                     />
                   ) : null}
                 </View>
@@ -601,10 +611,12 @@ function DayCell({
   dayInfo,
   personalFeasts,
   personalNamedays,
+  personalBirthdays,
   personalEvents,
   showTypikonForDate,
   orthocalPending = false,
   loadingBorderColor,
+  isDark,
 }: {
   date: Date;
   today: Date;
@@ -616,13 +628,14 @@ function DayCell({
   dayInfo: CalendarDayInfo;
   personalFeasts: { title: string }[];
   personalNamedays: { title: string }[];
+  personalBirthdays: { title: string }[];
   personalEvents: { title: string }[];
   showTypikonForDate: (date: Date) => boolean;
   orthocalPending?: boolean;
   loadingBorderColor: string;
+  isDark: boolean;
 }) {
   const { t, lang } = useAppTranslation();
-  const scheme = useColorScheme();
   const isWeb = Platform.OS === 'web';
   const [hovered, setHovered] = useState(false);
   const displayInfo = useMemo(
@@ -634,14 +647,14 @@ function DayCell({
     feastCell: dayInfo.isFeastCell,
     fastingCell: dayInfo.isFastDay,
     meatFastCell: dayInfo.fastingFoodIcons.noMeat,
-  });
+  }, isDark);
   const feastRank = dayInfo.feastRank;
   const showTypikon = showTypikonForDate(date);
   const isToday = isSameLocalDay(date, today);
   const hasFeastBorder = dayInfo.isFeastCell;
   const hasGreatFridayBorder = dayInfo.isGreatFridayBorder;
-  const isDark = scheme === 'dark';
   const defaultBorder = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)';
+  const feastAccent = isDark ? colors.feastTextSoftDark : colors.feastBorder;
   const resolvedBorderWidth = orthocalPending
     ? 1.5
     : hasFeastBorder || hasGreatFridayBorder
@@ -660,12 +673,12 @@ function DayCell({
         : isToday
           ? colors.accentGold
           : defaultBorder;
-  const titleColor = dayInfo.isFeastTitleRed ? colors.feastBorder : cellStyle.foreground;
-  const subColor = dayInfo.isFeastTitleRed ? colors.feastBorder : cellStyle.foreground;
-  const dayNumColor = isSunday || dayInfo.isFeastCell ? colors.feastBorder : cellStyle.foreground;
+  const titleColor = dayInfo.isFeastTitleRed ? feastAccent : cellStyle.foreground;
+  const subColor = dayInfo.isFeastTitleRed ? feastAccent : cellStyle.foreground;
+  const dayNumColor = isSunday || dayInfo.isFeastCell ? feastAccent : cellStyle.foreground;
   const typikonOnMutedCell = dayInfo.isFastDay && !dayInfo.fastingFoodIcons.noMeat;
   const typikonColor = feastRank
-    ? calendarTypikonColor(feastRank, typikonOnMutedCell ? 'muted' : 'light')
+    ? calendarTypikonColor(feastRank, isDark, typikonOnMutedCell)
     : cellStyle.foreground;
   const hoverLabel = calendarDayHoverLabel(
     date,
@@ -688,7 +701,9 @@ function DayCell({
           ? isDark
             ? colors.feastHoverBorderDark
             : colors.feastHoverBorder
-          : colors.accentGold
+          : isDark
+            ? colors.calendarHoverBorderDark
+            : colors.accentGold
       : resolvedBorderColor;
   const cellBackgroundColor = calendarCellHoverBackground(
     cellStyle.backgroundColor,
@@ -702,6 +717,7 @@ function DayCell({
         displayInfo.dayTitle,
         [
           ...personalFeasts.map((d) => d.title),
+          ...personalBirthdays.map((d) => d.title),
           ...personalEvents.map((d) => d.title),
           ...displayInfo.feasts,
         ],
@@ -714,10 +730,15 @@ function DayCell({
       displayInfo.saints,
       personalFeasts,
       personalNamedays,
+      personalBirthdays,
       personalEvents,
     ],
   );
-  const feastCount = displayInfo.feasts.length + personalFeasts.length + personalEvents.length;
+  const feastCount =
+    displayInfo.feasts.length +
+    personalFeasts.length +
+    personalEvents.length +
+    personalBirthdays.length;
   const saintCount = displayInfo.saints.length + personalNamedays.length;
   const markerCount = feastCount + saintCount;
   const fastingIcons = dayInfo.fastingFoodIcons;
@@ -758,7 +779,7 @@ function DayCell({
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
         >
-          <ActivityIndicator size="small" color={colors.accentWine} />
+          <ActivityIndicator size="small" color={isDark ? colors.tabActiveDark : colors.accentWine} />
         </View>
       ) : null}
       <View style={[styles.cellBody, compact ? styles.cellBodyCompact : null]}>
@@ -776,7 +797,11 @@ function DayCell({
             style={[styles.fastingCorner, compact ? styles.fastingCornerCompact : null]}
           >
             {fastingIcons.noEating ? (
-              <CalendarFastingFoodIcon kind="noEating" size={fastingIconSize} />
+              <CalendarFastingFoodIcon
+                kind="noEating"
+                size={fastingIconSize}
+                color={calendarFastingFoodIconColor('noEating', isDark, cellStyle.foreground)}
+              />
             ) : null}
             {!fastingIcons.noEating && fastingIcons.noMeat ? (
               <CalendarFastingFoodIcon kind="noMeat" size={fastingIconSize} />
@@ -826,11 +851,27 @@ function DayCell({
                       backgroundColor:
                         personalFeasts.length > 0
                           ? colors.accentWine
-                          : personalEvents.length > 0
+                          : personalBirthdays.length > 0
                             ? isDark
-                              ? colors.personalEventDark
-                              : colors.personalEvent
-                            : titleColor,
+                              ? colors.personalBirthdayDark
+                              : colors.personalBirthday
+                            : personalEvents.length > 0
+                              ? isDark
+                                ? colors.personalEventDark
+                                : colors.personalEvent
+                              : titleColor,
+                    },
+                  ]}
+                />
+              ) : null}
+              {personalBirthdays.length > 0 && personalFeasts.length > 0 ? (
+                <View
+                  style={[
+                    styles.compactDot,
+                    {
+                      backgroundColor: isDark
+                        ? colors.personalBirthdayDark
+                        : colors.personalBirthday,
                     },
                   ]}
                 />
@@ -884,6 +925,7 @@ function DayCell({
                     personalFeasts,
                     personalNamedays,
                     personalEvents,
+                    personalBirthdays,
                   );
                   const isFeast = line.kind === 'feast';
                   const color =
@@ -976,6 +1018,7 @@ function CalendarMonthAgenda({
   isDark: boolean;
 }) {
   const { t, lang } = useAppTranslation();
+  const feastAccent = isDark ? colors.feastTextSoftDark : colors.feastBorder;
   const agendaDates = dates.filter((date) => {
     const hasPersonal = personalDaysOnCivilDate(personalDays, date).length > 0;
     return isAgendaDay(dayInfoForDate(date), phoneLayout, hasPersonal);
@@ -1007,6 +1050,13 @@ function CalendarMonthAgenda({
               kind: 'feast' as const,
               name: d.title,
               personalKind: 'custom_event' as const,
+            })),
+          ...personalOnDay
+            .filter((d) => d.kind === 'birthday')
+            .map((d) => ({
+              kind: 'feast' as const,
+              name: d.title,
+              personalKind: 'birthday' as const,
             })),
           ...personalOnDay
             .filter((d) => d.kind === 'nameday')
@@ -1059,7 +1109,7 @@ function CalendarMonthAgenda({
               <Text
                 style={[
                   styles.agendaDayNum,
-                  { color: info.isFeastTitleRed ? colors.feastBorder : textColor },
+                  { color: info.isFeastTitleRed ? feastAccent : textColor },
                 ]}
               >
                 {date.getDate()}
@@ -1069,7 +1119,7 @@ function CalendarMonthAgenda({
             <View style={styles.agendaBody}>
               {orthocalPending ? (
                 <View style={styles.agendaLoadingRow}>
-                  <ActivityIndicator size="small" color={colors.accentWine} />
+                  <ActivityIndicator size="small" color={isDark ? colors.tabActiveDark : colors.accentWine} />
                   <Text style={[styles.agendaLoadingText, { color: mutedColor }]}>
                     {t('calendar.dayLoading')}
                   </Text>
@@ -1078,7 +1128,7 @@ function CalendarMonthAgenda({
               <Text
                 style={[
                   styles.agendaDayTitle,
-                  { color: info.isFeastTitleRed ? colors.feastBorder : textColor },
+                  { color: info.isFeastTitleRed ? feastAccent : textColor },
                 ]}
               >
                 {info.dayTitle}
@@ -1093,7 +1143,7 @@ function CalendarMonthAgenda({
               {lines.slice(0, CALENDAR_CELL_MAX_COMMEMORATIONS).map((line, index) => {
                 const lineColor =
                   personalLineColor(line.personalKind, isDark) ??
-                  (line.kind === 'feast' ? colors.feastBorder : mutedColor);
+                  (line.kind === 'feast' ? feastAccent : mutedColor);
                 return (
                   <View key={`${line.kind}-${index}`} style={styles.agendaCommRow}>
                     <CommemorationListMarker

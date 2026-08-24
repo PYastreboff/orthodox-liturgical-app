@@ -18,6 +18,7 @@ type Props = {
 function personalIcon(kind: PersonalDayKind): keyof typeof Feather.glyphMap {
   if (kind === 'parish_feast') return 'home';
   if (kind === 'nameday') return 'user';
+  if (kind === 'birthday') return 'gift';
   return 'star';
 }
 
