@@ -8,6 +8,8 @@ function kinds(detail: ReturnType<typeof localizedFastingFoodsDetail>) {
   return {
     allowed: detail.allowed.map((f) => f.kind).sort().join(','),
     notAllowed: detail.notAllowed.map((f) => f.kind).sort().join(','),
+    ruleLabel: detail.ruleLabel,
+    exceptionNote: detail.exceptionNote ?? '',
   };
 }
 
@@ -44,7 +46,12 @@ const cases: Array<{
   appearanceKey?: string;
   civil?: { year: number; month: number; day: number };
   weeklyFast?: boolean;
-  expect: { allowed: string; notAllowed: string };
+  expect: {
+    allowed: string;
+    notAllowed: string;
+    ruleLabel?: string;
+    exceptionNote?: string;
+  };
   icons?: { fish: boolean; wine: boolean; oil: boolean };
 }> = [
   {
@@ -153,7 +160,11 @@ const cases: Array<{
       fast_abstentions: ['meat', 'fish', 'dairy', 'eggs', 'wine', 'oil'],
     }),
     appearanceKey: 'dormition_fast',
-    expect: { allowed: 'plant', notAllowed: 'dairy,eggs,fish,meat,oil,wine' },
+    expect: {
+      allowed: 'plant',
+      notAllowed: 'dairy,eggs,fish,meat,oil,wine',
+      ruleLabel: 'Dormition Fast',
+    },
   },
   {
     name: 'dormition fast — wine and oil allowed',
@@ -164,7 +175,12 @@ const cases: Array<{
       fast_abstentions: ['meat', 'fish', 'dairy', 'eggs'],
     }),
     appearanceKey: 'dormition_fast',
-    expect: { allowed: 'oil,plant,wine', notAllowed: 'dairy,eggs,fish,meat' },
+    expect: {
+      allowed: 'oil,plant,wine',
+      notAllowed: 'dairy,eggs,fish,meat',
+      ruleLabel: 'Dormition Fast',
+      exceptionNote: 'Wine and oil allowed',
+    },
     icons: { fish: false, wine: true, oil: true },
   },
   {
@@ -176,7 +192,12 @@ const cases: Array<{
       fast_abstentions: ['meat', 'dairy', 'eggs'],
     }),
     appearanceKey: 'dormition_fast',
-    expect: { allowed: 'fish,oil,plant,wine', notAllowed: 'dairy,eggs,meat' },
+    expect: {
+      allowed: 'fish,oil,plant,wine',
+      notAllowed: 'dairy,eggs,meat',
+      ruleLabel: 'Dormition Fast',
+      exceptionNote: 'Fish, wine, and oil allowed',
+    },
     icons: { fish: true, wine: true, oil: true },
   },
   {
@@ -213,7 +234,11 @@ for (const c of cases) {
     ),
   );
   const ok =
-    result.allowed === c.expect.allowed && result.notAllowed === c.expect.notAllowed;
+    result.allowed === c.expect.allowed &&
+    result.notAllowed === c.expect.notAllowed &&
+    (c.expect.ruleLabel === undefined || result.ruleLabel === c.expect.ruleLabel) &&
+    (c.expect.exceptionNote === undefined ||
+      result.exceptionNote === c.expect.exceptionNote);
   if (!ok) failed += 1;
   console.log(
     ok ? 'OK' : 'FAIL',

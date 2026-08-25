@@ -3,6 +3,7 @@ import type { PlainDate } from '../lib/calendar/julianGregorian';
 import { gregorianPlainToJulianPlain, julianCalendarToJulianDayNumber } from '../lib/calendar/julianGregorian';
 import { isCheesefareWeekPaschaDistance, isMeatFastRule } from '../lib/calendar/meatFast';
 import { isInCheesefareWeek, localizedWeeklyFastDayLabel } from '../lib/calendar/weeklyFast';
+import { localizeOrthocalText } from './orthocalContent';
 import { translate } from './translate';
 import type { UiLanguage } from './types';
 
@@ -25,7 +26,7 @@ export type FastingFoodItem = {
 };
 
 export type FastingFoodsDetail = {
-  /** orthocal rule name, e.g. "Wine and oil" (not shown on the Fast / No fast pill). */
+  /** Orthocal season / day kind (fast_level), e.g. "Dormition Fast". */
   ruleLabel: string;
   allowed: FastingFoodItem[];
   notAllowed: FastingFoodItem[];
@@ -45,18 +46,31 @@ export type FastSummaryKind =
   | 'dairy'
   | 'total_abstinence';
 
-/** Orthocal `fast_level` fallbacks when abstentions / exceptions are missing. */
-const FAST_LEVEL_KEYS: Record<number, string> = {
+/**
+ * Orthocal `FastLevels` (calendarium/datetools.py) — season / kind of day,
+ * not the food list. Foods come from `fast_exception` / `fast_abstentions`.
+ *
+ * 0 NoFast · 1 Fast · 2 LentenFast · 3 ApostlesFast · 4 DormitionFast · 5 NativityFast
+ */
+const ORTHOCAL_FAST_LEVEL_KEYS: Record<number, string> = {
   0: 'fasting.noFast',
-  1: 'fasting.levelStrict',
-  4: 'fasting.levelStrict',
-  5: 'fasting.levelStrict',
+  1: 'fasting.levelFast',
+  2: 'appearance.great_lent',
+  3: 'appearance.apostles_fast',
+  4: 'appearance.dormition_fast',
+  5: 'appearance.nativity_fast',
 };
 
 const FAST_DESC_KEYS: Record<string, string> = {
   'no fast': 'fasting.noFast',
   'fast free': 'fasting.noFast',
   'fast free day': 'fasting.noFast',
+  fast: 'fasting.levelFast',
+  'lenten fast': 'appearance.great_lent',
+  'great lent': 'appearance.great_lent',
+  'apostles fast': 'appearance.apostles_fast',
+  'dormition fast': 'appearance.dormition_fast',
+  'nativity fast': 'appearance.nativity_fast',
   'wine and oil': 'fasting.levelWineOil',
   'wine oil': 'fasting.levelWineOil',
   'fish allowed': 'fasting.levelFish',
@@ -69,15 +83,24 @@ const FAST_DESC_KEYS: Record<string, string> = {
 
 const FAST_EXCEPTION_KEYS: Record<string, string> = {
   'wine and oil allowed': 'fasting.exceptionWineOil',
+  'wine and oil are allowed': 'fasting.exceptionWineOil',
   'wine oil allowed': 'fasting.exceptionWineOil',
   'fish wine and oil allowed': 'fasting.exceptionFishWineOil',
   'fish wine and oil are allowed': 'fasting.exceptionFishWineOil',
   'fish allowed': 'fasting.exceptionFish',
   'oil allowed': 'fasting.exceptionOil',
+  'wine is allowed': 'fasting.exceptionWine',
+  'wine allowed': 'fasting.exceptionWine',
+  'wine oil and caviar are allowed': 'fasting.exceptionWineOilCaviar',
+  'wine oil and caviar allowed': 'fasting.exceptionWineOilCaviar',
   'dairy allowed': 'fasting.exceptionDairy',
   'meat allowed': 'fasting.exceptionMeat',
   'meat permitted': 'fasting.exceptionMeat',
+  'meat fast': 'fasting.levelMeatFast',
+  'strict fast wine and oil': 'fasting.exceptionStrictWineOil',
+  'strict fast': 'fasting.levelStrict',
   'no fast': 'fasting.noFast',
+  'fast free': 'fasting.noFast',
 };
 
 const REDUNDANT_FAST_EXCEPTIONS = new Set([
@@ -86,8 +109,6 @@ const REDUNDANT_FAST_EXCEPTIONS = new Set([
   'no fast',
   'no overrides',
   'no override',
-  'fish wine and oil are allowed',
-  'fish wine and oil allowed',
 ]);
 
 type AllowableFood = Exclude<FastingFoodKind, 'all' | 'plant'>;
@@ -102,7 +123,7 @@ type FastExceptionParse =
 function allowancePrefixFromException(normalized: string): string {
   const match = normalized.match(/^(.+?)\s+(?:are\s+)?(?:allowed|permitted)\b/);
   if (match) return match[1];
-  return normalized.replace(/\s+(?:allowed|permitted)$/, '').trim();
+  return normalized.replace(/\s+(?:are\s+)?(?:allowed|permitted)$/, '').trim();
 }
 
 function allowedFoodsInPrefix(prefix: string): AllowableFood[] {
@@ -144,6 +165,11 @@ function parseFastExceptionDesc(raw: string | undefined | null): FastExceptionPa
       const foods = allowedFoodsInPrefix(paren[1]);
       if (foods.length > 0) return { kind: 'allow', foods };
     }
+    // "Strict Fast (Wine and Oil)" after normalize → "strict fast wine and oil"
+    if (normalized.includes('wine') || normalized.includes('oil')) {
+      const foods = allowedFoodsInPrefix(normalized.replace(/^strict fast\s*/, ''));
+      if (foods.length > 0) return { kind: 'allow', foods };
+    }
     return { kind: 'none' };
   }
 
@@ -161,8 +187,6 @@ function parseFastExceptionDesc(raw: string | undefined | null): FastExceptionPa
 function resolveFastException(day: OrthocalDay): FastExceptionParse {
   const fromException = parseFastExceptionDesc(day.fast_exception_desc);
   if (fromException.kind !== 'none') return fromException;
-  const fromLevel = parseFastExceptionDesc(day.fast_level_desc);
-  if (fromLevel.kind !== 'none') return fromLevel;
   if (isCheesefareWeekPaschaDistance(day.pascha_distance)) {
     return { kind: 'meat_fast' };
   }
@@ -256,29 +280,35 @@ export function isOrthocalFastDay(
   );
 }
 
-function ruleLabelFromDetail(detail: FastingFoodsDetail, lang: UiLanguage): string {
-  if (detail.meatFast) return translate(lang, 'fasting.levelMeatFast');
-  if (detail.totalAbstinence) return translate(lang, 'fasting.levelNoEating');
-
-  const allowed = new Set(detail.allowed.map((item) => item.kind));
-  if (allowed.has('all')) return translate(lang, 'fasting.noFast');
-
-  const notAllowed = new Set(detail.notAllowed.map((item) => item.kind));
-  const isStrict =
-    allowed.has('plant') &&
-    (['meat', 'dairy', 'eggs', 'fish', 'wine', 'oil'] as const).every((kind) =>
-      notAllowed.has(kind),
-    );
-  if (isStrict) return translate(lang, 'fasting.levelStrict');
-
-  if (allowed.has('fish') && allowed.has('wine') && allowed.has('oil')) {
-    return translate(lang, 'fasting.levelFish');
-  }
-  if (allowed.has('wine') && allowed.has('oil')) {
-    return translate(lang, 'fasting.levelWineOil');
+/**
+ * Orthocal season label from `fast_level` / `fast_level_desc`
+ * (e.g. Dormition Fast). Not derived from allowed foods.
+ */
+function orthocalSeasonRuleLabel(
+  day: OrthocalDay,
+  civil: PlainDate,
+  lang: UiLanguage,
+): string {
+  if (day.fast_level <= 0) {
+    return translate(lang, 'fasting.noFast');
   }
 
-  return translate(lang, 'fasting.levelStrict');
+  // Level 1 "Fast" is the generic Wed/Fri (and similar) marker.
+  if (day.fast_level === 1) {
+    const weekly = localizedWeeklyFastDayLabel(civil, lang);
+    if (weekly) return weekly;
+  }
+
+  const desc = day.fast_level_desc?.trim();
+  if (desc) {
+    const byDesc = FAST_DESC_KEYS[normalizeFastText(desc)];
+    if (byDesc) return translate(lang, byDesc);
+    return localizeOrthocalText(desc, lang);
+  }
+
+  const byLevel = ORTHOCAL_FAST_LEVEL_KEYS[day.fast_level];
+  if (byLevel) return translate(lang, byLevel);
+  return translate(lang, 'fasting.levelFast');
 }
 
 const ABSTENTION_KINDS: Partial<Record<string, FastingFoodKind>> = {
@@ -304,14 +334,12 @@ function detailFromAbstentions(
   for (const kind of ALL_FAST_FOODS) {
     if (!notAllowedSet.has(kind)) allowedKinds.push(kind);
   }
-  const detail: FastingFoodsDetail = {
+  return {
     ruleLabel: '',
     allowed: foodItems(lang, allowedKinds),
     notAllowed: foodItems(lang, notAllowedKinds),
     meatFast: notAllowedSet.has('meat') && !notAllowedSet.has('dairy') && !notAllowedSet.has('eggs'),
   };
-  detail.ruleLabel = ruleLabelFromDetail(detail, lang);
-  return detail;
 }
 
 function fastExceptionNote(day: OrthocalDay, lang: UiLanguage): string | undefined {
@@ -333,7 +361,12 @@ function detailForStrictFast(lang: UiLanguage): FastingFoodsDetail {
 }
 
 function detailForFastLevel(level: number, lang: UiLanguage): FastingFoodsDetail {
-  if (level >= 1) return detailForStrictFast(lang);
+  if (level >= 1) {
+    return {
+      ...detailForStrictFast(lang),
+      ruleLabel: translate(lang, ORTHOCAL_FAST_LEVEL_KEYS[level] ?? 'fasting.levelFast'),
+    };
+  }
   return {
     ruleLabel: translate(lang, 'fasting.noFast'),
     allowed: foodItems(lang, ['all']),
@@ -343,6 +376,12 @@ function detailForFastLevel(level: number, lang: UiLanguage): FastingFoodsDetail
 
 function applyException(detail: FastingFoodsDetail, day: OrthocalDay, lang: UiLanguage): void {
   const parsed = resolveFastException(day);
+  if (parsed.kind === 'meat_fast') {
+    detail.allowed = foodItems(lang, ['plant', 'dairy', 'eggs', 'fish', 'wine', 'oil']);
+    detail.notAllowed = foodItems(lang, ['meat']);
+    detail.meatFast = true;
+    return;
+  }
   if (parsed.kind !== 'allow') return;
 
   const addAllowed = (kind: AllowableFood) => {
@@ -433,7 +472,7 @@ export function showHeroFeastRankChip(
   return feastRank.glyph !== 'ordinary';
 }
 
-/** Allowed / not allowed lists and orthocal rule name for the Fasting section body. */
+/** Allowed / not allowed lists and orthocal season name for the Fasting section body. */
 export function localizedFastingFoodsDetail(
   day: OrthocalDay | null,
   appearanceKey: string,
@@ -460,18 +499,27 @@ export function localizedFastingFoodsDetail(
     return {
       ...detailForStrictFast(lang),
       ruleLabel:
-        localizedWeeklyFastDayLabel(civil, lang) ?? translate(lang, 'fasting.levelStrict'),
+        localizedWeeklyFastDayLabel(civil, lang) ?? translate(lang, 'fasting.levelFast'),
     };
   }
 
   if (!day) {
     if (isStrictFastAppearanceFallback(appearanceKey)) {
-      return detailForStrictFast(lang);
+      const fallback = detailForStrictFast(lang);
+      if (appearanceKey.startsWith('dormition')) {
+        fallback.ruleLabel = translate(lang, 'appearance.dormition_fast');
+      } else if (appearanceKey.startsWith('nativity_fast')) {
+        fallback.ruleLabel = translate(lang, 'appearance.nativity_fast');
+      } else if (appearanceKey.startsWith('apostles')) {
+        fallback.ruleLabel = translate(lang, 'appearance.apostles_fast');
+      } else if (appearanceKey.includes('lent') || appearanceKey === 'holy_week') {
+        fallback.ruleLabel = translate(lang, 'appearance.great_lent');
+      }
+      return fallback;
     }
     return detailForFastLevel(0, lang);
   }
 
-  const weeklyLabel = localizedWeeklyFastDayLabel(civil, lang);
   let detail =
     day.fast_abstentions && day.fast_abstentions.length > 0
       ? detailFromAbstentions(day.fast_abstentions, lang)
@@ -481,11 +529,7 @@ export function localizedFastingFoodsDetail(
     applyException(detail, day, lang);
   }
 
-  if (weeklyLabel && day.fast_level === 1) {
-    detail.ruleLabel = weeklyLabel;
-  } else {
-    detail.ruleLabel = ruleLabelFromDetail(detail, lang);
-  }
+  detail.ruleLabel = orthocalSeasonRuleLabel(day, civil, lang);
 
   const exceptionNote = fastExceptionNote(day, lang);
   if (exceptionNote) detail.exceptionNote = exceptionNote;

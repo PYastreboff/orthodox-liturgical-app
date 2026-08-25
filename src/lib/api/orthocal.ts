@@ -168,13 +168,15 @@ export function formatOrthocalFastLabel(day: OrthocalDay): string {
   return label;
 }
 
+/** Orthocal FastLevels: 0 NoFast, 1 Fast, 2 Lenten, 3 Apostles, 4 Dormition, 5 Nativity.
+ *  Food lists come from fast_exception / fast_abstentions, not from the level number. */
 const FAST_FOODS_BY_LEVEL: Record<number, string> = {
   0: 'All standard foods are allowed.',
-  1: 'All standard foods are allowed.',
-  2: 'Wine and oil permitted; follow your typikon for other foods.',
-  3: 'Fish, wine, and oil are generally permitted; no meat or dairy.',
-  4: 'Strict fast: no meat, dairy, eggs, fish, wine, or oil (typical weekday rule).',
-  5: 'Strict fast: no meat, dairy, eggs, fish, wine, or oil (typical weekday rule).',
+  1: 'Fast day — typically Wed/Fri strict unless an exception applies.',
+  2: 'Lenten Fast season — foods follow that day’s wine/oil/fish exception.',
+  3: 'Apostles Fast season — foods follow that day’s wine/oil/fish exception.',
+  4: 'Dormition Fast season — foods follow that day’s wine/oil/fish exception.',
+  5: 'Nativity Fast season — foods follow that day’s wine/oil/fish exception.',
 };
 
 export function fastingFoodsForLevel(fastLevel: number, fallbackKey: string): string {

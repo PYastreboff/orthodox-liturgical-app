@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 
 import { CollapsibleSection } from '../../src/components/CollapsibleSection';
@@ -154,11 +154,18 @@ export default function TodayScreen() {
   const phoneLayout = usePhoneLayout();
   const sectionCardPadding = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
   const scrollBottomPadding = useTabBarBottomPadding();
+  const scrollRef = useRef<ScrollView>(null);
 
   useFocusEffect(
     useCallback(() => {
       const day = consumePendingDay();
-      if (day) setSelectedDate(day);
+      if (!day) return;
+      setSelectedDate(day);
+      // After tab focus / layout, then scroll (immediate scroll can no-op mid-transition).
+      const id = requestAnimationFrame(() => {
+        scrollRef.current?.scrollTo({ y: 0, animated: false });
+      });
+      return () => cancelAnimationFrame(id);
     }, [consumePendingDay, setSelectedDate]),
   );
   const civilPlain = useMemo(() => civilPlainDateFromLocal(selectedDate), [selectedDate]);
@@ -336,6 +343,7 @@ export default function TodayScreen() {
   return (
     <VestmentPageBackground appearance={appearance} gradientEnabled={showVestmentGradient}>
     <ScrollView
+      ref={scrollRef}
       style={styles.scroll}
       contentContainerStyle={[
         styles.container,
@@ -496,7 +504,7 @@ export default function TodayScreen() {
                     </Text>
                   ) : dashboard.fastingFoods.ruleLabel !== dashboard.weeklyFastSectionLabel ? (
                     <Text style={[styles.fastLevelDetail, type.body, { color: theme.colors.text }]}>
-                      {t('today.fastRule', { rule: dashboard.fastingFoods.ruleLabel })}
+                      {dashboard.fastingFoods.ruleLabel}
                     </Text>
                   ) : null}
                 </>
