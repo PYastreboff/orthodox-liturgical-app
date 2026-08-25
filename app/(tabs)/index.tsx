@@ -7,6 +7,7 @@ import { FastingFoodList } from '../../src/components/FastingFoodList';
 import { FastSummaryPill } from '../../src/components/FastSummaryPill';
 import { SectionTitleRow } from '../../src/components/SectionTitleRow';
 import { DayHero } from '../../src/components/DayHero';
+import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
 import { AltarServerRoleTable } from '../../src/components/AltarServerRoleTable';
 import { ChoirGuideTable } from '../../src/components/ChoirGuideTable';
 import { DeaconGuideTable } from '../../src/components/DeaconGuideTable';
@@ -167,6 +168,45 @@ export default function TodayScreen() {
       });
       return () => cancelAnimationFrame(id);
     }, [consumePendingDay, setSelectedDate]),
+  );
+
+  const [calendarMonth, setCalendarMonth] = useState(
+    () => new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
+  );
+  const thisMonth = useMemo(() => {
+    const n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), 1);
+  }, []);
+
+  useEffect(() => {
+    setCalendarMonth(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
+  }, [selectedDate]);
+
+  const setCalendarMonthCursor = useCallback((date: Date) => {
+    setCalendarMonth(new Date(date.getFullYear(), date.getMonth(), 1));
+  }, []);
+
+  const onCalendarChangeMonth = useCallback(
+    (delta: -1 | 1) => {
+      setCalendarMonthCursor(
+        new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + delta, 1),
+      );
+    },
+    [calendarMonth, setCalendarMonthCursor],
+  );
+
+  const canGoToThisMonth =
+    calendarMonth.getFullYear() !== thisMonth.getFullYear() ||
+    calendarMonth.getMonth() !== thisMonth.getMonth();
+
+  const onCalendarDayPress = useCallback(
+    (date: Date) => {
+      setSelectedDate(startOfLocalDay(date));
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollTo({ y: 0, animated: true });
+      });
+    },
+    [setSelectedDate],
   );
   const civilPlain = useMemo(() => civilPlainDateFromLocal(selectedDate), [selectedDate]);
   const gregorianDateLabel = useMemo(
@@ -875,6 +915,26 @@ export default function TodayScreen() {
           </>
         )}
       </CollapsibleSection>
+
+      <View style={styles.homeCalendar}>
+        <Text
+          style={[
+            styles.homeCalendarTitle,
+            text(18, 24),
+            { color: theme.colors.text, fontWeight: '700' },
+          ]}
+        >
+          {t('calendar.title')}
+        </Text>
+        <LiturgicalMonthGrid
+          visibleMonth={calendarMonth}
+          onChangeMonth={onCalendarChangeMonth}
+          onGoToThisMonth={() => setCalendarMonthCursor(thisMonth)}
+          canGoToThisMonth={canGoToThisMonth}
+          onDayPress={onCalendarDayPress}
+          liturgicalCalendar={primaryCalendar}
+        />
+      </View>
     </ScrollView>
     </VestmentPageBackground>
   );
@@ -887,6 +947,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
+  },
+  homeCalendar: {
+    marginTop: 20,
+    marginBottom: 8,
+  },
+  homeCalendarTitle: {
+    marginBottom: 12,
+    paddingHorizontal: 2,
   },
   statusLine: {
     textAlign: 'center',
