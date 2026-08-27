@@ -29,10 +29,17 @@ export const colors = {
   accentTheotokos: '#2f4a6f',
   /** Custom calendar events (namedays/feasts use accentWine). */
   personalEvent: '#2d2b5e',
-  personalEventDark: '#2d2b5e',
+  /** Soft periwinkle — readable on dark calendar cells (#181614–#2c2822). */
+  personalEventDark: '#a4a2e6',
   /** Birthdays — same family as custom events, slightly lighter. */
   personalBirthday: '#45428a',
-  personalBirthdayDark: '#45428a',
+  personalBirthdayDark: '#b0ace8',
+  /** Day of repose — personal memorial. */
+  personalRepose: '#4a4858',
+  personalReposeDark: '#c4c0d0',
+  /** 40th-day memorial derived from a repose entry. */
+  personalFortieth: '#5a5868',
+  personalFortiethDark: '#d4d0de',
   /** Tab bar active — high contrast on parchment / dark surfaces */
   tabActiveLight: '#1e1a16',
   tabActiveDark: '#e8c97a',

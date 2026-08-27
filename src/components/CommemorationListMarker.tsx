@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
-import type { PersonalDayKind } from '../lib/personalDays';
+import type { PersonalDayDisplayKind } from '../lib/personalDays';
 
 type Kind = 'feast' | 'saint';
 
@@ -11,14 +11,16 @@ type Props = {
   /** Match the adjacent first line height. */
   lineHeight?: number;
   size?: number;
-  /** Parish feast, nameday, or custom event — Feather icon instead of ›. */
-  personalKind?: PersonalDayKind | null;
+  /** Parish feast, nameday, repose, etc. — Feather icon instead of ›. */
+  personalKind?: PersonalDayDisplayKind | null;
 };
 
-function personalIcon(kind: PersonalDayKind): keyof typeof Feather.glyphMap {
+function personalIcon(kind: PersonalDayDisplayKind): keyof typeof Feather.glyphMap {
   if (kind === 'parish_feast') return 'home';
   if (kind === 'nameday') return 'user';
   if (kind === 'birthday') return 'gift';
+  if (kind === 'repose') return 'sunset';
+  if (kind === 'repose_fortieth') return 'bookmark';
   return 'star';
 }
 

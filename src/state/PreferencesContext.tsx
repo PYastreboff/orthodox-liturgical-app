@@ -60,6 +60,8 @@ type StoredPreferences = {
   notifyLiturgyMorning?: boolean;
   notifyVespersEve?: boolean;
   notifyPresanctified?: boolean;
+  notifyWeeklyDigest?: boolean;
+  homeScreenWidget?: boolean;
   personalDays?: PersonalDay[];
   /** First-launch tips dismissed. */
   onboardingCompleted?: boolean;
@@ -87,6 +89,10 @@ type Preferences = {
   notifyVespersEve: boolean;
   /** Native: afternoon reminder on Presanctified evenings. */
   notifyPresanctified: boolean;
+  /** Native: Sunday morning summary of the week ahead. */
+  notifyWeeklyDigest: boolean;
+  /** Opt in to home-screen widget / Live Activity when available (native). */
+  homeScreenWidget: boolean;
   /** Parish feast days, namedays, birthdays, and custom events. */
   personalDays: PersonalDay[];
   /** First-launch tip sheet has been completed or skipped. */
@@ -110,6 +116,8 @@ type PreferencesContextValue = Preferences & {
   setNotifyLiturgyMorning: (value: boolean) => void;
   setNotifyVespersEve: (value: boolean) => void;
   setNotifyPresanctified: (value: boolean) => void;
+  setNotifyWeeklyDigest: (value: boolean) => void;
+  setHomeScreenWidget: (value: boolean) => void;
   setPersonalDays: (value: PersonalDay[]) => void;
   setOnboardingCompleted: (value: boolean) => void;
 };
@@ -155,6 +163,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [notifyLiturgyMorning, setNotifyLiturgyMorningState] = useState(false);
   const [notifyVespersEve, setNotifyVespersEveState] = useState(false);
   const [notifyPresanctified, setNotifyPresanctifiedState] = useState(false);
+  const [notifyWeeklyDigest, setNotifyWeeklyDigestState] = useState(false);
+  const [homeScreenWidget, setHomeScreenWidgetState] = useState(false);
   const [personalDays, setPersonalDaysState] = useState<PersonalDay[]>([]);
   const [onboardingCompleted, setOnboardingCompletedState] = useState(false);
   const [preferencesReady, setPreferencesReady] = useState(false);
@@ -220,6 +230,12 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         }
         if (typeof parsed.notifyPresanctified === 'boolean') {
           setNotifyPresanctifiedState(parsed.notifyPresanctified);
+        }
+        if (typeof parsed.notifyWeeklyDigest === 'boolean') {
+          setNotifyWeeklyDigestState(parsed.notifyWeeklyDigest);
+        }
+        if (typeof parsed.homeScreenWidget === 'boolean') {
+          setHomeScreenWidgetState(parsed.homeScreenWidget);
         }
         setPersonalDaysState(parsePersonalDays(parsed.personalDays));
         if (typeof parsed.onboardingCompleted === 'boolean') {
@@ -345,6 +361,22 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     [persist],
   );
 
+  const setNotifyWeeklyDigest = useCallback(
+    (value: boolean) => {
+      setNotifyWeeklyDigestState(value);
+      void persist({ notifyWeeklyDigest: value });
+    },
+    [persist],
+  );
+
+  const setHomeScreenWidget = useCallback(
+    (value: boolean) => {
+      setHomeScreenWidgetState(value);
+      void persist({ homeScreenWidget: value });
+    },
+    [persist],
+  );
+
   const setPersonalDays = useCallback(
     (value: PersonalDay[]) => {
       const next = parsePersonalDays(value);
@@ -400,6 +432,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       notifyLiturgyMorning,
       notifyVespersEve,
       notifyPresanctified,
+      notifyWeeklyDigest,
+      homeScreenWidget,
       personalDays,
       onboardingCompleted,
       preferencesReady,
@@ -418,6 +452,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setNotifyLiturgyMorning,
       setNotifyVespersEve,
       setNotifyPresanctified,
+      setNotifyWeeklyDigest,
+      setHomeScreenWidget,
       setPersonalDays,
       setOnboardingCompleted,
     }),
@@ -429,6 +465,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       notifyFastingReminder,
       notifyLiturgyMorning,
       notifyPresanctified,
+      notifyWeeklyDigest,
+      homeScreenWidget,
       notifyVespersEve,
       personalDays,
       onboardingCompleted,
@@ -442,6 +480,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setNotifyFastingReminder,
       setNotifyLiturgyMorning,
       setNotifyPresanctified,
+      setNotifyWeeklyDigest,
+      setHomeScreenWidget,
       setNotifyVespersEve,
       setOnboardingCompleted,
       setPersonalDays,

@@ -536,6 +536,75 @@ export function localizedFastingFoodsDetail(
   return detail;
 }
 
+/** Plain-language fasting context: season name plus today’s exception (if any). */
+export function localizedFastingExplanation(
+  day: OrthocalDay | null,
+  appearanceKey: string,
+  civil: PlainDate,
+  weeklyFast: boolean,
+  lang: UiLanguage,
+): string | null {
+  if (isGreatAndHolyFriday(appearanceKey)) {
+    return translate(lang, 'fasting.explainGoodFriday');
+  }
+
+  if (!day) {
+    if (weeklyFast) return translate(lang, 'fasting.explainWeekly');
+    if (isStrictFastAppearanceFallback(appearanceKey)) {
+      if (appearanceKey.startsWith('dormition')) {
+        return translate(lang, 'fasting.explainSeasonOnly', {
+          season: translate(lang, 'appearance.dormition_fast'),
+        });
+      }
+      if (appearanceKey.startsWith('nativity_fast')) {
+        return translate(lang, 'fasting.explainSeasonOnly', {
+          season: translate(lang, 'appearance.nativity_fast'),
+        });
+      }
+      if (appearanceKey.startsWith('apostles')) {
+        return translate(lang, 'fasting.explainSeasonOnly', {
+          season: translate(lang, 'appearance.apostles_fast'),
+        });
+      }
+      if (appearanceKey.includes('lent') || appearanceKey === 'holy_week') {
+        return translate(lang, 'fasting.explainSeasonOnly', {
+          season: translate(lang, 'appearance.great_lent'),
+        });
+      }
+    }
+    return null;
+  }
+
+  const exception = resolveFastException(day);
+  if (exception.kind === 'fast_free') {
+    return translate(lang, 'fasting.explainFastFree');
+  }
+
+  if (isMeatFastAppearance(day, appearanceKey, civil)) {
+    return translate(lang, 'fasting.explainMeatFast');
+  }
+
+  const seasonLabel = orthocalSeasonRuleLabel(day, civil, lang);
+  const exceptionNote = fastExceptionNote(day, lang);
+
+  if (day.fast_level >= 2 && exceptionNote) {
+    return translate(lang, 'fasting.explainSeasonException', {
+      season: seasonLabel,
+      exception: exceptionNote,
+    });
+  }
+  if (day.fast_level >= 2) {
+    return translate(lang, 'fasting.explainSeasonOnly', { season: seasonLabel });
+  }
+  if ((day.fast_level === 1 || weeklyFast) && exceptionNote) {
+    return translate(lang, 'fasting.explainDayException', { exception: exceptionNote });
+  }
+  if (day.fast_level === 1 || weeklyFast) {
+    return translate(lang, 'fasting.explainWeekly');
+  }
+  return null;
+}
+
 export type CalendarFastingFoodIcons = {
   fish: boolean;
   wine: boolean;

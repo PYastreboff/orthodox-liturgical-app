@@ -1,4 +1,9 @@
-import { fetchOrthocalDay, fetchOrthocalGregorianMonth } from '../api/orthocal';
+import {
+  fetchOrthocalDay,
+  fetchOrthocalGregorianMonth,
+  getCachedOrthocalDay,
+  loadOrthocalDayFromPersistentCache,
+} from '../api/orthocal';
 import type { PrimaryCalendar } from '../calendar/dateDisplay';
 import { civilPlainDateFromLocal, orthocalQueryDate } from '../calendar/liturgicalCalendar';
 import { toDayIso } from '../calendar/localDate';
@@ -106,17 +111,47 @@ function buildDayInfo(
   ];
 }
 
+async function resolveOrthocalDayForDate(
+  date: Date,
+  liturgicalCalendar: PrimaryCalendar,
+): Promise<Awaited<ReturnType<typeof fetchOrthocalDay>> | null> {
+  const queryDate = orthocalQueryDate(civilPlainDateFromLocal(date));
+  const memHit = getCachedOrthocalDay(liturgicalCalendar, queryDate);
+  if (memHit) return memHit;
+  try {
+    return await fetchOrthocalDay(liturgicalCalendar, queryDate);
+  } catch {
+    return loadOrthocalDayFromPersistentCache(liturgicalCalendar, queryDate);
+  }
+}
+
+function mergeCachedDaysIntoMonth(
+  days: Date[],
+  liturgicalCalendar: PrimaryCalendar,
+  next: MonthDayMap,
+): void {
+  for (const date of days) {
+    const queryDate = orthocalQueryDate(civilPlainDateFromLocal(date));
+    const cached = getCachedOrthocalDay(liturgicalCalendar, queryDate);
+    if (!cached) continue;
+    const [iso, info] = buildDayInfo(date, liturgicalCalendar, cached);
+    next[iso] = info;
+  }
+}
+
+function monthFullyLoadedFromOrthocal(
+  days: Date[],
+  map: MonthDayMap,
+): boolean {
+  return days.every((date) => map[toDayIso(date)]?.orthocalLoaded);
+}
+
 async function fetchDayEntry(
   date: Date,
   liturgicalCalendar: PrimaryCalendar,
 ): Promise<readonly [string, CalendarDayInfo]> {
-  const queryDate = orthocalQueryDate(civilPlainDateFromLocal(date));
-  try {
-    const orthocalDay = await fetchOrthocalDay(liturgicalCalendar, queryDate);
-    return buildDayInfo(date, liturgicalCalendar, orthocalDay);
-  } catch {
-    return buildDayInfo(date, liturgicalCalendar, null);
-  }
+  const orthocalDay = await resolveOrthocalDayForDate(date, liturgicalCalendar);
+  return buildDayInfo(date, liturgicalCalendar, orthocalDay);
 }
 
 function publishMonthDay(
@@ -141,16 +176,26 @@ async function fetchMonthDayMap(
     ...buildAppearanceOnlyMonth(visibleMonth, liturgicalCalendar),
     ...monthCache.get(cacheKey),
   };
+  mergeCachedDaysIntoMonth(days, liturgicalCalendar, next);
   emitMonthProgress(cacheKey, next);
 
   if (liturgicalCalendar === 'gregorian') {
     const y = visibleMonth.getFullYear();
     const m = visibleMonth.getMonth() + 1;
-    const orthocalDays = await fetchOrthocalGregorianMonth(y, m);
-    for (const orthocalDay of orthocalDays) {
-      const date = new Date(orthocalDay.year, orthocalDay.month - 1, orthocalDay.day);
-      const [iso, info] = buildDayInfo(date, liturgicalCalendar, orthocalDay);
-      publishMonthDay(cacheKey, iso, info, next);
+    try {
+      const orthocalDays = await fetchOrthocalGregorianMonth(y, m);
+      for (const orthocalDay of orthocalDays) {
+        const date = new Date(orthocalDay.year, orthocalDay.month - 1, orthocalDay.day);
+        const [iso, info] = buildDayInfo(date, liturgicalCalendar, orthocalDay);
+        publishMonthDay(cacheKey, iso, info, next);
+      }
+    } catch {
+      await Promise.all(
+        days.map(async (date) => {
+          const [iso, info] = await fetchDayEntry(date, liturgicalCalendar);
+          publishMonthDay(cacheKey, iso, info, next);
+        }),
+      );
     }
     return next;
   }
@@ -183,6 +228,19 @@ export function loadOrthocalMonth(
   onProgress?: (partial: MonthDayMap) => void,
 ): Promise<MonthDayMap> {
   const key = monthCacheKey(calendar, month);
+  const days = daysInMonth(month);
+
+  if (!monthCache.has(key)) {
+    const seeded: MonthDayMap = buildAppearanceOnlyMonth(month, calendar);
+    mergeCachedDaysIntoMonth(days, calendar, seeded);
+    if (Object.values(seeded).some((entry) => entry.orthocalLoaded)) {
+      monthCache.set(key, seeded);
+    }
+    if (monthFullyLoadedFromOrthocal(days, seeded)) {
+      monthComplete.add(key);
+    }
+  }
+
   if (monthComplete.has(key)) {
     const hit = monthCache.get(key)!;
     onProgress?.(hit);

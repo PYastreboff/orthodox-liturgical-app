@@ -35,7 +35,7 @@ import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
-import { SUPPORT_URL } from '../../src/lib/legal/urls';
+import { SUPPORT_URL, DONATION_URL } from '../../src/lib/legal/urls';
 import {
   SERVING_ROLE_ICON_NAMES,
   SERVING_ROLE_IDS,
@@ -142,6 +142,10 @@ export default function SettingsScreen() {
     setNotifyVespersEve,
     notifyPresanctified,
     setNotifyPresanctified,
+    notifyWeeklyDigest,
+    setNotifyWeeklyDigest,
+    homeScreenWidget,
+    setHomeScreenWidget,
     personalDays,
     setPersonalDays,
   } = usePreferences();
@@ -183,12 +187,14 @@ export default function SettingsScreen() {
         notifyLiturgyMorning,
         notifyVespersEve,
         notifyPresanctified,
+        notifyWeeklyDigest,
       ].filter(Boolean).length,
     [
       notifyFastingReminder,
       notifyLiturgyMorning,
       notifyPresanctified,
       notifyVespersEve,
+      notifyWeeklyDigest,
     ],
   );
 
@@ -212,6 +218,10 @@ export default function SettingsScreen() {
     () => personalDays.filter((d) => d.kind === 'custom_event'),
     [personalDays],
   );
+  const reposeDays = useMemo(
+    () => personalDays.filter((d) => d.kind === 'repose'),
+    [personalDays],
+  );
   const parishFeastValueLabel =
     parishFeastDays.length === 0
       ? t('settings.personalDaysNone')
@@ -228,6 +238,10 @@ export default function SettingsScreen() {
     customEvents.length === 0
       ? t('settings.personalDaysNone')
       : t('settings.personalDaysOnCount', { count: customEvents.length });
+  const reposeValueLabel =
+    reposeDays.length === 0
+      ? t('settings.personalDaysNone')
+      : t('settings.personalDaysOnCount', { count: reposeDays.length });
 
   const notificationOptions = useMemo(
     (): NotificationToggleOption[] => [
@@ -259,12 +273,20 @@ export default function SettingsScreen() {
         leading: <Feather name="moon" size={18} color={roleIconColor} />,
         enabled: notifyPresanctified,
       },
+      {
+        id: 'weekly_digest',
+        label: t('settings.notifyWeeklyDigest'),
+        hint: t('settings.notifyWeeklyDigestHint'),
+        leading: <Feather name="calendar" size={18} color={roleIconColor} />,
+        enabled: notifyWeeklyDigest,
+      },
     ],
     [
       notifyFastingReminder,
       notifyLiturgyMorning,
       notifyPresanctified,
       notifyVespersEve,
+      notifyWeeklyDigest,
       roleIconColor,
       t,
     ],
@@ -366,6 +388,7 @@ export default function SettingsScreen() {
         else if (kind === 'liturgy') setNotifyLiturgyMorning(value);
         else if (kind === 'vespers') setNotifyVespersEve(value);
         else if (kind === 'presanctified') setNotifyPresanctified(value);
+        else if (kind === 'weekly_digest') setNotifyWeeklyDigest(value);
       };
 
       if (!next) {
@@ -392,6 +415,7 @@ export default function SettingsScreen() {
       setNotifyLiturgyMorning,
       setNotifyPresanctified,
       setNotifyVespersEve,
+      setNotifyWeeklyDigest,
       t,
       uiLanguage,
     ],
@@ -531,6 +555,25 @@ export default function SettingsScreen() {
               />
               <SettingsLinkRow
                 isDark={isDark}
+                icon="smartphone"
+                label={t('settings.homeScreenWidget')}
+                hint={
+                  nativeReminders
+                    ? t('settings.homeScreenWidgetHint')
+                    : t('settings.notificationsWebOnly')
+                }
+                trailing={
+                  <SettingsSwitch
+                    value={homeScreenWidget}
+                    onValueChange={setHomeScreenWidget}
+                    isDark={isDark}
+                    accessibilityLabel={t('settings.homeScreenWidget')}
+                  />
+                }
+                showDivider
+              />
+              <SettingsLinkRow
+                isDark={isDark}
                 icon="home"
                 label={t('settings.parishFeast')}
                 hint={t('settings.parishFeastRowHint')}
@@ -565,6 +608,21 @@ export default function SettingsScreen() {
                 onPress={() => setPersonalDaysKind('custom_event')}
                 showDivider
               />
+              <SettingsLinkRow
+                isDark={isDark}
+                leading={
+                  <MaterialCommunityIcons
+                    name="cross"
+                    size={18}
+                    color={roleIconColor}
+                  />
+                }
+                label={t('settings.repose')}
+                hint={t('settings.reposeRowHint')}
+                valueLabel={reposeValueLabel}
+                onPress={() => setPersonalDaysKind('repose')}
+                showDivider
+              />
 
               <SettingsLinkRow
                 isDark={isDark}
@@ -591,6 +649,37 @@ export default function SettingsScreen() {
                 trailingIcon="external-link"
                 showDivider
               />
+            </View>
+          </View>
+
+          <View style={[settingsListCard(isDark), styles.tipJarCard]}>
+            <View style={styles.tipJarInner}>
+              <Feather
+                name="coffee"
+                size={22}
+                color={isDark ? colors.tabActiveDark : colors.accentWine}
+              />
+              <Text style={[styles.tipJarTitle, { color: theme.colors.text }]}>
+                {t('settings.tipJarTitle')}
+              </Text>
+              <Text style={[styles.tipJarBody, { color: muted }]}>
+                {t('settings.tipJarBody')}
+              </Text>
+              <Pressable
+                onPress={() => Linking.openURL(DONATION_URL)}
+                accessibilityRole="link"
+                accessibilityLabel={t('settings.tipJarButton')}
+                style={({ pressed }) => [
+                  styles.tipJarButton,
+                  {
+                    backgroundColor: isDark ? colors.accentWine : colors.ink,
+                    opacity: pressed ? 0.88 : 1,
+                  },
+                ]}
+              >
+                <Feather name="external-link" size={15} color="#fff" />
+                <Text style={styles.tipJarButtonLabel}>{t('settings.tipJarButton')}</Text>
+              </Pressable>
             </View>
           </View>
 
@@ -726,6 +815,41 @@ const styles = StyleSheet.create({
   },
   pageHeader: {
     marginBottom: 20,
+  },
+  tipJarCard: {
+    marginTop: 18,
+  },
+  tipJarInner: {
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    gap: 8,
+  },
+  tipJarTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  tipJarBody: {
+    fontSize: 13,
+    lineHeight: 18,
+    textAlign: 'center',
+    paddingHorizontal: 8,
+  },
+  tipJarButton: {
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+  },
+  tipJarButtonLabel: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   footer: {
     marginTop: 8,

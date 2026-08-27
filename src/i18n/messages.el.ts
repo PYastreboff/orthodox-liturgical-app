@@ -103,6 +103,18 @@ export const el = {
     customEventEmpty: 'Δεν υπάρχουν ακόμη προσωπικά γεγονότα.',
     addCustomEvent: 'Προσθήκη γεγονότος',
     customEventPlaceholder: 'π.χ. Επέτειος',
+    repose: 'Ημέρες κοιμήσεως',
+    reposeHint: 'Επέτειος κοιμήσεως αγαπημένου. Προαιρετικά εμφάνιση της 40ής ημέρας στο ημερολόγιο.',
+    reposeRowHint: 'Εμφανίζεται στο Ημερολόγιο· προαιρετικά 40ή ημέρα και υπενθύμιση παραμονής.',
+    reposeEmpty: 'Δεν υπάρχουν ημέρες κοιμήσεως ακόμα.',
+    addRepose: 'Προσθήκη ημέρας κοιμήσεως',
+    reposePlaceholder: 'π.χ. Ματούσα Μαρία',
+    reposeShowFortiethDay: 'Εμφάνιση 40ής ημέρας',
+    reposeShowFortiethDayHint:
+      'Σημειώνει την 40ή ημέρα στο ημερολόγιο (η ημέρα κοιμήσεως μετρά ως 1η).',
+    reposeFortiethPreview: '40ή ημέρα φέτος: {date}',
+    reposeFortiethOn: '40ή ημέρα στο ημερολόγιο',
+    reposeFortiethCalendarLabel: '{name} — 40ή ημέρα',
     addParishFeast: 'Προσθήκη ενοριακής εορτής',
     addNameday: 'Προσθήκη ονομαστικής εορτής',
     editPersonalDay: 'Επεξεργασία προσωπικής ημέρας',
@@ -134,6 +146,11 @@ export const el = {
     notifyVespersHint: 'Απόγευμα (~16:00).',
     notifyPresanctified: 'Προηγιασμένων',
     notifyPresanctifiedHint: 'Απόγευμα (~16:30).',
+    notifyWeeklyDigest: 'Εβδομαδιαία σύνοψη',
+    notifyWeeklyDigestHint: 'Κυριακή πρωί (~8:00) — εορτές, νηστεία και προσωπικές ημέρες της εβδομάδας.',
+    homeScreenWidget: 'Widget αρχικής οθόνης',
+    homeScreenWidgetHint:
+      'Μόνο στην εφαρμογή (iOS & Android) — όχι στο web. Σημερινή εορτή και νηστεία στην οθόνη κλειδώματος.',
     notifyPermissionDenied: 'Η άδεια ειδοποιήσεων είναι απενεργοποιημένη στις ρυθμίσεις συστήματος.',
     version: 'Έκδοση {version} · ρουμπρίκες προσανατολισμένες στην ΜΠ',
     madeBy: 'Δημιουργία: ',
@@ -162,6 +179,10 @@ export const el = {
     privacyPolicyHint: 'Πώς το OrthoDaily χειρίζεται δεδομένα στη συσκευή και στο διαδίκτυο.',
     supportLink: 'Υποστήριξη & σχόλια',
     supportHint: 'Αναφέρετε πρόβλημα ή κάντε ερώτηση στο GitHub.',
+    tipJarTitle: 'Υποστηρίξτε το OrthoDaily',
+    tipJarBody:
+      'Αν η εφαρμογή βοηθά την προσευχή ή την ενορία σας, ένα φιλοδώρημα μέσω PayPal στηρίζει την ανάπτυξη. Δεν είναι υποχρεωτικό. Ευχαριστούμε ούτως ή άλλως.',
+    tipJarButton: 'Φιλοδώρημα με PayPal',
     colorsLegend: 'Οδηγός',
     colorsLegendHint: 'Τι σημαίνουν τα χρώματα και τα σύμβολα στο «Σήμερα» και το Ημερολόγιο.',
     colorsLegendLink: 'Χρώματα & νηστεία',
@@ -406,6 +427,18 @@ export const el = {
       'Μεγάλη Παρασκευή — απόλυτη νηστεία. Ορισμένοι κοινωνούν κατά την ακολουθία.',
     noteDefault:
       'Δεδομένα από orthocal.info (ρουμπρίκες OCA). Επαληθεύστε με την πρακτική του Πατριαρχείου Μόσχας.',
+    explainSeasonOnly:
+      'Αυτή η ημέρα ανήκει στο {season}. Τα επιτρεπόμενα τρόφιμα ακολουθούν τους κανόνες της περιόδου και τυχόν εξαιρέσεις εορτών.',
+    explainSeasonException:
+      'Αυτή η ημέρα ανήκει στο {season}. {exception}',
+    explainDayException: 'Σήμερα ισχύει εξαίρεση νηστείας: {exception}',
+    explainWeekly:
+      'Τετάρτη και Παρασκευή είναι ημέρες νηστείας στη ρωσική παράδοση, εκτός αν εορτή ή η Φωτεινή εβδομάδα ακυρώσει τη νηστεία.',
+    explainGoodFriday:
+      'Μεγάλη και Αγία Παρασκευή — πλήρης abstinence από τροφή.',
+    explainMeatFast:
+      'Εβδομάδα Τυρινής: χωρίς κρέας· γαλακτοκομικά, αυγά, ψάρι, κρασί και λάδι επιτρέπονται.',
+    explainFastFree: 'Το Orthocal σημειώνει αυτή την ημέρα ως χωρίς νηστεία παρά την εποχή του ημερολογίου.',
   },
   calendarHint: {
     julian: 'Άγιοι και αναγνώσματα — ιουλιανές ρουμπρίκες orthocal για αυτή την πολιτική ημερομηνία.',
@@ -1218,5 +1251,13 @@ export const el = {
     channelVespers: 'Εσπερινός / Αγρυπνία',
     channelPresanctified: 'Προηγιασμένων',
     channelPersonalDayEve: 'Προσωπικές υπενθυμίσεις',
+    channelWeeklyDigest: 'Εβδομαδιαία σύνοψη',
+    weeklyDigestTitle: 'Η εβδομάδα σας',
+    weeklyDigestBodyGeneric:
+      'Ανοίξτε το OrthoDaily για εορτές, νηστεία και προσωπικές ημέρες αυτής της εβδομάδας.',
+    weeklyDigestPersonal: '{count} προσωπικές ημέρες',
+    weeklyDigestSeason: 'Περιλαμβάνει {season}',
+    weeklyDigestFastDays: '{count} ημέρες νηστείας',
+    weeklyDigestFeasts: 'Μεγάλες εορτές: {feasts}',
   },
 } as const;

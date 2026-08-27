@@ -20,6 +20,7 @@ import { dateToJulianPlainDate } from '../../lib/calendar/julianGregorian';
 import {
   clampPersonalDate,
   daysInCalendarMonth,
+  formatFortiethDayPreview,
   formatPersonalDayDate,
   gregorianMonthDay,
   MAX_PERSONAL_DAYS,
@@ -49,6 +50,7 @@ type Draft = {
   day: number;
   calendar: PersonalDayCalendar;
   remindEve: boolean;
+  showFortiethDay: boolean;
 };
 
 function todayInCalendar(calendar: PersonalDayCalendar): { month: number; day: number } {
@@ -86,6 +88,14 @@ function copyForKind(kind: PersonalDayKind, t: (key: string) => string) {
         add: t('settings.addBirthday'),
         placeholder: t('settings.birthdayPlaceholder'),
       };
+    case 'repose':
+      return {
+        title: t('settings.repose'),
+        hint: t('settings.reposeHint'),
+        empty: t('settings.reposeEmpty'),
+        add: t('settings.addRepose'),
+        placeholder: t('settings.reposePlaceholder'),
+      };
     default:
       return {
         title: t('settings.customEvent'),
@@ -107,6 +117,7 @@ function emptyDraft(kind: PersonalDayKind, calendar: PersonalDayCalendar): Draft
     day: today.day,
     calendar,
     remindEve: true,
+    showFortiethDay: kind === 'repose',
   };
 }
 
@@ -119,6 +130,7 @@ function draftFromDay(day: PersonalDay): Draft {
     day: day.day,
     calendar: day.calendar,
     remindEve: day.remindEve,
+    showFortiethDay: day.kind === 'repose' ? day.showFortiethDay !== false : false,
   };
 }
 
@@ -198,6 +210,9 @@ export function SettingsPersonalDaysModal({
       day,
       calendar: draft.calendar,
       remindEve,
+      ...(draft.kind === 'repose'
+        ? { showFortiethDay: draft.showFortiethDay }
+        : null),
     };
     const without = days.filter((d) => d.id !== saved.id);
     onChange([...without, saved]);
@@ -235,6 +250,9 @@ export function SettingsPersonalDaysModal({
               <Text style={[styles.itemMeta, { color: mutedColor }]}>
                 {formatPersonalDayDate(item, lang)}
                 {item.remindEve ? ` · ${t('settings.personalDayRemindOn')}` : ''}
+                {item.kind === 'repose' && item.showFortiethDay !== false
+                  ? ` · ${t('settings.reposeFortiethOn')}`
+                  : ''}
               </Text>
             </View>
             <Feather name="chevron-right" size={18} color={mutedColor} />
@@ -411,6 +429,36 @@ export function SettingsPersonalDaysModal({
                     accessibilityLabel={t('settings.personalDayRemindEve')}
                   />
                 </View>
+
+                {draft.kind === 'repose' ? (
+                  <>
+                    <View style={styles.remindRow}>
+                      <View style={styles.remindText}>
+                        <Text style={[styles.itemTitle, { color: textColor }]}>
+                          {t('settings.reposeShowFortiethDay')}
+                        </Text>
+                        <Text style={[styles.itemMeta, { color: mutedColor }]}>
+                          {t('settings.reposeShowFortiethDayHint')}
+                        </Text>
+                      </View>
+                      <SettingsSwitch
+                        value={draft.showFortiethDay}
+                        onValueChange={(showFortiethDay) =>
+                          setDraft({ ...draft, showFortiethDay })
+                        }
+                        isDark={isDark}
+                        accessibilityLabel={t('settings.reposeShowFortiethDay')}
+                      />
+                    </View>
+                    {draft.showFortiethDay ? (
+                      <Text style={[styles.fortiethPreview, { color: mutedColor }]}>
+                        {t('settings.reposeFortiethPreview', {
+                          date: formatFortiethDayPreview(draft, lang),
+                        })}
+                      </Text>
+                    ) : null}
+                  </>
+                ) : null}
               </ScrollView>
             ) : (
               <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
@@ -635,6 +683,11 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
     gap: 2,
+  },
+  fortiethPreview: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 8,
   },
   actions: {
     flexDirection: 'row',

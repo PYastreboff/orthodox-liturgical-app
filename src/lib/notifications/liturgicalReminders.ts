@@ -26,7 +26,8 @@ export type NotificationReminderKind =
   | 'liturgy'
   | 'vespers'
   | 'presanctified'
-  | 'personal_day_eve';
+  | 'personal_day_eve'
+  | 'weekly_digest';
 
 type ChannelDef = {
   id: string;
@@ -45,6 +46,10 @@ const CHANNELS: Record<NotificationReminderKind, ChannelDef> = {
     id: 'orthodaily-personal-day-eve',
     nameKey: 'notifications.channelPersonalDayEve',
   },
+  weekly_digest: {
+    id: 'orthodaily-weekly-digest',
+    nameKey: 'notifications.channelWeeklyDigest',
+  },
 };
 
 const TIMES: Record<NotificationReminderKind, { hour: number; minute: number }> = {
@@ -53,6 +58,7 @@ const TIMES: Record<NotificationReminderKind, { hour: number; minute: number }> 
   vespers: { hour: 16, minute: 0 },
   presanctified: { hour: 16, minute: 30 },
   personal_day_eve: { hour: 18, minute: 0 },
+  weekly_digest: { hour: 8, minute: 0 },
 };
 
 export type ReminderPrefs = {
@@ -60,6 +66,7 @@ export type ReminderPrefs = {
   notifyLiturgyMorning: boolean;
   notifyVespersEve: boolean;
   notifyPresanctified: boolean;
+  notifyWeeklyDigest: boolean;
   personalDays: PersonalDay[];
   primaryCalendar: PrimaryCalendar;
   uiLanguage: UiLanguage;
@@ -87,6 +94,7 @@ function anyReminderEnabled(prefs: ReminderPrefs): boolean {
     prefs.notifyLiturgyMorning ||
     prefs.notifyVespersEve ||
     prefs.notifyPresanctified ||
+    prefs.notifyWeeklyDigest ||
     prefs.personalDays.some((day) => day.remindEve)
   );
 }
@@ -152,6 +160,64 @@ function fastingBody(day: OrthocalDay | null, appearanceKey: string, lang: UiLan
     });
   }
   return translate(lang, 'notifications.fastingBodyGeneric');
+}
+
+async function weeklyDigestBody(
+  prefs: ReminderPrefs,
+  weekStart: Date,
+  lang: UiLanguage,
+): Promise<string> {
+  const parts: string[] = [];
+  let personalCount = 0;
+  let fastDayCount = 0;
+  let seasonLabel: string | null = null;
+  const feastTitles: string[] = [];
+
+  for (let i = 0; i < 7; i += 1) {
+    const day = addLocalDays(weekStart, i);
+    const civil = civilPlainDateFromLocal(day);
+    personalCount += personalDaysOnCivilDate(prefs.personalDays, day).length;
+
+    const orthocal = await resolveOrthocalDay(prefs.primaryCalendar, civil);
+    const appearance = getLiturgicalAppearanceForLocalDate(day, prefs.primaryCalendar, orthocal);
+    const weeklyFast = isWeeklyFastForCivilDate(civil);
+    if (isOrthocalFastDay(orthocal, appearance.key, weeklyFast)) {
+      fastDayCount += 1;
+    }
+    if (orthocal && orthocal.fast_level >= 2 && !seasonLabel) {
+      seasonLabel = orthocal.fast_level_desc?.trim() || null;
+    }
+    const feastTitle = orthocal?.summary_title?.trim();
+    if (orthocal && orthocal.feast_level >= 6 && feastTitle) {
+      feastTitles.push(feastTitle);
+    }
+  }
+
+  if (personalCount > 0) {
+    parts.push(
+      translate(lang, 'notifications.weeklyDigestPersonal', { count: personalCount }),
+    );
+  }
+  if (seasonLabel) {
+    parts.push(
+      translate(lang, 'notifications.weeklyDigestSeason', { season: seasonLabel }),
+    );
+  } else if (fastDayCount > 0) {
+    parts.push(
+      translate(lang, 'notifications.weeklyDigestFastDays', { count: fastDayCount }),
+    );
+  }
+  if (feastTitles.length > 0) {
+    parts.push(
+      translate(lang, 'notifications.weeklyDigestFeasts', {
+        feasts: feastTitles.slice(0, 3).join(', '),
+      }),
+    );
+  }
+  if (parts.length === 0) {
+    return translate(lang, 'notifications.weeklyDigestBodyGeneric');
+  }
+  return parts.join(' ');
 }
 
 async function scheduleOne(
@@ -290,6 +356,18 @@ export async function syncLiturgicalReminders(prefs: ReminderPrefs): Promise<voi
         translate(lang, 'notifications.personalDayEveBody', {
           title: personalDay.title,
         }),
+      );
+    }
+
+    if (prefs.notifyWeeklyDigest && day.getDay() === 0) {
+      const monday = addLocalDays(day, 1);
+      const body = await weeklyDigestBody(prefs, monday, lang);
+      await scheduleOne(
+        'weekly_digest',
+        day,
+        now,
+        translate(lang, 'notifications.weeklyDigestTitle'),
+        body,
       );
     }
   }

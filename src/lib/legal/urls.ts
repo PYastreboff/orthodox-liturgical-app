@@ -7,3 +7,6 @@ export const SUPPORT_URL =
 
 export const APP_MARKETING_URL =
   'https://pyastreboff.github.io/orthodox-liturgical-app/';
+
+/** Voluntary tip jar (PayPal.me). */
+export const DONATION_URL = 'https://paypal.me/PYastreboff';

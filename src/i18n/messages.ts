@@ -104,6 +104,18 @@ const en = {
     customEventEmpty: 'No custom events yet.',
     addCustomEvent: 'Add Custom Event',
     customEventPlaceholder: 'e.g. Anniversary',
+    repose: 'Days of Repose',
+    reposeHint: 'Anniversary of a loved one’s repose. Optionally show the 40th-day memorial on the calendar.',
+    reposeRowHint: 'Shows on Calendar; optional 40th-day and eve reminders.',
+    reposeEmpty: 'No days of repose yet.',
+    addRepose: 'Add Day of Repose',
+    reposePlaceholder: 'e.g. Matushka Maria',
+    reposeShowFortiethDay: 'Show 40th-day memorial',
+    reposeShowFortiethDayHint:
+      'Marks the 40th day on the calendar (day of repose counts as day 1).',
+    reposeFortiethPreview: '40th day this year: {date}',
+    reposeFortiethOn: '40th day on calendar',
+    reposeFortiethCalendarLabel: '{name} — 40th day',
     addParishFeast: 'Add Parish Feast Day',
     addNameday: 'Add Nameday',
     editPersonalDay: 'Edit Personal Day',
@@ -135,6 +147,11 @@ const en = {
     notifyVespersHint: 'Afternoon alert (~16:00).',
     notifyPresanctified: 'Presanctified',
     notifyPresanctifiedHint: 'Afternoon alert (~16:30).',
+    notifyWeeklyDigest: 'Weekly Digest',
+    notifyWeeklyDigestHint: 'Sunday morning (~8:00) — feasts, fasts, and personal days ahead.',
+    homeScreenWidget: 'Home Screen Widget',
+    homeScreenWidgetHint:
+      'Phone app only (iOS & Android) — not on web. Today’s feast and fast on your lock screen.',
     notifyPermissionDenied: 'Notification permission is off in system settings.',
     version: 'Version {version} · Moscow Patriarchate–oriented rubrics',
     madeBy: 'Made by ',
@@ -163,6 +180,10 @@ const en = {
     privacyPolicyHint: 'How OrthoDaily handles data on your device and online.',
     supportLink: 'Support & Feedback',
     supportHint: 'Report a problem or ask a question on GitHub.',
+    tipJarTitle: 'Support OrthoDaily',
+    tipJarBody:
+      'If the app helps your prayer or parish life, a tip via PayPal keeps development going. Never required. Thank you either way.',
+    tipJarButton: 'Tip with PayPal',
     colorsLegend: 'Guide',
     colorsLegendHint: 'What the colours and symbols on Today and Calendar mean.',
     colorsLegendLink: 'Colours & Fasting',
@@ -407,6 +428,18 @@ const en = {
       'Great and Holy Friday is a day of total fast from food. Some receive Holy Communion at the service; follow your typikon.',
     noteDefault:
       'Data from orthocal.info (OCA rubrics). Verify against Moscow Patriarchate practice where they differ.',
+    explainSeasonOnly:
+      'This day falls in {season}. Foods allowed today follow that season’s weekday rules and any feast exceptions.',
+    explainSeasonException:
+      'This day falls in {season}. {exception}',
+    explainDayException: 'Today’s fasting rule has an exception: {exception}',
+    explainWeekly:
+      'Wednesday and Friday are fasting days in the Russian tradition unless a feast or Bright Week lifts the fast.',
+    explainGoodFriday:
+      'Great and Holy Friday is a day of total fast from food.',
+    explainMeatFast:
+      'Cheesefare week: abstain from meat; dairy, eggs, fish, wine, and oil are allowed.',
+    explainFastFree: 'Orthocal marks this as a fast-free day despite the calendar season.',
   },
   calendarHint: {
     julian: 'Saints and readings from orthocal Julian rubrics for this civil date.',
@@ -1235,6 +1268,13 @@ const en = {
     channelVespers: 'Vespers / Vigil',
     channelPresanctified: 'Presanctified Liturgy',
     channelPersonalDayEve: 'Personal day reminders',
+    channelWeeklyDigest: 'Weekly digest',
+    weeklyDigestTitle: 'Your week ahead',
+    weeklyDigestBodyGeneric: 'Open OrthoDaily for feasts, fasting, and personal commemorations this week.',
+    weeklyDigestPersonal: '{count} personal commemorations',
+    weeklyDigestSeason: 'Includes {season}',
+    weeklyDigestFastDays: '{count} fasting days',
+    weeklyDigestFeasts: 'Major feasts: {feasts}',
   },
 } as const;
 
@@ -1342,6 +1382,18 @@ const ru = {
     customEventEmpty: 'Пока нет своих событий.',
     addCustomEvent: 'Добавить событие',
     customEventPlaceholder: 'напр. Годовщина',
+    repose: 'Дни упокоения',
+    reposeHint: 'Годовщина упокоения близкого. Можно показать сороковой день в календаре.',
+    reposeRowHint: 'В календаре; по желанию — сороковой день и напоминание накануне.',
+    reposeEmpty: 'Дней упокоения пока нет.',
+    addRepose: 'Добавить день упокоения',
+    reposePlaceholder: 'напр. матушка Мария',
+    reposeShowFortiethDay: 'Показывать сороковой день',
+    reposeShowFortiethDayHint:
+      'Отмечает 40-й день в календаре (день упокоения считается первым).',
+    reposeFortiethPreview: '40-й день в этом году: {date}',
+    reposeFortiethOn: 'сороковой день в календаре',
+    reposeFortiethCalendarLabel: '{name} — 40-й день',
     addParishFeast: 'Добавить приходской праздник',
     addNameday: 'Добавить именины',
     editPersonalDay: 'Изменить личную дату',
@@ -1373,6 +1425,11 @@ const ru = {
     notifyVespersHint: 'Днём (~16:00).',
     notifyPresanctified: 'Преждеосвященная',
     notifyPresanctifiedHint: 'Днём (~16:30).',
+    notifyWeeklyDigest: 'Еженедельная сводка',
+    notifyWeeklyDigestHint: 'Воскресенье утром (~8:00) — праздники, пост и личные даты на неделю.',
+    homeScreenWidget: 'Виджет на главном экране',
+    homeScreenWidgetHint:
+      'Только в приложении (iOS и Android) — не на сайте. Праздник и пост на экране блокировки.',
     notifyPermissionDenied: 'Разрешение на уведомления выключено в настройках системы.',
     version: 'Версия {version} · ориентир: Московская Патриархия',
     madeBy: 'Создал ',
@@ -1401,6 +1458,10 @@ const ru = {
     privacyPolicyHint: 'Как OrthoDaily обрабатывает данные на устройстве и в сети.',
     supportLink: 'Поддержка и отзывы',
     supportHint: 'Сообщить о проблеме или задать вопрос на GitHub.',
+    tipJarTitle: 'Поддержать OrthoDaily',
+    tipJarBody:
+      'Если приложение помогает в молитве или приходской жизни, чаевые через PayPal поддерживают разработку. Не обязательно. В любом случае спасибо.',
+    tipJarButton: 'Чаевые через PayPal',
     colorsLegend: 'Справка',
     colorsLegendHint: 'Что означают цвета и знаки на экранах «Сегодня» и «Календарь».',
     colorsLegendLink: 'Цвета и пост',
@@ -1648,6 +1709,18 @@ const ru = {
       'В Великую и Святую Пятницу — полное воздержание от пищи. Некоторые причащаются на службе; следуйте своему типику.',
     noteDefault:
       'Данные orthocal.info (рубрики OCA). Сверяйте с практикой Московской Патриархии, где они расходятся.',
+    explainSeasonOnly:
+      'Этот день относится к {season}. Разрешённая пища следует правилам сезона и исключениям на праздники.',
+    explainSeasonException:
+      'Этот день относится к {season}. {exception}',
+    explainDayException: 'Сегодня действует исключение из поста: {exception}',
+    explainWeekly:
+      'Среда и пятница — постные дни в русской традиции, если праздник или Светлая седмица не отменяют пост.',
+    explainGoodFriday:
+      'В Великую и Святую Пятницу — полное воздержание от пищи.',
+    explainMeatFast:
+      'Сырная седмица: без мяса; молочное, яйца, рыба, вино и масло разрешены.',
+    explainFastFree: 'Orthocal отмечает этот день как пост-free, несмотря на календарный сезон.',
   },
   calendarHint: {
     julian: 'Святые и чтения — юлианские рубрики orthocal для этой гражданской даты.',
@@ -2487,6 +2560,14 @@ const ru = {
     channelVespers: 'Вечерня / бдение',
     channelPresanctified: 'Преждеосвященная',
     channelPersonalDayEve: 'Личные напоминания',
+    channelWeeklyDigest: 'Еженедельная сводка',
+    weeklyDigestTitle: 'Ваша неделя впереди',
+    weeklyDigestBodyGeneric:
+      'Откройте OrthoDaily — праздники, пост и личные даты на этой неделе.',
+    weeklyDigestPersonal: '{count} личных памятных дат',
+    weeklyDigestSeason: 'Включая {season}',
+    weeklyDigestFastDays: '{count} постных дней',
+    weeklyDigestFeasts: 'Великие праздники: {feasts}',
   },
 };
 

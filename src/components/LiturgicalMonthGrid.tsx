@@ -34,7 +34,11 @@ import { intlLocaleForLanguage } from '../i18n/locale';
 import { localizeCalendarDayInfo } from '../i18n/orthocalContent';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
-import { personalDaysOnCivilDate, type PersonalDayKind } from '../lib/personalDays';
+import {
+  calendarLabelForOccurrence,
+  personalDayOccurrencesOnCivilDate,
+  type PersonalDayDisplayKind,
+} from '../lib/personalDays';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { typikonIconColor } from '../lib/liturgical/typikonSymbols';
 import { usePreferences } from '../state/PreferencesContext';
@@ -110,7 +114,11 @@ function personalKindForName(
   namedays: { title: string }[],
   events: { title: string }[],
   birthdays: { title: string }[],
-): PersonalDayKind | null {
+  repose: { title: string }[],
+  fortieth: { title: string }[],
+): PersonalDayDisplayKind | null {
+  if (fortieth.some((d) => d.title === name)) return 'repose_fortieth';
+  if (repose.some((d) => d.title === name)) return 'repose';
   if (feasts.some((d) => d.title === name)) return 'parish_feast';
   if (namedays.some((d) => d.title === name)) return 'nameday';
   if (birthdays.some((d) => d.title === name)) return 'birthday';
@@ -118,11 +126,32 @@ function personalKindForName(
   return null;
 }
 
-function personalLineColor(kind: PersonalDayKind | null, isDark: boolean): string | null {
+function personalLineColor(kind: PersonalDayDisplayKind | null, isDark: boolean): string | null {
   if (!kind) return null;
+  if (kind === 'repose') return isDark ? colors.personalReposeDark : colors.personalRepose;
+  if (kind === 'repose_fortieth') return isDark ? colors.personalFortiethDark : colors.personalFortieth;
   if (kind === 'custom_event') return isDark ? colors.personalEventDark : colors.personalEvent;
   if (kind === 'birthday') return isDark ? colors.personalBirthdayDark : colors.personalBirthday;
-  return colors.accentWine;
+  return isDark ? colors.feastTextSoftDark : colors.accentWine;
+}
+
+function primaryPersonalMarkerColor(
+  lists: {
+    personalFeasts: { title: string }[];
+    personalRepose: { title: string }[];
+    personalFortieth: { title: string }[];
+    personalBirthdays: { title: string }[];
+    personalEvents: { title: string }[];
+  },
+  isDark: boolean,
+  fallback: string,
+): string {
+  if (lists.personalFeasts.length > 0) return personalLineColor('parish_feast', isDark)!;
+  if (lists.personalRepose.length > 0) return personalLineColor('repose', isDark)!;
+  if (lists.personalFortieth.length > 0) return personalLineColor('repose_fortieth', isDark)!;
+  if (lists.personalBirthdays.length > 0) return personalLineColor('birthday', isDark)!;
+  if (lists.personalEvents.length > 0) return personalLineColor('custom_event', isDark)!;
+  return fallback;
 }
 
 function CalendarFastingIconsRow({
@@ -483,6 +512,9 @@ export function LiturgicalMonthGrid({
                   style={[styles.cellSlot, { width: cellWidth, minHeight: cellHeight }]}
                 >
                   {date ? (
+                    (() => {
+                      const personal = personalListsForDate(personalDays, date, lang);
+                      return (
                     <DayCell
                       date={date}
                       today={today}
@@ -492,23 +524,19 @@ export function LiturgicalMonthGrid({
                       typography={cellTypography}
                       onPress={onDayPress}
                       dayInfo={dayInfoForDate(date)}
-                      personalFeasts={personalDaysOnCivilDate(personalDays, date).filter(
-                        (d) => d.kind === 'parish_feast',
-                      )}
-                      personalNamedays={personalDaysOnCivilDate(personalDays, date).filter(
-                        (d) => d.kind === 'nameday',
-                      )}
-                      personalBirthdays={personalDaysOnCivilDate(personalDays, date).filter(
-                        (d) => d.kind === 'birthday',
-                      )}
-                      personalEvents={personalDaysOnCivilDate(personalDays, date).filter(
-                        (d) => d.kind === 'custom_event',
-                      )}
+                      personalFeasts={personal.personalFeasts}
+                      personalNamedays={personal.personalNamedays}
+                      personalBirthdays={personal.personalBirthdays}
+                      personalEvents={personal.personalEvents}
+                      personalRepose={personal.personalRepose}
+                      personalFortieth={personal.personalFortieth}
                       showTypikonForDate={showTypikonForDate}
                       orthocalPending={loading && !dayInfoForDate(date).orthocalLoaded}
                       loadingBorderColor={loadingBorderColor}
                       isDark={isDark}
                     />
+                      );
+                    })()
                   ) : null}
                 </View>
               ))}
@@ -600,6 +628,40 @@ function resolveCalendarCellTypography(width: number, isCompact: boolean): Calen
   };
 }
 
+function personalListsForDate(
+  personalDays: import('../lib/personalDays').PersonalDay[],
+  date: Date,
+  lang: import('../i18n/types').UiLanguage,
+) {
+  const occurrences = personalDayOccurrencesOnCivilDate(personalDays, date);
+  const personalFeasts = occurrences
+    .filter((o) => o.day.kind === 'parish_feast' && o.variant === 'default')
+    .map((o) => ({ title: o.day.title }));
+  const personalNamedays = occurrences
+    .filter((o) => o.day.kind === 'nameday' && o.variant === 'default')
+    .map((o) => ({ title: o.day.title }));
+  const personalBirthdays = occurrences
+    .filter((o) => o.day.kind === 'birthday' && o.variant === 'default')
+    .map((o) => ({ title: o.day.title }));
+  const personalEvents = occurrences
+    .filter((o) => o.day.kind === 'custom_event' && o.variant === 'default')
+    .map((o) => ({ title: o.day.title }));
+  const personalRepose = occurrences
+    .filter((o) => o.day.kind === 'repose' && o.variant === 'default')
+    .map((o) => ({ title: o.day.title }));
+  const personalFortieth = occurrences
+    .filter((o) => o.variant === 'fortieth')
+    .map((o) => ({ title: calendarLabelForOccurrence(o, lang) }));
+  return {
+    personalFeasts,
+    personalNamedays,
+    personalBirthdays,
+    personalEvents,
+    personalRepose,
+    personalFortieth,
+  };
+}
+
 function DayCell({
   date,
   today,
@@ -613,6 +675,8 @@ function DayCell({
   personalNamedays,
   personalBirthdays,
   personalEvents,
+  personalRepose,
+  personalFortieth,
   showTypikonForDate,
   orthocalPending = false,
   loadingBorderColor,
@@ -630,6 +694,8 @@ function DayCell({
   personalNamedays: { title: string }[];
   personalBirthdays: { title: string }[];
   personalEvents: { title: string }[];
+  personalRepose: { title: string }[];
+  personalFortieth: { title: string }[];
   showTypikonForDate: (date: Date) => boolean;
   orthocalPending?: boolean;
   loadingBorderColor: string;
@@ -717,6 +783,8 @@ function DayCell({
         displayInfo.dayTitle,
         [
           ...personalFeasts.map((d) => d.title),
+          ...personalRepose.map((d) => d.title),
+          ...personalFortieth.map((d) => d.title),
           ...personalBirthdays.map((d) => d.title),
           ...personalEvents.map((d) => d.title),
           ...displayInfo.feasts,
@@ -732,11 +800,15 @@ function DayCell({
       personalNamedays,
       personalBirthdays,
       personalEvents,
+      personalRepose,
+      personalFortieth,
     ],
   );
   const feastCount =
     displayInfo.feasts.length +
     personalFeasts.length +
+    personalRepose.length +
+    personalFortieth.length +
     personalEvents.length +
     personalBirthdays.length;
   const saintCount = displayInfo.saints.length + personalNamedays.length;
@@ -848,18 +920,17 @@ function DayCell({
                   style={[
                     styles.compactDot,
                     {
-                      backgroundColor:
-                        personalFeasts.length > 0
-                          ? colors.accentWine
-                          : personalBirthdays.length > 0
-                            ? isDark
-                              ? colors.personalBirthdayDark
-                              : colors.personalBirthday
-                            : personalEvents.length > 0
-                              ? isDark
-                                ? colors.personalEventDark
-                                : colors.personalEvent
-                              : titleColor,
+                      backgroundColor: primaryPersonalMarkerColor(
+                        {
+                          personalFeasts,
+                          personalRepose,
+                          personalFortieth,
+                          personalBirthdays,
+                          personalEvents,
+                        },
+                        isDark,
+                        titleColor,
+                      ),
                     },
                   ]}
                 />
@@ -869,19 +940,34 @@ function DayCell({
                   style={[
                     styles.compactDot,
                     {
-                      backgroundColor: isDark
-                        ? colors.personalBirthdayDark
-                        : colors.personalBirthday,
+                      backgroundColor: personalLineColor('birthday', isDark)!,
                     },
                   ]}
                 />
               ) : null}
-              {personalEvents.length > 0 && personalFeasts.length > 0 ? (
+              {personalEvents.length > 0 &&
+              (personalFeasts.length > 0 || personalBirthdays.length > 0) ? (
                 <View
                   style={[
                     styles.compactDot,
                     {
-                      backgroundColor: isDark ? colors.personalEventDark : colors.personalEvent,
+                      backgroundColor: personalLineColor('custom_event', isDark)!,
+                    },
+                  ]}
+                />
+              ) : null}
+              {(personalRepose.length > 0 || personalFortieth.length > 0) &&
+              (personalFeasts.length > 0 ||
+                personalBirthdays.length > 0 ||
+                personalEvents.length > 0) ? (
+                <View
+                  style={[
+                    styles.compactDot,
+                    {
+                      backgroundColor: personalLineColor(
+                        personalRepose.length > 0 ? 'repose' : 'repose_fortieth',
+                        isDark,
+                      )!,
                     },
                   ]}
                 />
@@ -893,7 +979,9 @@ function DayCell({
                     styles.compactDotSaint,
                     {
                       backgroundColor:
-                        personalNamedays.length > 0 ? colors.accentWine : subColor,
+                        personalNamedays.length > 0
+                          ? personalLineColor('nameday', isDark)!
+                          : subColor,
                     },
                   ]}
                 />
@@ -926,6 +1014,8 @@ function DayCell({
                     personalNamedays,
                     personalEvents,
                     personalBirthdays,
+                    personalRepose,
+                    personalFortieth,
                   );
                   const isFeast = line.kind === 'feast';
                   const color =
@@ -1020,7 +1110,7 @@ function CalendarMonthAgenda({
   const { t, lang } = useAppTranslation();
   const feastAccent = isDark ? colors.feastTextSoftDark : colors.feastBorder;
   const agendaDates = dates.filter((date) => {
-    const hasPersonal = personalDaysOnCivilDate(personalDays, date).length > 0;
+    const hasPersonal = personalDayOccurrencesOnCivilDate(personalDays, date).length > 0;
     return isAgendaDay(dayInfoForDate(date), phoneLayout, hasPersonal);
   });
 
@@ -1035,45 +1125,47 @@ function CalendarMonthAgenda({
         const isToday = isSameLocalDay(date, today);
         const orthocalPending = monthLoading && !info.orthocalLoaded;
         const weekday = new Intl.DateTimeFormat(intlLocale, { weekday: 'short' }).format(date);
-        const personalOnDay = personalDaysOnCivilDate(personalDays, date);
+        const personal = personalListsForDate(personalDays, date, lang);
         const lines = [
-          ...personalOnDay
-            .filter((d) => d.kind === 'parish_feast')
-            .map((d) => ({
-              kind: 'feast' as const,
-              name: d.title,
-              personalKind: 'parish_feast' as const,
-            })),
-          ...personalOnDay
-            .filter((d) => d.kind === 'custom_event')
-            .map((d) => ({
-              kind: 'feast' as const,
-              name: d.title,
-              personalKind: 'custom_event' as const,
-            })),
-          ...personalOnDay
-            .filter((d) => d.kind === 'birthday')
-            .map((d) => ({
-              kind: 'feast' as const,
-              name: d.title,
-              personalKind: 'birthday' as const,
-            })),
-          ...personalOnDay
-            .filter((d) => d.kind === 'nameday')
-            .map((d) => ({
-              kind: 'saint' as const,
-              name: d.title,
-              personalKind: 'nameday' as const,
-            })),
+          ...personal.personalFeasts.map((d) => ({
+            kind: 'feast' as const,
+            name: d.title,
+            personalKind: 'parish_feast' as const,
+          })),
+          ...personal.personalRepose.map((d) => ({
+            kind: 'feast' as const,
+            name: d.title,
+            personalKind: 'repose' as const,
+          })),
+          ...personal.personalFortieth.map((d) => ({
+            kind: 'feast' as const,
+            name: d.title,
+            personalKind: 'repose_fortieth' as const,
+          })),
+          ...personal.personalEvents.map((d) => ({
+            kind: 'feast' as const,
+            name: d.title,
+            personalKind: 'custom_event' as const,
+          })),
+          ...personal.personalBirthdays.map((d) => ({
+            kind: 'feast' as const,
+            name: d.title,
+            personalKind: 'birthday' as const,
+          })),
+          ...personal.personalNamedays.map((d) => ({
+            kind: 'saint' as const,
+            name: d.title,
+            personalKind: 'nameday' as const,
+          })),
           ...info.feasts.map((name) => ({
             kind: 'feast' as const,
             name,
-            personalKind: null as PersonalDayKind | null,
+            personalKind: null as PersonalDayDisplayKind | null,
           })),
           ...info.saints.map((name) => ({
             kind: 'saint' as const,
             name,
-            personalKind: null as PersonalDayKind | null,
+            personalKind: null as PersonalDayDisplayKind | null,
           })),
         ];
 

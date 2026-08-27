@@ -585,6 +585,11 @@ export default function TodayScreen() {
             ) : null}
           </>
         ) : null}
+        {dashboard.fastingExplanation ? (
+          <Text style={[styles.fastingExplain, type.body, { color: theme.colors.text }]}>
+            {dashboard.fastingExplanation}
+          </Text>
+        ) : null}
         <Text style={[styles.cardHint, type.hint]}>{dashboard.fastingNote}</Text>
       </CollapsibleSection>
 
@@ -917,15 +922,6 @@ export default function TodayScreen() {
       </CollapsibleSection>
 
       <View style={styles.homeCalendar}>
-        <Text
-          style={[
-            styles.homeCalendarTitle,
-            text(18, 24),
-            { color: theme.colors.text, fontWeight: '700' },
-          ]}
-        >
-          {t('calendar.title')}
-        </Text>
         <LiturgicalMonthGrid
           visibleMonth={calendarMonth}
           onChangeMonth={onCalendarChangeMonth}
@@ -951,10 +947,6 @@ const styles = StyleSheet.create({
   homeCalendar: {
     marginTop: 20,
     marginBottom: 8,
-  },
-  homeCalendarTitle: {
-    marginBottom: 12,
-    paddingHorizontal: 2,
   },
   statusLine: {
     textAlign: 'center',
@@ -1027,6 +1019,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontStyle: 'italic',
     opacity: 0.85,
+  },
+  fastingExplain: {
+    marginTop: 12,
+    lineHeight: 22,
+    opacity: 0.92,
   },
   majorFeastBlock: {
     marginTop: 10,

@@ -7,6 +7,7 @@ import {
   localizedFastingFoodsDetail,
   heroFastChipDisplay,
   showHeroFeastRankChip,
+  localizedFastingExplanation,
   type HeroFastChipDisplay,
   type FastSummaryKind,
   type FastingFoodsDetail,
@@ -58,6 +59,8 @@ export type DayDashboardData = {
   weeklyFastSectionLabel: string | null;
   /** Rule name + allowed / not allowed for the Fasting section body. */
   fastingFoods: FastingFoodsDetail;
+  /** Short “why” line: season + exception when applicable. */
+  fastingExplanation: string | null;
   fastingNote: string;
 };
 
@@ -136,6 +139,13 @@ export function buildDayDashboard(
     civil,
   );
   const fastSummaryKind = fastSummaryKindFromDetail(fastingFoods, isFastDay);
+  const fastingExplanation = localizedFastingExplanation(
+    liturgicalDay,
+    appearanceKey,
+    civil,
+    weeklyFast,
+    lang,
+  );
 
   const dayTitle = liturgicalDayTitle(
     liturgicalDay,
@@ -172,6 +182,7 @@ export function buildDayDashboard(
     isFastDay,
     weeklyFastSectionLabel,
     fastingFoods,
+    fastingExplanation,
     fastingNote: buildFastingNote(liturgicalDay, appearanceKey, civil, lang),
   };
 }
