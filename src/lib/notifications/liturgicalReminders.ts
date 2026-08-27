@@ -372,3 +372,39 @@ export async function syncLiturgicalReminders(prefs: ReminderPrefs): Promise<voi
     }
   }
 }
+
+export type TestNotificationResult = 'ok' | 'unsupported' | 'denied';
+
+/** Fire one sample alert so the user can confirm permissions and channels. */
+export async function sendTestNotification(lang: UiLanguage): Promise<TestNotificationResult> {
+  if (!supportsLocalNotifications()) return 'unsupported';
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+  });
+
+  const permitted = await requestNotificationPermissions(lang);
+  if (!permitted) return 'denied';
+
+  await ensureAndroidChannels(lang);
+
+  const testId = `${ID_PREFIX}test`;
+  await Notifications.cancelScheduledNotificationAsync(testId).catch(() => undefined);
+
+  await Notifications.scheduleNotificationAsync({
+    identifier: testId,
+    content: {
+      title: translate(lang, 'notifications.testTitle'),
+      body: translate(lang, 'notifications.testBody'),
+      ...(Platform.OS === 'android' ? { channelId: CHANNELS.fasting.id } : null),
+    },
+    trigger: null,
+  });
+
+  return 'ok';
+}

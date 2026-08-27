@@ -4,7 +4,6 @@ import {
   Linking,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -16,6 +15,7 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 import { OrthoDailyLogo } from '../../src/components/OrthoDailyLogo';
+import { AppScrollView } from '../../src/components/AppScrollView';
 import { PhonePageHeader } from '../../src/components/PhonePageHeader';
 import {
   SettingsLinkRow,
@@ -42,7 +42,6 @@ import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
 import { LanguageGlyphIcon } from '../../src/components/settings/LanguageGlyphIcon';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
-import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { SUPPORT_URL, DONATION_URL } from '../../src/lib/legal/urls';
 import {
@@ -53,6 +52,7 @@ import {
 import {
   type NotificationReminderKind,
   requestNotificationPermissions,
+  sendTestNotification,
   supportsLocalNotifications,
 } from '../../src/lib/notifications/liturgicalReminders';
 import { usePreferences } from '../../src/state/PreferencesContext';
@@ -494,10 +494,23 @@ export default function SettingsScreen() {
     return true;
   }, [nativeReminders, t, uiLanguage]);
 
+  const handleTestNotification = useCallback(async () => {
+    const result = await sendTestNotification(uiLanguage);
+    if (result === 'unsupported') {
+      Alert.alert(t('settings.notifications'), t('settings.notificationsWebOnly'));
+      return;
+    }
+    if (result === 'denied') {
+      setPermissionHint(true);
+      Alert.alert(t('settings.notifications'), t('settings.notifyPermissionDenied'));
+      return;
+    }
+    setPermissionHint(false);
+  }, [t, uiLanguage]);
+
   const version = Constants.expoConfig?.version ?? '0.1.0';
   const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
-  const showTabHeader = useTabHeaderShown();
   const pageBg = theme.colors.background;
 
   useFocusEffect(
@@ -514,7 +527,7 @@ export default function SettingsScreen() {
         <title>{t('tabs.browserTitleSettings')}</title>
       </Head>
       <View style={[styles.page, { backgroundColor: pageBg }]}>
-        <ScrollView
+        <AppScrollView
           style={styles.scroll}
           contentContainerStyle={[
             styles.container,
@@ -526,16 +539,14 @@ export default function SettingsScreen() {
             },
           ]}
         >
-          {!showTabHeader ? (
-            <View style={styles.pageHeader}>
-              <PhonePageHeader
-                title={t('settings.title')}
-                subtitle={t('settings.subtitleShort')}
-                textColor={theme.colors.text}
-                mutedColor={muted}
-              />
-            </View>
-          ) : null}
+          <View style={styles.pageHeader}>
+            <PhonePageHeader
+              title={t('settings.title')}
+              subtitle={t('settings.subtitleShort')}
+              textColor={theme.colors.text}
+              mutedColor={muted}
+            />
+          </View>
 
           <View style={settingsListCard(isDark)}>
             <View style={settingsLinkListInset}>
@@ -750,7 +761,7 @@ export default function SettingsScreen() {
               </Text>
             </View>
           </View>
-        </ScrollView>
+        </AppScrollView>
       </View>
 
       {activePicker === 'servingRole' ? (
@@ -831,6 +842,9 @@ export default function SettingsScreen() {
         onClose={() => setNotificationsOpen(false)}
         isDark={isDark}
         footerNote={notificationsFooterNote}
+        testLabel={t('settings.testNotification')}
+        testHint={t('settings.testNotificationHint')}
+        onTestPress={() => void handleTestNotification()}
       />
       <SettingsPrayersModal
         visible={prayersOpen}

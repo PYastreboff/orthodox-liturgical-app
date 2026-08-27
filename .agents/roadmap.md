@@ -28,7 +28,7 @@ Use this to avoid re-proposing finished work or contradicting decisions.
 
 ### Quick wins
 - “Back to today” chip when viewing another day
-- Test notification button in Settings
+- [x] Test notification button in Settings
 - Custom notification times (currently fixed 6:30 / 7:00 / 16:00 / 16:30)
 - Richer notification bodies (include fast rule text)
 - Inline typikon tap → legend sheet

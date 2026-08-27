@@ -157,6 +157,8 @@ const en = {
     homeScreenWidgetHint:
       'Phone app only (iOS & Android) — not on web. Today’s feast and fast on your lock screen.',
     notifyPermissionDenied: 'Notification permission is off in system settings.',
+    testNotification: 'Send Test Notification',
+    testNotificationHint: 'Fires a sample alert now so you can check permissions and sound.',
     version: 'Version {version} · Moscow Patriarchate–oriented rubrics',
     madeBy: 'Made by ',
     dataSourcesTitle: 'Liturgical Sources',
@@ -1552,6 +1554,8 @@ const en = {
     weeklyDigestSeason: 'Includes {season}',
     weeklyDigestFastDays: '{count} fasting days',
     weeklyDigestFeasts: 'Major feasts: {feasts}',
+    testTitle: 'OrthoDaily test',
+    testBody: 'Notifications are working. Reminder times follow your Settings toggles.',
   },
 } as const;
 
@@ -1712,6 +1716,8 @@ const ru = {
     homeScreenWidgetHint:
       'Только в приложении (iOS и Android) — не на сайте. Праздник и пост на экране блокировки.',
     notifyPermissionDenied: 'Разрешение на уведомления выключено в настройках системы.',
+    testNotification: 'Отправить тестовое уведомление',
+    testNotificationHint: 'Сразу показывает пример, чтобы проверить разрешение и звук.',
     version: 'Версия {version} · ориентир: Московская Патриархия',
     madeBy: 'Создал ',
     dataSourcesTitle: 'Источники литургических текстов',
@@ -3122,6 +3128,8 @@ const ru = {
     weeklyDigestSeason: 'Включая {season}',
     weeklyDigestFastDays: '{count} постных дней',
     weeklyDigestFeasts: 'Великие праздники: {feasts}',
+    testTitle: 'Тест OrthoDaily',
+    testBody: 'Уведомления работают. Время напоминаний задаётся в Настройках.',
   },
 };
 

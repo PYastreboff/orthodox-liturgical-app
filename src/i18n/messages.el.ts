@@ -156,6 +156,8 @@ export const el = {
     homeScreenWidgetHint:
       'Μόνο στην εφαρμογή (iOS & Android) — όχι στο web. Σημερινή εορτή και νηστεία στην οθόνη κλειδώματος.',
     notifyPermissionDenied: 'Η άδεια ειδοποιήσεων είναι απενεργοποιημένη στις ρυθμίσεις συστήματος.',
+    testNotification: 'Αποστολή δοκιμαστικής ειδοποίησης',
+    testNotificationHint: 'Εμφανίζει τώρα ένα δείγμα για έλεγχο άδειας και ήχου.',
     version: 'Έκδοση {version} · ρουμπρίκες προσανατολισμένες στην ΜΠ',
     madeBy: 'Δημιουργία: ',
     dataSourcesTitle: 'Λειτουργικές πηγές',
@@ -1537,5 +1539,7 @@ export const el = {
     weeklyDigestSeason: 'Περιλαμβάνει {season}',
     weeklyDigestFastDays: '{count} ημέρες νηστείας',
     weeklyDigestFeasts: 'Μεγάλες εορτές: {feasts}',
+    testTitle: 'Δοκιμή OrthoDaily',
+    testBody: 'Οι ειδοποιήσεις λειτουργούν. Οι ώρες ακολουθούν τις επιλογές στις Ρυθμίσεις.',
   },
 } as const;

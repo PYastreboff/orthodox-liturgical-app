@@ -30,6 +30,10 @@ type Props = {
   onClose: () => void;
   isDark: boolean;
   footerNote?: string;
+  testLabel?: string;
+  testHint?: string;
+  onTestPress?: () => void;
+  testDisabled?: boolean;
 };
 
 /** Multi-select notification picker — same sheet pattern as SettingsOptionModal. */
@@ -42,6 +46,10 @@ export function SettingsNotificationsModal({
   onClose,
   isDark,
   footerNote,
+  testLabel,
+  testHint,
+  onTestPress,
+  testDisabled = false,
 }: Props) {
   const surfaceBg = isDark ? '#2a2724' : '#ebe6de';
   const textColor = isDark ? '#e8e3dd' : '#2b2623';
@@ -108,6 +116,38 @@ export function SettingsNotificationsModal({
               );
             })}
           </ScrollView>
+          {testLabel && onTestPress ? (
+            <Pressable
+              onPress={onTestPress}
+              disabled={testDisabled}
+              style={({ pressed }) => [
+                styles.testBtn,
+                {
+                  borderColor,
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.05)',
+                  opacity: testDisabled ? 0.45 : pressed ? 0.88 : 1,
+                },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={testLabel}
+              accessibilityState={{ disabled: testDisabled }}
+              {...hoverAccessibilityProps(testLabel, { role: 'button' })}
+            >
+              <Feather
+                name="bell"
+                size={18}
+                color={isDark ? colors.tabActiveDark : colors.accentWine}
+              />
+              <View style={styles.textCol}>
+                <Text style={[styles.testLabel, { color: textColor }]}>{testLabel}</Text>
+                {testHint ? (
+                  <Text style={[styles.testHint, { color: mutedColor }]} numberOfLines={2}>
+                    {testHint}
+                  </Text>
+                ) : null}
+              </View>
+            </Pressable>
+          ) : null}
           {footerNote ? (
             <Text style={[styles.footerNote, { color: mutedColor }]}>{footerNote}</Text>
           ) : null}
@@ -192,6 +232,27 @@ const styles = StyleSheet.create({
   },
   checkPlaceholder: {
     width: 18,
+  },
+  testBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginHorizontal: 16,
+    marginTop: 4,
+    marginBottom: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  testLabel: {
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 20,
+  },
+  testHint: {
+    fontSize: 12,
+    lineHeight: 16,
   },
   footerNote: {
     fontSize: 12,

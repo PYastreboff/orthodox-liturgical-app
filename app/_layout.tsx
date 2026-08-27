@@ -1,8 +1,11 @@
+import 'react-native-gesture-handler';
+
 import { Stack } from 'expo-router';
 import Head from 'expo-router/head';
 import { useTheme } from '@react-navigation/native';
 import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, type Metrics } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { AppThemeProvider } from '../src/components/AppThemeProvider';
 import { LiturgicalRemindersSync } from '../src/components/LiturgicalRemindersSync';
@@ -24,8 +27,30 @@ function RootStack() {
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: theme.colors.background },
+          animation: 'slide_from_right',
+          gestureEnabled: true,
+          fullScreenGestureEnabled: true,
+          // Keep Today mounted so swipe-back can reveal it under a transparent day card.
+          freezeOnBlur: false,
         }}
-      />
+      >
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            animation: 'none',
+            contentStyle: { backgroundColor: theme.colors.background },
+          }}
+        />
+        <Stack.Screen
+          name="day/[section]"
+          options={{
+            presentation: 'transparentModal',
+            animation: 'none',
+            contentStyle: { backgroundColor: 'transparent' },
+            gestureEnabled: false,
+          }}
+        />
+      </Stack>
     </View>
   );
 }
@@ -36,24 +61,29 @@ export default function RootLayout() {
       <Head>
         <title>OrthoDaily</title>
       </Head>
-      <SafeAreaProvider initialMetrics={Platform.OS === 'web' ? WEB_SAFE_AREA_METRICS : undefined}>
-        <WebViewportBootstrap />
-        <PreferencesProvider>
-          <AppThemeProvider>
-            <SplashGate>
-              <DayNavigationProvider>
-                <LiturgicalRemindersSync />
-                <RootStack />
-              </DayNavigationProvider>
-            </SplashGate>
-          </AppThemeProvider>
-        </PreferencesProvider>
-      </SafeAreaProvider>
+      <GestureHandlerRootView style={styles.flex}>
+        <SafeAreaProvider initialMetrics={Platform.OS === 'web' ? WEB_SAFE_AREA_METRICS : undefined}>
+          <WebViewportBootstrap />
+          <PreferencesProvider>
+            <AppThemeProvider>
+              <SplashGate>
+                <DayNavigationProvider>
+                  <LiturgicalRemindersSync />
+                  <RootStack />
+                </DayNavigationProvider>
+              </SplashGate>
+            </AppThemeProvider>
+          </PreferencesProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
   root: {
     flex: 1,
     width: '100%',

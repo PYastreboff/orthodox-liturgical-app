@@ -1,34 +1,14 @@
-import { Tabs } from 'expo-router';
 import { useTheme } from '@react-navigation/native';
 import { Platform, StyleSheet } from 'react-native';
 
-import { AppBrandHeader } from '../../src/components/AppBrandHeader';
-import { TabBarBleedBackground } from '../../src/components/TabBarBleedBackground';
+import { MainTabBar } from '../../src/components/MainTabBar';
 import { TAB_ICON_SIZE, tabBarIconOptions } from '../../src/components/TabBarIcon';
 import { useCalendarPrefetch } from '../../src/hooks/useCalendarPrefetch';
-import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
-import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
-import { useLayoutSafeAreaInsets } from '../../src/hooks/useLayoutSafeAreaInsets';
+import { SwipeTabs } from '../../src/navigation/SwipeTabs';
 import { usePreferences } from '../../src/state/PreferencesContext';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
-import { isIosSafariBrowser } from '../../src/theme/webViewport';
-import { TAB_BAR_CONTENT_HEIGHT } from '../../src/theme/layout';
 import { colors } from '../../src/theme/tokens';
-
-function tabBarBackground(isDark: boolean, phoneLayout: boolean): string {
-  if (isDark) {
-    return phoneLayout ? colors.darkSurface : 'rgba(28, 24, 20, 0.92)';
-  }
-  return phoneLayout ? colors.parchment : 'rgba(245, 240, 232, 0.92)';
-}
-
-function tabBarBorderColor(isDark: boolean): string {
-  if (isDark) {
-    return 'rgba(46, 40, 34, 0.92)';
-  }
-  return 'rgba(226, 216, 202, 0.92)';
-}
 
 function TabsLayoutContent() {
   const theme = useTheme();
@@ -36,64 +16,34 @@ function TabsLayoutContent() {
   const { primaryCalendar } = usePreferences();
   useCalendarPrefetch(primaryCalendar);
   const sceneBackground = theme.colors.background;
-  const insets = useLayoutSafeAreaInsets();
   const { t } = useAppTranslation();
-  const showTabHeader = useTabHeaderShown();
-  const phoneLayout = usePhoneLayout();
-  const bottomInset = insets.bottom;
-  const iosSafariBrowser = Platform.OS === 'web' && isIosSafariBrowser();
-  const nativePhoneBleed = phoneLayout && Platform.OS === 'ios';
-  const tabBarBleedHeight = nativePhoneBleed ? 2 : 0;
-  const tabBarBottom = 0;
-  const tabBarBottomPad =
-    bottomInset +
-    tabBarBleedHeight +
-    (Platform.OS === 'android' && bottomInset === 0 ? 8 : iosSafariBrowser ? 4 : 0);
-  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + tabBarBottomPad;
-  const tabBarBg = tabBarBackground(isDark, phoneLayout);
 
   return (
-    <Tabs
+    <SwipeTabs
+      tabBarPosition="bottom"
+      tabBar={(props) => <MainTabBar {...props} />}
       screenOptions={{
-        headerShown: showTabHeader,
-        headerStyle: { backgroundColor: isDark ? colors.darkSurface : colors.parchment },
-        headerTintColor: isDark ? colors.darkInk : colors.ink,
-        headerTitleStyle: { fontWeight: '600' },
+        swipeEnabled: true,
+        animationEnabled: true,
+        lazy: true,
+        lazyPreloadDistance: 1,
         sceneStyle: {
           flex: 1,
           backgroundColor: sceneBackground,
         },
         tabBarStyle: {
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: tabBarBottom,
-          width: '100%',
-          backgroundColor: tabBarBg,
-          borderTopColor: tabBarBorderColor(isDark),
-          borderTopWidth: StyleSheet.hairlineWidth,
-          borderBottomWidth: 0,
-          height: tabBarHeight,
-          paddingTop: 0,
-          paddingBottom: tabBarBottomPad,
+          backgroundColor: 'transparent',
           elevation: 0,
           shadowOpacity: 0,
-          shadowRadius: 0,
-          overflow: 'visible',
-          ...(Platform.OS === 'web'
-            ? ({ boxShadow: 'none' } as const)
-            : null),
+          ...(Platform.OS === 'web' ? ({ boxShadow: 'none' } as const) : null),
         },
-        tabBarBackground: () => (
-          <TabBarBleedBackground color={tabBarBg} bleedPx={tabBarBleedHeight} />
-        ),
         tabBarItemStyle: {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
           paddingTop: 0,
           paddingBottom: 0,
-          paddingVertical: 0,
+          minHeight: 52,
         },
         tabBarIconStyle: {
           marginTop: 0,
@@ -106,47 +56,53 @@ function TabsLayoutContent() {
           fontWeight: '500',
           marginTop: 2,
           marginBottom: 0,
-          includeFontPadding: false,
-          textAlignVertical: 'center',
+          textTransform: 'none',
         },
         tabBarActiveTintColor: isDark ? colors.tabActiveDark : colors.tabActiveLight,
         tabBarInactiveTintColor: isDark ? '#8a8580' : colors.muted,
+        tabBarIndicatorStyle: styles.hiddenIndicator,
+        tabBarPressColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(43,38,35,0.08)',
+        tabBarShowIcon: true,
       }}
     >
-      <Tabs.Screen
+      <SwipeTabs.Screen
         name="index"
         options={{
           title: 'OrthoDaily',
           tabBarLabel: t('tabs.today'),
-          headerTitle: () => <AppBrandHeader />,
           sceneStyle: { flex: 1, backgroundColor: 'transparent' },
           ...tabBarIconOptions('today'),
         }}
       />
-      <Tabs.Screen
+      <SwipeTabs.Screen
         name="calendar"
         options={{
           title: t('tabs.browserTitleCalendar'),
-          headerTitle: t('calendar.title'),
           tabBarLabel: t('tabs.calendar'),
           sceneStyle: { backgroundColor: sceneBackground },
           ...tabBarIconOptions('calendar'),
         }}
       />
-      <Tabs.Screen
+      <SwipeTabs.Screen
         name="settings"
         options={{
           title: t('tabs.browserTitleSettings'),
-          headerTitle: t('settings.title'),
           tabBarLabel: t('tabs.settings'),
           sceneStyle: { backgroundColor: sceneBackground },
           ...tabBarIconOptions('settings'),
         }}
       />
-    </Tabs>
+    </SwipeTabs>
   );
 }
 
 export default function TabsLayout() {
   return <TabsLayoutContent />;
 }
+
+const styles = StyleSheet.create({
+  hiddenIndicator: {
+    height: 0,
+    width: 0,
+  },
+});

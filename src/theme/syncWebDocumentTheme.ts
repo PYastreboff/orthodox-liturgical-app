@@ -49,6 +49,17 @@ html {
     background-color: ${colors.darkBg};
   }
 }
+@media (max-width: 767px) {
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
 html.${IOS_WEB_CLASS},
 html.${IOS_WEB_CLASS} body,
 html.${IOS_WEB_CLASS} #root {

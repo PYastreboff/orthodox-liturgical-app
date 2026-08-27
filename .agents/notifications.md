@@ -70,6 +70,5 @@ Push notification **titles/bodies** and Android **channel names** — separate f
 ## Future ideas (not implemented)
 
 - Custom notification times per type
-- Test notification button in Settings
 - Richer notification bodies (fast rule text)
 - Server push via FCM (would need Firebase Blaze + backend)

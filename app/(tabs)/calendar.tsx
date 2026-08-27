@@ -1,7 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
 import {
   Platform,
-  ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
@@ -9,18 +7,19 @@ import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
 import Head from 'expo-router/head';
 
+import { AppScrollView } from '../../src/components/AppScrollView';
 import { CalendarSearch } from '../../src/components/CalendarSearch';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
 import { PhonePageHeader } from '../../src/components/PhonePageHeader';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
-import { useTabHeaderShown } from '../../src/hooks/useTabHeaderShown';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
+import { useCallback, useMemo, useState } from 'react';
 
 export default function CalendarScreen() {
   const theme = useTheme();
@@ -35,7 +34,6 @@ export default function CalendarScreen() {
 
   const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
-  const showTabHeader = useTabHeaderShown();
   const [cursor, setCursor] = useState(thisMonth);
 
   const setCursorMonth = useCallback((date: Date) => {
@@ -88,7 +86,7 @@ export default function CalendarScreen() {
         <title>{t('tabs.browserTitleCalendar')}</title>
       </Head>
       <View style={[styles.page, { backgroundColor: calendarBg }]}>
-      <ScrollView
+      <AppScrollView
       style={styles.scroll}
       contentContainerStyle={[
         styles.scrollContent,
@@ -101,14 +99,12 @@ export default function CalendarScreen() {
       ]}
     >
       <View style={styles.introSection}>
-        {!showTabHeader ? (
-          <PhonePageHeader
-            title={t('calendar.title')}
-            subtitle={t('calendar.subtitleShort')}
-            textColor={theme.colors.text}
-            mutedColor={theme.dark ? '#a39e98' : colors.muted}
-          />
-        ) : null}
+        <PhonePageHeader
+          title={t('calendar.title')}
+          subtitle={t('calendar.subtitleShort')}
+          textColor={theme.colors.text}
+          mutedColor={theme.dark ? '#a39e98' : colors.muted}
+        />
         <CalendarSearch
           calendar={primaryCalendar}
           year={cursor.getFullYear()}
@@ -130,7 +126,7 @@ export default function CalendarScreen() {
         onDayPress={onDayPress}
         liturgicalCalendar={primaryCalendar}
       />
-    </ScrollView>
+      </AppScrollView>
       </View>
     </>
   );

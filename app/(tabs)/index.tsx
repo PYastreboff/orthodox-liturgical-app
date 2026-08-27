@@ -1,7 +1,8 @@
-import { ScrollView, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
+import { StyleSheet, Text, View, type LayoutChangeEvent, type ScrollView } from 'react-native';
 import { useCallback, useRef, useState } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 
+import { AppScrollView } from '../../src/components/AppScrollView';
 import { DayHero } from '../../src/components/DayHero';
 import { TodaySkeleton } from '../../src/components/TodaySkeleton';
 import { TodaySectionTiles } from '../../src/components/TodaySectionTiles';
@@ -51,7 +52,7 @@ export default function TodayScreen() {
       appearance={model.appearance}
       gradientEnabled={model.showVestmentGradient}
     >
-      <ScrollView
+      <AppScrollView
         ref={scrollRef}
         style={styles.scroll}
         onLayout={onScrollLayout}
@@ -121,7 +122,7 @@ export default function TodayScreen() {
             liturgicalCalendar={model.primaryCalendar}
           />
         </View>
-      </ScrollView>
+      </AppScrollView>
     </VestmentPageBackground>
   );
 }

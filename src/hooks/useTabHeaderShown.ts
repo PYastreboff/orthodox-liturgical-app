@@ -1,11 +1,7 @@
-import { Platform, useWindowDimensions } from 'react-native';
-
-/** Match calendar “desktop” layout breakpoint. */
-const DESKTOP_TAB_HEADER_MIN_WIDTH = 768;
-
-/** Expo tab header (OrthoDaily Home / Calendar / Settings) — wide web only. */
+/**
+ * Whether the navigator shows a top tab header.
+ * Swipeable material tabs have no native header — screens use in-page titles instead.
+ */
 export function useTabHeaderShown(): boolean {
-  const { width } = useWindowDimensions();
-  if (Platform.OS !== 'web') return false;
-  return width >= DESKTOP_TAB_HEADER_MIN_WIDTH;
+  return false;
 }

@@ -1,8 +1,9 @@
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import Head from 'expo-router/head';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { AppScrollView } from '../src/components/AppScrollView';
 import { RecipesLibrary } from '../src/components/RecipesLibrary';
 import { StackScreenHeader } from '../src/components/StackScreenHeader';
 import { useLayoutSafeAreaInsets } from '../src/hooks/useLayoutSafeAreaInsets';
@@ -32,7 +33,7 @@ export default function RecipesScreen() {
           backLabel={t('recipes.back')}
           onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         />
-        <ScrollView
+        <AppScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={[
             styles.content,
@@ -50,7 +51,7 @@ export default function RecipesScreen() {
             isDark={isDark}
             contentBottom={8}
           />
-        </ScrollView>
+        </AppScrollView>
       </View>
     </>
   );
