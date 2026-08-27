@@ -133,7 +133,7 @@ export function RecipesLibrary({
   const { t, lang } = useAppTranslation();
   const { text } = useFontScale();
   const bodyType = text(14, 20);
-  const chipType = text(13, 18);
+  const chipType = text(11, 15);
   const [query, setQuery] = useState('');
   const [meal, setMeal] = useState<MealFilter>('all');
   const library = useFastingRecipes();
@@ -244,6 +244,9 @@ export function RecipesLibrary({
                   chipType,
                   { color: selected ? chipSelectedFg : textColor },
                 ]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.85}
               >
                 {label}
               </Text>
@@ -354,8 +357,8 @@ const styles = StyleSheet.create({
   chip: {
     borderRadius: 999,
     borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 16,
-    paddingVertical: 9,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
   },
   chipLabel: {
     fontWeight: '600',

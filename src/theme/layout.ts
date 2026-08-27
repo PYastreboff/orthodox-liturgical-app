@@ -3,8 +3,11 @@ export const TAB_BAR_CONTENT_HEIGHT = 52;
 
 export const SCROLL_EXTRA_BOTTOM_PADDING = 12;
 
-/** Extra pixels past the layout box to hide sub-pixel seams at the screen bottom. */
-export const SAFARI_TAB_BAR_BLEED_PX = 8;
+/**
+ * Extra pixels under the tab icons so sub-pixel / home-indicator seams stay covered.
+ * Also added to scroll bottom padding so content clears the taller bar.
+ */
+export const TAB_BAR_EDGE_PAD_PX = 3;
 
 /** Horizontal gutter outside safe area on scroll screens (Settings, Calendar, etc.). */
 export const SCREEN_GUTTER_X = 20;

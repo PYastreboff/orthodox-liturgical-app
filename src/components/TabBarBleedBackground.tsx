@@ -1,25 +1,24 @@
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 type Props = {
   color: string;
-  /** Extra fill below the tab bar layout box. */
+  /** Extra fill below the tab icons (safe-area / seam pad). */
   bleedPx: number;
 };
 
 /**
- * Solid backdrop for the tab bar. Extends past the bottom edge on phone/web so RN does not
- * leave a 1px unpainted strip above Safari’s toolbar or the home indicator.
+ * Solid backdrop for the tab bar. Fills the bar box so padding / safe-area
+ * regions never show the scene through a hairline gap.
  */
 export function TabBarBleedBackground({ color, bleedPx }: Props) {
-  const extend = Math.max(bleedPx, Platform.OS === 'web' ? 4 : 2);
-
   return (
     <View
       style={[
         styles.fill,
         {
           backgroundColor: color,
-          bottom: -extend,
+          // Keep a little paint below the layout box when ancestors allow it.
+          bottom: -Math.max(bleedPx, 2),
         },
       ]}
     />
