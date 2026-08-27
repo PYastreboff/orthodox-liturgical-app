@@ -66,6 +66,7 @@ export default function EasterCookingDetailScreen() {
       resolveImageSource={(id) => easterFoodImageSource(id)}
       resolveImageUriFallback={(id) => easterFoodImageUriFallback(id)}
       eyebrowLabel={t('easterCooking.recipeEyebrow')}
+      shareBasePath="/easter-cooking"
     />
   );
 }

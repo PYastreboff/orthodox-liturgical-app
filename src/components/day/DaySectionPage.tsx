@@ -19,6 +19,7 @@ import {
   todaySectionTitleKey,
   type TodaySectionId,
 } from '../../lib/today/todaySections';
+import { SERVING_ROLE_PHRASE_LABEL_KEYS } from '../../lib/liturgical/servingRoles';
 import { colors } from '../../theme/tokens';
 import { useResolvedColorScheme } from '../../theme/useResolvedColorScheme';
 import { useTheme } from '@react-navigation/native';
@@ -42,7 +43,11 @@ export function DaySectionPage({ section }: Props) {
   const insets = useLayoutSafeAreaInsets();
   const phone = usePhoneLayout();
   const model = useTodayDayModel();
-  const title = t(todaySectionTitleKey(section, model.servingRole));
+  const titleKey = todaySectionTitleKey(section, model.servingRole);
+  const title =
+    section === 'vestments'
+      ? t(titleKey, { role: t(SERVING_ROLE_PHRASE_LABEL_KEYS[model.servingRole]) })
+      : t(titleKey);
   const icon = todaySectionIcon(section, model.servingRole);
   const iconColor = isDark ? colors.tabActiveDark : colors.accentWine;
   const muted = isDark ? '#a39e98' : colors.muted;

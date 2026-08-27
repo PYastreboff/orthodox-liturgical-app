@@ -58,8 +58,8 @@ export function isTodaySectionId(value: string): value is TodaySectionId {
 export function todaySectionTitleKey(section: TodaySectionId, servingRole: ClergyRole): string {
   if (section === 'vestments') {
     return servingRole === 'layperson' || servingRole === 'chorister'
-      ? 'today.sectionChurchDress'
-      : 'today.sectionVestments';
+      ? 'today.churchDressPageTitle'
+      : 'today.vestmentsPageTitle';
   }
   switch (section) {
     case 'date':

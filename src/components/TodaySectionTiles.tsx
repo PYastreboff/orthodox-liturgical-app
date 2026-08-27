@@ -4,12 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
-import {
-  isTodaySectionId,
-  todayHomeTiles,
-  todaySectionTitleKey,
-  type TodayTileDef,
-} from '../lib/today/todaySections';
+import { todayHomeTiles } from '../lib/today/todaySections';
 import type { ClergyRole } from '../types/liturgical';
 import { colors } from '../theme/tokens';
 import { SectionIcon } from './SectionIcon';
@@ -20,11 +15,6 @@ type Props = {
   borderColor: string;
   isDark: boolean;
 };
-
-function rowLabelKey(tile: TodayTileDef, servingRole: ClergyRole): string {
-  if (isTodaySectionId(tile.id)) return todaySectionTitleKey(tile.id, servingRole);
-  return tile.titleKey;
-}
 
 export function TodaySectionTiles({
   servingRole,
@@ -42,7 +32,7 @@ export function TodaySectionTiles({
   return (
     <View style={styles.rowList}>
       {tiles.map((tile) => {
-        const title = t(rowLabelKey(tile, servingRole));
+        const title = t(tile.titleKey);
         return (
           <Pressable
             key={tile.id}

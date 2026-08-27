@@ -36,3 +36,14 @@ export const SERVING_ROLE_LABEL_KEYS: Record<ClergyRole, string> = {
   priest: 'today.rolePriest',
   bishop: 'today.roleBishop',
 };
+
+/** Lowercase phrase for “Today's vestments for …” page titles. */
+export const SERVING_ROLE_PHRASE_LABEL_KEYS: Record<ClergyRole, string> = {
+  layperson: 'today.rolePhraseLayperson',
+  chorister: 'today.rolePhraseChorister',
+  altar_server: 'today.rolePhraseAltarServer',
+  reader: 'today.rolePhraseReader',
+  deacon: 'today.rolePhraseDeacon',
+  priest: 'today.rolePhrasePriest',
+  bishop: 'today.rolePhraseBishop',
+};

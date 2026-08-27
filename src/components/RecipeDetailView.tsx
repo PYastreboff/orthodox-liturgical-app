@@ -17,6 +17,7 @@ import {
 import { useTheme } from '@react-navigation/native';
 
 import { useFontScale } from '../hooks/useFontScale';
+import { useShareRecipe } from '../hooks/useShareRecipe';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../hooks/useScreenSafePadding';
@@ -59,6 +60,8 @@ type Props = {
   resolveImageUriFallback?: (id: string) => string | null;
   /** Optional eyebrow above the title instead of the recipe category label. */
   eyebrowLabel?: string;
+  /** Path prefix for shared links (default `/recipes`). */
+  shareBasePath?: string;
 };
 
 function StatChip({
@@ -96,10 +99,12 @@ export function RecipeDetailView({
   resolveImageSource = recipeImageSource,
   resolveImageUriFallback,
   eyebrowLabel,
+  shareBasePath = '/recipes',
 }: Props) {
   const theme = useTheme();
   const router = useRouter();
   const { t, lang } = useAppTranslation();
+  const { shareRecipe } = useShareRecipe();
   const isDark = useResolvedColorScheme() === 'dark';
   const phone = usePhoneLayout();
   const screenSafe = useScreenSafePadding();
@@ -136,6 +141,15 @@ export function RecipeDetailView({
     else router.replace(backFallbackRoute);
   };
 
+  const handleShare = () => {
+    void shareRecipe({
+      recipeId: recipe.id,
+      title,
+      detailLine: `${t('recipes.minutes', { n: totalMinutes })} · ${t(recipeDifficultyLabelKey(recipe.difficulty))}`,
+      shareBasePath,
+    });
+  };
+
   const contentColumnStyle = {
     maxWidth: phone ? undefined : CONTENT_MAX_WIDTH,
     width: '100%' as const,
@@ -170,6 +184,21 @@ export function RecipeDetailView({
             color="#fff"
             style={styles.backFabIcon}
           />
+        </Pressable>
+        <Pressable
+          onPress={handleShare}
+          style={[
+            styles.shareFab,
+            {
+              top: screenSafe.paddingTop + 10,
+              right: Math.max(screenSafe.paddingRight, 14),
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={t('recipes.shareRecipeA11y')}
+          hitSlop={8}
+        >
+          <Feather name="share-2" size={18} color="#fff" />
         </Pressable>
         <ScrollView
           bounces={false}
@@ -419,6 +448,18 @@ const styles = StyleSheet.create({
   },
   backFabIcon: {
     marginLeft: -2,
+  },
+  shareFab: {
+    position: Platform.OS === 'web' ? ('fixed' as 'absolute') : 'absolute',
+    zIndex: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(20,16,14,0.55)',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255,255,255,0.25)',
   },
   heroTitleBlock: {
     position: 'absolute',
