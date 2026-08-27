@@ -16,7 +16,6 @@ import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useFontScale } from '../hooks/useFontScale';
 import { useFastingRecipes } from '../hooks/useFastingRecipes';
-import { useTodayDayModel } from '../hooks/useTodayDayModel';
 import {
   RECIPE_MEAL_SLOTS,
   recipeMealSlot,
@@ -137,9 +136,7 @@ export function RecipesLibrary({
   const [query, setQuery] = useState('');
   const [meal, setMeal] = useState<MealFilter>('all');
   const library = useFastingRecipes();
-  const day = useTodayDayModel();
   const recipes = library.recipes;
-  const showForOtherDays = !day.waitingForDay && !day.dashboard.isFastDay;
 
   const filtered = useMemo(() => {
     if (library.status !== 'ready') return [];
@@ -180,30 +177,6 @@ export function RecipesLibrary({
 
   return (
     <View style={styles.root}>
-      {showForOtherDays ? (
-        <View
-          style={[
-            styles.otherDaysBanner,
-            {
-              backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(43,38,35,0.05)',
-              borderColor,
-            },
-          ]}
-          accessibilityRole="text"
-          accessibilityLabel={`${t('recipes.forOtherDaysTitle')}. ${t('recipes.forOtherDaysBody')}`}
-        >
-          <Feather name="calendar" size={18} color={mutedColor} />
-          <View style={styles.otherDaysText}>
-            <Text style={[styles.otherDaysTitle, bodyType, { color: textColor }]}>
-              {t('recipes.forOtherDaysTitle')}
-            </Text>
-            <Text style={[styles.otherDaysBody, bodyType, { color: mutedColor }]}>
-              {t('recipes.forOtherDaysBody')}
-            </Text>
-          </View>
-        </View>
-      ) : null}
-
       <View
         style={[
           styles.searchWrap,
@@ -348,26 +321,6 @@ export function RecipesLibrary({
 const styles = StyleSheet.create({
   root: {
     gap: 14,
-  },
-  otherDaysBanner: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-  otherDaysText: {
-    flex: 1,
-    minWidth: 0,
-    gap: 2,
-  },
-  otherDaysTitle: {
-    fontWeight: '700',
-  },
-  otherDaysBody: {
-    opacity: 0.95,
   },
   searchWrap: {
     flexDirection: 'row',

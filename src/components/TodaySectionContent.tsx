@@ -312,6 +312,8 @@ export function TodaySectionContent({ section, model }: Props) {
                 style={styles.fastLevelPill}
               />
             </View>
+          </DayPagePanel>
+          <DayPagePanel {...panel} title={t('recipes.forFastingDays')}>
             <Pressable
               onPress={() => router.push('/recipes')}
               style={({ pressed }) => [
@@ -320,15 +322,11 @@ export function TodaySectionContent({ section, model }: Props) {
                   backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.05)',
                   borderColor: theme.colors.border,
                   opacity: pressed ? 0.88 : 1,
-                  marginTop: 16,
+                  marginTop: 0,
                 },
               ]}
               accessibilityRole="button"
-              accessibilityLabel={
-                dashboard.isFastDay
-                  ? t('recipes.openFromFasting')
-                  : `${t('recipes.openFromFasting')}. ${t('recipes.forFastingDays')}`
-              }
+              accessibilityLabel={t('recipes.openFromFasting')}
             >
               <MaterialCommunityIcons
                 name="food-variant"
@@ -343,26 +341,6 @@ export function TodaySectionContent({ section, model }: Props) {
                   {t('recipes.openFromFastingHint')}
                 </Text>
               </View>
-              {!dashboard.isFastDay ? (
-                <View
-                  style={[
-                    styles.forFastingBadge,
-                    {
-                      backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(107,45,60,0.1)',
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.forFastingBadgeText,
-                      { color: isDark ? colors.tabActiveDark : colors.accentWine },
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {t('recipes.forFastingDays')}
-                  </Text>
-                </View>
-              ) : null}
               <Feather name="chevron-right" size={18} color={muted} />
             </Pressable>
           </DayPagePanel>
@@ -708,17 +686,6 @@ const styles = StyleSheet.create({
   actionRowLabel: {
     fontWeight: '700',
   },
-  forFastingBadge: {
-    maxWidth: 120,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 999,
-  },
-  forFastingBadgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.2,
-  },
   cardBody: {
     gap: 0,
   },
@@ -732,7 +699,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   readingsToolbarPhone: {
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     flexWrap: 'wrap',
   },
   serviceRankRow: {

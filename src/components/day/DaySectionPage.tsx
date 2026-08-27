@@ -99,9 +99,6 @@ export function DaySectionPage({ section }: Props) {
                 <SectionIcon name={icon} color={iconColor} size={26} />
               </View>
               <View style={styles.introText}>
-                <Text style={[styles.introTitle, { color: theme.colors.text }]} numberOfLines={2}>
-                  {title}
-                </Text>
                 <Text style={[styles.introDay, { color: theme.colors.text }]} numberOfLines={2}>
                   {model.dashboard.dayTitle}
                 </Text>
@@ -160,15 +157,10 @@ const styles = StyleSheet.create({
     minWidth: 0,
     gap: 2,
   },
-  introTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    letterSpacing: 0.15,
-  },
   introDay: {
-    fontSize: 14,
-    fontWeight: '600',
-    opacity: 0.92,
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.1,
   },
   introDate: {
     fontSize: 13,
