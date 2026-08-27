@@ -1438,7 +1438,7 @@ const en = {
   liturgy: {
     chrysostom: {
       intro:
-        'The Divine Liturgy of St John Chrysostom — the usual Sunday and feast-day Eucharist in most Orthodox churches. Expand each part to follow along. Variable hymns and readings depend on the day.',
+        'The Divine Liturgy of St John Chrysostom — the usual Sunday and feast-day Eucharist in most Orthodox churches. The full text is below for personal follow-along; variable hymns and readings depend on the day.',
       disclaimer:
         'Abridged for personal use. Rubrics, commemorations, and local customs differ — follow your parish and bishop.',
       opening: {
@@ -3084,7 +3084,7 @@ const ru = {
   liturgy: {
     chrysostom: {
       intro:
-        'Божественная литургия святого Иоанна Златоуста — обычная воскресная и праздничная литургия в большинстве православных храмов. Раскройте раздел, чтобы следить за богослужением.',
+        'Божественная литургия святого Иоанна Златоуста — обычная воскресная и праздничная литургия в большинстве православных храмов. Ниже полный текст для личного следования; изменяемые песнопения и чтения зависят от дня.',
       disclaimer:
         'Сокращённый текст для личного пользования. Чин, поминовения и обычаи различаются — следуйте указаниям своего прихода.',
       opening: { title: 'Начало', summary: 'Благословенно Царствие…' },

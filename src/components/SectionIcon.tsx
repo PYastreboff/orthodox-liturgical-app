@@ -2,6 +2,7 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { HoverAccessible } from './HoverAccessible';
+import { TypikonGlyphIcon } from './TypikonGlyphIcon';
 
 export type SectionIconName =
   | 'serving-role'
@@ -107,7 +108,7 @@ export function SectionIcon({ name, color, size = SECTION_ICON_SIZE }: Props) {
       case 'prayers':
         return <MaterialCommunityIcons name="hands-pray" size={size} color={color} />;
       case 'liturgy':
-        return <MaterialCommunityIcons name="book-cross" size={size} color={color} />;
+        return <TypikonGlyphIcon glyph="liturgy" size={size} color={color} />;
       default:
         return <Feather name="circle" size={size} color={color} />;
     }
