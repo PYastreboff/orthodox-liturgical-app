@@ -79,6 +79,7 @@ type SettingsPicker =
   | 'fontScale'
   | 'calendar'
   | 'language'
+  | 'personalDays'
   | null;
 
 type DataSource = {
@@ -214,46 +215,10 @@ export default function SettingsScreen() {
     notificationsEnabledCount === 0
       ? t('settings.notificationsOff')
       : t('settings.notificationsOnCount', { count: notificationsEnabledCount });
-  const parishFeastDays = useMemo(
-    () => personalDays.filter((d) => d.kind === 'parish_feast'),
-    [personalDays],
-  );
-  const namedays = useMemo(
-    () => personalDays.filter((d) => d.kind === 'nameday'),
-    [personalDays],
-  );
-  const birthdays = useMemo(
-    () => personalDays.filter((d) => d.kind === 'birthday'),
-    [personalDays],
-  );
-  const customEvents = useMemo(
-    () => personalDays.filter((d) => d.kind === 'custom_event'),
-    [personalDays],
-  );
-  const reposeDays = useMemo(
-    () => personalDays.filter((d) => d.kind === 'repose'),
-    [personalDays],
-  );
-  const parishFeastValueLabel =
-    parishFeastDays.length === 0
+  const personalDaysValueLabel =
+    personalDays.length === 0
       ? t('settings.personalDaysNone')
-      : t('settings.personalDaysOnCount', { count: parishFeastDays.length });
-  const namedayValueLabel =
-    namedays.length === 0
-      ? t('settings.personalDaysNone')
-      : t('settings.personalDaysOnCount', { count: namedays.length });
-  const birthdayValueLabel =
-    birthdays.length === 0
-      ? t('settings.personalDaysNone')
-      : t('settings.personalDaysOnCount', { count: birthdays.length });
-  const customEventValueLabel =
-    customEvents.length === 0
-      ? t('settings.personalDaysNone')
-      : t('settings.personalDaysOnCount', { count: customEvents.length });
-  const reposeValueLabel =
-    reposeDays.length === 0
-      ? t('settings.personalDaysNone')
-      : t('settings.personalDaysOnCount', { count: reposeDays.length });
+      : t('settings.personalDaysOnCount', { count: personalDays.length });
 
   const prayersValueLabel =
     enabledPrayers.length === 0
@@ -424,6 +389,37 @@ export default function SettingsScreen() {
     [roleIconColor, t],
   );
 
+  const personalDayKindOptions = useMemo(
+    (): SettingsOption<PersonalDayKind>[] => [
+      {
+        id: 'parish_feast',
+        label: t('settings.parishFeast'),
+        leading: <Feather name="home" size={18} color={roleIconColor} />,
+      },
+      {
+        id: 'nameday',
+        label: t('settings.nameday'),
+        leading: <Feather name="user" size={18} color={roleIconColor} />,
+      },
+      {
+        id: 'birthday',
+        label: t('settings.birthday'),
+        leading: <Feather name="gift" size={18} color={roleIconColor} />,
+      },
+      {
+        id: 'custom_event',
+        label: t('settings.customEvent'),
+        leading: <Feather name="star" size={18} color={roleIconColor} />,
+      },
+      {
+        id: 'repose',
+        label: t('settings.repose'),
+        leading: <MaterialCommunityIcons name="cross" size={18} color={roleIconColor} />,
+      },
+    ],
+    [roleIconColor, t],
+  );
+
   const pickerTitle = useMemo(() => {
     switch (activePicker) {
       case 'servingRole':
@@ -436,6 +432,8 @@ export default function SettingsScreen() {
         return t('settings.liturgicalCalendar');
       case 'language':
         return t('settings.appLanguage');
+      case 'personalDays':
+        return t('settings.personalDays');
       default:
         return '';
     }
@@ -648,53 +646,11 @@ export default function SettingsScreen() {
               />
               <SettingsLinkRow
                 isDark={isDark}
-                icon="home"
-                label={t('settings.parishFeast')}
-                hint={t('settings.parishFeastRowHint')}
-                valueLabel={parishFeastValueLabel}
-                onPress={() => setPersonalDaysKind('parish_feast')}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="user"
-                label={t('settings.nameday')}
-                hint={t('settings.namedayRowHint')}
-                valueLabel={namedayValueLabel}
-                onPress={() => setPersonalDaysKind('nameday')}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="gift"
-                label={t('settings.birthday')}
-                hint={t('settings.birthdayRowHint')}
-                valueLabel={birthdayValueLabel}
-                onPress={() => setPersonalDaysKind('birthday')}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="star"
-                label={t('settings.customEvent')}
-                hint={t('settings.customEventRowHint')}
-                valueLabel={customEventValueLabel}
-                onPress={() => setPersonalDaysKind('custom_event')}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                leading={
-                  <MaterialCommunityIcons
-                    name="cross"
-                    size={18}
-                    color={roleIconColor}
-                  />
-                }
-                label={t('settings.repose')}
-                hint={t('settings.reposeRowHint')}
-                valueLabel={reposeValueLabel}
-                onPress={() => setPersonalDaysKind('repose')}
+                icon="bookmark"
+                label={t('settings.personalDays')}
+                hint={t('settings.personalDaysRowHint')}
+                valueLabel={personalDaysValueLabel}
+                onPress={() => setActivePicker('personalDays')}
                 showDivider
               />
 
@@ -848,6 +804,20 @@ export default function SettingsScreen() {
           options={languageOptions}
           value={uiLanguage}
           onSelect={setUiLanguage}
+          onClose={() => setActivePicker(null)}
+          isDark={isDark}
+        />
+      ) : null}
+      {activePicker === 'personalDays' ? (
+        <SettingsOptionModal
+          visible
+          title={pickerTitle}
+          options={personalDayKindOptions}
+          value={(personalDaysKind ?? '') as PersonalDayKind}
+          onSelect={(kind) => {
+            setActivePicker(null);
+            setPersonalDaysKind(kind);
+          }}
           onClose={() => setActivePicker(null)}
           isDark={isDark}
         />

@@ -2,6 +2,7 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMemo, useRef, useState } from 'react';
 import {
   Modal,
+  PanResponder,
   Pressable,
   StyleSheet,
   Text,
@@ -131,6 +132,23 @@ export function DayHero({
   const roleMenuBorder = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(43,38,35,0.12)';
   const servingRoleLabel = t(SERVING_ROLE_LABEL_KEYS[servingRole]);
 
+  const onPreviousRef = useRef(onPrevious);
+  const onNextRef = useRef(onNext);
+  onPreviousRef.current = onPrevious;
+  onNextRef.current = onNext;
+
+  const daySwipe = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_evt, gesture) =>
+        Math.abs(gesture.dx) > 18 && Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.4,
+      onPanResponderRelease: (_evt, gesture) => {
+        if (Math.abs(gesture.dx) < 48) return;
+        if (gesture.dx < 0) onNextRef.current();
+        else onPreviousRef.current();
+      },
+    }),
+  ).current;
+
   const openRoleMenu = () => {
     if (roleMenuOpen) {
       setRoleMenuOpen(false);
@@ -164,6 +182,7 @@ export function DayHero({
           ? { borderWidth: 2, borderColor: majorFeastBorder }
           : null,
       ]}
+      {...daySwipe.panHandlers}
     >
       <LinearGradient
         colors={[...heroStyle.gradient]}

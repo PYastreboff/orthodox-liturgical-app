@@ -1,3 +1,4 @@
+import { localizeLectionaryTitle } from './lectionaryTitles';
 import { translate } from './translate';
 import type { UiLanguage } from './types';
 
@@ -210,6 +211,41 @@ const FEAST_KEY_BY_ENGLISH: Record<string, string> = {
     'orthocalFeasts.constantineHelen',
   'The Shepherds who saw the Lord': 'orthocalFeasts.shepherds',
   'The Veneration of the Magi': 'orthocalFeasts.venerationMagi',
+  'Saturday after Theophany': 'orthocalFeasts.saturdayAfterTheophany',
+  'Sunday after Theophany': 'orthocalFeasts.sundayAfterTheophany',
+  'Saturday after the Nativity': 'orthocalFeasts.saturdayAfterNativity',
+  'Sunday after the Nativity': 'orthocalFeasts.sundayAfterNativity',
+  'Forefeast of Nativity': 'orthocalFeasts.forefeastNativity',
+  'Leavetaking of Annunciation': 'orthocalFeasts.leavetakingAnnunciation',
+  'Afterfeast of the Transfiguration': 'orthocalFeasts.afterfeastTransfiguration',
+  'Synaxis of Archangel Gabriel': 'orthocalFeasts.synaxisGabriel',
+  'Synaxis of the Archangel Gabriel': 'orthocalFeasts.synaxisGabriel',
+  'Presanctified Liturgy': 'typikon.presanctified',
+  'Leavetaking of Mid-Pentecost': 'orthocalFeasts.leavetakingMidPentecost',
+  'Leavetaking Exaltation': 'orthocalFeasts.leavetakingElevationCross',
+  'Day of Rejoicing (Radonitsa)': 'orthocalFeasts.radonitsa',
+  'Tikhvin Icon': 'orthocalFeasts.tikhvinIcon',
+  'Tikhvin Icon of the Most-Holy Theotokos': 'orthocalFeasts.tikhvinIcon',
+  'Church New Year': 'orthocalFeasts.churchNewYear',
+  'Begin Nativity Fast': 'orthocalFeasts.beginNativityFast',
+  'Forefeast of Entry': 'orthocalFeasts.forefeastEntry',
+  'Leavetaking of the Entry': 'orthocalFeasts.leavetakingEntry',
+  'Sunday of the Forefathers': 'orthocalFeasts.sundayForefathers',
+  'Fathers of the 1st Six Ecumenical Councils': 'orthocalFeasts.fathersSixCouncils',
+  'Fathers of the Seventh Ecumenical Council': 'orthocalFeasts.fathersSeventhCouncil',
+  'Commemoration of the First Ecumenical Council (325)': 'orthocalFeasts.councilNicea',
+  'Commemoration of the Second Ecumenical Council (381).': 'orthocalFeasts.councilConstantinople',
+  'Commemoration of the Third Ecumenical Council (431)': 'orthocalFeasts.councilEphesus',
+  'Commemoration of the Apparition of the Sign of the Precious Cross over Jerusalem in 351 AD':
+    'orthocalFeasts.crossApparitionJerusalem',
+  'Commemoration of an Uncondemning Monk': 'orthocalFeasts.uncondemningMonk',
+  'Synaxis of Serbian Hierarchs': 'orthocalFeasts.synaxisSerbianHierarchs',
+  'Seven Sleepers of Ephesus': 'orthocalFeasts.sevenSleepersEphesus',
+  'Seven Hieromartyrs of Cherson': 'orthocalFeasts.sevenHieromartyrsCherson',
+  'Leavetaking of Pascha': 'orthocalFeasts.leavetakingPascha',
+  'Forefeast of Ascension': 'orthocalFeasts.forefeastAscension',
+  'Blessed Princess Olga': 'orthocalFeasts.princessOlga',
+  'Ven. Anthony of the Kiev Caves': 'orthocalFeasts.anthonyKievCaves',
 
   // Seasons / weekday shells
   Sunday: 'appearance.sunday',
@@ -245,6 +281,7 @@ function normalizeTitleKey(text: string): string {
     .replace(/\blife-giving\b/g, 'lifegiving')
     .replace(/\bgreat-martyrs?\b/g, (m) => (m.endsWith('s') ? 'greatmartyrs' : 'greatmartyr'))
     .replace(/\bequals-to-the-apostles\b/g, 'equal-to-the-apostles')
+    .replace(/\bof the\b/g, 'of ')
     .replace(/\s+/g, ' ');
 }
 
@@ -294,6 +331,36 @@ const HONORIFIC_RULES: Record<Exclude<UiLanguage, 'en'>, HonorificRule[]> = {
     { pattern: /\bBodiless Powers\b/gi, replacement: 'бесплотных сил' },
     { pattern: /\bthe Newly Appeared\b/gi, replacement: 'Новоявленный' },
     { pattern: /\bNewly Appeared\b/gi, replacement: 'Новоявленный' },
+    { pattern: /\bRepose of\b/gi, replacement: 'Преставление' },
+    { pattern: /\bRepose\b/gi, replacement: 'Преставление' },
+    { pattern: /\bCommemoration of\b/gi, replacement: 'Память' },
+    { pattern: /\bCommemoration\b/gi, replacement: 'Память' },
+    { pattern: /\bFool-for-Christ\b/gi, replacement: 'Юродивый' },
+    { pattern: /\bFool for Christ\b/gi, replacement: 'Юродивый' },
+    { pattern: /\bBl\.\b/g, replacement: 'Блж.' },
+    { pattern: /\bBlessed\b/gi, replacement: 'Блж.' },
+    { pattern: /\bGerontissa\b/gi, replacement: 'Игуменья' },
+    { pattern: /\bHieromonk\b/gi, replacement: 'Иером.' },
+    { pattern: /\bArchimandrite\b/gi, replacement: 'Архим.' },
+    { pattern: /\bPrincess\b/gi, replacement: 'кнж.' },
+    { pattern: /\bMaiden\b/gi, replacement: 'Дева' },
+    { pattern: /\bEcumenical Council\b/gi, replacement: 'Вселенский собор' },
+    { pattern: /\bUncondemning Monk\b/gi, replacement: 'монаха без осуждения' },
+    { pattern: /\bSerbian Hierarchs\b/gi, replacement: 'Сербских архиереев' },
+    { pattern: /\bSeven Sleepers\b/gi, replacement: 'Семь отроков' },
+    { pattern: /\bSeven Hieromartyrs\b/gi, replacement: 'Семь сщмч.' },
+    { pattern: /\bEthiopian Eunuch\b/gi, replacement: 'Ефиопский евнух' },
+    { pattern: /\bQueen Candace\b/gi, replacement: 'царицы Кандаки' },
+    { pattern: /\bForefeast\b/gi, replacement: 'Предпразднство' },
+    { pattern: /\bAfterfeast\b/gi, replacement: 'Попразднство' },
+    { pattern: /\bLeavetaking\b/gi, replacement: 'Отдание' },
+    { pattern: /\bMid-Pentecost\b/gi, replacement: 'Преполовения Пятидесятницы' },
+    { pattern: /\bExaltation\b/gi, replacement: 'Воздвижения Креста' },
+    { pattern: /\bEntry\b/gi, replacement: 'Введения' },
+    { pattern: /\bForefathers\b/gi, replacement: 'отец' },
+    { pattern: /\bPresanctified Liturgy\b/gi, replacement: 'Преждеосвященная литургия' },
+    { pattern: /\bCheesefare\b/gi, replacement: 'Сыропустной седмицы' },
+    { pattern: /\bRadonitsa\b/gi, replacement: 'Радоница' },
     { pattern: /\bTheologian\b/gi, replacement: 'Богослов' },
     { pattern: /\bMelodist\b/gi, replacement: 'Сладкопевец' },
     { pattern: /\bChoirmaster\b/gi, replacement: 'Доместик' },
@@ -379,6 +446,36 @@ const HONORIFIC_RULES: Record<Exclude<UiLanguage, 'en'>, HonorificRule[]> = {
     { pattern: /\bBodiless Powers\b/gi, replacement: 'Ασωμάτων Δυνάμεων' },
     { pattern: /\bthe Newly Appeared\b/gi, replacement: 'Νεοφανής' },
     { pattern: /\bNewly Appeared\b/gi, replacement: 'Νεοφανής' },
+    { pattern: /\bRepose of\b/gi, replacement: 'Κοίμησις' },
+    { pattern: /\bRepose\b/gi, replacement: 'Κοίμησις' },
+    { pattern: /\bCommemoration of\b/gi, replacement: 'Μνήμη' },
+    { pattern: /\bCommemoration\b/gi, replacement: 'Μνήμη' },
+    { pattern: /\bFool-for-Christ\b/gi, replacement: 'Δια Χριστόν Σαλός' },
+    { pattern: /\bFool for Christ\b/gi, replacement: 'Δια Χριστόν Σαλός' },
+    { pattern: /\bBl\.\b/g, replacement: 'Μακ.' },
+    { pattern: /\bBlessed\b/gi, replacement: 'Μακ.' },
+    { pattern: /\bGerontissa\b/gi, replacement: 'Γερόντισσα' },
+    { pattern: /\bHieromonk\b/gi, replacement: 'Ιερομ.' },
+    { pattern: /\bArchimandrite\b/gi, replacement: 'Αρχιμ.' },
+    { pattern: /\bPrincess\b/gi, replacement: 'πριγκ.' },
+    { pattern: /\bMaiden\b/gi, replacement: 'Παρθένος' },
+    { pattern: /\bEcumenical Council\b/gi, replacement: 'Οικουμενική Σύνοδος' },
+    { pattern: /\bUncondemning Monk\b/gi, replacement: 'μοναχού χωρίς κατάκριση' },
+    { pattern: /\bSerbian Hierarchs\b/gi, replacement: 'Σερβικών Ιεραρχών' },
+    { pattern: /\bSeven Sleepers\b/gi, replacement: 'Επτά Παίδων' },
+    { pattern: /\bSeven Hieromartyrs\b/gi, replacement: 'Επτά Ιερομαρτύρων' },
+    { pattern: /\bEthiopian Eunuch\b/gi, replacement: 'Αιθίοπας ευνούχος' },
+    { pattern: /\bQueen Candace\b/gi, replacement: 'βασίλισσας Κανδάκης' },
+    { pattern: /\bForefeast\b/gi, replacement: 'Προεόρτια' },
+    { pattern: /\bAfterfeast\b/gi, replacement: 'Μεθεόρτια' },
+    { pattern: /\bLeavetaking\b/gi, replacement: 'Απόδοση' },
+    { pattern: /\bMid-Pentecost\b/gi, replacement: 'Μεσοπεντηκοστής' },
+    { pattern: /\bExaltation\b/gi, replacement: 'Υψώσεως του Σταυρού' },
+    { pattern: /\bEntry\b/gi, replacement: 'Εισόδου' },
+    { pattern: /\bForefathers\b/gi, replacement: 'Προπατόρων' },
+    { pattern: /\bPresanctified Liturgy\b/gi, replacement: 'Προηγιασμένη Λειτουργία' },
+    { pattern: /\bCheesefare\b/gi, replacement: 'Τυροφάγου' },
+    { pattern: /\bRadonitsa\b/gi, replacement: 'Ραντιτσά' },
     { pattern: /\bTheologian\b/gi, replacement: 'Θεολόγος' },
     { pattern: /\bMelodist\b/gi, replacement: 'Μελωδός' },
     { pattern: /\bChoirmaster\b/gi, replacement: 'Δομέστικος' },
@@ -495,6 +592,45 @@ const GIVEN_NAME_DISPLAY: Record<Exclude<UiLanguage, 'en'>, Array<[RegExp, strin
     [/\bSinai\b/gi, 'Синайский'],
     [/\bEgypt\b/gi, 'Египетская'],
     [/\bNazianzus\b/gi, 'Назианзин'],
+    [/\bHaralambos\b/gi, 'Харлампий'],
+    [/\bScholastica\b/gi, 'Схоластика'],
+    [/\bBenedict\b/gi, 'Бенедикт'],
+    [/\bQuadratus\b/gi, 'Кодрат'],
+    [/\bAnastasia\b/gi, 'Анастасия'],
+    [/\bIsidora\b/gi, 'Исидора'],
+    [/\bSimon\b/gi, 'Симон'],
+    [/\bMaximovitch\b/gi, 'Максимович'],
+    [/\bArsenios\b/gi, 'Арсений'],
+    [/\bArsenius\b/gi, 'Арсений'],
+    [/\bTheophan\b/gi, 'Феофан'],
+    [/\bNyssa\b/gi, 'Нисский'],
+    [/\bOlga\b/gi, 'Ольга'],
+    [/\bGabriel\b/gi, 'Гавриил'],
+    [/\bDimitrios\b/gi, 'Димитрий'],
+    [/\bMarcella\b/gi, 'Марцелла'],
+    [/\bMusa\b/gi, 'Муса'],
+    [/\bStudios\b/gi, 'Студий'],
+    [/\bVasily\b/gi, 'Василий'],
+    [/\bLawrence\b/gi, 'Лаврентий'],
+    [/\bAvram\b/gi, 'Авраам'],
+    [/\bFlorovsky\b/gi, 'Флоровский'],
+    [/\bSeraphim\b/gi, 'Серафим'],
+    [/\bLazarus\b/gi, 'Лазарь'],
+    [/\bGavrilia\b/gi, 'Гавриилия'],
+    [/\bKontoglou\b/gi, 'Контоглу'],
+    [/\bPhotios\b/gi, 'Фотий'],
+    [/\bGeorges\b/gi, 'Жорж'],
+    [/\bRose\b/gi, 'Роуз'],
+    [/\bMoore\b/gi, 'Мур'],
+    [/\bPlatina\b/gi, 'Платина'],
+    [/\bKaluga\b/gi, 'Калуга'],
+    [/\bSmolensk\b/gi, 'Смоленский'],
+    [/\bCherson\b/gi, 'Херсонский'],
+    [/\bEphesus\b/gi, 'Эфесский'],
+    [/\bCrete\b/gi, 'Критский'],
+    [/\bRome\b/gi, 'Римская'],
+    [/\bEthiopian\b/gi, 'Ефиопский'],
+    [/\bCandace\b/gi, 'Кандакия'],
   ],
   el: [
     [/\bNicholas\b/gi, 'Νικόλαος'],
@@ -554,6 +690,117 @@ const GIVEN_NAME_DISPLAY: Record<Exclude<UiLanguage, 'en'>, Array<[RegExp, strin
     [/\bSinai\b/gi, 'του Σινά'],
     [/\bEgypt\b/gi, 'της Αιγύπτου'],
     [/\bNazianzus\b/gi, 'Ναζιανζηνός'],
+    [/\bHaralambos\b/gi, 'Χαράλαμπος'],
+    [/\bScholastica\b/gi, 'Σχολαστική'],
+    [/\bBenedict\b/gi, 'Βενέδικτος'],
+    [/\bQuadratus\b/gi, 'Κοδράτος'],
+    [/\bAnastasia\b/gi, 'Αναστασία'],
+    [/\bIsidora\b/gi, 'Ισιδώρα'],
+    [/\bSimon\b/gi, 'Σίμων'],
+    [/\bMaximovitch\b/gi, 'Μαξιμόβιτς'],
+    [/\bArsenios\b/gi, 'Αρσένιος'],
+    [/\bArsenius\b/gi, 'Αρσένιος'],
+    [/\bTheophan\b/gi, 'Θεοφάνης'],
+    [/\bNyssa\b/gi, 'Νύσσης'],
+    [/\bOlga\b/gi, 'Όλγα'],
+    [/\bGabriel\b/gi, 'Γαβριήλ'],
+    [/\bDimitrios\b/gi, 'Δημήτριος'],
+    [/\bMarcella\b/gi, 'Μαρκέλλα'],
+    [/\bMusa\b/gi, 'Μούσα'],
+    [/\bStudios\b/gi, 'Στουδίου'],
+    [/\bVasily\b/gi, 'Βασίλειος'],
+    [/\bLawrence\b/gi, 'Λαυρέντιος'],
+    [/\bAvram\b/gi, 'Αβραάμ'],
+    [/\bFlorovsky\b/gi, 'Φλωρόφσκι'],
+    [/\bSeraphim\b/gi, 'Σεραφείμ'],
+    [/\bLazarus\b/gi, 'Λάζαρος'],
+    [/\bGavrilia\b/gi, 'Γαβριηλία'],
+    [/\bKontoglou\b/gi, 'Κοντόγλου'],
+    [/\bPhotios\b/gi, 'Φώτιος'],
+    [/\bGeorges\b/gi, 'Γεώργιος'],
+    [/\bRose\b/gi, 'Ρόουζ'],
+    [/\bMoore\b/gi, 'Μουρ'],
+    [/\bPlatina\b/gi, 'Πλατίνα'],
+    [/\bKaluga\b/gi, 'Καλούγκα'],
+    [/\bSmolensk\b/gi, 'Σμολενσκ'],
+    [/\bCherson\b/gi, 'Χερσώνος'],
+    [/\bEphesus\b/gi, 'Εφέσου'],
+    [/\bCrete\b/gi, 'Κρήτης'],
+    [/\bRome\b/gi, 'Ρώμης'],
+    [/\bEthiopian\b/gi, 'Αιθίοπας'],
+    [/\bCandace\b/gi, 'Κανδάκης'],
+  ],
+};
+
+/** Leftover English liturgical phrases after honorifics / given names. */
+const RESIDUAL_PHRASES: Record<Exclude<UiLanguage, 'en'>, Array<[RegExp, string]>> = {
+  ru: [
+    [/\bof the Kiev Caves\b/gi, 'Киево-Печерский'],
+    [/\bthe Kiev Caves\b/gi, 'Киево-Печерский'],
+    [/\bKiev Caves\b/gi, 'Киево-Печерский'],
+    [/\bthe Recluse\b/gi, 'Затворник'],
+    [/\bthe Fool\b/gi, 'Юродивый'],
+    [/\bthe Zealot\b/gi, 'Зилот'],
+    [/\bsister of\b/gi, 'сестра'],
+    [/\bbrother of\b/gi, 'брат'],
+    [/\bThe Placing of the Precious Robe of the Lord in Moscow\b/gi, 'Положение ризы Господней в Москве'],
+    [/\bPrecious Robe of the Lord\b/gi, 'ризы Господней'],
+    [/\bApostles of the 70\b/gi, 'Апостолы из 70'],
+    [/\bof the 70\b/gi, 'из 70'],
+    [/\bof Sicily\b/gi, 'Сицилийский'],
+    [/\bof Prusa\b/gi, 'Прусский'],
+    [/\bof Tobolsk\b/gi, 'Тобольский'],
+    [/\bof Italy\b/gi, 'Италийский'],
+    [/\bof Cappadocia\b/gi, 'Каппадокийский'],
+    [/\bof Armenia\b/gi, 'Армянский'],
+    [/\bof Nikopolis\b/gi, 'Никопольский'],
+    [/\bin Moscow\b/gi, 'в Москве'],
+    [/\bin Armenia\b/gi, 'в Армении'],
+    [/\bNinety-nine Fathers\b/gi, 'Девяносто девять отцов'],
+    [/\bat Kaluga\b/gi, 'в Калуге'],
+    [/\bover Jerusalem\b/gi, 'над Иерусалимом'],
+    [/\bSign of the Precious Cross\b/gi, 'Знамения Честного Креста'],
+    [/\bFr\b/g, 'свящ.'],
+    [/\bOC\b/g, 'ст. ст.'],
+    [/\bdate unknown\b/gi, 'дата неизвестна'],
+    [/\band\b/g, 'и'],
+    [/\bof\b/gi, ''],
+    [/\bthe\b/gi, ''],
+    [/\ban\b/gi, ''],
+  ],
+  el: [
+    [/\bof the Kiev Caves\b/gi, 'των Σπηλαίων του Κιέβου'],
+    [/\bthe Kiev Caves\b/gi, 'των Σπηλαίων του Κιέβου'],
+    [/\bKiev Caves\b/gi, 'των Σπηλαίων του Κιέβου'],
+    [/\bthe Recluse\b/gi, 'ο Έγκλειστος'],
+    [/\bthe Fool\b/gi, 'ο Σαλός'],
+    [/\bthe Zealot\b/gi, 'ο Ζηλωτής'],
+    [/\bsister of\b/gi, 'αδελφή'],
+    [/\bbrother of\b/gi, 'αδελφός'],
+    [/\bThe Placing of the Precious Robe of the Lord in Moscow\b/gi, 'Κατάθεσις της Τιμίας Εσθήτος του Κυρίου στη Μόσχα'],
+    [/\bPrecious Robe of the Lord\b/gi, 'Τιμίας Εσθήτος του Κυρίου'],
+    [/\bApostles of the 70\b/gi, 'Απόστολοι των 70'],
+    [/\bof the 70\b/gi, 'των 70'],
+    [/\bof Sicily\b/gi, 'της Σικελίας'],
+    [/\bof Prusa\b/gi, 'της Προύσης'],
+    [/\bof Tobolsk\b/gi, 'του Τομπόλσκ'],
+    [/\bof Italy\b/gi, 'της Ιταλίας'],
+    [/\bof Cappadocia\b/gi, 'της Καππαδοκίας'],
+    [/\bof Armenia\b/gi, 'της Αρμενίας'],
+    [/\bof Nikopolis\b/gi, 'της Νικοπόλεως'],
+    [/\bin Moscow\b/gi, 'στη Μόσχα'],
+    [/\bin Armenia\b/gi, 'στην Αρμενία'],
+    [/\bNinety-nine Fathers\b/gi, 'ενενήκοντα εννέα Πατέρες'],
+    [/\bat Kaluga\b/gi, 'Καλούγκα'],
+    [/\bover Jerusalem\b/gi, 'επάνω από την Ιερουσαλήμ'],
+    [/\bSign of the Precious Cross\b/gi, 'Σημείου του Τιμίου Σταυρού'],
+    [/\bFr\b/g, 'ιερ.'],
+    [/\bOC\b/g, 'π. ημ.'],
+    [/\bdate unknown\b/gi, 'άγνωστη ημερομηνία'],
+    [/\band\b/g, 'και'],
+    [/\bof\b/gi, ''],
+    [/\bthe\b/gi, ''],
+    [/\ban\b/gi, ''],
   ],
 };
 
@@ -566,7 +813,10 @@ function translateHonorifics(text: string, lang: UiLanguage): string {
   for (const [pattern, replacement] of GIVEN_NAME_DISPLAY[lang]) {
     out = out.replace(pattern, replacement);
   }
-  return out;
+  for (const [pattern, replacement] of RESIDUAL_PHRASES[lang]) {
+    out = out.replace(pattern, replacement);
+  }
+  return out.replace(/\s{2,}/g, ' ').trim();
 }
 
 function resolveFeastKey(text: string): string | null {
@@ -620,6 +870,14 @@ function normalizeNoteFragment(text: string): string {
 function localizeSingleOrthocalSegment(text: string, lang: UiLanguage): string {
   const exact = translateExactFeast(text, lang);
   if (exact) return exact;
+
+  const lectionary = localizeLectionaryTitle(text, lang, (part, partLang) => {
+    const partExact = translateExactFeast(part, partLang);
+    if (partExact) return partExact;
+    return translateHonorifics(part, partLang);
+  });
+  if (lectionary) return lectionary;
+
   return translateHonorifics(text, lang);
 }
 
@@ -627,7 +885,12 @@ function localizeSingleOrthocalSegment(text: string, lang: UiLanguage): string {
 export function localizeOrthocalText(text: string, lang: UiLanguage): string {
   if (lang === 'en' || !text.trim()) return text;
 
-  // Compound Orthocal lines: "Feast; Saint" or rare "Feast. Saint"
+  // Compound Orthocal lines: "Feast; Saint" or "Leavetaking / Forefeast"
+  const slashParts = text.split(/\s*\/\s*/).filter(Boolean);
+  if (slashParts.length > 1) {
+    return slashParts.map((part) => localizeSingleOrthocalSegment(part.trim(), lang)).join(' / ');
+  }
+
   const parts = text.split(/\s*;\s*/).filter(Boolean);
   if (parts.length > 1) {
     return parts.map((part) => localizeSingleOrthocalSegment(part.trim(), lang)).join('; ');

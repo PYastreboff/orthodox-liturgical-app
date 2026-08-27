@@ -8,6 +8,8 @@ import { FastingFoodList } from '../../src/components/FastingFoodList';
 import { FastSummaryPill } from '../../src/components/FastSummaryPill';
 import { SectionTitleRow } from '../../src/components/SectionTitleRow';
 import { DayHero } from '../../src/components/DayHero';
+import { TodayPersonalDays } from '../../src/components/TodayPersonalDays';
+import { TodaySkeleton } from '../../src/components/TodaySkeleton';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
 import { AltarServerRoleTable } from '../../src/components/AltarServerRoleTable';
 import { ChoirGuideTable } from '../../src/components/ChoirGuideTable';
@@ -65,6 +67,9 @@ import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
+import {
+  personalDayOccurrencesOnCivilDate,
+} from '../../src/lib/personalDays';
 
 import type { TodayCollapsibleKey } from '../../src/state/todayUiState';
 
@@ -151,6 +156,7 @@ export default function TodayScreen() {
     todayCollapsed,
     toggleTodaySection,
     enabledPrayers,
+    personalDays,
   } = usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
   const screenSafe = useScreenSafePadding();
@@ -227,6 +233,10 @@ export default function TodayScreen() {
   }, [civilPlain]);
   const { liturgicalDay, loading, refreshing, error } = useOrthocalDay(selectedDate, primaryCalendar);
   const waitingForDay = loading && !liturgicalDay;
+  const personalOnDay = useMemo(
+    () => personalDayOccurrencesOnCivilDate(personalDays, selectedDate),
+    [personalDays, selectedDate],
+  );
   const appearance = useMemo(
     () => getLiturgicalAppearanceForLocalDate(selectedDate, primaryCalendar, liturgicalDay),
     [liturgicalDay, primaryCalendar, selectedDate],
@@ -416,10 +426,13 @@ export default function TodayScreen() {
         onToday={() => setSelectedDate(today)}
         onShare={handleShareDay}
       />
+      <TodayPersonalDays
+        occurrences={personalOnDay}
+        isDark={isDark}
+        textColor={theme.colors.text}
+      />
       {waitingForDay ? (
-        <Text style={[styles.statusLine, type.status, { color: colors.muted }]}>
-          {t('today.loading')}
-        </Text>
+        <TodaySkeleton isDark={isDark} />
       ) : refreshing ? (
         <Text style={[styles.statusLine, type.status, { color: colors.muted }]}>
           {t('today.refreshing')}
