@@ -12,7 +12,6 @@ import {
 } from '../lib/prayers/prayers';
 
 type Props = {
-  enabledPrayers: readonly PrayerId[];
   textColor: string;
   mutedColor: string;
   borderColor: string;
@@ -130,7 +129,6 @@ function PrayerRow({
 }
 
 export function PrayersSectionBody({
-  enabledPrayers,
   textColor,
   mutedColor,
   borderColor,
@@ -138,20 +136,9 @@ export function PrayersSectionBody({
   bodyType,
   hintType,
 }: Props) {
-  const { t } = useAppTranslation();
-  const ordered = PRAYER_IDS.filter((id) => enabledPrayers.includes(id));
-
-  if (ordered.length === 0) {
-    return (
-      <Text style={[styles.empty, hintType, { color: mutedColor }]}>
-        {t('prayers.emptyEnabled')}
-      </Text>
-    );
-  }
-
   return (
     <View style={styles.list}>
-      {ordered.map((id) => (
+      {PRAYER_IDS.map((id) => (
         <PrayerRow
           key={id}
           id={id}
@@ -163,9 +150,6 @@ export function PrayersSectionBody({
           hintType={hintType}
         />
       ))}
-      <Text style={[styles.footnote, hintType, { color: mutedColor }]}>
-        {t('prayers.footnote')}
-      </Text>
     </View>
   );
 }
@@ -173,9 +157,6 @@ export function PrayersSectionBody({
 const styles = StyleSheet.create({
   list: {
     gap: 12,
-  },
-  empty: {
-    opacity: 0.9,
   },
   prayerCard: {
     borderRadius: 12,
@@ -226,9 +207,5 @@ const styles = StyleSheet.create({
   },
   rubricSpaced: {
     marginTop: 12,
-  },
-  footnote: {
-    marginTop: 2,
-    opacity: 0.8,
   },
 });

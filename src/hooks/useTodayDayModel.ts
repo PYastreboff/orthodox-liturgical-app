@@ -61,7 +61,6 @@ export function useTodayDayModel() {
     uiLanguage,
     servingRole,
     setServingRole,
-    enabledPrayers,
     personalDays,
   } = usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
@@ -314,7 +313,6 @@ export function useTodayDayModel() {
     setReadingsCategoryFilter,
     servingRole,
     setServingRole,
-    enabledPrayers,
     today,
     calendarMonth,
     thisMonth,

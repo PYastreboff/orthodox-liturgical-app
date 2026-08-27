@@ -2,7 +2,6 @@ import { Feather } from '@expo/vector-icons';
 import { useEffect, useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
-  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -31,6 +30,7 @@ import {
   type PersonalDayKind,
 } from '../../lib/personalDays';
 import { colors } from '../../theme/tokens';
+import { SettingsSheetFrame } from './SettingsSheetFrame';
 import { SettingsSwitch } from './SettingsSwitch';
 
 type Props = {
@@ -174,6 +174,7 @@ export function SettingsPersonalDaysModal({
   const textColor = isDark ? '#e8e3dd' : '#2b2623';
   const mutedColor = isDark ? '#a39e98' : colors.muted;
   const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.12)';
+  const handleColor = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(43,38,35,0.28)';
   const fieldBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)';
   const locale = intlLocaleForLanguage(lang);
 
@@ -298,14 +299,19 @@ export function SettingsPersonalDaysModal({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={closeAll}>
-      <View style={styles.root}>
-        <Pressable style={styles.backdrop} onPress={closeAll} accessibilityElementsHidden />
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={[styles.avoid, { height: sheetHeight }]}
-        >
-          <View style={[styles.sheet, { backgroundColor: surfaceBg, borderColor, flex: 1 }]}>
+    <SettingsSheetFrame
+      visible={visible}
+      onClose={closeAll}
+      sheetHeight={sheetHeight}
+      surfaceBg={surfaceBg}
+      borderColor={borderColor}
+      handleColor={handleColor}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.avoid}
+      >
+        <View style={styles.sheetBody}>
             <Text style={[styles.title, { color: textColor }]}>
               {draft
                 ? draft.id
@@ -557,39 +563,20 @@ export function SettingsPersonalDaysModal({
                 </Pressable>
               )}
             </View>
-          </View>
-        </KeyboardAvoidingView>
-      </View>
-    </Modal>
+        </View>
+      </KeyboardAvoidingView>
+    </SettingsSheetFrame>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingHorizontal: 16,
-    paddingBottom: 24,
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-  },
   avoid: {
-    width: '100%',
-    maxWidth: 420,
-    alignSelf: 'center',
-  },
-  sheet: {
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    overflow: 'hidden',
     flex: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    elevation: 10,
+    minHeight: 0,
+  },
+  sheetBody: {
+    flex: 1,
+    minHeight: 0,
   },
   title: {
     fontSize: 13,
@@ -597,7 +584,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
     textTransform: 'uppercase',
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 4,
     paddingBottom: 4,
   },
   subtitle: {

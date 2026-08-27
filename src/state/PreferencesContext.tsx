@@ -17,10 +17,6 @@ import {
 import type { UiLanguage } from '../i18n/types';
 import type { ClergyRole } from '../types/liturgical';
 import { parsePersonalDays, type PersonalDay } from '../lib/personalDays';
-import {
-  parseEnabledPrayers,
-  type PrayerId,
-} from '../lib/prayers/prayers';
 import type { FontScalePreference } from '../theme/fontScale';
 import {
   DEFAULT_TODAY_COLLAPSED,
@@ -67,7 +63,6 @@ type StoredPreferences = {
   notifyWeeklyDigest?: boolean;
   homeScreenWidget?: boolean;
   personalDays?: PersonalDay[];
-  enabledPrayers?: PrayerId[];
   /** First-launch tips dismissed. */
   onboardingCompleted?: boolean;
 };
@@ -100,8 +95,6 @@ type Preferences = {
   homeScreenWidget: boolean;
   /** Parish feast days, namedays, birthdays, and custom events. */
   personalDays: PersonalDay[];
-  /** Which prayer packs appear in the Today Prayers section. */
-  enabledPrayers: PrayerId[];
   /** First-launch tip sheet has been completed or skipped. */
   onboardingCompleted: boolean;
   preferencesReady: boolean;
@@ -126,7 +119,6 @@ type PreferencesContextValue = Preferences & {
   setNotifyWeeklyDigest: (value: boolean) => void;
   setHomeScreenWidget: (value: boolean) => void;
   setPersonalDays: (value: PersonalDay[]) => void;
-  setEnabledPrayers: (value: PrayerId[]) => void;
   setOnboardingCompleted: (value: boolean) => void;
 };
 
@@ -174,9 +166,6 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [notifyWeeklyDigest, setNotifyWeeklyDigestState] = useState(false);
   const [homeScreenWidget, setHomeScreenWidgetState] = useState(false);
   const [personalDays, setPersonalDaysState] = useState<PersonalDay[]>([]);
-  const [enabledPrayers, setEnabledPrayersState] = useState<PrayerId[]>(() =>
-    parseEnabledPrayers(undefined),
-  );
   const [onboardingCompleted, setOnboardingCompletedState] = useState(false);
   const [preferencesReady, setPreferencesReady] = useState(false);
 
@@ -249,7 +238,6 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
           setHomeScreenWidgetState(parsed.homeScreenWidget);
         }
         setPersonalDaysState(parsePersonalDays(parsed.personalDays));
-        setEnabledPrayersState(parseEnabledPrayers(parsed.enabledPrayers));
         if (typeof parsed.onboardingCompleted === 'boolean') {
           setOnboardingCompletedState(parsed.onboardingCompleted);
         }
@@ -398,15 +386,6 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     [persist],
   );
 
-  const setEnabledPrayers = useCallback(
-    (value: PrayerId[]) => {
-      const next = parseEnabledPrayers(value);
-      setEnabledPrayersState(next);
-      void persist({ enabledPrayers: next });
-    },
-    [persist],
-  );
-
   const setOnboardingCompleted = useCallback(
     (value: boolean) => {
       setOnboardingCompletedState(value);
@@ -456,7 +435,6 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       notifyWeeklyDigest,
       homeScreenWidget,
       personalDays,
-      enabledPrayers,
       onboardingCompleted,
       preferencesReady,
       setShowAlternateCalendar,
@@ -477,7 +455,6 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setNotifyWeeklyDigest,
       setHomeScreenWidget,
       setPersonalDays,
-      setEnabledPrayers,
       setOnboardingCompleted,
     }),
     [
@@ -492,7 +469,6 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       homeScreenWidget,
       notifyVespersEve,
       personalDays,
-      enabledPrayers,
       onboardingCompleted,
       preferencesReady,
       primaryCalendar,
@@ -509,7 +485,6 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setNotifyVespersEve,
       setOnboardingCompleted,
       setPersonalDays,
-      setEnabledPrayers,
       setPrimaryCalendar,
       setServingRole,
       setShowAlternateCalendar,

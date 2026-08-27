@@ -12,41 +12,12 @@ export const PRAYER_IDS = [
 
 export type PrayerId = (typeof PRAYER_IDS)[number];
 
-/** Shown on Today by default; others are opt-in in Settings. */
-export const DEFAULT_ENABLED_PRAYERS: readonly PrayerId[] = [
-  'morning',
-  'evening',
-  'communion',
-];
-
-export const OPTIONAL_PRAYER_IDS: readonly PrayerId[] = [
-  'trisagion',
-  'before_meals',
-  'jesus',
-  'ephraim',
-];
-
 export type PrayerContent = {
   title: string;
   /** Short label under the title when collapsed. */
   summary: string;
   paragraphs: string[];
 };
-
-export function isPrayerId(value: unknown): value is PrayerId {
-  return typeof value === 'string' && (PRAYER_IDS as readonly string[]).includes(value);
-}
-
-export function parseEnabledPrayers(raw: unknown): PrayerId[] {
-  if (raw === undefined || raw === null) return [...DEFAULT_ENABLED_PRAYERS];
-  if (!Array.isArray(raw)) return [...DEFAULT_ENABLED_PRAYERS];
-  if (raw.length === 0) return [];
-  const next: PrayerId[] = [];
-  for (const item of raw) {
-    if (isPrayerId(item) && !next.includes(item)) next.push(item);
-  }
-  return next.length > 0 ? next : [...DEFAULT_ENABLED_PRAYERS];
-}
 
 export function prayerTitleKey(id: PrayerId): string {
   return `prayers.${id}.title`;

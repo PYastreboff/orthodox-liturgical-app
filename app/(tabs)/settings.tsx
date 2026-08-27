@@ -27,17 +27,8 @@ import {
   SettingsNotificationsModal,
   type NotificationToggleOption,
 } from '../../src/components/settings/SettingsNotificationsModal';
-import {
-  SettingsPrayersModal,
-  type PrayerToggleOption,
-} from '../../src/components/settings/SettingsPrayersModal';
 import { SettingsPersonalDaysModal } from '../../src/components/settings/SettingsPersonalDaysModal';
 import type { PersonalDayKind } from '../../src/lib/personalDays';
-import {
-  OPTIONAL_PRAYER_IDS,
-  PRAYER_IDS,
-  type PrayerId,
-} from '../../src/lib/prayers/prayers';
 import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
 import { LanguageGlyphIcon } from '../../src/components/settings/LanguageGlyphIcon';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
@@ -156,15 +147,12 @@ export default function SettingsScreen() {
     setNotifyWeeklyDigest,
     homeScreenWidget,
     setHomeScreenWidget,
-    enabledPrayers,
-    setEnabledPrayers,
     personalDays,
     setPersonalDays,
   } = usePreferences();
 
   const [activePicker, setActivePicker] = useState<SettingsPicker>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [prayersOpen, setPrayersOpen] = useState(false);
   const [personalDaysKind, setPersonalDaysKind] = useState<PersonalDayKind | null>(null);
   const [permissionHint, setPermissionHint] = useState(false);
   const nativeReminders = supportsLocalNotifications();
@@ -219,57 +207,6 @@ export default function SettingsScreen() {
     personalDays.length === 0
       ? t('settings.personalDaysNone')
       : t('settings.personalDaysOnCount', { count: personalDays.length });
-
-  const prayersValueLabel =
-    enabledPrayers.length === 0
-      ? t('settings.personalDaysNone')
-      : t('settings.prayersOnCount', { count: enabledPrayers.length });
-
-  const prayerOptions = useMemo((): PrayerToggleOption[] => {
-    const leadingFor = (id: PrayerId) => {
-      if (id === 'morning') {
-        return <Feather name="sunrise" size={18} color={roleIconColor} />;
-      }
-      if (id === 'evening') {
-        return <Feather name="sunset" size={18} color={roleIconColor} />;
-      }
-      if (id === 'communion') {
-        return <MaterialCommunityIcons name="cross" size={18} color={roleIconColor} />;
-      }
-      if (id === 'trisagion') {
-        return <Feather name="book-open" size={18} color={roleIconColor} />;
-      }
-      if (id === 'before_meals') {
-        return <Feather name="coffee" size={18} color={roleIconColor} />;
-      }
-      if (id === 'jesus') {
-        return <Feather name="heart" size={18} color={roleIconColor} />;
-      }
-      return <MaterialCommunityIcons name="hands-pray" size={18} color={roleIconColor} />;
-    };
-    return PRAYER_IDS.map((id) => ({
-      id,
-      label: t(`prayers.${id}.title`),
-      hint: OPTIONAL_PRAYER_IDS.includes(id)
-        ? t('settings.prayerOptionalHint')
-        : t(`prayers.${id}.summary`),
-      leading: leadingFor(id),
-      enabled: enabledPrayers.includes(id),
-      optional: OPTIONAL_PRAYER_IDS.includes(id),
-    }));
-  }, [enabledPrayers, roleIconColor, t]);
-
-  const togglePrayer = useCallback(
-    (id: PrayerId, next: boolean) => {
-      if (next) {
-        if (enabledPrayers.includes(id)) return;
-        setEnabledPrayers([...enabledPrayers, id]);
-        return;
-      }
-      setEnabledPrayers(enabledPrayers.filter((prayerId) => prayerId !== id));
-    },
-    [enabledPrayers, setEnabledPrayers],
-  );
 
   const notificationOptions = useMemo(
     (): NotificationToggleOption[] => [
@@ -646,17 +583,6 @@ export default function SettingsScreen() {
               />
               <SettingsLinkRow
                 isDark={isDark}
-                leading={
-                  <MaterialCommunityIcons name="hands-pray" size={18} color={roleIconColor} />
-                }
-                label={t('settings.prayers')}
-                hint={t('settings.prayersRowHint')}
-                valueLabel={prayersValueLabel}
-                onPress={() => setPrayersOpen(true)}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
                 icon="bookmark"
                 label={t('settings.personalDays')}
                 hint={t('settings.personalDaysRowHint')}
@@ -845,16 +771,6 @@ export default function SettingsScreen() {
         testLabel={t('settings.testNotification')}
         testHint={t('settings.testNotificationHint')}
         onTestPress={() => void handleTestNotification()}
-      />
-      <SettingsPrayersModal
-        visible={prayersOpen}
-        title={t('settings.prayers')}
-        subtitle={t('settings.prayersModalHint')}
-        options={prayerOptions}
-        onToggle={togglePrayer}
-        onClose={() => setPrayersOpen(false)}
-        isDark={isDark}
-        footerNote={t('settings.prayersModalFooter')}
       />
       {personalDaysKind ? (
         <SettingsPersonalDaysModal

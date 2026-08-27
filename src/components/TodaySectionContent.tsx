@@ -113,7 +113,6 @@ export function TodaySectionContent({ section, model }: Props) {
     servingRole,
     dayServices,
     guideDayContext,
-    enabledPrayers,
     type,
     readingsAvailableCategories,
     readingsCategoryFilter,
@@ -389,7 +388,6 @@ export function TodaySectionContent({ section, model }: Props) {
     case 'prayers':
       return wrap(
         <PrayersSectionBody
-          enabledPrayers={enabledPrayers}
           textColor={theme.colors.text}
           mutedColor={muted}
           borderColor={theme.colors.border}

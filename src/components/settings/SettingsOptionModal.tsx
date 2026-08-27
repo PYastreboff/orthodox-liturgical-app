@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 const SELECTED_FG = '#fff';
 
@@ -11,6 +11,7 @@ function tintLeading(node: ReactNode, selected: boolean): ReactNode {
 
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import { colors } from '../../theme/tokens';
+import { SettingsSheetFrame } from './SettingsSheetFrame';
 
 export type SettingsOption<T extends string> = {
   id: T;
@@ -41,91 +42,71 @@ export function SettingsOptionModal<T extends string>({
   const surfaceBg = isDark ? '#2a2724' : '#ebe6de';
   const textColor = isDark ? '#e8e3dd' : '#2b2623';
   const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.12)';
+  const handleColor = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(43,38,35,0.28)';
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const sheetHeight = Math.round(windowHeight * (windowWidth < 600 ? 2 / 3 : 0.6));
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={styles.root}>
-        <Pressable style={styles.backdrop} onPress={onClose} accessibilityElementsHidden />
-        <View style={[styles.sheet, { backgroundColor: surfaceBg, borderColor, height: sheetHeight }]}>
-          <Text style={[styles.title, { color: textColor }]}>{title}</Text>
-          <ScrollView
-            style={styles.optionsScroll}
-            contentContainerStyle={styles.optionsContent}
-            keyboardShouldPersistTaps="handled"
-          >
-          {options.map((option) => {
-            const selected = option.id === value;
-            return (
-              <Pressable
-                key={option.id}
-                style={({ pressed }) => [
-                  styles.option,
-                  {
-                    backgroundColor: selected
-                      ? colors.accentWine
-                      : pressed
-                        ? 'rgba(139,46,60,0.14)'
-                        : 'transparent',
-                  },
-                ]}
-                onPress={() => {
-                  onSelect(option.id);
-                  onClose();
-                }}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
-                {...hoverAccessibilityProps(option.label, { role: 'button' })}
+    <SettingsSheetFrame
+      visible={visible}
+      onClose={onClose}
+      sheetHeight={sheetHeight}
+      surfaceBg={surfaceBg}
+      borderColor={borderColor}
+      handleColor={handleColor}
+    >
+      <Text style={[styles.title, { color: textColor }]}>{title}</Text>
+      <ScrollView
+        style={styles.optionsScroll}
+        contentContainerStyle={styles.optionsContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        {options.map((option) => {
+          const selected = option.id === value;
+          return (
+            <Pressable
+              key={option.id}
+              style={({ pressed }) => [
+                styles.option,
+                {
+                  backgroundColor: selected
+                    ? colors.accentWine
+                    : pressed
+                      ? 'rgba(139,46,60,0.14)'
+                      : 'transparent',
+                },
+              ]}
+              onPress={() => {
+                onSelect(option.id);
+                onClose();
+              }}
+              accessibilityRole="button"
+              accessibilityState={{ selected }}
+              {...hoverAccessibilityProps(option.label, { role: 'button' })}
+            >
+              {option.leading ? (
+                <View style={styles.leading}>{tintLeading(option.leading, selected)}</View>
+              ) : null}
+              <Text
+                style={[styles.optionLabel, { color: selected ? SELECTED_FG : textColor }]}
+                numberOfLines={2}
               >
-                {option.leading ? (
-                  <View style={styles.leading}>{tintLeading(option.leading, selected)}</View>
-                ) : null}
-                <Text
-                  style={[styles.optionLabel, { color: selected ? SELECTED_FG : textColor }]}
-                  numberOfLines={2}
-                >
-                  {option.label}
-                </Text>
-                {selected ? (
-                  <Feather name="check" size={18} color={SELECTED_FG} />
-                ) : (
-                  <View style={styles.checkPlaceholder} />
-                )}
-              </Pressable>
-            );
-          })}
-          </ScrollView>
-        </View>
-      </View>
-    </Modal>
+                {option.label}
+              </Text>
+              {selected ? (
+                <Feather name="check" size={18} color={SELECTED_FG} />
+              ) : (
+                <View style={styles.checkPlaceholder} />
+              )}
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+    </SettingsSheetFrame>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingHorizontal: 16,
-    paddingBottom: 24,
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-  },
-  sheet: {
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    overflow: 'hidden',
-    maxWidth: 420,
-    width: '100%',
-    alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    elevation: 10,
-  },
   optionsScroll: {
     flex: 1,
   },
@@ -140,7 +121,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
     textTransform: 'uppercase',
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 4,
     paddingBottom: 8,
   },
   option: {

@@ -1395,8 +1395,6 @@ const en = {
   },
   prayers: {
     emptyEnabled: 'No prayers selected. Turn some on in Settings → Prayers.',
-    footnote:
-      'Traditional Orthodox texts for personal use. Your parish prayer book may differ slightly.',
     morning: {
       title: 'Morning Prayers',
       summary: 'Opening prayers and morning rule.',
@@ -2968,8 +2966,6 @@ const ru = {
   },
   prayers: {
     emptyEnabled: 'Молитвы не выбраны. Включите их в Настройки → Молитвы.',
-    footnote:
-      'Традиционные православные тексты для личного употребления. Молитвослов вашего прихода может немного отличаться.',
     morning: {
       title: 'Утренние молитвы',
       summary: 'Начало и утреннее правило.',
