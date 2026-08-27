@@ -27,7 +27,12 @@ export type PersonalDay = {
   calendar: PersonalDayCalendar;
   /** Local notification on the evening before. */
   remindEve: boolean;
-  /** Repose only — show the 40th-day memorial on the calendar (day of repose = day 1). */
+  /**
+   * Repose only — calendar year of the repose (in `calendar`).
+   * Anniversary still recurs by month/day; the 40th day is computed once from this year.
+   */
+  year?: number;
+  /** Repose only — show the one-time 40th-day memorial on the calendar (day of repose = day 1). */
   showFortiethDay?: boolean;
 };
 
@@ -49,6 +54,9 @@ const KINDS: PersonalDayKind[] = [
   'repose',
 ];
 
+const MIN_REPOSE_YEAR = 1800;
+const MAX_REPOSE_YEAR = 2100;
+
 export function newPersonalDayId(): string {
   return `pd_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -64,8 +72,19 @@ export function clampPersonalDate(month: number, day: number): { month: number; 
   return { month: m, day: d };
 }
 
+export function clampReposeYear(year: number): number {
+  return Math.min(MAX_REPOSE_YEAR, Math.max(MIN_REPOSE_YEAR, Math.round(year)));
+}
+
 function parseCalendar(value: unknown): PersonalDayCalendar {
   return value === 'julian' ? 'julian' : 'gregorian';
+}
+
+function parseReposeYear(value: unknown): number {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return clampReposeYear(value);
+  }
+  return clampReposeYear(new Date().getFullYear());
 }
 
 export function parsePersonalDays(raw: unknown): PersonalDay[] {
@@ -91,7 +110,10 @@ export function parsePersonalDays(raw: unknown): PersonalDay[] {
       calendar: parseCalendar(rec.calendar),
       remindEve: rec.remindEve === true,
       ...(kind === 'repose'
-        ? { showFortiethDay: rec.showFortiethDay !== false }
+        ? {
+            year: parseReposeYear(rec.year),
+            showFortiethDay: rec.showFortiethDay !== false,
+          }
         : null),
     });
     if (out.length >= MAX_PERSONAL_DAYS) break;
@@ -117,7 +139,7 @@ function addLocalDays(date: Date, days: number): Date {
   return next;
 }
 
-/** Civil date for a recurring personal month/day in a given calendar year. */
+/** Civil date for a personal month/day in a given calendar year. */
 export function civilDateForPersonalDayInYear(day: PersonalDay, year: number): Date {
   if (day.calendar === 'gregorian') {
     return startOfLocalDay(new Date(year, day.month - 1, day.day));
@@ -126,9 +148,13 @@ export function civilDateForPersonalDayInYear(day: PersonalDay, year: number): D
   return startOfLocalDay(new Date(g.year, g.month - 1, g.day));
 }
 
-/** 40th-day memorial civil date (repose day counts as day 1). */
-export function fortiethDayCivilDateForRepose(repose: PersonalDay, year: number): Date {
-  return addLocalDays(civilDateForPersonalDayInYear(repose, year), FORTIETH_DAY_OFFSET);
+/** One-time 40th-day memorial civil date from the year of repose (repose day = day 1). */
+export function fortiethDayCivilDateForRepose(repose: PersonalDay): Date | null {
+  if (repose.kind !== 'repose' || repose.year == null) return null;
+  return addLocalDays(
+    civilDateForPersonalDayInYear(repose, clampReposeYear(repose.year)),
+    FORTIETH_DAY_OFFSET,
+  );
 }
 
 export function personalDaysOnCivilDate(
@@ -150,16 +176,14 @@ export function personalDayOccurrencesOnCivilDate(
   const onDay = personalDaysOnCivilDate(days, civil);
   const out: PersonalDayOccurrence[] = onDay.map((day) => ({ day, variant: 'default' }));
 
-  const y = civil.getFullYear();
   for (const day of days) {
     if (day.kind !== 'repose' || day.showFortiethDay === false) continue;
-    for (const tryYear of [y - 1, y, y + 1]) {
-      const fortieth = fortiethDayCivilDateForRepose(day, tryYear);
-      if (!isSameLocalDay(fortieth, civil)) continue;
-      if (onDay.some((entry) => entry.id === day.id)) continue;
-      out.push({ day, variant: 'fortieth' });
-      break;
-    }
+    const fortieth = fortiethDayCivilDateForRepose(day);
+    if (!fortieth || !isSameLocalDay(fortieth, civil)) continue;
+    // If the 40th day falls on the same civil calendar day as the anniversary
+    // (unusual), still show the fortieth label only when it is not already listed.
+    if (onDay.some((entry) => entry.id === day.id)) continue;
+    out.push({ day, variant: 'fortieth' });
   }
 
   return out;
@@ -183,7 +207,7 @@ export function calendarLabelForOccurrence(
 }
 
 export function formatPersonalDayDate(
-  day: Pick<PersonalDay, 'month' | 'day' | 'calendar'>,
+  day: Pick<PersonalDay, 'month' | 'day' | 'calendar' | 'year' | 'kind'>,
   lang: UiLanguage,
 ): string {
   const locale = intlLocaleForLanguage(lang);
@@ -194,26 +218,27 @@ export function formatPersonalDayDate(
     day.calendar === 'julian'
       ? translate(lang, 'settings.calendarJulian')
       : translate(lang, 'settings.calendarGregorian');
+  if (day.kind === 'repose' && day.year != null) {
+    return `${day.day} ${monthName} ${day.year} · ${calendarLabel}`;
+  }
   return `${day.day} ${monthName} · ${calendarLabel}`;
 }
 
 export function formatFortiethDayPreview(
-  repose: Pick<PersonalDay, 'month' | 'day' | 'calendar'>,
+  repose: Pick<PersonalDay, 'month' | 'day' | 'calendar' | 'year'>,
   lang: UiLanguage,
-  year = new Date().getFullYear(),
 ): string {
-  const fortieth = fortiethDayCivilDateForRepose(
-    {
-      id: '',
-      kind: 'repose',
-      title: '',
-      month: repose.month,
-      day: repose.day,
-      calendar: repose.calendar,
-      remindEve: false,
-    },
-    year,
-  );
+  const fortieth = fortiethDayCivilDateForRepose({
+    id: '',
+    kind: 'repose',
+    title: '',
+    month: repose.month,
+    day: repose.day,
+    calendar: repose.calendar,
+    year: repose.year ?? new Date().getFullYear(),
+    remindEve: false,
+  });
+  if (!fortieth) return '';
   const locale = intlLocaleForLanguage(lang);
   return new Intl.DateTimeFormat(locale, {
     weekday: 'short',

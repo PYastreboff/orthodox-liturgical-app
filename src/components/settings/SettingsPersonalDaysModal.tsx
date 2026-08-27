@@ -19,6 +19,7 @@ import { intlLocaleForLanguage } from '../../i18n/locale';
 import { dateToJulianPlainDate } from '../../lib/calendar/julianGregorian';
 import {
   clampPersonalDate,
+  clampReposeYear,
   daysInCalendarMonth,
   formatFortiethDayPreview,
   formatPersonalDayDate,
@@ -48,6 +49,7 @@ type Draft = {
   title: string;
   month: number;
   day: number;
+  year: number;
   calendar: PersonalDayCalendar;
   remindEve: boolean;
   showFortiethDay: boolean;
@@ -115,6 +117,7 @@ function emptyDraft(kind: PersonalDayKind, calendar: PersonalDayCalendar): Draft
     title: '',
     month: today.month,
     day: today.day,
+    year: new Date().getFullYear(),
     calendar,
     remindEve: true,
     showFortiethDay: kind === 'repose',
@@ -128,6 +131,7 @@ function draftFromDay(day: PersonalDay): Draft {
     title: day.title,
     month: day.month,
     day: day.day,
+    year: day.year ?? new Date().getFullYear(),
     calendar: day.calendar,
     remindEve: day.remindEve,
     showFortiethDay: day.kind === 'repose' ? day.showFortiethDay !== false : false,
@@ -211,7 +215,10 @@ export function SettingsPersonalDaysModal({
       calendar: draft.calendar,
       remindEve,
       ...(draft.kind === 'repose'
-        ? { showFortiethDay: draft.showFortiethDay }
+        ? {
+            year: clampReposeYear(draft.year),
+            showFortiethDay: draft.showFortiethDay,
+          }
         : null),
     };
     const without = days.filter((d) => d.id !== saved.id);
@@ -285,6 +292,11 @@ export function SettingsPersonalDaysModal({
     setDraft({ ...draft, day: next });
   };
 
+  const shiftYear = (delta: number) => {
+    if (!draft) return;
+    setDraft({ ...draft, year: clampReposeYear(draft.year + delta) });
+  };
+
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={closeAll}>
       <View style={styles.root}>
@@ -302,7 +314,11 @@ export function SettingsPersonalDaysModal({
                 : listTitle}
             </Text>
             <Text style={[styles.subtitle, { color: mutedColor }]}>
-              {draft ? dateHint : listHint}
+              {draft
+                ? draft.kind === 'repose'
+                  ? t('settings.reposeDateHint')
+                  : dateHint
+                : listHint}
             </Text>
 
             {draft ? (
@@ -412,6 +428,36 @@ export function SettingsPersonalDaysModal({
                     </Pressable>
                   </View>
                 </View>
+
+                {draft.kind === 'repose' ? (
+                  <View style={[styles.dateRow, { marginTop: 8 }]}>
+                    <View style={[styles.stepper, { backgroundColor: fieldBg, borderColor, flex: 1 }]}>
+                      <Pressable
+                        onPress={() => shiftYear(-1)}
+                        style={styles.stepperBtn}
+                        accessibilityRole="button"
+                        accessibilityLabel={t('settings.personalDayPrevYear')}
+                        {...hoverAccessibilityProps(t('settings.personalDayPrevYear'), {
+                          role: 'button',
+                        })}
+                      >
+                        <Feather name="chevron-left" size={18} color={textColor} />
+                      </Pressable>
+                      <Text style={[styles.stepperValue, { color: textColor }]}>{draft.year}</Text>
+                      <Pressable
+                        onPress={() => shiftYear(1)}
+                        style={styles.stepperBtn}
+                        accessibilityRole="button"
+                        accessibilityLabel={t('settings.personalDayNextYear')}
+                        {...hoverAccessibilityProps(t('settings.personalDayNextYear'), {
+                          role: 'button',
+                        })}
+                      >
+                        <Feather name="chevron-right" size={18} color={textColor} />
+                      </Pressable>
+                    </View>
+                  </View>
+                ) : null}
 
                 <View style={styles.remindRow}>
                   <View style={styles.remindText}>

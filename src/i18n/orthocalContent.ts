@@ -3,75 +3,215 @@ import type { UiLanguage } from './types';
 
 import type { CalendarDayInfo } from '../lib/liturgical/calendarDayInfo';
 
-/** Exact orthocal feast / commemoration titles → i18n key. */
+/**
+ * Exact Orthocal English feast / day titles → i18n key.
+ * Matching is case-insensitive and hyphen-normalized (see normalizeTitleKey).
+ */
 const FEAST_KEY_BY_ENGLISH: Record<string, string> = {
-  'Holy Pentecost': 'orthocalFeasts.holyPentecost',
-  'Day of the Holy Spirit': 'orthocalFeasts.dayOfHolySpirit',
-  'Third Day of the Trinity': 'orthocalFeasts.thirdDayOfTrinity',
-  'Leavetaking of Ascension': 'orthocalFeasts.leavetakingAscension',
-  'Memorial Saturday': 'orthocalFeasts.memorialSaturday',
-  'Feast of the Holy Trinity': 'orthocalFeasts.holyTrinity',
-  'Annunciation of the Theotokos': 'orthocalFeasts.annunciation',
-  'Annunciation of the Mother of God': 'orthocalFeasts.annunciation',
+  // Pascha / Bright Week
+  Pascha: 'appearance.pascha',
+  'Holy Pascha': 'appearance.pascha',
+  'The Resurrection of our Lord and Savior Jesus Christ': 'appearance.pascha',
+  'The Resurrection of our Lord and Saviour Jesus Christ': 'appearance.pascha',
+  'Bright Week': 'appearance.bright_week',
+  'Bright Monday': 'orthocalFeasts.brightMonday',
+  'Bright Tuesday': 'orthocalFeasts.brightTuesday',
+  'Bright Wednesday': 'orthocalFeasts.brightWednesday',
+  'Bright Thursday': 'orthocalFeasts.brightThursday',
+  'Bright Friday': 'orthocalFeasts.brightFriday',
+  'Bright Saturday': 'orthocalFeasts.brightSaturday',
+
+  // Holy Week
   'Lazarus Saturday': 'appearance.lazarus_saturday',
   'Palm Sunday': 'orthocalFeasts.palmSunday',
   'Palm Sunday: Entrance of Our Lord into Jerusalem': 'orthocalFeasts.palmSunday',
   'Entry of the Lord into Jerusalem': 'orthocalFeasts.palmSunday',
-  'Ascension of the Lord': 'orthocalFeasts.ascension',
-  'The Ascension of Our Lord': 'orthocalFeasts.ascension',
+  'Entrance of Our Lord into Jerusalem': 'orthocalFeasts.palmSunday',
+  'Holy Week': 'appearance.holy_week',
+  'Great and Holy Monday': 'orthocalFeasts.holyMonday',
+  'Holy Monday': 'orthocalFeasts.holyMonday',
+  'Great and Holy Tuesday': 'orthocalFeasts.holyTuesday',
+  'Holy Tuesday': 'orthocalFeasts.holyTuesday',
+  'Great and Holy Wednesday': 'orthocalFeasts.holyWednesday',
+  'Holy Wednesday': 'orthocalFeasts.holyWednesday',
+  'Great and Holy Thursday': 'orthocalFeasts.holyThursday',
+  'Holy Thursday': 'orthocalFeasts.holyThursday',
+  'Maundy Thursday': 'orthocalFeasts.holyThursday',
+  'Great and Holy Friday': 'orthocalFeasts.holyFriday',
+  'Good Friday': 'orthocalFeasts.holyFriday',
+  'Great and Holy Saturday': 'orthocalFeasts.holySaturday',
+  'Holy Saturday': 'orthocalFeasts.holySaturday',
+
+  // Twelve Great Feasts (+ common Orthocal spellings)
   'Nativity of Christ': 'orthocalFeasts.nativity',
   'The Nativity of Christ': 'orthocalFeasts.nativity',
-  'Theophany': 'orthocalFeasts.theophany',
+  Nativity: 'appearance.nativity',
+  Theophany: 'orthocalFeasts.theophany',
   'The Baptism of the Lord': 'orthocalFeasts.theophany',
-  'Transfiguration of the Lord': 'orthocalFeasts.transfiguration',
-  'Dormition of the Theotokos': 'orthocalFeasts.dormition',
-  'Exaltation of the Cross': 'orthocalFeasts.elevationCross',
-  'Elevation of the Cross': 'orthocalFeasts.elevationCross',
-  'Nativity of the Theotokos': 'orthocalFeasts.nativityTheotokos',
+  'Theophany of Our Lord and Savior Jesus Christ': 'orthocalFeasts.theophany',
+  'Theophany of Our Lord and Saviour Jesus Christ': 'orthocalFeasts.theophany',
   'Presentation of the Lord': 'orthocalFeasts.presentation',
   'Meeting of the Lord': 'orthocalFeasts.presentation',
-  'Saints Peter and Paul': 'orthocalFeasts.peterAndPaul',
-  'Holy Apostles Peter and Paul': 'orthocalFeasts.peterAndPaul',
-  'Great and Holy Tuesday': 'orthocalFeasts.holyTuesday',
-  'Great and Holy Wednesday': 'orthocalFeasts.holyWednesday',
-  'Great and Holy Thursday': 'orthocalFeasts.holyThursday',
-  'Great and Holy Friday': 'orthocalFeasts.holyFriday',
-  'Great and Holy Saturday': 'orthocalFeasts.holySaturday',
-  'Protection of the Most Holy Theotokos': 'appearance.pokrov',
-  'Protection of the Theotokos': 'appearance.pokrov',
+  'Meeting of Christ in the Temple': 'orthocalFeasts.presentation',
+  'Annunciation of the Theotokos': 'orthocalFeasts.annunciation',
+  'Annunciation of the Mother of God': 'orthocalFeasts.annunciation',
+  'Annunciation Most Holy Theotokos': 'orthocalFeasts.annunciation',
+  'Annunciation of the Most-Holy Theotokos': 'orthocalFeasts.annunciation',
+  'Annunciation of the Most Holy Theotokos': 'orthocalFeasts.annunciation',
+  Annunciation: 'appearance.annunciation',
+  'Transfiguration of the Lord': 'orthocalFeasts.transfiguration',
+  'Transfiguration of Our Lord': 'orthocalFeasts.transfiguration',
+  'Transfiguration of Our Lord and Savior Jesus Christ': 'orthocalFeasts.transfiguration',
+  Transfiguration: 'appearance.transfiguration',
+  'Dormition of the Theotokos': 'orthocalFeasts.dormition',
+  'Dormition of the Most-Holy Theotokos': 'orthocalFeasts.dormition',
+  'Dormition of the Most Holy Theotokos': 'orthocalFeasts.dormition',
+  Dormition: 'appearance.dormition',
+  'Exaltation of the Cross': 'orthocalFeasts.elevationCross',
+  'Elevation of the Cross': 'orthocalFeasts.elevationCross',
+  'Exaltation (Elevation) of the Precious Cross': 'orthocalFeasts.elevationCross',
+  'Elevation of the Precious Cross': 'orthocalFeasts.elevationCross',
+  'Nativity of the Theotokos': 'orthocalFeasts.nativityTheotokos',
+  'Nativity of the Most-Holy Theotokos': 'orthocalFeasts.nativityTheotokos',
+  'Nativity of the Most Holy Theotokos': 'orthocalFeasts.nativityTheotokos',
   'Entry of the Most Holy Theotokos into the Temple': 'appearance.entry_theotokos',
+  'Entry of the Most-Holy Theotokos into the Temple': 'appearance.entry_theotokos',
   'Entrance of the Theotokos into the Temple': 'appearance.entry_theotokos',
+  'Entrance of the Most-Holy Theotokos into the Temple': 'appearance.entry_theotokos',
+  'Ascension of the Lord': 'orthocalFeasts.ascension',
+  'The Ascension of Our Lord': 'orthocalFeasts.ascension',
+  'The Ascension of our Lord, God, and Saviour Jesus Christ': 'orthocalFeasts.ascension',
+  'The Ascension of our Lord, God, and Savior Jesus Christ': 'orthocalFeasts.ascension',
+  Ascension: 'appearance.ascension',
+  'Holy Pentecost': 'orthocalFeasts.holyPentecost',
+  Pentecost: 'appearance.pentecost',
+  'Feast of the Holy Trinity': 'orthocalFeasts.holyTrinity',
+  '8th Sunday of Pascha: Feast of the Holy Trinity': 'orthocalFeasts.holyTrinity',
+
+  // Synaxes / John the Baptist / Pokrov / Peter & Paul
+  'Synaxis of the Most Holy Theotokos': 'orthocalFeasts.synaxisTheotokos',
+  'Synaxis of the Most-Holy Theotokos': 'orthocalFeasts.synaxisTheotokos',
+  'Synaxis of the Archangel Michael': 'orthocalFeasts.synaxisMichael',
+  'Synaxis of Archangel Michael and the Bodiless Powers': 'orthocalFeasts.synaxisMichael',
+  'Synaxis of the Archangel Michael and the Other Bodiless Powers': 'orthocalFeasts.synaxisMichael',
+  'Synaxis of St John the Baptist': 'orthocalFeasts.synaxisJohnBaptist',
+  'Synaxis of the Holy Glorious Prophet, Forerunner and Baptist John':
+    'orthocalFeasts.synaxisJohnBaptist',
   'Nativity of St John the Baptist': 'appearance.nativity_john_baptist',
   'Nativity of the Holy Glorious Prophet, Forerunner, and Baptist John':
     'appearance.nativity_john_baptist',
+  'Beheading of St John the Baptist': 'appearance.beheading_john_baptist',
   'Beheading of the Holy Glorious Prophet, Forerunner, and Baptist John':
     'appearance.beheading_john_baptist',
-  'Beheading of St John the Baptist': 'appearance.beheading_john_baptist',
+  'Protection of the Most Holy Theotokos': 'appearance.pokrov',
+  'Protection of the Theotokos': 'appearance.pokrov',
+  'Protection (Pokrov) of the Most-Holy Theotokos': 'appearance.pokrov',
+  'Protection (Pokrov) of the Most Holy Theotokos': 'appearance.pokrov',
+  'Saints Peter and Paul': 'orthocalFeasts.peterAndPaul',
+  'Holy Apostles Peter and Paul': 'orthocalFeasts.peterAndPaul',
   'Circumcision of Our Lord': 'appearance.circumcision',
   'Circumcision of Our Lord Jesus Christ': 'appearance.circumcision',
   'Circumcision of Our Lord; St Basil the Great': 'orthocalFeasts.circumcision',
-  'Afterfeast of the Nativity of Christ': 'orthocalFeasts.afterfeastNativity',
-  'Afterfeast of Theophany': 'orthocalFeasts.afterfeastTheophany',
-  'Leavetaking of the Nativity of Christ': 'orthocalFeasts.leavetakingNativity',
-  'Leavetaking of Theophany': 'orthocalFeasts.leavetakingTheophany',
-  'Beginning of the Apostles Fast': 'appearance.apostles_fast',
-  'Synaxis of the Most Holy Theotokos': 'orthocalFeasts.synaxisTheotokos',
-  'Synaxis of the Archangel Michael': 'orthocalFeasts.synaxisMichael',
+
+  // Forefeasts / afterfeasts / leavetakings / eves
   'Forefeast of the Nativity of Christ': 'orthocalFeasts.forefeastNativity',
   'Forefeast of Theophany': 'orthocalFeasts.forefeastTheophany',
-  'Great and Holy Monday': 'orthocalFeasts.holyMonday',
-  Pascha: 'appearance.pascha',
-  'Holy Pascha': 'appearance.pascha',
-  'Bright Week': 'appearance.bright_week',
-  Pentecost: 'appearance.pentecost',
+  'Forefeast of Annunciation': 'orthocalFeasts.forefeastAnnunciation',
+  'Forefeast of Transfiguration': 'orthocalFeasts.forefeastTransfiguration',
+  'Forefeast of Dormition': 'orthocalFeasts.forefeastDormition',
+  'Forefeast of the Elevation of the Cross': 'orthocalFeasts.forefeastElevationCross',
+  'Afterfeast of the Nativity of Christ': 'orthocalFeasts.afterfeastNativity',
+  'Afterfeast of Theophany': 'orthocalFeasts.afterfeastTheophany',
+  'Afterfeast of Transfiguration': 'orthocalFeasts.afterfeastTransfiguration',
+  'Afterfeast of Dormition': 'orthocalFeasts.afterfeastDormition',
+  'Afterfeast of the Elevation of the Cross': 'orthocalFeasts.afterfeastElevationCross',
+  'Leavetaking of the Nativity of Christ': 'orthocalFeasts.leavetakingNativity',
+  'Leavetaking of the Nativity': 'orthocalFeasts.leavetakingNativity',
+  'Leavetaking of Theophany': 'orthocalFeasts.leavetakingTheophany',
+  'Leavetaking of Ascension': 'orthocalFeasts.leavetakingAscension',
+  'Leavetaking of Meeting': 'orthocalFeasts.leavetakingMeeting',
+  'Leavetaking of Transfiguration': 'orthocalFeasts.leavetakingTransfiguration',
+  'Leavetaking of Dormition': 'orthocalFeasts.leavetakingDormition',
+  'Eve of Nativity': 'orthocalFeasts.eveNativity',
+  'Eve of the Nativity of Christ': 'orthocalFeasts.eveNativity',
+  'Eve of Theophany': 'orthocalFeasts.eveTheophany',
+  'Midfeast of Pentecost': 'orthocalFeasts.midfeastPentecost',
+  'Day of the Holy Spirit': 'orthocalFeasts.dayOfHolySpirit',
+  'Third Day of the Trinity': 'orthocalFeasts.thirdDayOfTrinity',
+  'Beginning of the Apostles Fast': 'appearance.apostles_fast',
+  'Beginning of the Lenten Triodion': 'orthocalFeasts.beginningTriodion',
+  'Beginning of the Pentecostarion': 'orthocalFeasts.beginningPentecostarion',
+  'Memorial Saturday': 'orthocalFeasts.memorialSaturday',
+
+  // Triodion Sundays
+  'Sunday of Zacchaeus': 'orthocalFeasts.sundayZacchaeus',
+  'Sunday of the Publican and the Pharisee': 'orthocalFeasts.sundayPublican',
+  'Sunday of the Prodigal Son': 'orthocalFeasts.sundayProdigal',
+  'Sunday of Meatfare': 'orthocalFeasts.sundayMeatfare',
+  'Sunday of the Last Judgment': 'orthocalFeasts.sundayMeatfare',
+  'Sunday of Cheesefare: Expulsion of Adam from Paradise': 'orthocalFeasts.sundayCheesefare',
+  'Sunday of Cheesefare': 'orthocalFeasts.sundayCheesefare',
+  'Forgiveness Sunday': 'orthocalFeasts.sundayCheesefare',
+  'First Sunday of Lent': 'orthocalFeasts.sundayOrthodoxy',
+  'Sunday of Orthodoxy': 'orthocalFeasts.sundayOrthodoxy',
+  'Second Sunday of Lent': 'orthocalFeasts.sundayGregoryPalamas',
+  'Third Sunday of Lent': 'orthocalFeasts.sundayCross',
+  'Veneration of the Precious Cross': 'orthocalFeasts.sundayCross',
+  'Fourth Sunday of Lent': 'orthocalFeasts.sundayClimacus',
+  'Fifth Sunday of Lent': 'orthocalFeasts.sundayMaryEgypt',
+
+  // Pentecostarion Sundays / themes
+  'Antipascha: 2nd Sunday of Pascha': 'orthocalFeasts.thomasSunday',
+  'St Thomas Sunday': 'orthocalFeasts.thomasSunday',
+  'Thomas Sunday': 'orthocalFeasts.thomasSunday',
+  '3rd Sunday of Pascha': 'orthocalFeasts.myrrhbearers',
+  'Myrrhbearing Women': 'orthocalFeasts.myrrhbearers',
+  'Sunday of the Myrrhbearing Women': 'orthocalFeasts.myrrhbearers',
+  '4th Sunday of Pascha': 'orthocalFeasts.paralytic',
+  Paralytic: 'orthocalFeasts.paralytic',
+  'Sunday of the Paralytic': 'orthocalFeasts.paralytic',
+  '5th Sunday of Pascha': 'orthocalFeasts.samaritanWoman',
+  'Samaritan Woman': 'orthocalFeasts.samaritanWoman',
+  'Sunday of the Samaritan Woman': 'orthocalFeasts.samaritanWoman',
+  '6th Sunday of Pascha': 'orthocalFeasts.blindMan',
+  'Blind Man': 'orthocalFeasts.blindMan',
+  'Sunday of the Blind Man': 'orthocalFeasts.blindMan',
+  '1st Sunday after Pentecost': 'appearance.all_saints',
   'All Saints': 'appearance.all_saints',
+  '2nd Sunday after Pentecost': 'appearance.all_saints_russia',
   'All Saints of America, All Saints of Russia': 'appearance.all_saints_russia',
   'All Saints of Russia': 'appearance.all_saints_russia',
-  Nativity: 'appearance.nativity',
-  Transfiguration: 'appearance.transfiguration',
-  Dormition: 'appearance.dormition',
-  Annunciation: 'appearance.annunciation',
-  'Holy Week': 'appearance.holy_week',
+
+  // Common saints / icons (high-visibility commemorations)
+  'St Nicholas the Wonderworker, Abp. of Myra in Lycia': 'orthocalFeasts.nicholasWonderworker',
+  'Saint Nicholas the Wonderworker': 'orthocalFeasts.nicholasWonderworker',
+  'St Nicholas the Wonderworker': 'orthocalFeasts.nicholasWonderworker',
+  'Holy Greatmartyr, Victorybearer and Wonderworker George': 'orthocalFeasts.georgeVictorybearer',
+  'Greatmartyr George': 'orthocalFeasts.georgeVictorybearer',
+  'Greatmartyr Demetrius': 'orthocalFeasts.demetrius',
+  'Holy Greatmartyr Demetrius the Myrrh-gusher of Thessalonica': 'orthocalFeasts.demetrius',
+  'Rt. Blv. Great Prince Alexander Nevsky': 'orthocalFeasts.alexanderNevsky',
+  'Holy Forty Martyrs of Sebaste': 'orthocalFeasts.fortyMartyrsSebaste',
+  'Image of Christ Not Made by Hands': 'orthocalFeasts.imageNotMadeByHands',
+  'Vladimir Icon': 'orthocalFeasts.vladimirIcon',
+  'Vladimir Icon of the Most-Holy Theotokos': 'orthocalFeasts.vladimirIcon',
+  'Martyrs Boris and Gleb, Passionbearers': 'orthocalFeasts.borisAndGleb',
+  'SS Cyril and Methodius, Apostles to the Slavs': 'orthocalFeasts.cyrilMethodius',
+  'Repose Ven. Herman of Alaska, Wonderworker of All America': 'orthocalFeasts.hermanAlaska',
+  '3rd Finding of the Head of St John the Baptist': 'orthocalFeasts.thirdFindingHeadJohn',
+  'Procession of the Lifegiving Cross': 'orthocalFeasts.processionLifegivingCross',
+  'Procession of the Life-giving Cross': 'orthocalFeasts.processionLifegivingCross',
+  'Leavetaking of Pentecost': 'orthocalFeasts.leavetakingPentecost',
+  'Begin Dormition Fast': 'orthocalFeasts.beginDormitionFast',
+  'Beginning of the Dormition Fast': 'orthocalFeasts.beginDormitionFast',
+  'Synaxis of the Holy Unmercenaries': 'orthocalFeasts.synaxisUnmercenaries',
+  'SS Constantine and Helen, Equals-to-the-Apostles': 'orthocalFeasts.constantineHelen',
+  'Saints Constantine and Helen, Equals-to-the-Apostles':
+    'orthocalFeasts.constantineHelen',
+  'The Shepherds who saw the Lord': 'orthocalFeasts.shepherds',
+  'The Veneration of the Magi': 'orthocalFeasts.venerationMagi',
+
+  // Seasons / weekday shells
   Sunday: 'appearance.sunday',
   Saturday: 'appearance.saturday',
   Weekday: 'appearance.weekday',
@@ -85,72 +225,335 @@ const FEAST_KEY_BY_ENGLISH: Record<string, string> = {
   'Friday fast': 'appearance.friday_fast',
 };
 
+/** Drop trailing year / note parentheses for feast lookup. */
+function stripTrailingNotes(text: string): string {
+  return text
+    .replace(/\s*\([^)]*(?:\d|BC|AD|ca\.|c\.)[^)]*\)\s*$/gi, '')
+    .replace(/[.;,\s]+$/g, '')
+    .trim();
+}
+
+/** Normalize Orthocal title for lookup (case, hyphens, spelling variants). */
+function normalizeTitleKey(text: string): string {
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/[’‘ʻʼ]/g, "'")
+    .replace(/[‐‑‒–—−]/g, '-')
+    .replace(/\bsaviour\b/g, 'savior')
+    .replace(/\bmost-holy\b/g, 'most holy')
+    .replace(/\blife-giving\b/g, 'lifegiving')
+    .replace(/\bgreat-martyrs?\b/g, (m) => (m.endsWith('s') ? 'greatmartyrs' : 'greatmartyr'))
+    .replace(/\bequals-to-the-apostles\b/g, 'equal-to-the-apostles')
+    .replace(/\s+/g, ' ');
+}
+
+const FEAST_KEY_BY_NORMALIZED: Record<string, string> = {};
+for (const [english, key] of Object.entries(FEAST_KEY_BY_ENGLISH)) {
+  FEAST_KEY_BY_NORMALIZED[normalizeTitleKey(english)] = key;
+}
+
+/** Longer feast keys first — used for prefix / contains matching. */
+const FEAST_LOOKUP_ENTRIES = Object.entries(FEAST_KEY_BY_NORMALIZED).sort(
+  (a, b) => b[0].length - a[0].length,
+);
+
 type HonorificRule = { pattern: RegExp; replacement: string };
+
+const ABBREV = '(?=\\s|$|,|;|:)';
 
 const HONORIFIC_RULES: Record<Exclude<UiLanguage, 'en'>, HonorificRule[]> = {
   ru: [
+    { pattern: /\bOur Father among the Saints\b/gi, replacement: 'Свт.' },
+    { pattern: /\bOur Venerable Father\b/gi, replacement: 'Преп.' },
+    { pattern: /\bOur Holy Fathers?\b/gi, replacement: 'Свв. отцы' },
+    { pattern: /\bOur Holy Mothers?\b/gi, replacement: 'Свв. жены' },
+    { pattern: /\bOur Holy Mother\b/gi, replacement: 'Прп.' },
+    { pattern: /\bOur Holy Father\b/gi, replacement: 'Свт.' },
     { pattern: /\bHoly Equals-to-the-Apostles\b/gi, replacement: 'Св. равноап.' },
-    { pattern: /\bEqual-to-the-Apostles\b/gi, replacement: 'Равноап.' },
-    { pattern: /\bHoly Greatmartyr\b/gi, replacement: 'Св. вмч.' },
-    { pattern: /\bGreatmartyr\b/gi, replacement: 'Вмч.' },
+    { pattern: /\bEquals?-to-the-Apostles\b/gi, replacement: 'Равноап.' },
+    { pattern: /\bHoly Great-?martyrs\b/gi, replacement: 'Св. вмчч.' },
+    { pattern: /\bHoly Great-?martyr\b/gi, replacement: 'Св. вмч.' },
+    { pattern: /\bGreat-?martyrs\b/gi, replacement: 'Вмчч.' },
+    { pattern: /\bGreat-?martyr\b/gi, replacement: 'Вмч.' },
+    { pattern: /\bNew Confessor\s*\/\s*Hieromartyr\b/gi, replacement: 'Новосщмч.' },
     { pattern: /\bHieromartyr\b/gi, replacement: 'Сщмч.' },
     { pattern: /\bHoly New Martyr\b/gi, replacement: 'Св. новомч.' },
     { pattern: /\bNew Martyr\b/gi, replacement: 'Новомч.' },
+    { pattern: /\bNew Confessor\b/gi, replacement: 'Новоисп.' },
     { pattern: /\bHoly Martyrs\b/gi, replacement: 'Св. мученики' },
     { pattern: /\bHoly Martyr\b/gi, replacement: 'Св. мч.' },
-    { pattern: /\bTrans\. Rel\. Ven\.\b/gi, replacement: 'Перен. мощей прп.' },
-    { pattern: /\bTrans\. Rel\.\b/gi, replacement: 'Перен. мощей' },
+    { pattern: /\bMartyrs\b/gi, replacement: 'Мученики' },
+    { pattern: /\bMartyr\b/gi, replacement: 'Мч.' },
+    { pattern: /\bPassionbearers?\b/gi, replacement: 'Страстотерпцы' },
+    { pattern: /\bWonderworker\b/gi, replacement: 'Чудотворец' },
+    { pattern: /\bVictorybearer\b/gi, replacement: 'Победоносец' },
+    { pattern: /\bMyrrh-?gusher\b/gi, replacement: 'Мироточивый' },
+    { pattern: /\bUnmercenaries\b/gi, replacement: 'Бессребреники' },
+    { pattern: /\bUnmercenary\b/gi, replacement: 'Бессребреник' },
+    { pattern: /\bBodiless Powers\b/gi, replacement: 'бесплотных сил' },
+    { pattern: /\bthe Newly Appeared\b/gi, replacement: 'Новоявленный' },
+    { pattern: /\bNewly Appeared\b/gi, replacement: 'Новоявленный' },
+    { pattern: /\bTheologian\b/gi, replacement: 'Богослов' },
+    { pattern: /\bMelodist\b/gi, replacement: 'Сладкопевец' },
+    { pattern: /\bChoirmaster\b/gi, replacement: 'Доместик' },
+    { pattern: /\bEmpress\b/gi, replacement: 'царица' },
+    { pattern: /\b[Ee]nlightener\b/g, replacement: 'просветитель' },
+    { pattern: /\bRelics of\b/gi, replacement: 'Мощи' },
     { pattern: /\bTranslation of the Relics\b/gi, replacement: 'Перенесение мощей' },
+    { pattern: new RegExp(`\\bTrans\\. Rel\\. Ven\\.${ABBREV}`, 'gi'), replacement: 'Перен. мощей прп.' },
+    { pattern: new RegExp(`\\bTrans\\. Rel\\.${ABBREV}`, 'gi'), replacement: 'Перен. мощей' },
     { pattern: /\bRight-believing\b/gi, replacement: 'Благв.' },
+    { pattern: new RegExp(`\\bRt\\. Blv\\.${ABBREV}`, 'gi'), replacement: 'Благв.' },
     { pattern: /\bRighteous\b/gi, replacement: 'Прав.' },
     { pattern: /\bConfessor\b/gi, replacement: 'Исп.' },
     { pattern: /\bHierarch\b/gi, replacement: 'Свт.' },
+    { pattern: new RegExp(`\\bAbp\\.${ABBREV}`, 'gi'), replacement: 'архиеп.' },
+    { pattern: /\bArchbishop\b/gi, replacement: 'Архиеп.' },
     { pattern: /\bApostles\b/gi, replacement: 'Апостолы' },
     { pattern: /\bApostle\b/gi, replacement: 'Ап.' },
+    { pattern: /\bProphet\b/gi, replacement: 'Прор.' },
+    { pattern: /\bForerunner\b/gi, replacement: 'Предтеча' },
+    { pattern: /\bTheotokos\b/gi, replacement: 'Богородицы' },
+    { pattern: /\bLife-?giving\b/gi, replacement: 'Животворящего' },
+    { pattern: /\band Companions\b/gi, replacement: 'и с ним' },
+    { pattern: /\bCompanions\b/gi, replacement: 'и с ним' },
+    { pattern: /\bMiracle of\b/gi, replacement: 'Чудо' },
+    { pattern: /\bthe Great\b/gi, replacement: 'Великий' },
+    { pattern: /\bthe New\b/gi, replacement: 'Новый' },
     { pattern: /\bVenerable\b/gi, replacement: 'Преп.' },
-    { pattern: /\bVen\.\b/gi, replacement: 'Преп.' },
+    { pattern: new RegExp(`\\bVen\\.${ABBREV}`, 'gi'), replacement: 'Преп.' },
+    { pattern: /\bSS\b/g, replacement: 'Свв.' },
     { pattern: /\bSaint\b/gi, replacement: 'Св.' },
-    { pattern: /\bSt\.\b/gi, replacement: 'Св.' },
+    { pattern: new RegExp(`\\bSt\\.${ABBREV}`, 'gi'), replacement: 'Св.' },
+    { pattern: /\bSt\b(?=\s+[A-ZА-ЯЁ])/g, replacement: 'Св.' },
     { pattern: /\bHoly\b/gi, replacement: 'Св.' },
-    { pattern: /\bbishop\b/gi, replacement: 'еп.' },
+    { pattern: /\bpatriarch\b/gi, replacement: 'патр.' },
+    { pattern: /\b[Bb]ishop\b/g, replacement: 'еп.' },
     { pattern: /\bmetropolitan\b/gi, replacement: 'митр.' },
+    { pattern: /\b[Aa]bbot\b/g, replacement: 'игумен' },
+    { pattern: /\bMonastery\b/gi, replacement: 'монастыря' },
     { pattern: /\bpriest\b/gi, replacement: 'свящ.' },
     { pattern: /\bdeacon\b/gi, replacement: 'диак.' },
     { pattern: /\bof the Seventy\b/gi, replacement: 'из 70' },
+    { pattern: /\bparents of\b/gi, replacement: 'родители' },
+    { pattern: /\btheir mother\b/gi, replacement: 'их мать' },
+    { pattern: /\btheir teacher\b/gi, replacement: 'их учитель' },
     { pattern: /\bat Sofia\b/gi, replacement: 'в Софии' },
     { pattern: /\bof Constantinople\b/gi, replacement: 'Константинопольского' },
+    { pattern: /\bof Myra in Lycia\b/gi, replacement: 'Мир Ликийских' },
+    { pattern: /\bAbbot of Sinai\b/gi, replacement: 'игумен Синайский' },
+    { pattern: /\bof Rhodes\b/gi, replacement: 'Родосский' },
+    { pattern: /\bof Japan\b/gi, replacement: 'Японский' },
+    { pattern: /\bof Moscow\b/gi, replacement: 'Московский' },
+    { pattern: /\bof Egypt\b/gi, replacement: 'Египетский' },
   ],
   el: [
+    { pattern: /\bOur Father among the Saints\b/gi, replacement: 'Ἐν Ἁγίοις Πατὴρ ἡμῶν' },
+    { pattern: /\bOur Venerable Father\b/gi, replacement: 'Ὅσ.' },
+    { pattern: /\bOur Holy Fathers?\b/gi, replacement: 'Ἅγ. Πατέρες' },
+    { pattern: /\bOur Holy Mothers?\b/gi, replacement: 'Ἅγιες Μητέρες' },
+    { pattern: /\bOur Holy Mother\b/gi, replacement: 'Ὁσία' },
+    { pattern: /\bOur Holy Father\b/gi, replacement: 'Ἅγ.' },
     { pattern: /\bHoly Equals-to-the-Apostles\b/gi, replacement: 'Ἱσαπόστολος' },
-    { pattern: /\bEqual-to-the-Apostles\b/gi, replacement: 'Ἱσαπόστολος' },
-    { pattern: /\bHoly Greatmartyr\b/gi, replacement: 'Ἅγ. Μεγαλομάρτυς' },
-    { pattern: /\bGreatmartyr\b/gi, replacement: 'Μεγαλομάρτυς' },
+    { pattern: /\bEquals?-to-the-Apostles\b/gi, replacement: 'Ἱσαπόστολος' },
+    { pattern: /\bHoly Great-?martyrs\b/gi, replacement: 'Ἅγ. Μεγαλομάρτυρες' },
+    { pattern: /\bHoly Great-?martyr\b/gi, replacement: 'Ἅγ. Μεγαλομάρτυς' },
+    { pattern: /\bGreat-?martyrs\b/gi, replacement: 'Μεγαλομάρτυρες' },
+    { pattern: /\bGreat-?martyr\b/gi, replacement: 'Μεγαλομάρτυς' },
+    { pattern: /\bNew Confessor\s*\/\s*Hieromartyr\b/gi, replacement: 'Νεομάρτυς Ἱερομάρτυς' },
     { pattern: /\bHieromartyr\b/gi, replacement: 'Ἱερομάρτυς' },
     { pattern: /\bHoly New Martyr\b/gi, replacement: 'Ἅγ. Νεομάρτυς' },
     { pattern: /\bNew Martyr\b/gi, replacement: 'Νεομάρτυς' },
+    { pattern: /\bNew Confessor\b/gi, replacement: 'Νεομολογητής' },
     { pattern: /\bHoly Martyrs\b/gi, replacement: 'Ἅγιοι Μάρτυρες' },
     { pattern: /\bHoly Martyr\b/gi, replacement: 'Ἅγ. Μάρτυς' },
-    { pattern: /\bTrans\. Rel\. Ven\.\b/gi, replacement: 'Μετάθεσις λειψάνων ὁσ.' },
-    { pattern: /\bTrans\. Rel\.\b/gi, replacement: 'Μετάθεσις λειψάνων' },
+    { pattern: /\bMartyrs\b/gi, replacement: 'Μάρτυρες' },
+    { pattern: /\bMartyr\b/gi, replacement: 'Μάρτυς' },
+    { pattern: /\bPassionbearers?\b/gi, replacement: 'Πασιφόροι' },
+    { pattern: /\bWonderworker\b/gi, replacement: 'Θαυματουργός' },
+    { pattern: /\bVictorybearer\b/gi, replacement: 'Τροπαιοφόρος' },
+    { pattern: /\bMyrrh-?gusher\b/gi, replacement: 'Μυροβλύτης' },
+    { pattern: /\bUnmercenaries\b/gi, replacement: 'Ανάργυροι' },
+    { pattern: /\bUnmercenary\b/gi, replacement: 'Ανάργυρος' },
+    { pattern: /\bBodiless Powers\b/gi, replacement: 'Ασωμάτων Δυνάμεων' },
+    { pattern: /\bthe Newly Appeared\b/gi, replacement: 'Νεοφανής' },
+    { pattern: /\bNewly Appeared\b/gi, replacement: 'Νεοφανής' },
+    { pattern: /\bTheologian\b/gi, replacement: 'Θεολόγος' },
+    { pattern: /\bMelodist\b/gi, replacement: 'Μελωδός' },
+    { pattern: /\bChoirmaster\b/gi, replacement: 'Δομέστικος' },
+    { pattern: /\bEmpress\b/gi, replacement: 'Αυτοκράτειρα' },
+    { pattern: /\b[Ee]nlightener\b/g, replacement: 'φωτιστής' },
+    { pattern: /\bRelics of\b/gi, replacement: 'Λείψανα' },
     { pattern: /\bTranslation of the Relics\b/gi, replacement: 'Μετάθεσις λειψάνων' },
+    { pattern: new RegExp(`\\bTrans\\. Rel\\. Ven\\.${ABBREV}`, 'gi'), replacement: 'Μετάθεσις λειψάνων ὁσ.' },
+    { pattern: new RegExp(`\\bTrans\\. Rel\\.${ABBREV}`, 'gi'), replacement: 'Μετάθεσις λειψάνων' },
     { pattern: /\bRight-believing\b/gi, replacement: 'Ευσεβής' },
+    { pattern: new RegExp(`\\bRt\\. Blv\\.${ABBREV}`, 'gi'), replacement: 'Ευσεβής' },
     { pattern: /\bRighteous\b/gi, replacement: 'Δίκαιος' },
     { pattern: /\bConfessor\b/gi, replacement: 'Ὁμολογητής' },
     { pattern: /\bHierarch\b/gi, replacement: 'Ἱεράρχης' },
+    { pattern: new RegExp(`\\bAbp\\.${ABBREV}`, 'gi'), replacement: 'αρχιεπ.' },
+    { pattern: /\bArchbishop\b/gi, replacement: 'Αρχιεπίσκοπος' },
     { pattern: /\bApostles\b/gi, replacement: 'Απόστολοι' },
     { pattern: /\bApostle\b/gi, replacement: 'Απόσ.' },
+    { pattern: /\bProphet\b/gi, replacement: 'Προφ.' },
+    { pattern: /\bForerunner\b/gi, replacement: 'Πρόδρομος' },
+    { pattern: /\bTheotokos\b/gi, replacement: 'Θεοτόκου' },
+    { pattern: /\bLife-?giving\b/gi, replacement: 'Ζωοποιού' },
+    { pattern: /\band Companions\b/gi, replacement: 'και οι συν αυτώ' },
+    { pattern: /\bCompanions\b/gi, replacement: 'και οι συν αυτώ' },
+    { pattern: /\bMiracle of\b/gi, replacement: 'Θαύμα' },
+    { pattern: /\bthe Great\b/gi, replacement: 'ο Μέγας' },
+    { pattern: /\bthe New\b/gi, replacement: 'ο Νέος' },
     { pattern: /\bVenerable\b/gi, replacement: 'Όσιος' },
-    { pattern: /\bVen\.\b/gi, replacement: 'Όσ.' },
+    { pattern: new RegExp(`\\bVen\\.${ABBREV}`, 'gi'), replacement: 'Όσ.' },
+    { pattern: /\bSS\b/g, replacement: 'Ἅγ.' },
     { pattern: /\bSaint\b/gi, replacement: 'Ἅγ.' },
-    { pattern: /\bSt\.\b/gi, replacement: 'Ἅγ.' },
+    { pattern: new RegExp(`\\bSt\\.${ABBREV}`, 'gi'), replacement: 'Ἅγ.' },
+    { pattern: /\bSt\b(?=\s+[A-ZΑ-Ω])/g, replacement: 'Ἅγ.' },
     { pattern: /\bHoly\b/gi, replacement: 'Ἅγ.' },
-    { pattern: /\bbishop\b/gi, replacement: 'επ.' },
+    { pattern: /\bpatriarch\b/gi, replacement: 'πατρ.' },
+    { pattern: /\b[Bb]ishop\b/g, replacement: 'επ.' },
     { pattern: /\bmetropolitan\b/gi, replacement: 'μητρ.' },
+    { pattern: /\b[Aa]bbot\b/g, replacement: 'ἡγούμενος' },
+    { pattern: /\bMonastery\b/gi, replacement: 'μονής' },
     { pattern: /\bpriest\b/gi, replacement: 'ιερ.' },
     { pattern: /\bdeacon\b/gi, replacement: 'διάκ.' },
     { pattern: /\bof the Seventy\b/gi, replacement: 'τῶν 70' },
+    { pattern: /\bparents of\b/gi, replacement: 'γονείς' },
+    { pattern: /\btheir mother\b/gi, replacement: 'η μητέρα τους' },
+    { pattern: /\btheir teacher\b/gi, replacement: 'ο διδάσκαλός τους' },
     { pattern: /\bat Sofia\b/gi, replacement: 'Σοφίας' },
     { pattern: /\bof Constantinople\b/gi, replacement: 'Κωνσταντινουπόλεως' },
+    { pattern: /\bof Myra in Lycia\b/gi, replacement: 'Μύρων τῆς Λυκίας' },
+    { pattern: /\bAbbot of Sinai\b/gi, replacement: 'ἡγούμενος τοῦ Σινᾶ' },
+    { pattern: /\bof Rhodes\b/gi, replacement: 'της Ρόδου' },
+    { pattern: /\bof Japan\b/gi, replacement: 'της Ιαπωνίας' },
+    { pattern: /\bof Moscow\b/gi, replacement: 'Μόσχας' },
+    { pattern: /\bof Egypt\b/gi, replacement: 'της Αιγύπτου' },
+  ],
+};
+
+/** Given-name display replacements after honorific rewrite (word-boundary). */
+const GIVEN_NAME_DISPLAY: Record<Exclude<UiLanguage, 'en'>, Array<[RegExp, string]>> = {
+  ru: [
+    [/\bNicholas\b/gi, 'Николай'],
+    [/\bNicolas\b/gi, 'Николай'],
+    [/\bGeorge\b/gi, 'Георгий'],
+    [/\bJohn\b/gi, 'Иоанн'],
+    [/\bMary\b/gi, 'Мария'],
+    [/\bMichael\b/gi, 'Михаил'],
+    [/\bBasil\b/gi, 'Василий'],
+    [/\bAndrew\b/gi, 'Андрей'],
+    [/\bPeter\b/gi, 'Пётр'],
+    [/\bPaul\b/gi, 'Павел'],
+    [/\bSergius\b/gi, 'Сергий'],
+    [/\bSergei\b/gi, 'Сергий'],
+    [/\bDemetrius\b/gi, 'Димитрий'],
+    [/\bDmitri\b/gi, 'Димитрий'],
+    [/\bAnthony\b/gi, 'Антоний'],
+    [/\bTheodore\b/gi, 'Феодор'],
+    [/\bTheodora\b/gi, 'Феодора'],
+    [/\bTimothy\b/gi, 'Тимофей'],
+    [/\bLuke\b/gi, 'Лука'],
+    [/\bMark\b/gi, 'Марк'],
+    [/\bMatthew\b/gi, 'Матфей'],
+    [/\bJames\b/gi, 'Иаков'],
+    [/\bJoseph\b/gi, 'Иосиф'],
+    [/\bStephen\b/gi, 'Стефан'],
+    [/\bCatherine\b/gi, 'Екатерина'],
+    [/\bBarbara\b/gi, 'Варвара'],
+    [/\bHerman\b/gi, 'Герман'],
+    [/\bAlexander\b/gi, 'Александр'],
+    [/\bGregory\b/gi, 'Григорий'],
+    [/\bPalamas\b/gi, 'Палама'],
+    [/\bClimacus\b/gi, 'Лествичник'],
+    [/\bEphraim\b/gi, 'Ефрем'],
+    [/\bCyril\b/gi, 'Кирилл'],
+    [/\bMethodius\b/gi, 'Мефодий'],
+    [/\bBoris\b/gi, 'Борис'],
+    [/\bGleb\b/gi, 'Глеб'],
+    [/\bConstantine\b/gi, 'Константин'],
+    [/\bHelen\b/gi, 'Елена'],
+    [/\bHelena\b/gi, 'Елена'],
+    [/\bTikhon\b/gi, 'Тихон'],
+    [/\bAthanasius\b/gi, 'Афанасий'],
+    [/\bMaximus\b/gi, 'Максим'],
+    [/\bHilarion\b/gi, 'Иларион'],
+    [/\bIsaac\b/gi, 'Исаак'],
+    [/\bRomanos\b/gi, 'Роман'],
+    [/\bRomanus\b/gi, 'Роман'],
+    [/\bPoemen\b/gi, 'Пимен'],
+    [/\bPhanurius\b/gi, 'Фанурий'],
+    [/\bBartholomew\b/gi, 'Варфоломей'],
+    [/\bTitus\b/gi, 'Тит'],
+    [/\bAnanias\b/gi, 'Анания'],
+    [/\bAlaska\b/gi, 'Аляскинский'],
+    [/\bThessalonica\b/gi, 'Фессалоникийский'],
+    [/\bThessalonika\b/gi, 'Фессалоникийский'],
+    [/\bSinai\b/gi, 'Синайский'],
+    [/\bEgypt\b/gi, 'Египетская'],
+    [/\bNazianzus\b/gi, 'Назианзин'],
+  ],
+  el: [
+    [/\bNicholas\b/gi, 'Νικόλαος'],
+    [/\bNicolas\b/gi, 'Νικόλαος'],
+    [/\bGeorge\b/gi, 'Γεώργιος'],
+    [/\bJohn\b/gi, 'Ιωάννης'],
+    [/\bMary\b/gi, 'Μαρία'],
+    [/\bMichael\b/gi, 'Μιχαήλ'],
+    [/\bBasil\b/gi, 'Βασίλειος'],
+    [/\bAndrew\b/gi, 'Ανδρέας'],
+    [/\bPeter\b/gi, 'Πέτρος'],
+    [/\bPaul\b/gi, 'Παύλος'],
+    [/\bSergius\b/gi, 'Σέργιος'],
+    [/\bSergei\b/gi, 'Σέργιος'],
+    [/\bDemetrius\b/gi, 'Δημήτριος'],
+    [/\bDmitri\b/gi, 'Δημήτριος'],
+    [/\bAnthony\b/gi, 'Αντώνιος'],
+    [/\bTheodore\b/gi, 'Θεόδωρος'],
+    [/\bTheodora\b/gi, 'Θεοδώρα'],
+    [/\bTimothy\b/gi, 'Τιμόθεος'],
+    [/\bLuke\b/gi, 'Λουκάς'],
+    [/\bMark\b/gi, 'Μάρκος'],
+    [/\bMatthew\b/gi, 'Ματθαίος'],
+    [/\bJames\b/gi, 'Ιάκωβος'],
+    [/\bJoseph\b/gi, 'Ιωσήφ'],
+    [/\bStephen\b/gi, 'Στέφανος'],
+    [/\bCatherine\b/gi, 'Αικατερίνη'],
+    [/\bBarbara\b/gi, 'Βαρβάρα'],
+    [/\bHerman\b/gi, 'Γερμανός'],
+    [/\bAlexander\b/gi, 'Αλέξανδρος'],
+    [/\bGregory\b/gi, 'Γρηγόριος'],
+    [/\bPalamas\b/gi, 'Παλαμάς'],
+    [/\bClimacus\b/gi, 'της Κλίμακος'],
+    [/\bEphraim\b/gi, 'Εφραίμ'],
+    [/\bCyril\b/gi, 'Κύριλλος'],
+    [/\bMethodius\b/gi, 'Μεθόδιος'],
+    [/\bBoris\b/gi, 'Βόρις'],
+    [/\bGleb\b/gi, 'Γκλεμπ'],
+    [/\bConstantine\b/gi, 'Κωνσταντίνος'],
+    [/\bHelen\b/gi, 'Ελένη'],
+    [/\bHelena\b/gi, 'Ελένη'],
+    [/\bTikhon\b/gi, 'Τύχων'],
+    [/\bAthanasius\b/gi, 'Αθανάσιος'],
+    [/\bMaximus\b/gi, 'Μάξιμος'],
+    [/\bHilarion\b/gi, 'Ιλαρίων'],
+    [/\bIsaac\b/gi, 'Ισαάκ'],
+    [/\bRomanos\b/gi, 'Ρωμανός'],
+    [/\bRomanus\b/gi, 'Ρωμανός'],
+    [/\bPoemen\b/gi, 'Ποιμήν'],
+    [/\bPhanurius\b/gi, 'Φανούριος'],
+    [/\bBartholomew\b/gi, 'Βαρθολομαίος'],
+    [/\bTitus\b/gi, 'Τίτος'],
+    [/\bAnanias\b/gi, 'Ανανίας'],
+    [/\bAlaska\b/gi, 'της Αλάσκας'],
+    [/\bThessalonica\b/gi, 'Θεσσαλονίκης'],
+    [/\bThessalonika\b/gi, 'Θεσσαλονίκης'],
+    [/\bSinai\b/gi, 'του Σινά'],
+    [/\bEgypt\b/gi, 'της Αιγύπτου'],
+    [/\bNazianzus\b/gi, 'Ναζιανζηνός'],
   ],
 };
 
@@ -160,16 +563,40 @@ function translateHonorifics(text: string, lang: UiLanguage): string {
   for (const { pattern, replacement } of HONORIFIC_RULES[lang]) {
     out = out.replace(pattern, replacement);
   }
+  for (const [pattern, replacement] of GIVEN_NAME_DISPLAY[lang]) {
+    out = out.replace(pattern, replacement);
+  }
   return out;
 }
 
-function translateExactFeast(text: string, lang: UiLanguage): string | null {
-  const trimmed = text.trim();
-  const key = FEAST_KEY_BY_ENGLISH[trimmed];
-  if (key) {
-    const translated = translate(lang, key);
-    if (translated !== key) return translated;
+function resolveFeastKey(text: string): string | null {
+  const cleaned = stripTrailingNotes(text);
+  const norm = normalizeTitleKey(cleaned);
+  const exact = FEAST_KEY_BY_NORMALIZED[norm];
+  if (exact) return exact;
+
+  // Prefix match for longer known titles (skip short shells like "Sunday").
+  for (const [englishNorm, key] of FEAST_LOOKUP_ENTRIES) {
+    if (englishNorm.length < 12) continue;
+    if (
+      norm === englishNorm ||
+      norm.startsWith(`${englishNorm} `) ||
+      norm.startsWith(`${englishNorm},`) ||
+      norm.startsWith(`${englishNorm};`) ||
+      norm.startsWith(`${englishNorm}.`) ||
+      norm.startsWith(`${englishNorm}:`)
+    ) {
+      return key;
+    }
   }
+  return null;
+}
+
+function translateExactFeast(text: string, lang: UiLanguage): string | null {
+  const key = resolveFeastKey(text);
+  if (!key) return null;
+  const translated = translate(lang, key);
+  if (translated !== key) return translated;
   return null;
 }
 
@@ -190,12 +617,23 @@ function normalizeNoteFragment(text: string): string {
   return text.trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
-/** Localize orthocal feast / saint name for display (canonical source stays English). */
-export function localizeOrthocalText(text: string, lang: UiLanguage): string {
-  if (lang === 'en' || !text.trim()) return text;
+function localizeSingleOrthocalSegment(text: string, lang: UiLanguage): string {
   const exact = translateExactFeast(text, lang);
   if (exact) return exact;
   return translateHonorifics(text, lang);
+}
+
+/** Localize orthocal feast / saint name for display (canonical source stays English). */
+export function localizeOrthocalText(text: string, lang: UiLanguage): string {
+  if (lang === 'en' || !text.trim()) return text;
+
+  // Compound Orthocal lines: "Feast; Saint" or rare "Feast. Saint"
+  const parts = text.split(/\s*;\s*/).filter(Boolean);
+  if (parts.length > 1) {
+    return parts.map((part) => localizeSingleOrthocalSegment(part.trim(), lang)).join('; ');
+  }
+
+  return localizeSingleOrthocalSegment(text, lang);
 }
 
 /**

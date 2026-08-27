@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 
+import { PrayersSectionBody } from '../../src/components/PrayersSectionBody';
 import { CollapsibleSection } from '../../src/components/CollapsibleSection';
 import { FastingFoodList } from '../../src/components/FastingFoodList';
 import { FastSummaryPill } from '../../src/components/FastSummaryPill';
@@ -149,6 +150,7 @@ export default function TodayScreen() {
     setServingRole,
     todayCollapsed,
     toggleTodaySection,
+    enabledPrayers,
   } = usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
   const screenSafe = useScreenSafePadding();
@@ -591,6 +593,24 @@ export default function TodayScreen() {
           </Text>
         ) : null}
         <Text style={[styles.cardHint, type.hint]}>{dashboard.fastingNote}</Text>
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        title={t('today.sectionPrayers')}
+        icon="prayers"
+        expanded={!todayCollapsed.prayers}
+        onToggle={() => toggleSection('prayers')}
+        themeColors={theme.colors}
+      >
+        <PrayersSectionBody
+          enabledPrayers={enabledPrayers}
+          textColor={theme.colors.text}
+          mutedColor={isDark ? '#a39e98' : colors.muted}
+          borderColor={theme.colors.border}
+          isDark={isDark}
+          bodyType={type.body}
+          hintType={type.hint}
+        />
       </CollapsibleSection>
 
       <CollapsibleSection
