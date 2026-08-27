@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 
 import type { OrthocalDay } from '../src/lib/api/orthocal';
 import {
+  isHolyWeekTonePeriod,
   resolveOrthocalTone,
   toneFromSundayAfterPaschaIndex,
 } from '../src/lib/liturgical/orthocalTone';
@@ -82,5 +83,12 @@ assert.equal(
 );
 
 assert.equal(resolveOrthocalTone(day({ tone: 4, weekday: 0, pascha_distance: 14 })), 4);
+
+assert.equal(isHolyWeekTonePeriod(day({ tone: 0, weekday: 6, pascha_distance: -8 })), true);
+assert.equal(isHolyWeekTonePeriod(day({ tone: 0, weekday: 5, pascha_distance: -2 })), true);
+assert.equal(isHolyWeekTonePeriod(day({ tone: 0, weekday: 6, pascha_distance: -1 })), true);
+assert.equal(isHolyWeekTonePeriod(day({ tone: 0, weekday: 0, pascha_distance: -7 })), true);
+assert.equal(isHolyWeekTonePeriod(day({ tone: 1, weekday: 3, pascha_distance: -9 })), false);
+assert.equal(isHolyWeekTonePeriod(day({ tone: 1, weekday: 0, pascha_distance: 0 })), false);
 
 console.log('verify-orthocal-tone: ok');

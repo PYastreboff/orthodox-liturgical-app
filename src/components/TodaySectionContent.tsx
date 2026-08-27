@@ -14,6 +14,7 @@ import { LiturgicalTextSectionBlock } from './LiturgicalPassageBlock';
 import { LiturgicalTextsCategoryToggle } from './LiturgicalTextsCategoryToggle';
 import { PriestGuideTable } from './PriestGuideTable';
 import { PrayersSectionBody } from './PrayersSectionBody';
+import { ChrysostomLiturgyBody } from './ChrysostomLiturgyBody';
 import { ReaderGuideTable } from './ReaderGuideTable';
 import { ReadingsLanguageToggle } from './ReadingsLanguageToggle';
 import { TodayPersonalDays } from './TodayPersonalDays';
@@ -28,6 +29,7 @@ import {
 } from '../i18n/feastRank';
 import type { CommemorationEntry } from '../lib/liturgical/commemorations';
 import type { TodaySectionId } from '../lib/today/todaySections';
+import { isGreatLentSeason } from '../lib/liturgical/lentSeason';
 import { colors } from '../theme/tokens';
 
 function isPrimaryGreatFeastEntry(
@@ -113,6 +115,7 @@ export function TodaySectionContent({ section, model }: Props) {
     servingRole,
     dayServices,
     guideDayContext,
+    appearance,
     type,
     readingsAvailableCategories,
     readingsCategoryFilter,
@@ -273,7 +276,8 @@ export function TodaySectionContent({ section, model }: Props) {
         </View>
       );
 
-    case 'fasting':
+    case 'fasting': {
+      const showEasterCooking = isGreatLentSeason(appearance.key);
       return (
         <View style={styles.pageStack}>
           <DayPagePanel {...panel} first>
@@ -343,6 +347,42 @@ export function TodaySectionContent({ section, model }: Props) {
               <Feather name="chevron-right" size={18} color={muted} />
             </Pressable>
           </DayPagePanel>
+          {showEasterCooking ? (
+            <DayPagePanel {...panel} title={t('easterCooking.sectionTitle')}>
+              <Text style={[styles.cardHintFlat, type.hint, { color: muted, marginBottom: 10 }]}>
+                {t('easterCooking.sectionHint')}
+              </Text>
+              <Pressable
+                onPress={() => router.push('/easter-cooking')}
+                style={({ pressed }) => [
+                  styles.actionRow,
+                  {
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.05)',
+                    borderColor: theme.colors.border,
+                    opacity: pressed ? 0.88 : 1,
+                    marginTop: 0,
+                  },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t('easterCooking.openFromFasting')}
+              >
+                <MaterialCommunityIcons
+                  name="cake-variant"
+                  size={20}
+                  color={isDark ? colors.tabActiveDark : colors.accentWine}
+                />
+                <View style={styles.actionRowText}>
+                  <Text style={[styles.actionRowLabel, type.body, { color: theme.colors.text }]}>
+                    {t('easterCooking.openFromFasting')}
+                  </Text>
+                  <Text style={[type.hint, { color: muted }]}>
+                    {t('easterCooking.openFromFastingHint')}
+                  </Text>
+                </View>
+                <Feather name="chevron-right" size={18} color={muted} />
+              </Pressable>
+            </DayPagePanel>
+          ) : null}
           {dashboard.isFastDay && !dashboard.fastingFoods.totalAbstinence ? (
             <DayPagePanel {...panel}>
               <View style={styles.fastingFoodsStack}>
@@ -383,6 +423,19 @@ export function TodaySectionContent({ section, model }: Props) {
             </DayPagePanel>
           ) : null}
         </View>
+      );
+    }
+
+    case 'liturgy':
+      return wrap(
+        <ChrysostomLiturgyBody
+          textColor={theme.colors.text}
+          mutedColor={muted}
+          borderColor={theme.colors.border}
+          isDark={isDark}
+          bodyType={type.body}
+          hintType={type.hint}
+        />,
       );
 
     case 'prayers':

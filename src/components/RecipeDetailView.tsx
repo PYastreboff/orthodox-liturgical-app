@@ -5,6 +5,7 @@ import Head from 'expo-router/head';
 import { useState } from 'react';
 import {
   Image,
+  type ImageSourcePropType,
   Platform,
   Pressable,
   ScrollView,
@@ -50,6 +51,14 @@ const CONTENT_PAD = 20;
 
 type Props = {
   recipe: FastingRecipe;
+  /** Route when there is no back stack (default `/recipes`). */
+  backFallbackRoute?: string;
+  /** Override hero/list image resolution (default fasting recipe assets). */
+  resolveImageSource?: (id: string) => ImageSourcePropType | null;
+  /** Alternate image host when the primary URI fails to load. */
+  resolveImageUriFallback?: (id: string) => string | null;
+  /** Optional eyebrow above the title instead of the recipe category label. */
+  eyebrowLabel?: string;
 };
 
 function StatChip({
@@ -81,7 +90,13 @@ function StatChip({
   );
 }
 
-export function RecipeDetailView({ recipe }: Props) {
+export function RecipeDetailView({
+  recipe,
+  backFallbackRoute = '/recipes',
+  resolveImageSource = recipeImageSource,
+  resolveImageUriFallback,
+  eyebrowLabel,
+}: Props) {
   const theme = useTheme();
   const router = useRouter();
   const { t, lang } = useAppTranslation();
@@ -92,6 +107,7 @@ export function RecipeDetailView({ recipe }: Props) {
   const { width } = useWindowDimensions();
   const { text } = useFontScale();
   const [imageFailed, setImageFailed] = useState(false);
+  const [useFallbackImage, setUseFallbackImage] = useState(false);
 
   const muted = isDark ? '#a39e98' : colors.muted;
   const textColor = theme.colors.text;
@@ -103,7 +119,12 @@ export function RecipeDetailView({ recipe }: Props) {
   const notes = recipeNotes(recipe, lang);
   const servingSize = recipeServingSize(recipe, lang);
   const totalMinutes = recipeTotalMinutes(recipe);
-  const imageSource = recipeImageSource(recipe.id);
+  const imageSource = useFallbackImage
+    ? (() => {
+        const uri = resolveImageUriFallback?.(recipe.id) ?? null;
+        return uri ? { uri } : null;
+      })()
+    : resolveImageSource(recipe.id);
   const heroHeight = phone
     ? Math.min(220, Math.round(width * 0.55))
     : Math.min(280, Math.round(width * 0.28));
@@ -112,7 +133,7 @@ export function RecipeDetailView({ recipe }: Props) {
 
   const goBack = () => {
     if (router.canGoBack()) router.back();
-    else router.replace('/recipes');
+    else router.replace(backFallbackRoute);
   };
 
   const contentColumnStyle = {
@@ -163,7 +184,13 @@ export function RecipeDetailView({ recipe }: Props) {
                 style={styles.heroImage}
                 resizeMode="cover"
                 accessibilityIgnoresInvertColors
-                onError={() => setImageFailed(true)}
+                onError={() => {
+                  if (!useFallbackImage && resolveImageUriFallback?.(recipe.id)) {
+                    setUseFallbackImage(true);
+                    return;
+                  }
+                  setImageFailed(true);
+                }}
               />
             ) : (
               <View
@@ -191,7 +218,7 @@ export function RecipeDetailView({ recipe }: Props) {
             <View style={styles.heroTitleBlock}>
               <View style={contentColumnStyle}>
                 <Text style={styles.heroEyebrow} numberOfLines={1}>
-                  {t(recipeCategoryLabelKey(recipe.category))}
+                  {eyebrowLabel ?? t(recipeCategoryLabelKey(recipe.category))}
                 </Text>
                 <Text
                   style={[

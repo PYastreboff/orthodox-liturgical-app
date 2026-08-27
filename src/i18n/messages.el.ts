@@ -270,6 +270,7 @@ export const el = {
     sectionFasting: 'Νηστεία',
     sectionRecipes: 'Νηστίσιμες Συνταγές',
     sectionPrayers: 'Προσευχές',
+    sectionLiturgy: 'Θεία Λειτουργία',
     sectionVestments: 'Ιερά άμφια',
     sectionChurchDress: 'Εκκλησιαστική ενδυμασία',
     sectionServices: 'Τυπικές ακολουθίες',
@@ -286,6 +287,7 @@ export const el = {
     tileFasting: 'Νηστεία',
     tileRecipes: 'Συνταγές',
     tilePrayers: 'Προσευχές',
+    tileLiturgy: 'Λειτουργία',
     tileReadings: 'Κείμενα',
     tileFeasts: 'Εορτές',
     tileSaints: 'Άγιοι',
@@ -1407,6 +1409,38 @@ export const el = {
       title: 'Ευχή του Αγίου Εφραίμ',
       summary: 'Ιδιαίτερα στη Μεγάλη Τεσσαρακοστή.',
     },
+  },
+  liturgy: {
+    chrysostom: {
+      intro:
+        'Η Θεία Λειτουργία του Αγίου Ιωάννη του Χρυσοστόμου — η συνήθης κυριακάτικη και εορταστική Λειτουργία. Ανοίξτε κάθε τμήμα για να ακολουθήσετε.',
+      disclaimer:
+        'Συνοπτικό κείμενο για προσωπική χρήση. Τα έθιμα διαφέρουν — ακολουθήστε τον ναό σας.',
+      opening: { title: 'Αρχή', summary: 'Ευλογημένη η βασιλεία…' },
+      great_litany: { title: 'Μεγάλη δέηση', summary: 'Εν ειρήνη του Κυρίου δεηθώμεν.' },
+      antiphons: { title: 'Αντίφωνα & Τρισάγιον', summary: 'Άγιος ο Θεός…' },
+      readings: { title: 'Απόστολος & Ευαγγέλιο', summary: 'Σοφία! Ορθοί!' },
+      cherubic: { title: 'Χερουβικός ύμνος', summary: 'Οι τα Χερουβίμ…' },
+      creed: { title: 'Σύμβολο της πίστεως', summary: 'Πιστεύω εις ένα Θεόν…' },
+      anaphora: { title: 'Αναφορά', summary: 'Άγιος, Άγιος, Άγιος…' },
+      communion: { title: 'Μετάληψη', summary: 'Ιδε ο Αμνός του Θεού…' },
+      dismissal: { title: 'Απόλυση', summary: 'Δόξα σοι, Χριστέ…' },
+    },
+  },
+  easterCooking: {
+    sectionTitle: 'Πασχαλινή μαγειρική',
+    sectionHint:
+      'Η Μεγάλη Τεσσαρακοστή οδηγεί στο Πάσχα. Παραδοσιακά φαγητά ευλογούνται και μοιράζονται στο τραπέζι της Ανάστασης.',
+    openFromFasting: 'Πασχαλινές συνταγές & νόημα',
+    openFromFastingHint: 'Πάσχα, κουλίτς, τσουρέκι, κόκκινα αυγά',
+    pageTitle: 'Πασχαλινή μαγειρική',
+    browserTitle: 'OrthoDaily - Πασχαλινή μαγειρική',
+    intro:
+      'Παραδοσιακά πασχαλινά φαγητά για το καλάθι και το τραπέζι — με σύντομη εξήγηση του νοήματός τους.',
+    back: 'Πίσω',
+    meaningHeading: 'Νόημα',
+    recipeEyebrow: 'Πασχαλινό φαγητό',
+    notFound: 'Η συνταγή δεν βρέθηκε',
   },
   recipes: {
     levelStrict: 'Αυστηρή Νηστεία',

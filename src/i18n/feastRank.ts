@@ -1,5 +1,5 @@
 import type { OrthocalDay } from '../lib/api/orthocal';
-import { resolveOrthocalTone } from '../lib/liturgical/orthocalTone';
+import { resolveOrthocalTone, isHolyWeekTonePeriod } from '../lib/liturgical/orthocalTone';
 import type { FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import { FEAST_RANK_BY_LEVEL } from '../lib/liturgical/typikonSymbols';
 import { translate } from './translate';
@@ -97,5 +97,6 @@ export function localizedToneLabelForOrthocalDay(
 ): string {
   const resolved = resolveOrthocalTone(day);
   if (resolved !== null) return localizedToneLabel(resolved, lang);
+  if (isHolyWeekTonePeriod(day)) return translate(lang, 'appearance.holy_week');
   return localizedToneLabel(-1, lang);
 }

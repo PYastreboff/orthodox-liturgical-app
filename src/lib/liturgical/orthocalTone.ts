@@ -47,3 +47,9 @@ export function resolveOrthocalTone(day: OrthocalDay | null | undefined): number
 
   return toneFromSundayAfterPaschaIndex(sundayIndex);
 }
+
+/** Lazarus Saturday through Holy Saturday — weekly Octoechos tone is not appointed. */
+export function isHolyWeekTonePeriod(day: OrthocalDay | null | undefined): boolean {
+  if (!day) return false;
+  return day.pascha_distance >= -8 && day.pascha_distance <= -1;
+}

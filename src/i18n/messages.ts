@@ -269,6 +269,7 @@ const en = {
     sectionFasting: 'Fasting Information',
     sectionRecipes: 'Lenten Recipes',
     sectionPrayers: 'Prayers',
+    sectionLiturgy: 'Divine Liturgy',
     sectionVestments: 'Vestments',
     sectionChurchDress: 'Church Clothing',
     sectionServices: 'Typical Services',
@@ -285,6 +286,7 @@ const en = {
     tileFasting: 'Fasting',
     tileRecipes: 'Recipes',
     tilePrayers: 'Prayers',
+    tileLiturgy: 'Liturgy',
     tileReadings: 'Readings',
     tileFeasts: 'Feasts',
     tileSaints: 'Saints',
@@ -1424,6 +1426,65 @@ const en = {
       summary: 'Especially for Great Lent.',
     },
   },
+  liturgy: {
+    chrysostom: {
+      intro:
+        'The Divine Liturgy of St John Chrysostom — the usual Sunday and feast-day Eucharist in most Orthodox churches. Expand each part to follow along. Variable hymns and readings depend on the day.',
+      disclaimer:
+        'Abridged for personal use. Rubrics, commemorations, and local customs differ — follow your parish and bishop.',
+      opening: {
+        title: 'Opening blessing',
+        summary: 'Blessed is the Kingdom…',
+      },
+      great_litany: {
+        title: 'Great Litany',
+        summary: 'In peace let us pray to the Lord.',
+      },
+      antiphons: {
+        title: 'Antiphons & Trisagion',
+        summary: 'Holy God, Holy Mighty, Holy Immortal…',
+      },
+      readings: {
+        title: 'Epistle & Gospel',
+        summary: 'Wisdom! Let us attend!',
+      },
+      cherubic: {
+        title: 'Cherubic Hymn',
+        summary: 'Let us who mystically represent the Cherubim…',
+      },
+      creed: {
+        title: 'Nicene Creed',
+        summary: 'I believe in one God…',
+      },
+      anaphora: {
+        title: 'Anaphora (Eucharistic Canon)',
+        summary: 'Holy, holy, holy… Take, eat…',
+      },
+      communion: {
+        title: 'Communion & Thanksgiving',
+        summary: 'Behold the Lamb of God…',
+      },
+      dismissal: {
+        title: 'Dismissal',
+        summary: 'Glory to Thee, O Christ our God…',
+      },
+    },
+  },
+  easterCooking: {
+    sectionTitle: 'Easter Cooking',
+    sectionHint:
+      'Great Lent looks toward Pascha. These traditional foods are blessed and shared at the feast — each carries the joy of the Resurrection.',
+    openFromFasting: 'Paschal recipes & meanings',
+    openFromFastingHint: 'Pascha, kulich, tsoureki, red eggs, and more',
+    pageTitle: 'Easter Cooking',
+    browserTitle: 'OrthoDaily - Easter Cooking',
+    intro:
+      'Traditional Paschal foods for the basket and the feast table. Each recipe includes why the Church blesses and shares it at Pascha.',
+    back: 'Back',
+    meaningHeading: 'Meaning',
+    recipeEyebrow: 'Paschal food',
+    notFound: 'Recipe not found',
+  },
   recipes: {
     levelStrict: 'Strict Fast',
     levelWineOil: 'Wine & Oil',
@@ -1828,6 +1889,7 @@ const ru = {
     sectionFasting: 'Пост',
     sectionRecipes: 'Постные Рецепты',
     sectionPrayers: 'Молитвы',
+    sectionLiturgy: 'Божественная литургия',
     sectionVestments: 'Облачения',
     sectionChurchDress: 'Церковная одежда',
     sectionServices: 'Обычные богослужения',
@@ -1844,6 +1906,7 @@ const ru = {
     tileFasting: 'Пост',
     tileRecipes: 'Рецепты',
     tilePrayers: 'Молитвы',
+    tileLiturgy: 'Литургия',
     tileReadings: 'Тексты',
     tileFeasts: 'Праздники',
     tileSaints: 'Святые',
@@ -2994,6 +3057,38 @@ const ru = {
       title: 'Молитва Ефрема Сирина',
       summary: 'Особенно в Великий пост.',
     },
+  },
+  liturgy: {
+    chrysostom: {
+      intro:
+        'Божественная литургия святого Иоанна Златоуста — обычная воскресная и праздничная литургия в большинстве православных храмов. Раскройте раздел, чтобы следить за богослужением.',
+      disclaimer:
+        'Сокращённый текст для личного пользования. Чин, поминовения и обычаи различаются — следуйте указаниям своего прихода.',
+      opening: { title: 'Начало', summary: 'Благословенно Царствие…' },
+      great_litany: { title: 'Великая ектения', summary: 'Миром Господу помолимся.' },
+      antiphons: { title: 'Антифоны и Трисвятое', summary: 'Святый Боже…' },
+      readings: { title: 'Апостол и Евангелие', summary: 'Премудрость! Станем добре!' },
+      cherubic: { title: 'Херувимская песнь', summary: 'Да молчим, яко да Царя всех предстанем…' },
+      creed: { title: 'Символ веры', summary: 'Верую во единого Бога…' },
+      anaphora: { title: 'Анафора', summary: 'Свят, Свят, Свят… Приимите, ядите…' },
+      communion: { title: 'Причащение', summary: 'Агнец Божий, вземляй грех мира…' },
+      dismissal: { title: 'Отпуст', summary: 'Слава Тебе, Христе Боже наш…' },
+    },
+  },
+  easterCooking: {
+    sectionTitle: 'Пасхальная выпечка',
+    sectionHint:
+      'Великий пост ведёт к Пасхе. Эти традиционные блюда освящают и делят на празднике — каждое несёт радость Воскресения.',
+    openFromFasting: 'Пасхальные рецепты и смысл',
+    openFromFastingHint: 'Пасха, кулич, цуреки, крашеные яйца и др.',
+    pageTitle: 'Пасхальная выпечка',
+    browserTitle: 'OrthoDaily - Пасхальная выпечка',
+    intro:
+      'Традиционные пасхальные блюда для корзины и стола. У каждого рецепта — краткое объяснение, почему Церковь благословляет его на Пасху.',
+    back: 'Назад',
+    meaningHeading: 'Смысл',
+    recipeEyebrow: 'Пасхальное блюдо',
+    notFound: 'Рецепт не найден',
   },
   recipes: {
     levelStrict: 'Строгий Пост',
