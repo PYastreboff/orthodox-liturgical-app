@@ -464,6 +464,7 @@ export function TodaySectionContent({ section, model }: Props) {
             dayServices.items.map((entry, index) => {
               const prevSlot = dayServices.items[index - 1]?.slot;
               const showSlotHeader = entry.slot !== prevSlot;
+              const isLast = index === dayServices.items.length - 1;
               return (
                 <View key={`${entry.kind}-${index}`}>
                   {showSlotHeader ? (
@@ -478,7 +479,7 @@ export function TodaySectionContent({ section, model }: Props) {
                       {entry.slotLabel}
                     </Text>
                   ) : null}
-                  <View style={styles.rowBetween}>
+                  <View style={[styles.rowBetween, isLast ? styles.serviceRowLast : null]}>
                     <Text
                       style={[
                         styles.body,
@@ -507,7 +508,9 @@ export function TodaySectionContent({ section, model }: Props) {
               );
             })
           )}
-          <Text style={[styles.cardHint, type.hint, { color: muted }]}>{dayServices.footnote}</Text>
+          <Text style={[styles.servicesFootnote, type.hint, { color: muted }]}>
+            {dayServices.footnote}
+          </Text>
         </View>,
       );
 
@@ -799,6 +802,15 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: colors.muted,
     opacity: 0.9,
+  },
+  servicesFootnote: {
+    marginTop: 16,
+    marginBottom: 0,
+    color: colors.muted,
+    opacity: 0.9,
+  },
+  serviceRowLast: {
+    marginBottom: 0,
   },
   commemorationList: {
     gap: 12,
