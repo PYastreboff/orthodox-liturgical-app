@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -196,6 +197,8 @@ export function RecipesLibrary({
           autoCorrect={false}
           autoCapitalize="none"
           clearButtonMode="while-editing"
+          underlineColorAndroid="transparent"
+          selectionColor={colors.accentWine}
           accessibilityLabel={t('recipes.searchPlaceholder')}
         />
         {query ? (
@@ -336,6 +339,7 @@ const styles = StyleSheet.create({
     minWidth: 0,
     padding: 0,
     margin: 0,
+    ...(Platform.OS === 'web' ? { outlineStyle: 'none' as 'solid' } : null),
   },
   chipScrollOuter: {
     marginHorizontal: -2,
