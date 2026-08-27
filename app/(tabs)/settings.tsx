@@ -848,7 +848,10 @@ export default function SettingsScreen() {
           kind={personalDaysKind}
           days={personalDays}
           onChange={setPersonalDays}
-          onClose={() => setPersonalDaysKind(null)}
+          onClose={() => {
+            setPersonalDaysKind(null);
+            setActivePicker('personalDays');
+          }}
           isDark={isDark}
           onEnableEveReminder={ensureReminderPermission}
         />

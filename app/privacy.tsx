@@ -1,9 +1,9 @@
-import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Head from 'expo-router/head';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 
+import { StackScreenHeader } from '../src/components/StackScreenHeader';
 import { useLayoutSafeAreaInsets } from '../src/hooks/useLayoutSafeAreaInsets';
 import { useScreenSafePadding } from '../src/hooks/useScreenSafePadding';
 import { useAppTranslation } from '../src/i18n/useAppTranslation';
@@ -26,34 +26,18 @@ export default function PrivacyPolicyScreen() {
   return (
     <>
       <Head>
-        <title>OrthoDaily – Privacy Policy</title>
+        <title>OrthoDaily - Privacy Policy</title>
         <meta
           name="description"
           content="Privacy Policy for OrthoDaily — how the app stores preferences and loads liturgical data."
         />
       </Head>
       <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
-        <View
-          style={[
-            styles.topBar,
-            {
-              paddingTop: screenSafe.paddingTop + 8,
-              paddingLeft: screenSafe.paddingLeft,
-              paddingRight: screenSafe.paddingRight,
-              borderBottomColor: isDark ? colors.darkBorder : colors.border,
-            },
-          ]}
-        >
-          <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/settings'))}
-            style={styles.backBtn}
-            accessibilityRole="button"
-            accessibilityLabel={t('privacy.back')}
-          >
-            <Feather name="chevron-left" size={22} color={theme.colors.text} />
-            <Text style={[styles.backLabel, { color: theme.colors.text }]}>{t('privacy.back')}</Text>
-          </Pressable>
-        </View>
+        <StackScreenHeader
+          title={t('privacy.title')}
+          backLabel={t('privacy.back')}
+          onBack={() => (router.canGoBack() ? router.back() : router.replace('/settings'))}
+        />
         <ScrollView
           contentContainerStyle={[
             styles.content,
@@ -64,7 +48,6 @@ export default function PrivacyPolicyScreen() {
             },
           ]}
         >
-          <Text style={[styles.title, { color: theme.colors.text }]}>{t('privacy.title')}</Text>
           <Text style={[styles.updated, { color: muted }]}>
             {t('privacy.lastUpdated', { date: PRIVACY_POLICY_LAST_UPDATED })}
           </Text>
@@ -89,33 +72,11 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
-  topBar: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingBottom: 10,
-  },
-  backBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    gap: 2,
-    paddingVertical: 4,
-    paddingRight: 8,
-  },
-  backLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
   content: {
-    paddingTop: 20,
+    paddingTop: 12,
     maxWidth: 720,
     width: '100%',
     alignSelf: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: 0.2,
-    marginBottom: 8,
   },
   updated: {
     fontSize: 13,

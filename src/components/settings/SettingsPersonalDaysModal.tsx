@@ -223,7 +223,7 @@ export function SettingsPersonalDaysModal({
     };
     const without = days.filter((d) => d.id !== saved.id);
     onChange([...without, saved]);
-    closeAll();
+    setDraft(null);
   };
 
   const removeDraft = () => {
@@ -232,7 +232,7 @@ export function SettingsPersonalDaysModal({
       return;
     }
     onChange(days.filter((d) => d.id !== draft.id));
-    closeAll();
+    setDraft(null);
   };
 
   const renderList = () => (
@@ -551,7 +551,9 @@ export function SettingsPersonalDaysModal({
                 </>
               ) : (
                 <Pressable onPress={closeAll} style={styles.actionBtn}>
-                  <Text style={[styles.backLabel, { color: mutedColor }]}>{t('settings.done')}</Text>
+                  <Text style={[styles.backLabel, { color: mutedColor }]}>
+                    {t('settings.personalDayBack')}
+                  </Text>
                 </Pressable>
               )}
             </View>

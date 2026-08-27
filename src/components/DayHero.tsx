@@ -216,26 +216,28 @@ export function DayHero({
             dayTitleType,
             { color: fg },
             isMajorFeastDay ? styles.dayTitleFeast : null,
-            styles.dayTitleWithCorners,
+            phoneLayout ? styles.dayTitleWithCornersPhone : styles.dayTitleWithCorners,
           ]}
           numberOfLines={3}
         >
           {dayTitle}
         </Text>
         {onShare ? (
-          <Pressable
-            style={({ pressed }) => [
-              styles.shareBtn,
-              { backgroundColor: navBtnBg },
-              pressed && styles.navBtnPressed,
-            ]}
-            onPress={onShare}
-            accessibilityLabel={t('today.shareDayA11y')}
-            accessibilityRole="button"
-            hitSlop={6}
-          >
-            <Feather name="share-2" size={16} color={fg} />
-          </Pressable>
+          <View style={styles.cornerActions}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.cornerBtn,
+                { backgroundColor: navBtnBg },
+                pressed && styles.navBtnPressed,
+              ]}
+              onPress={onShare}
+              accessibilityLabel={t('today.shareDayA11y')}
+              accessibilityRole="button"
+              hitSlop={6}
+            >
+              <Feather name="share-2" size={16} color={fg} />
+            </Pressable>
+          </View>
         ) : (
           <View style={styles.cornerSpacer} />
         )}
@@ -475,6 +477,9 @@ const styles = StyleSheet.create({
     letterSpacing: 0.35,
   },
   dayTitleWithCorners: {
+    paddingHorizontal: 72,
+  },
+  dayTitleWithCornersPhone: {
     paddingHorizontal: 40,
   },
   roleBtn: {
@@ -488,11 +493,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  shareBtn: {
+  cornerActions: {
     position: 'absolute',
     top: 0,
     right: 0,
     zIndex: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  cornerBtn: {
     width: 30,
     height: 30,
     borderRadius: 15,
@@ -503,7 +513,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 0,
-    width: 30,
+    width: 66,
     height: 30,
   },
   roleMenuRoot: {

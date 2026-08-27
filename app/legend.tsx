@@ -1,10 +1,10 @@
-import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Head from 'expo-router/head';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 
 import { LiturgicalLegendGuide } from '../src/components/LiturgicalLegendGuide';
+import { StackScreenHeader } from '../src/components/StackScreenHeader';
 import { useLayoutSafeAreaInsets } from '../src/hooks/useLayoutSafeAreaInsets';
 import { useScreenSafePadding } from '../src/hooks/useScreenSafePadding';
 import { useAppTranslation } from '../src/i18n/useAppTranslation';
@@ -27,39 +27,21 @@ export default function ColoursLegendScreen() {
         <meta name="description" content={t('legend.intro')} />
       </Head>
       <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
-        <View
-          style={[
-            styles.topBar,
-            {
-              paddingTop: screenSafe.paddingTop + 8,
-              paddingLeft: screenSafe.paddingLeft,
-              paddingRight: screenSafe.paddingRight,
-              borderBottomColor: isDark ? colors.darkBorder : colors.border,
-            },
-          ]}
-        >
-          <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/settings'))}
-            style={styles.backBtn}
-            accessibilityRole="button"
-            accessibilityLabel={t('legend.back')}
-          >
-            <Feather name="chevron-left" size={22} color={theme.colors.text} />
-            <Text style={[styles.backLabel, { color: theme.colors.text }]}>{t('legend.back')}</Text>
-          </Pressable>
-        </View>
+        <StackScreenHeader
+          title={t('legend.title')}
+          backLabel={t('legend.back')}
+          onBack={() => (router.canGoBack() ? router.back() : router.replace('/settings'))}
+        />
         <ScrollView
           contentContainerStyle={[
             styles.content,
             {
               paddingLeft: screenSafe.paddingLeft,
               paddingRight: screenSafe.paddingRight,
-              paddingBottom: insets.bottom + 40,
+              paddingBottom: insets.bottom + 28,
             },
           ]}
         >
-          <Text style={[styles.title, { color: theme.colors.text }]}>{t('legend.title')}</Text>
-          <Text style={[styles.intro, { color: muted }]}>{t('legend.intro')}</Text>
           <LiturgicalLegendGuide
             textColor={theme.colors.text}
             mutedColor={muted}
@@ -75,37 +57,10 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
-  topBar: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingBottom: 10,
-  },
-  backBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    gap: 2,
-    paddingVertical: 4,
-    paddingRight: 8,
-  },
-  backLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
   content: {
-    paddingTop: 20,
-    maxWidth: 720,
+    paddingTop: 8,
+    maxWidth: 800,
     width: '100%',
     alignSelf: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: 0.2,
-    marginBottom: 8,
-  },
-  intro: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 8,
   },
 });

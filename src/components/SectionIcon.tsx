@@ -10,6 +10,7 @@ export type SectionIconName =
   | 'feasts'
   | 'saints'
   | 'fasting'
+  | 'recipes'
   | 'vestments'
   | 'church-clothing'
   | 'services'
@@ -28,6 +29,7 @@ const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
   feasts: 'today.sectionFeasts',
   saints: 'today.sectionSaints',
   fasting: 'today.sectionFasting',
+  recipes: 'today.sectionRecipes',
   vestments: 'today.sectionVestments',
   'church-clothing': 'today.sectionChurchDress',
   services: 'today.sectionServices',
@@ -45,66 +47,65 @@ export const SECTION_ICON_SIZE = 22;
 type Props = {
   name: SectionIconName;
   color: string;
+  size?: number;
 };
 
-export function SectionIcon({ name, color }: Props) {
+export function SectionIcon({ name, color, size = SECTION_ICON_SIZE }: Props) {
   const { t } = useAppTranslation();
   const icon = (() => {
     switch (name) {
       case 'serving-role':
         return (
-          <MaterialCommunityIcons name="account-group-outline" size={SECTION_ICON_SIZE} color={color} />
+          <MaterialCommunityIcons name="account-group-outline" size={size} color={color} />
         );
       case 'date':
-        return <Feather name="calendar" size={SECTION_ICON_SIZE} color={color} />;
+        return <Feather name="calendar" size={size} color={color} />;
       case 'about-today':
-        return <Feather name="book-open" size={SECTION_ICON_SIZE} color={color} />;
+        return <Feather name="book-open" size={size} color={color} />;
       case 'feasts':
-        return <MaterialCommunityIcons name="star-four-points-outline" size={SECTION_ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="star-four-points-outline" size={size} color={color} />;
       case 'saints':
-        return <MaterialCommunityIcons name="account-outline" size={SECTION_ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="account-outline" size={size} color={color} />;
       case 'fasting':
-        return <MaterialCommunityIcons name="baguette" size={SECTION_ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="baguette" size={size} color={color} />;
+      case 'recipes':
+        return <MaterialCommunityIcons name="food-variant" size={size} color={color} />;
       case 'vestments':
-        return <MaterialCommunityIcons name="hanger" size={SECTION_ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="hanger" size={size} color={color} />;
       case 'church-clothing':
         return (
-          <MaterialCommunityIcons name="tshirt-crew-outline" size={SECTION_ICON_SIZE} color={color} />
+          <MaterialCommunityIcons name="tshirt-crew-outline" size={size} color={color} />
         );
       case 'services':
-        return <MaterialCommunityIcons name="church" size={SECTION_ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="church" size={size} color={color} />;
       case 'choir-guide':
         return (
-          <MaterialCommunityIcons name="music-note-outline" size={SECTION_ICON_SIZE} color={color} />
+          <MaterialCommunityIcons name="music-note-outline" size={size} color={color} />
         );
       case 'altar-roles':
-        return <MaterialCommunityIcons name="candle" size={SECTION_ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="candle" size={size} color={color} />;
       case 'reader-guide':
         return (
-          <MaterialCommunityIcons
-            name="book-open-page-variant-outline"
-            size={SECTION_ICON_SIZE}
-            color={color}
-          />
+          <MaterialCommunityIcons name="book-cross" size={size} color={color} />
         );
       case 'deacon-guide':
         return (
-          <MaterialCommunityIcons name="account-tie-outline" size={SECTION_ICON_SIZE} color={color} />
+          <MaterialCommunityIcons name="account-tie-outline" size={size} color={color} />
         );
       case 'priest-guide':
-        return <MaterialCommunityIcons name="cross" size={SECTION_ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="cross" size={size} color={color} />;
       case 'readings':
         return (
           <MaterialCommunityIcons
             name="book-open-page-variant-outline"
-            size={SECTION_ICON_SIZE}
+            size={size}
             color={color}
           />
         );
       case 'prayers':
-        return <MaterialCommunityIcons name="hands-pray" size={SECTION_ICON_SIZE} color={color} />;
+        return <MaterialCommunityIcons name="hands-pray" size={size} color={color} />;
       default:
-        return <Feather name="circle" size={SECTION_ICON_SIZE} color={color} />;
+        return <Feather name="circle" size={size} color={color} />;
     }
   })();
 

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
-import { useFontScale } from '../hooks/useFontScale';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
+import { useFontScale } from '../hooks/useFontScale';
 import type { CommemorationEntry } from '../lib/liturgical/commemorations';
 import { colors } from '../theme/tokens';
 
@@ -11,67 +12,72 @@ type Props = {
   entry: CommemorationEntry;
   textColor: string;
   mutedColor: string;
-  cardBg: string;
   borderColor: string;
-  /** Primary great feast on this day — red card matching Date & Liturgical Day. */
+  isDark: boolean;
+  bodyType: { fontSize: number; lineHeight: number };
+  hintType: { fontSize: number; lineHeight: number };
+  /** Primary great feast on this day — red styling matching Date & Liturgical Day. */
   isPrimaryGreatFeast?: boolean;
-  isDark?: boolean;
 };
 
 function hasLifeAccount(entry: CommemorationEntry): boolean {
   return Boolean(entry.body?.trim());
 }
 
+function collapsedSummary(entry: CommemorationEntry): string | null {
+  const story = entry.storyTitle?.trim();
+  if (story && story !== entry.name.trim()) return story;
+  const body = entry.body?.trim();
+  if (!body) return null;
+  const firstLine = body.split(/\n+/)[0]?.trim() ?? '';
+  return firstLine || null;
+}
+
 export function CommemorationCard({
   entry,
   textColor,
   mutedColor,
-  cardBg,
   borderColor,
+  isDark,
+  bodyType,
+  hintType,
   isPrimaryGreatFeast = false,
-  isDark = false,
 }: Props) {
   const { t } = useAppTranslation();
   const { text } = useFontScale();
   const [expanded, setExpanded] = useState(false);
   const collapsible = hasLifeAccount(entry);
+  const summary = collapsedSummary(entry);
   const nameColor = isPrimaryGreatFeast ? colors.feastBorder : textColor;
-  const resolvedCardBg = isPrimaryGreatFeast
+  const cardBg = isPrimaryGreatFeast
     ? isDark
       ? 'rgba(139,46,60,0.22)'
       : 'rgba(139,46,60,0.1)'
-    : cardBg;
-  const resolvedBorderColor = isPrimaryGreatFeast
+    : isDark
+      ? 'rgba(255,255,255,0.045)'
+      : 'rgba(43,38,35,0.035)';
+  const cardBorder = isPrimaryGreatFeast
     ? isDark
       ? colors.feastHoverBorderDark
       : colors.feastBorder
     : borderColor;
-  const nameType = text(16, 22);
   const storyType = text(13, 18);
-  const bodyType = text(14, 21);
+  const lifeType = text(14, 21);
 
-  const readMoreColor = isDark ? colors.darkInk : textColor;
-  const readMoreBorderColor = isDark ? borderColor : resolvedBorderColor;
-  const readMoreBg = resolvedCardBg;
-
-  const headerRow = (
-    <View style={styles.headerRow}>
-      <Text style={[styles.name, nameType, { color: nameColor }]}>{entry.name}</Text>
+  const header = (
+    <>
+      <View style={styles.headerText}>
+        <Text style={[styles.title, bodyType, { color: nameColor }]}>{entry.name}</Text>
+        {!expanded && summary ? (
+          <Text style={[styles.summary, hintType, { color: mutedColor }]} numberOfLines={2}>
+            {summary}
+          </Text>
+        ) : null}
+      </View>
       {collapsible ? (
-        <Text
-          style={[
-            styles.readMoreLabel,
-            {
-              color: readMoreColor,
-              borderColor: readMoreBorderColor,
-              backgroundColor: readMoreBg,
-            },
-          ]}
-        >
-          {expanded ? t('commemorations.readLess') : t('commemorations.readMore')}
-        </Text>
+        <Feather name={expanded ? 'chevron-up' : 'chevron-down'} size={18} color={mutedColor} />
       ) : null}
-    </View>
+    </>
   );
 
   return (
@@ -79,32 +85,42 @@ export function CommemorationCard({
       style={[
         styles.card,
         isPrimaryGreatFeast ? styles.cardGreatFeast : null,
-        { backgroundColor: resolvedCardBg, borderColor: resolvedBorderColor },
+        { backgroundColor: cardBg, borderColor: cardBorder },
       ]}
     >
       {collapsible ? (
         <Pressable
           onPress={() => setExpanded((prev) => !prev)}
-          style={({ pressed }) => [styles.headerPressable, pressed && styles.headerPressed]}
+          style={styles.header}
+          accessibilityRole="button"
+          accessibilityState={{ expanded }}
           {...hoverAccessibilityProps(
-            expanded ? t('commemorations.collapse', { name: entry.name }) : t('commemorations.expand', { name: entry.name }),
+            expanded
+              ? t('commemorations.collapse', { name: entry.name })
+              : t('commemorations.expand', { name: entry.name }),
             { role: 'button' },
           )}
-          accessibilityState={{ expanded }}
         >
-          {headerRow}
+          {header}
         </Pressable>
       ) : (
-        <View style={styles.headerPressable}>{headerRow}</View>
+        <View style={styles.header}>{header}</View>
       )}
       {collapsible && expanded ? (
-        <View style={styles.bodyWrap}>
+        <View
+          style={[
+            styles.body,
+            {
+              borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(43,38,35,0.08)',
+            },
+          ]}
+        >
           {entry.storyTitle && entry.storyTitle !== entry.name ? (
             <Text style={[styles.storyTitle, storyType, { color: mutedColor }]}>
               {entry.storyTitle}
             </Text>
           ) : null}
-          <Text style={[styles.body, bodyType, { color: textColor }]}>{entry.body}</Text>
+          <Text style={[styles.life, lifeType, { color: textColor }]}>{entry.body}</Text>
         </View>
       ) : null}
     </View>
@@ -115,47 +131,41 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
-    marginBottom: 12,
     overflow: 'hidden',
   },
   cardGreatFeast: {
     borderWidth: 2,
   },
-  headerPressable: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  headerPressed: {
-    opacity: 0.88,
-  },
-  headerRow: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     gap: 10,
-  },
-  readMoreLabel: {
-    flexShrink: 0,
-    fontSize: 12,
-    fontWeight: '600',
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    overflow: 'hidden',
-  },
-  name: {
-    flex: 1,
-    fontWeight: '700',
-  },
-  bodyWrap: {
     paddingHorizontal: 14,
+    paddingVertical: 13,
+  },
+  headerText: {
+    flex: 1,
+    minWidth: 0,
+    gap: 3,
+  },
+  title: {
+    fontWeight: '700',
+    letterSpacing: 0.15,
+  },
+  summary: {
+    opacity: 0.88,
+  },
+  body: {
+    paddingHorizontal: 14,
+    paddingTop: 10,
     paddingBottom: 14,
-    paddingTop: 0,
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
   storyTitle: {
     marginBottom: 8,
     fontStyle: 'italic',
   },
-  body: {},
+  life: {
+    opacity: 0.96,
+  },
 });

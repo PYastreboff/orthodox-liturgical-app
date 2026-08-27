@@ -90,7 +90,7 @@ function buildFastingNote(
   if (appearanceKey.includes('lent')) {
     return translate(lang, 'fasting.noteLent');
   }
-  return translate(lang, 'fasting.noteDefault');
+  return '';
 }
 
 export function buildDayDashboard(

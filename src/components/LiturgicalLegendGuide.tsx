@@ -47,55 +47,70 @@ export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = fals
       : SECTION_CARD_PADDING;
   const hintColor = mutedColor ?? textColor;
   const legendBorder = isDark ? colors.darkBorder : colors.border;
+  const rowBg = isDark ? colors.darkSurface : colors.card;
   const cellLegend = calendarCellLegend(isDark);
 
   return (
-    <View style={[styles.wrap, { paddingHorizontal: wrapPaddingX }, pageLayout ? styles.wrapPage : null]}>
+    <View
+      style={[
+        styles.wrap,
+        { paddingHorizontal: wrapPaddingX },
+        pageLayout ? styles.wrapPage : null,
+      ]}
+    >
       <View style={styles.legendSection}>
         <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
           {t('settings.legendPillsTitle')}
         </Text>
-        <Text style={[styles.legendSubsectionHint, { color: hintColor }]}>
-          {t('settings.legendPillsHint')}
-        </Text>
-        <View style={styles.pillTableWrap}>
-          <View style={styles.pillTable}>
-            {FAST_PILL_LEGEND_KINDS.map((kind) => (
-              <View key={kind} style={[styles.pillTableRow, phoneLayout ? styles.pillTableRowPhone : null]}>
-                <View
-                  style={[
-                    styles.pillTableLabelCell,
-                    phoneLayout ? styles.pillTableLabelCellPhone : null,
-                  ]}
-                >
-                  <FastSummaryPill
-                    label={t(FAST_PILL_LEGEND_LABEL_KEY[kind])}
-                    kind={kind}
-                    textStyle={styles.pillText}
-                    style={[styles.pillTablePill, phoneLayout ? styles.pillTablePillPhone : null]}
-                  />
-                </View>
-                <Text style={[styles.pillTableDesc, { color: hintColor }]}>
-                  {t(PILL_DESC_KEYS[kind])}
-                </Text>
+        <View style={styles.pillTable}>
+          {FAST_PILL_LEGEND_KINDS.map((kind) => (
+            <View
+              key={kind}
+              style={[
+                styles.pillRow,
+                {
+                  backgroundColor: pageLayout ? rowBg : 'transparent',
+                  borderColor: pageLayout ? legendBorder : 'transparent',
+                  borderWidth: pageLayout ? StyleSheet.hairlineWidth : 0,
+                },
+                phoneLayout ? styles.pillRowPhone : null,
+              ]}
+            >
+              <View
+                style={[
+                  styles.pillLabelCell,
+                  phoneLayout ? styles.pillLabelCellPhone : null,
+                ]}
+              >
+                <FastSummaryPill
+                  label={t(FAST_PILL_LEGEND_LABEL_KEY[kind])}
+                  kind={kind}
+                  textStyle={styles.pillText}
+                  style={[styles.pillTablePill, phoneLayout ? styles.pillTablePillPhone : null]}
+                />
               </View>
-            ))}
-          </View>
+              <Text style={[styles.pillDesc, { color: hintColor }]}>
+                {t(PILL_DESC_KEYS[kind])}
+              </Text>
+            </View>
+          ))}
         </View>
       </View>
-
-      <View style={[styles.divider, { backgroundColor: legendBorder }]} />
 
       <View style={styles.legendSection}>
         <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
           {t('calendar.legendTitle')}
         </Text>
-        <Text style={[styles.legendSubsectionHint, { color: hintColor }]}>
-          {t('calendar.legendFastingHint')}
-        </Text>
-        <View style={styles.swatchRow}>
+        <View
+          style={[
+            styles.symbolCard,
+            pageLayout
+              ? { backgroundColor: rowBg, borderColor: legendBorder }
+              : styles.symbolCardPlain,
+          ]}
+        >
           {cellLegend.map((item) => (
-            <View key={item.key} style={styles.swatchItem}>
+            <View key={item.key} style={styles.symbolItem}>
               <View
                 style={[
                   styles.swatch,
@@ -117,12 +132,16 @@ export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = fals
         <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
           {t('calendar.legendIconsTitle')}
         </Text>
-        <Text style={[styles.legendSubsectionHint, { color: hintColor }]}>
-          {t('calendar.legendIconsHint')}
-        </Text>
-        <View style={styles.iconRow}>
+        <View
+          style={[
+            styles.symbolCard,
+            pageLayout
+              ? { backgroundColor: rowBg, borderColor: legendBorder }
+              : styles.symbolCardPlain,
+          ]}
+        >
           {CALENDAR_ICON_LEGEND.map((item) => (
-            <View key={item.key} style={styles.iconItem}>
+            <View key={item.key} style={styles.symbolItem}>
               <CalendarFastingFoodIcon
                 kind={item.kind}
                 size={CALENDAR_FASTING_ICON_SIZE}
@@ -138,20 +157,22 @@ export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = fals
         </View>
       </View>
 
-      <View style={[styles.divider, { backgroundColor: legendBorder }]} />
-
       <View style={styles.legendSection}>
         <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
           {t('settings.legendTypikonTitle')}
         </Text>
-        <Text style={[styles.legendSubsectionHint, { color: hintColor }]}>
-          {t('settings.legendTypikonHint')}
-        </Text>
-        <View style={styles.typikonRow}>
+        <View
+          style={[
+            styles.symbolCard,
+            pageLayout
+              ? { backgroundColor: rowBg, borderColor: legendBorder }
+              : styles.symbolCardPlain,
+          ]}
+        >
           {TYPIKON_LEGEND_ENTRIES.map((entry) => {
             const rank = FEAST_RANK_BY_LEVEL[entry.level];
             return (
-              <View key={entry.level} style={styles.typikonItem}>
+              <View key={entry.level} style={styles.symbolItem}>
                 <TypikonGlyphIcon
                   glyph={rank.glyph}
                   size={CALENDAR_FASTING_ICON_SIZE}
@@ -171,10 +192,11 @@ const styles = StyleSheet.create({
   wrap: {
     paddingVertical: 14,
     alignItems: 'stretch',
-    gap: 10,
+    gap: 22,
   },
   wrapPage: {
-    paddingVertical: 12,
+    paddingVertical: 4,
+    gap: 20,
   },
   legendSection: {
     width: '100%',
@@ -183,45 +205,37 @@ const styles = StyleSheet.create({
   },
   legendSubsectionTitle: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '700',
     lineHeight: 20,
+    letterSpacing: 0.1,
     textAlign: 'left',
     width: '100%',
-  },
-  legendSubsectionHint: {
-    fontSize: 13,
-    lineHeight: 18,
-    opacity: 0.92,
-    textAlign: 'left',
-    width: '100%',
-  },
-  pillTableWrap: {
-    width: '100%',
-    alignItems: 'flex-start',
   },
   pillTable: {
     width: '100%',
-    maxWidth: 640,
-    gap: 10,
+    gap: 8,
   },
-  pillTableRow: {
+  pillRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
     width: '100%',
+    borderRadius: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
-  pillTableRowPhone: {
+  pillRowPhone: {
     flexDirection: 'column',
     alignItems: 'flex-start',
-    gap: 6,
+    gap: 8,
   },
-  pillTableLabelCell: {
+  pillLabelCell: {
     width: 148,
     flexShrink: 0,
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
-  pillTableLabelCellPhone: {
+  pillLabelCellPhone: {
     width: '100%',
     maxWidth: 220,
   },
@@ -236,7 +250,7 @@ const styles = StyleSheet.create({
     width: 'auto',
     minWidth: 110,
   },
-  pillTableDesc: {
+  pillDesc: {
     flex: 1,
     fontSize: 13,
     lineHeight: 18,
@@ -246,39 +260,29 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
   },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    width: '100%',
-    marginVertical: 4,
-    opacity: 0.65,
-  },
-  swatchRow: {
+  symbolCard: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    gap: 14,
-    rowGap: 8,
+    gap: 12,
+    rowGap: 10,
     width: '100%',
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
   },
-  swatchItem: {
+  symbolCardPlain: {
+    borderWidth: 0,
+    borderRadius: 0,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+  },
+  symbolItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-  },
-  iconRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    gap: 14,
-    rowGap: 8,
-    width: '100%',
-  },
-  iconItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+    gap: 7,
   },
   swatch: {
     width: 14,
@@ -298,22 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   label: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
-  },
-  typikonRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    gap: 14,
-    rowGap: 8,
-    width: '100%',
-  },
-  typikonItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    maxWidth: '100%',
   },
 });

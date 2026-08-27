@@ -28,7 +28,6 @@ export function FastingFoodList({ heading, items, textColor, iconColor, bodyType
 
 const styles = StyleSheet.create({
   block: {
-    marginTop: 8,
     gap: 6,
   },
   heading: {

@@ -14,6 +14,7 @@
     "generate:brand-assets": "node scripts/generate-brand-assets.mjs",
     "verify:liturgical-colors": "npx tsx scripts/verify-liturgical-colors.ts",
     "verify:fuzzy-search": "npx tsx scripts/verify-fuzzy-search.ts",
+    "export:recipes": "npx tsx scripts/export-recipes-json.ts",
     "verify:fasting": "npx tsx scripts/verify-fasting-exceptions.ts",
     "verify:tone": "npx tsx scripts/verify-orthocal-tone.ts",
     "build:ios": "eas build --platform ios --profile preview",

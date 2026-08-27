@@ -21,7 +21,7 @@ export const SERVING_ROLE_ICON_NAMES: Record<
   layperson: 'account-outline',
   chorister: 'music-note-outline',
   altar_server: 'candle',
-  reader: 'book-open-page-variant-outline',
+  reader: 'book-cross',
   deacon: 'account-tie-outline',
   priest: 'cross',
   bishop: 'crown-outline',
