@@ -9,6 +9,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
+import { cardElevation } from '../theme/cards';
+import { colors } from '../theme/tokens';
 
 type Props = {
   isDark: boolean;
@@ -40,7 +42,7 @@ function SkeletonBlock({
   );
 }
 
-/** Placeholder cards under the hero while Orthocal day data loads. */
+/** Placeholder for the gospel card and tile grid while Orthocal day data loads. */
 export function TodaySkeleton({ isDark }: Props) {
   const { t } = useAppTranslation();
   const opacity = useSharedValue(0.55);
@@ -55,42 +57,81 @@ export function TodaySkeleton({ isDark }: Props) {
 
   const pulse = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
-  const cardBg = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.55)';
-  const border = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(43,38,35,0.1)';
+  const cardBg = isDark ? colors.darkSurface : colors.card;
+  const border = isDark ? colors.darkBorder : 'rgba(43,38,35,0.1)';
 
   return (
     <Animated.View style={[styles.root, pulse]} accessibilityLabel={t('a11y.loading')}>
-      {[0, 1, 2].map((i) => (
-        <View key={i} style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
-          <SkeletonBlock height={14} width="42%" isDark={isDark} />
-          <SkeletonBlock height={12} width="88%" isDark={isDark} style={styles.gap} />
-          <SkeletonBlock height={12} width="70%" isDark={isDark} style={styles.gap} />
-          {i === 0 ? (
-            <SkeletonBlock height={12} width="55%" isDark={isDark} style={styles.gap} />
-          ) : null}
+      <View
+        style={[
+          styles.gospelCard,
+          cardElevation(isDark),
+          { backgroundColor: cardBg, borderColor: border },
+        ]}
+      >
+        <View style={styles.gospelBody}>
+          <SkeletonBlock height={12} width="38%" isDark={isDark} />
+          <SkeletonBlock height={16} width="52%" isDark={isDark} style={styles.gapSm} />
+          <SkeletonBlock height={14} width="100%" isDark={isDark} style={styles.gap} />
+          <SkeletonBlock height={14} width="94%" isDark={isDark} style={styles.gapSm} />
+          <SkeletonBlock height={14} width="78%" isDark={isDark} style={styles.gapSm} />
         </View>
-      ))}
+      </View>
+
+      <View style={styles.tileGrid}>
+        {[0, 1, 2, 3].map((i) => (
+          <View
+            key={i}
+            style={[
+              styles.tile,
+              cardElevation(isDark),
+              { backgroundColor: cardBg, borderColor: border },
+            ]}
+          >
+            <SkeletonBlock height={40} width={40} isDark={isDark} />
+            <SkeletonBlock height={14} width="72%" isDark={isDark} style={styles.gap} />
+          </View>
+        ))}
+      </View>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
-    gap: 10,
+    gap: 18,
+    marginTop: 16,
     marginBottom: 8,
-    marginTop: 2,
   },
-  card: {
-    borderRadius: 12,
+  gospelCard: {
+    borderRadius: 22,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+  },
+  gospelBody: {
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+  },
+  tileGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  tile: {
+    width: '47.8%',
+    borderRadius: 18,
     borderWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: 14,
-    paddingVertical: 14,
-    gap: 0,
+    paddingVertical: 16,
+    minHeight: 96,
   },
   block: {
-    borderRadius: 6,
+    borderRadius: 8,
   },
   gap: {
-    marginTop: 10,
+    marginTop: 12,
+  },
+  gapSm: {
+    marginTop: 8,
   },
 });

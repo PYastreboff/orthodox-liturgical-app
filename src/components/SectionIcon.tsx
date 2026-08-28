@@ -22,6 +22,7 @@ export type SectionIconName =
   | 'priest-guide'
   | 'readings'
   | 'prayers'
+  | 'jesus-prayer'
   | 'liturgy';
 
 const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
@@ -42,6 +43,7 @@ const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
   'priest-guide': 'today.sectionPriestGuide',
   readings: 'today.sectionReadings',
   prayers: 'today.sectionPrayers',
+  'jesus-prayer': 'today.sectionJesusPrayer',
   liturgy: 'today.sectionLiturgy',
 };
 
@@ -107,6 +109,8 @@ export function SectionIcon({ name, color, size = SECTION_ICON_SIZE }: Props) {
         );
       case 'prayers':
         return <MaterialCommunityIcons name="hands-pray" size={size} color={color} />;
+      case 'jesus-prayer':
+        return <MaterialCommunityIcons name="meditation" size={size} color={color} />;
       case 'liturgy':
         return <TypikonGlyphIcon glyph="liturgy" size={size} color={color} />;
       default:

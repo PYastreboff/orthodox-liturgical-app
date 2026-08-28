@@ -6,6 +6,7 @@ export const TODAY_SECTION_IDS = [
   'date',
   'fasting',
   'prayers',
+  'jesusPrayer',
   'liturgy',
   'vestments',
   'services',
@@ -44,6 +45,12 @@ const BASE_TILES: readonly TodayTileDef[] = [
   { id: 'date', icon: 'date', titleKey: 'today.tileDate', href: '/day/date' },
   { id: 'fasting', icon: 'fasting', titleKey: 'today.tileFasting', href: '/day/fasting' },
   { id: 'prayers', icon: 'prayers', titleKey: 'today.tilePrayers', href: '/day/prayers' },
+  {
+    id: 'jesusPrayer',
+    icon: 'jesus-prayer',
+    titleKey: 'today.tileJesusPrayer',
+    href: '/day/jesusPrayer',
+  },
   { id: 'liturgy', icon: 'liturgy', titleKey: 'today.tileLiturgy', href: '/day/liturgy' },
   { id: 'readings', icon: 'readings', titleKey: 'today.tileReadings', href: '/day/readings' },
   { id: 'feasts', icon: 'feasts', titleKey: 'today.tileFeasts', href: '/day/feasts' },
@@ -68,6 +75,8 @@ export function todaySectionTitleKey(section: TodaySectionId, servingRole: Clerg
       return 'today.sectionFasting';
     case 'prayers':
       return 'today.sectionPrayers';
+    case 'jesusPrayer':
+      return 'today.sectionJesusPrayer';
     case 'liturgy':
       return 'today.sectionLiturgy';
     case 'services':
@@ -106,6 +115,8 @@ export function todaySectionIcon(section: TodaySectionId, servingRole: ClergyRol
       return 'fasting';
     case 'prayers':
       return 'prayers';
+    case 'jesusPrayer':
+      return 'jesus-prayer';
     case 'liturgy':
       return 'liturgy';
     case 'services':

@@ -4,6 +4,7 @@ import { useFocusEffect, useTheme } from '@react-navigation/native';
 
 import { AppScrollView } from '../../src/components/AppScrollView';
 import { DayHero } from '../../src/components/DayHero';
+import { TodayDailyFocus } from '../../src/components/TodayDailyFocus';
 import { TodaySkeleton } from '../../src/components/TodaySkeleton';
 import { TodaySectionTiles } from '../../src/components/TodaySectionTiles';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
@@ -13,6 +14,7 @@ import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useTodayDayModel } from '../../src/hooks/useTodayDayModel';
 import { startOfLocalDay } from '../../src/lib/calendar/localDate';
+import { firstGospelExcerpt } from '../../src/lib/liturgical/hymnExcerpt';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { colors } from '../../src/theme/tokens';
 
@@ -99,6 +101,20 @@ export default function TodayScreen() {
             </Text>
           ) : null}
 
+          {!model.waitingForDay ? (
+            <TodayDailyFocus
+              gospel={firstGospelExcerpt(model.readingsSourceSections)}
+              fastLabel={model.dashboard.fastSummaryLabel}
+              toneLabel={model.dashboard.toneLabel}
+              saintName={model.saints[0]?.name ?? null}
+              feastName={model.feasts[0]?.name ?? null}
+              textColor={theme.colors.text}
+              borderColor={theme.colors.border}
+              isDark={model.isDark}
+              loading={model.refreshing}
+            />
+          ) : null}
+
           <TodaySectionTiles
             servingRole={model.servingRole}
             textColor={theme.colors.text}
@@ -139,10 +155,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   homeCalendarPhone: {
-    marginTop: 0,
+    marginTop: 12,
   },
   homeCalendarWeb: {
-    marginTop: 28,
+    marginTop: 32,
   },
   statusLine: {
     textAlign: 'center',

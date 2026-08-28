@@ -335,6 +335,7 @@ export function useTodayDayModel() {
     readingsCategoryMenuOpen,
     setReadingsCategoryMenuOpen,
     readingsAvailableCategories,
+    readingsSourceSections,
     readingsVisibleSections,
     feasts,
     saints,

@@ -1,11 +1,13 @@
 import { useRouter, type Href } from 'expo-router';
-import { Feather } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
+import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
-import { todayHomeTiles } from '../lib/today/todaySections';
+import { todayTileGroups } from '../lib/today/todayTileGroups';
+import { todaySectionTitleKey, type TodaySectionId } from '../lib/today/todaySections';
 import type { ClergyRole } from '../types/liturgical';
+import { cardElevation } from '../theme/cards';
 import { colors } from '../theme/tokens';
 import { SectionIcon } from './SectionIcon';
 
@@ -16,6 +18,27 @@ type Props = {
   isDark: boolean;
 };
 
+const GUIDE_TILE_IDS = new Set<TodaySectionId>([
+  'choirGuide',
+  'altarRoles',
+  'readerGuide',
+  'deaconGuide',
+  'priestGuide',
+]);
+
+function tileLabel(
+  tileId: TodaySectionId,
+  titleKey: string,
+  phone: boolean,
+  servingRole: ClergyRole,
+  t: (key: string) => string,
+): string {
+  if (phone && GUIDE_TILE_IDS.has(tileId)) {
+    return t(todaySectionTitleKey(tileId, servingRole));
+  }
+  return t(titleKey);
+}
+
 export function TodaySectionTiles({
   servingRole,
   textColor,
@@ -24,64 +47,136 @@ export function TodaySectionTiles({
 }: Props) {
   const { t } = useAppTranslation();
   const router = useRouter();
-  const tiles = todayHomeTiles(servingRole);
+  const phone = usePhoneLayout();
+  const groups = todayTileGroups(servingRole);
   const iconColor = isDark ? colors.tabActiveDark : colors.accentWine;
   const tileBg = isDark ? colors.darkSurface : colors.card;
-  const muted = isDark ? '#a39e98' : colors.muted;
+  const iconBg = isDark ? 'rgba(232,201,122,0.12)' : 'rgba(107,45,60,0.09)';
+  const sectionMuted = isDark ? '#8f8982' : '#8a8278';
 
   return (
-    <View style={styles.rowList}>
-      {tiles.map((tile) => {
-        const title = t(tile.titleKey);
-        return (
-          <Pressable
-            key={tile.id}
-            onPress={() => router.push(tile.href as Href)}
-            style={({ pressed }) => [
-              styles.row,
-              {
-                backgroundColor: tileBg,
-                borderColor,
-                opacity: pressed ? 0.92 : 1,
-              },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={title}
-            {...hoverAccessibilityProps(title, { role: 'button' })}
-          >
-            <SectionIcon name={tile.icon} color={iconColor} size={24} />
-            <Text style={[styles.rowLabel, { color: textColor }]} numberOfLines={1}>
-              {title}
-            </Text>
-            <Feather name="chevron-right" size={18} color={muted} />
-          </Pressable>
-        );
-      })}
+    <View style={styles.root}>
+      {groups.map(({ group, tiles }) => (
+        <View key={group.id} style={styles.group}>
+          <Text style={[styles.groupTitle, { color: sectionMuted }]}>
+            {t(group.titleKey)}
+          </Text>
+          <View style={[styles.grid, phone ? styles.gridPhone : styles.gridWide]}>
+            {tiles.map((tile) => {
+              const title = tileLabel(tile.id, tile.titleKey, phone, servingRole, t);
+              return (
+                <Pressable
+                  key={tile.id}
+                  onPress={() => router.push(tile.href as Href)}
+                  style={({ pressed }) => [
+                    styles.tileShell,
+                    cardElevation(isDark),
+                    phone ? styles.tilePhone : styles.tileWide,
+                    {
+                      opacity: pressed ? 0.94 : 1,
+                      transform: [{ scale: pressed ? 0.98 : 1 }],
+                    },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={title}
+                  {...hoverAccessibilityProps(title, { role: 'button' })}
+                >
+                  <View
+                    style={[
+                      styles.tile,
+                      phone ? styles.tilePhoneLayout : null,
+                      {
+                        backgroundColor: tileBg,
+                        borderColor: isDark ? colors.darkBorder : borderColor,
+                      },
+                    ]}
+                  >
+                    <View style={[styles.iconCircle, { backgroundColor: iconBg }]}>
+                      <SectionIcon name={tile.icon} color={iconColor} size={20} />
+                    </View>
+                    <Text
+                      style={[
+                        styles.tileLabel,
+                        phone ? styles.tileLabelPhone : null,
+                        { color: textColor },
+                      ]}
+                      numberOfLines={2}
+                    >
+                      {title}
+                    </Text>
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+      ))}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  rowList: {
-    gap: 8,
-    marginTop: 10,
-    marginBottom: 4,
+  root: {
+    gap: 20,
+    marginTop: 8,
+    marginBottom: 8,
   },
-  row: {
+  group: {
+    gap: 10,
+  },
+  groupTitle: {
+    fontSize: 11,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 1.1,
+    paddingHorizontal: 2,
+  },
+  grid: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    minHeight: 56,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    borderWidth: StyleSheet.hairlineWidth,
+    flexWrap: 'wrap',
+    gap: 10,
   },
-  rowLabel: {
-    flex: 1,
-    minWidth: 0,
-    fontSize: 16,
+  gridPhone: {},
+  gridWide: {
+    gap: 12,
+  },
+  tileShell: {},
+  tile: {
+    borderRadius: 18,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    minHeight: 96,
+    gap: 12,
+    justifyContent: 'flex-end',
+  },
+  tilePhoneLayout: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tilePhone: {
+    width: '47.8%',
+    flexGrow: 1,
+  },
+  tileWide: {
+    width: '31%',
+    minWidth: 148,
+    flexGrow: 1,
+  },
+  iconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tileLabel: {
+    fontSize: 15,
     fontWeight: '700',
-    letterSpacing: 0.1,
+    letterSpacing: 0.05,
+    lineHeight: 19,
+  },
+  tileLabelPhone: {
+    textAlign: 'center',
   },
 });

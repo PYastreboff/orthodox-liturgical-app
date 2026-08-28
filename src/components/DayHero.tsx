@@ -25,6 +25,7 @@ import {
 import { isRedTypikonRank, typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import type { ClergyRole } from '../types/liturgical';
 import { colors } from '../theme/tokens';
+import { cardElevation } from '../theme/cards';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
 import { FastingFoodIcon } from './FastingFoodIcon';
@@ -176,8 +177,8 @@ export function DayHero({
     <View
       style={[
         styles.heroShell,
+        cardElevation(isDark),
         isDark ? styles.heroShellDark : null,
-        isDark ? styles.heroShadow : null,
         isMajorFeastDay
           ? { borderWidth: 2, borderColor: majorFeastBorder }
           : null,
@@ -437,8 +438,8 @@ export function DayHero({
 
 const styles = StyleSheet.create({
   heroShell: {
-    borderRadius: 18,
-    marginBottom: 14,
+    borderRadius: 22,
+    marginBottom: 16,
     width: '100%',
     alignSelf: 'stretch',
     overflow: 'hidden',
@@ -451,13 +452,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     alignItems: 'center',
     width: '100%',
-  },
-  heroShadow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.18,
-    shadowRadius: 14,
-    elevation: 5,
   },
   titleRow: {
     width: '100%',
