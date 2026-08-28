@@ -76,7 +76,7 @@ function TabsLayoutContent() {
             title: 'OrthoDaily',
             tabBarLabel: t('tabs.today'),
             sceneStyle: { flex: 1, backgroundColor: 'transparent' },
-            ...tabBarIconOptions('today'),
+            ...tabBarIconOptions('today', t),
           }}
         />
         <SwipeTabs.Screen
@@ -85,7 +85,7 @@ function TabsLayoutContent() {
             title: t('tabs.browserTitleCalendar'),
             tabBarLabel: t('tabs.calendar'),
             sceneStyle: { backgroundColor: sceneBackground },
-            ...tabBarIconOptions('calendar'),
+            ...tabBarIconOptions('calendar', t),
           }}
         />
         <SwipeTabs.Screen
@@ -94,7 +94,7 @@ function TabsLayoutContent() {
             title: t('tabs.browserTitleSettings'),
             tabBarLabel: t('tabs.settings'),
             sceneStyle: { backgroundColor: sceneBackground },
-            ...tabBarIconOptions('settings'),
+            ...tabBarIconOptions('settings', t),
           }}
         />
       </SwipeTabs>

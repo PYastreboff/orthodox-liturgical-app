@@ -9,6 +9,7 @@ import { AltarServerRoleTable } from './AltarServerRoleTable';
 import { ChoirGuideTable } from './ChoirGuideTable';
 import { DeaconGuideTable } from './DeaconGuideTable';
 import { FastingFoodList } from './FastingFoodList';
+import { FastingRecipesPreview } from './FastingRecipesPreview';
 import { FastSummaryPill } from './FastSummaryPill';
 import { LiturgicalTextSectionBlock } from './LiturgicalPassageBlock';
 import { LiturgicalTextsCategoryToggle } from './LiturgicalTextsCategoryToggle';
@@ -420,6 +421,18 @@ export function TodaySectionContent({ section, model }: Props) {
                   <Text style={[styles.cardHintFlat, type.hint]}>{dashboard.fastingNote}</Text>
                 ) : null}
               </View>
+            </DayPagePanel>
+          ) : null}
+          {!dashboard.isFastDay ? (
+            <DayPagePanel {...panel} title={t('recipes.nonFastDayTitle')}>
+              <FastingRecipesPreview
+                textColor={theme.colors.text}
+                mutedColor={muted}
+                borderColor={theme.colors.border}
+                isDark={isDark}
+                bodyType={type.body}
+                hintType={type.hint}
+              />
             </DayPagePanel>
           ) : null}
         </View>

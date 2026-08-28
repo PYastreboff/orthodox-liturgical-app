@@ -15,6 +15,7 @@ import type {
 } from '../../src/lib/recipes/fastingRecipes';
 import { MARILENA_EXTRA_RECIPES } from './marilenaExtra';
 import { MIA_KOUPPA_EXTRA_RECIPES } from './miaKouppaExtra';
+import { ORTHODOX_EXTRA_RECIPES } from './orthodoxExtra';
 
 function L(en: string, ru: string, el: string): LocalizedText {
   return { en, ru, el };
@@ -2358,4 +2359,5 @@ export const FASTING_RECIPES: readonly FastingRecipe[] = [
   ...CORE_FASTING_RECIPES,
   ...MIA_KOUPPA_EXTRA_RECIPES,
   ...MARILENA_EXTRA_RECIPES,
+  ...ORTHODOX_EXTRA_RECIPES,
 ];

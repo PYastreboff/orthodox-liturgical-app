@@ -8,6 +8,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { useAppTranslation } from '../i18n/useAppTranslation';
+
 type Props = {
   isDark: boolean;
 };
@@ -40,6 +42,7 @@ function SkeletonBlock({
 
 /** Placeholder cards under the hero while Orthocal day data loads. */
 export function TodaySkeleton({ isDark }: Props) {
+  const { t } = useAppTranslation();
   const opacity = useSharedValue(0.55);
 
   useEffect(() => {
@@ -56,7 +59,7 @@ export function TodaySkeleton({ isDark }: Props) {
   const border = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(43,38,35,0.1)';
 
   return (
-    <Animated.View style={[styles.root, pulse]} accessibilityLabel="Loading">
+    <Animated.View style={[styles.root, pulse]} accessibilityLabel={t('a11y.loading')}>
       {[0, 1, 2].map((i) => (
         <View key={i} style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
           <SkeletonBlock height={14} width="42%" isDark={isDark} />

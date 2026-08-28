@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import { colors } from '../../theme/tokens';
-import { SEGMENTED_PICKER_HORIZONTAL_INSET } from './SegmentedPicker';
+import { SETTINGS_CARD_HORIZONTAL_INSET } from './settingsLayout';
 
 type Props = {
   isDark: boolean;
@@ -96,7 +96,7 @@ export function SettingsLinkRow({
 }
 
 export const settingsLinkListInset = {
-  marginHorizontal: SEGMENTED_PICKER_HORIZONTAL_INSET,
+  marginHorizontal: SETTINGS_CARD_HORIZONTAL_INSET,
   marginVertical: 4,
   alignSelf: 'stretch' as const,
 };
