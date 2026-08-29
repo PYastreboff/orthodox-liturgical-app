@@ -70,7 +70,7 @@ export default function CalendarScreen() {
     [onDayPress, setCursorMonth],
   );
 
-  const calendarBg = theme.dark ? colors.darkBg : '#e8e3d8';
+  const calendarBg = theme.dark ? colors.darkBg : colors.parchment;
 
   useFocusEffect(
     useCallback(() => {

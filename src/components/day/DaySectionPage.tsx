@@ -20,7 +20,9 @@ import {
   type TodaySectionId,
 } from '../../lib/today/todaySections';
 import { SERVING_ROLE_PHRASE_LABEL_KEYS } from '../../lib/liturgical/servingRoles';
-import { colors } from '../../theme/tokens';
+import { iconBadgeSurface, surfaceCard } from '../../theme/cards';
+import { colors, radii } from '../../theme/tokens';
+import { useVestmentAccent } from '../../state/VestmentAccentContext';
 import { useResolvedColorScheme } from '../../theme/useResolvedColorScheme';
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
@@ -48,7 +50,8 @@ export function DaySectionPage({ section }: Props) {
       ? t(titleKey, { role: t(SERVING_ROLE_PHRASE_LABEL_KEYS[model.servingRole]) })
       : t(titleKey);
   const icon = todaySectionIcon(section, model.servingRole);
-  const iconColor = isDark ? colors.tabActiveDark : colors.accentWine;
+  const vestmentAccent = useVestmentAccent();
+  const iconColor = vestmentAccent.accent;
   const muted = isDark ? '#a39e98' : colors.muted;
 
   const goBack = useStackBack('/(tabs)');
@@ -90,25 +93,8 @@ export function DaySectionPage({ section }: Props) {
                 },
               ]}
             >
-              <View
-                style={[
-                  styles.intro,
-                  {
-                    backgroundColor: isDark ? colors.darkSurface : colors.card,
-                    borderColor: theme.colors.border,
-                  },
-                ]}
-              >
-                <View
-                  style={[
-                    styles.introIcon,
-                    {
-                      backgroundColor: isDark
-                        ? 'rgba(255,255,255,0.08)'
-                        : 'rgba(107,45,60,0.1)',
-                    },
-                  ]}
-                >
+              <View style={[styles.intro, surfaceCard(isDark, { radius: radii.xl })]}>
+                <View style={iconBadgeSurface(vestmentAccent.accentSoft)}>
                   <SectionIcon name={icon} color={iconColor} size={26} />
                 </View>
                 <View style={styles.introText}>
@@ -155,19 +141,10 @@ const styles = StyleSheet.create({
   intro: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    borderRadius: 14,
-    borderWidth: StyleSheet.hairlineWidth,
-    marginBottom: 16,
-  },
-  introIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
+    gap: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    marginBottom: 18,
   },
   introText: {
     flex: 1,
@@ -175,8 +152,8 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   introDay: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 17,
+    fontWeight: '800',
     letterSpacing: 0.1,
   },
   introDate: {

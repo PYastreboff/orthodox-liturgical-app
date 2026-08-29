@@ -54,6 +54,7 @@ import type { FontScalePreference } from '../../src/theme/fontScale';
 import type { ClergyRole } from '../../src/types/liturgical';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
+import { useVestmentAccent } from '../../src/state/VestmentAccentContext';
 import { colors } from '../../src/theme/tokens';
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/peter-yastreboff-6a9664313/';
@@ -157,7 +158,8 @@ export default function SettingsScreen() {
   const [permissionHint, setPermissionHint] = useState(false);
   const nativeReminders = supportsLocalNotifications();
   const muted = isDark ? '#a39e98' : colors.muted;
-  const roleIconColor = isDark ? colors.tabActiveDark : colors.accentWine;
+  const vestmentAccent = useVestmentAccent();
+  const roleIconColor = vestmentAccent.accent;
 
   const servingRoleLabel = t(SERVING_ROLE_LABEL_KEYS[servingRole]);
   const themeLabel =
@@ -624,7 +626,7 @@ export default function SettingsScreen() {
               <Feather
                 name="coffee"
                 size={22}
-                color={isDark ? colors.tabActiveDark : colors.accentWine}
+                color={vestmentAccent.accent}
               />
               <Text style={[styles.tipJarTitle, { color: theme.colors.text }]}>
                 {t('settings.tipJarTitle')}
@@ -639,8 +641,9 @@ export default function SettingsScreen() {
                 style={({ pressed }) => [
                   styles.tipJarButton,
                   {
-                    backgroundColor: isDark ? colors.accentWine : colors.ink,
-                    opacity: pressed ? 0.88 : 1,
+                    backgroundColor: vestmentAccent.accent,
+                    opacity: pressed ? 0.9 : 1,
+                    transform: [{ scale: pressed ? 0.98 : 1 }],
                   },
                 ]}
               >
@@ -829,9 +832,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 999,
   },
   tipJarButtonLabel: {
     color: '#fff',

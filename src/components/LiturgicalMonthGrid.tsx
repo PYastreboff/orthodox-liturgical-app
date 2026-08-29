@@ -608,7 +608,7 @@ export function LiturgicalMonthGrid({
 
 /** Fixed height so every day in a week row aligns (compact uses CELL_HEIGHT_COMPACT). */
 const CELL_HEIGHT_COMPACT = 52;
-const CELL_BORDER_RADIUS = 10;
+const CELL_BORDER_RADIUS = 12;
 
 type CalendarCellTypography = {
   cellHeight: number;
@@ -1349,9 +1349,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   monthTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    letterSpacing: 0.2,
+    fontSize: 22,
+    fontWeight: '800',
+    letterSpacing: -0.2,
   },
   monthTitleWrap: {
     flex: 1,

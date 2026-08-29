@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { typography } from '../theme/tokens';
+
 type Props = {
   title: string;
   subtitle?: string;
@@ -21,17 +23,15 @@ export function PhonePageHeader({ title, subtitle, textColor, mutedColor }: Prop
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: 6,
+    gap: 8,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: 0.2,
-    lineHeight: 34,
+    ...typography.headline,
   },
   subtitle: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: '400',
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '500',
+    letterSpacing: 0.1,
   },
 });

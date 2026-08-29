@@ -25,6 +25,7 @@ import {
 import { isRedTypikonRank, typikonIconColor, type FeastRankDisplay } from '../lib/liturgical/typikonSymbols';
 import type { ClergyRole } from '../types/liturgical';
 import { colors } from '../theme/tokens';
+import { useLiturgicalVestmentAccent } from '../state/VestmentAccentContext';
 import { cardElevation } from '../theme/cards';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
@@ -75,6 +76,7 @@ export function DayHero({
 }: Props) {
   const { t, lang } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
+  const vestmentAccent = useLiturgicalVestmentAccent();
   const phoneLayout = usePhoneLayout();
   const heroPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
   const { text } = useFontScale();
@@ -87,19 +89,33 @@ export function DayHero({
   );
   const fg = heroStyle.foreground;
   const fgLower = fg.toLowerCase();
-  const lightHeroText =
+  const darkHeroSurface =
     fgLower === '#ffffff' ||
     fgLower === '#f7eef8' ||
     fgLower === '#e8eef8' ||
-    fgLower === colors.darkInk.toLowerCase() ||
-    fgLower === '#f2ebe2';
-  const chipBg = lightHeroText
-    ? 'rgba(255,255,255,0.14)'
-    : isDark
-      ? 'rgba(255,255,255,0.1)'
-      : 'rgba(255,255,255,0.65)';
-  const navBtnBg = lightHeroText ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.22)';
-  const todayBtnBg = lightHeroText ? 'rgba(255,255,255,0.16)' : 'rgba(30,26,22,0.55)';
+    fgLower === '#f2ebe2' ||
+    fgLower === colors.darkInk.toLowerCase();
+  const lightHeroBackground = fgLower === '#1e1a16' || fgLower === colors.ink.toLowerCase();
+  const chipBg = darkHeroSurface
+    ? 'rgba(255,255,255,0.22)'
+    : lightHeroBackground
+      ? 'rgba(255,255,255,0.14)'
+      : isDark
+        ? 'rgba(255,255,255,0.1)'
+        : 'rgba(255,255,255,0.65)';
+  const navBtnBg = darkHeroSurface
+    ? 'rgba(255,255,255,0.22)'
+    : lightHeroBackground
+      ? 'rgba(255,255,255,0.14)'
+      : 'rgba(255,255,255,0.22)';
+  const todayBtnBg = isDark
+    ? darkHeroSurface
+      ? 'rgba(255,255,255,0.16)'
+      : 'rgba(30,26,22,0.55)'
+    : darkHeroSurface
+      ? 'rgba(255,255,255,0.92)'
+      : vestmentAccent.accent;
+  const todayBtnFg = isDark ? fg : darkHeroSurface ? colors.ink : vestmentAccent.onAccent;
   const dayTitleType = text(28, 34);
   const primaryDateType = text(17, 22);
   const julianDateType = text(12, 16);
@@ -107,27 +123,31 @@ export function DayHero({
   const feastChipType = text(12, 16);
   const todayBtnType = text(13, 18);
   const menuLabelType = text(14, 18);
-  // Light hero text → dark surface so black typikon ranks render light (match chip text).
-  const typikonSurface = lightHeroText ? 'dark' : 'light';
+  // Dark hero → typikon ranks that render for dark surfaces; light hero → light-surface ranks.
+  const typikonSurface = darkHeroSurface ? 'dark' : 'light';
   const typikonColor =
-    lightHeroText && !isRedTypikonRank(feastRank)
+    (darkHeroSurface || lightHeroBackground) && !isRedTypikonRank(feastRank)
       ? fg
       : typikonIconColor(feastRank, typikonSurface);
   const majorFeastServiceLabel = isMajorFeastDay
     ? feastRankHeroLabelForMajorFeastDay(feastRank, orthocalFeastLevel, lang)
     : null;
-  const majorFeastChipBg = lightHeroText
-    ? 'rgba(214,58,82,0.22)'
-    : isDark
-      ? 'rgba(214,58,82,0.28)'
-      : 'rgba(214,58,82,0.16)';
+  const majorFeastChipBg = darkHeroSurface
+    ? 'rgba(214,58,82,0.28)'
+    : lightHeroBackground
+      ? 'rgba(214,58,82,0.16)'
+      : isDark
+        ? 'rgba(214,58,82,0.28)'
+        : 'rgba(214,58,82,0.16)';
   const majorFeastBorder = isDark ? colors.feastHoverBorderDark : colors.feastBorder;
-  const majorFeastTypikonColor = lightHeroText ? colors.feastBorder : fg;
-  const majorFeastTypikonBackdrop = lightHeroText
+  const majorFeastTypikonColor = darkHeroSurface ? colors.feastBorder : fg;
+  const majorFeastTypikonBackdrop = darkHeroSurface
     ? 'rgba(255,255,255,0.28)'
-    : isDark
-      ? 'rgba(255,255,255,0.14)'
-      : 'rgba(255,255,255,0.72)';
+    : lightHeroBackground
+      ? 'rgba(255,255,255,0.72)'
+      : isDark
+        ? 'rgba(255,255,255,0.14)'
+        : 'rgba(255,255,255,0.72)';
   const roleMenuSurface = isDark ? '#2a2724' : '#fffcf7';
   const roleMenuText = isDark ? '#e8e3dd' : colors.ink;
   const roleMenuBorder = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(43,38,35,0.12)';
@@ -180,7 +200,7 @@ export function DayHero({
         cardElevation(isDark),
         isDark ? styles.heroShellDark : null,
         isMajorFeastDay
-          ? { borderWidth: 2, borderColor: majorFeastBorder }
+          ? { borderWidth: 4, borderColor: majorFeastBorder }
           : null,
       ]}
       {...daySwipe.panHandlers}
@@ -278,7 +298,7 @@ export function DayHero({
                     styles.roleMenuItem,
                     {
                       backgroundColor: selected
-                        ? colors.accentWine
+                        ? vestmentAccent.accent
                         : pressed
                           ? ROLE_MENU_ITEM_PRESSED
                           : 'transparent',
@@ -295,13 +315,13 @@ export function DayHero({
                   <MaterialCommunityIcons
                     name={SERVING_ROLE_ICON_NAMES[id]}
                     size={18}
-                    color={selected ? '#fff' : roleMenuText}
+                    color={selected ? vestmentAccent.onAccent : roleMenuText}
                   />
                   <Text
                     style={[
                       styles.roleMenuItemLabel,
                       menuLabelType,
-                      { color: selected ? '#fff' : roleMenuText },
+                      { color: selected ? vestmentAccent.onAccent : roleMenuText },
                     ]}
                     numberOfLines={1}
                   >
@@ -428,7 +448,9 @@ export function DayHero({
 
       {canGoToToday ? (
         <Pressable style={[styles.todayBtn, { backgroundColor: todayBtnBg }]} onPress={onToday}>
-          <Text style={[styles.todayBtnText, todayBtnType, { color: fg }]}>{t('today.jumpToToday')}</Text>
+          <Text style={[styles.todayBtnText, todayBtnType, { color: todayBtnFg }]}>
+            {t('today.jumpToToday')}
+          </Text>
         </Pressable>
       ) : null}
       </LinearGradient>
@@ -438,8 +460,8 @@ export function DayHero({
 
 const styles = StyleSheet.create({
   heroShell: {
-    borderRadius: 22,
-    marginBottom: 16,
+    borderRadius: 28,
+    marginBottom: 18,
     width: '100%',
     alignSelf: 'stretch',
     overflow: 'hidden',

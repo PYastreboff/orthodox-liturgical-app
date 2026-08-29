@@ -7,8 +7,9 @@ import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { todayTileGroups } from '../lib/today/todayTileGroups';
 import { todaySectionTitleKey, type TodaySectionId } from '../lib/today/todaySections';
 import type { ClergyRole } from '../types/liturgical';
-import { cardElevation } from '../theme/cards';
-import { colors } from '../theme/tokens';
+import { useLiturgicalVestmentAccent } from '../state/VestmentAccentContext';
+import { iconBadgeSurface, surfaceCard } from '../theme/cards';
+import { radii, typography } from '../theme/tokens';
 import { SectionIcon } from './SectionIcon';
 
 type Props = {
@@ -47,17 +48,16 @@ export function TodaySectionTiles({
   const { t } = useAppTranslation();
   const router = useRouter();
   const phone = usePhoneLayout();
+  const vestmentAccent = useLiturgicalVestmentAccent();
   const groups = todayTileGroups(servingRole);
-  const iconColor = isDark ? colors.tabActiveDark : colors.accentWine;
-  const tileBg = isDark ? colors.darkSurface : colors.card;
-  const iconBg = isDark ? 'rgba(232,201,122,0.12)' : 'rgba(107,45,60,0.09)';
-  const sectionMuted = isDark ? '#8f8982' : '#8a8278';
+  const iconColor = vestmentAccent.accent;
+  const sectionMuted = isDark ? '#8a8480' : '#7a746e';
 
   return (
     <View style={styles.root}>
       {groups.map(({ group, tiles }) => (
         <View key={group.id} style={styles.group}>
-          <Text style={[styles.groupTitle, { color: sectionMuted }]}>
+          <Text style={[styles.groupTitle, typography.eyebrow, { color: sectionMuted }]}>
             {t(group.titleKey)}
           </Text>
           <View style={[styles.grid, phone ? styles.gridPhone : styles.gridWide]}>
@@ -69,8 +69,8 @@ export function TodaySectionTiles({
                   onPress={() => router.push(tile.href as Href)}
                   style={({ pressed }) => [
                     styles.tileShell,
-                    cardElevation(isDark),
                     phone ? styles.tilePhone : styles.tileWide,
+                    surfaceCard(isDark, { radius: radii.lg }),
                     {
                       opacity: pressed ? 0.94 : 1,
                       transform: [{ scale: pressed ? 0.98 : 1 }],
@@ -80,16 +80,8 @@ export function TodaySectionTiles({
                   accessibilityLabel={title}
                   {...hoverAccessibilityProps(title, { role: 'button' })}
                 >
-                  <View
-                    style={[
-                      styles.tile,
-                      {
-                        backgroundColor: tileBg,
-                        borderColor: isDark ? colors.darkBorder : borderColor,
-                      },
-                    ]}
-                  >
-                    <View style={[styles.iconCircle, { backgroundColor: iconBg }]}>
+                  <View style={styles.tile}>
+                    <View style={iconBadgeSurface(vestmentAccent.accentSoft)}>
                       <SectionIcon name={tile.icon} color={iconColor} size={20} />
                     </View>
                     <Text
@@ -111,38 +103,32 @@ export function TodaySectionTiles({
 
 const styles = StyleSheet.create({
   root: {
-    gap: 20,
-    marginTop: 8,
-    marginBottom: 8,
+    gap: 24,
+    marginTop: 12,
+    marginBottom: 10,
   },
   group: {
-    gap: 10,
+    gap: 12,
   },
   groupTitle: {
-    fontSize: 11,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-    letterSpacing: 1.1,
-    paddingHorizontal: 2,
+    paddingHorizontal: 4,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: 10,
+    gap: 12,
   },
   gridPhone: {},
   gridWide: {
-    gap: 12,
+    gap: 14,
   },
   tileShell: {},
   tile: {
-    borderRadius: 18,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingVertical: 16,
-    paddingHorizontal: 14,
-    minHeight: 96,
-    gap: 12,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    minHeight: 104,
+    gap: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -155,19 +141,12 @@ const styles = StyleSheet.create({
     minWidth: 160,
     flexGrow: 1,
   },
-  iconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   tileLabel: {
     width: '100%',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700',
-    letterSpacing: 0.05,
-    lineHeight: 19,
+    letterSpacing: 0.1,
+    lineHeight: 18,
     textAlign: 'center',
   },
 });

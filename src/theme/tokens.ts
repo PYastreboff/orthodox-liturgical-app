@@ -1,13 +1,15 @@
 /**
- * Icon-inspired palette: parchment, wine, gold — minimal chrome for church use.
+ * Liturgical design tokens — parchment, wine, gold with a modern surface system.
  */
 export const colors = {
-  parchment: '#f5f0e8',
-  card: '#fffcf7',
-  ink: '#1e1a16',
-  muted: '#6f6a64',
-  border: '#e2d8ca',
+  parchment: '#f7f3ec',
+  card: '#ffffff',
+  ink: '#161412',
+  muted: '#6b6560',
+  border: '#e6ddd2',
+  borderSubtle: 'rgba(30, 26, 22, 0.08)',
   accentWine: '#6b2d3c',
+  accentWineSoft: 'rgba(107, 45, 60, 0.12)',
   /** Major feast outline on the month grid — brighter than accentWine. */
   feastBorder: '#d63a52',
   /** Calendar Sunday column header — light mode (readable on parchment). */
@@ -23,7 +25,8 @@ export const colors = {
   /** Great Friday cell border on hover — deep wine, not gold. */
   greatFridayHoverBorder: '#5a1a24',
   greatFridayHoverBorderDark: '#4a3c3a',
-  accentGold: '#b08d57',
+  accentGold: '#a67c3d',
+  accentGoldSoft: 'rgba(166, 124, 61, 0.14)',
   /** Calendar cell hover ring on dark mode — muted gold, darker than accentGold. */
   calendarHoverBorderDark: '#6e5c38',
   accentTheotokos: '#2f4a6f',
@@ -41,11 +44,64 @@ export const colors = {
   personalFortieth: '#5a5868',
   personalFortiethDark: '#d4d0de',
   /** Tab bar active — high contrast on parchment / dark surfaces */
-  tabActiveLight: '#1e1a16',
+  tabActiveLight: '#161412',
   tabActiveDark: '#e8c97a',
 
-  darkBg: '#12100e',
-  darkSurface: '#1c1814',
-  darkInk: '#f2ebe2',
-  darkBorder: '#2e2822',
+  darkBg: '#0c0b0a',
+  darkSurface: '#181614',
+  darkSurfaceElevated: '#211d19',
+  darkInk: '#f4efe8',
+  darkBorder: '#2c2620',
+  darkBorderSubtle: 'rgba(255, 255, 255, 0.08)',
+} as const;
+
+export const radii = {
+  xs: 8,
+  sm: 12,
+  md: 16,
+  lg: 20,
+  xl: 24,
+  xxl: 28,
+  pill: 999,
+} as const;
+
+export const spacing = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  xxl: 24,
+  section: 32,
+} as const;
+
+export const typography = {
+  eyebrow: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: '800' as const,
+    letterSpacing: 1.2,
+    textTransform: 'uppercase' as const,
+  },
+  caption: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '600' as const,
+  },
+  body: {
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '500' as const,
+  },
+  title: {
+    fontSize: 17,
+    lineHeight: 22,
+    fontWeight: '700' as const,
+  },
+  headline: {
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: '800' as const,
+    letterSpacing: -0.3,
+  },
 } as const;

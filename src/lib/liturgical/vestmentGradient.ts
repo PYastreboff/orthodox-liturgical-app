@@ -21,7 +21,7 @@ const HERO_GRADIENT_BY_PILL_BG: Record<string, VestmentHeroStyle> = {
   '#2f4a6f': { gradient: ['#4a6a94', '#1a2a40'], foreground: '#ffffff' },
   '#8b2e3c': { gradient: ['#b84a58', '#4a1520'], foreground: '#ffffff' },
   '#2d5a3e': { gradient: ['#4a8a62', '#1a3024'], foreground: '#ffffff' },
-  '#121010': { gradient: ['#2a2826', '#0a0a0a'], foreground: '#f2ebe2' },
+  '#121010': { gradient: ['#3a3834', '#141210'], foreground: '#f4efe8' },
   '#5c3d6e': { gradient: ['#7a5a8c', '#2a1838'], foreground: '#f7eef8' },
 };
 
@@ -142,8 +142,8 @@ function darkModeVestmentGradientStops(pillBg: string): readonly [string, string
 }
 
 const HERO_GRADIENT_BY_APPEARANCE_KEY: Partial<Record<string, VestmentHeroStyle>> = {
-  great_friday: { gradient: ['#2a2826', '#0a0a0a'], foreground: '#f2ebe2' },
-  holy_saturday: { gradient: ['#121010', '#f0ebe3'], foreground: '#1e1a16' },
+  great_friday: { gradient: ['#3a3834', '#141210'], foreground: '#f4efe8' },
+  holy_saturday: { gradient: ['#2a2824', '#4a443c'], foreground: '#f4efe8' },
 };
 
 function resolveHeroStyle(

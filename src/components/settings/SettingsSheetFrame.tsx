@@ -3,6 +3,7 @@ import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { useSwipeToDismissSheet } from '../../hooks/useSwipeToDismissSheet';
+import { radii } from '../../theme/tokens';
 
 type Props = {
   visible: boolean;
@@ -66,17 +67,17 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   sheet: {
-    borderRadius: 16,
+    borderRadius: radii.xl,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
     maxWidth: 420,
     width: '100%',
     alignSelf: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.28,
+    shadowRadius: 28,
+    elevation: 12,
   },
   handleRow: {
     alignItems: 'center',

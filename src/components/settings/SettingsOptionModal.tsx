@@ -10,7 +10,8 @@ function tintLeading(node: ReactNode, selected: boolean): ReactNode {
 }
 
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
-import { colors } from '../../theme/tokens';
+import { useVestmentAccent } from '../../state/VestmentAccentContext';
+import { colors, radii } from '../../theme/tokens';
 import { SettingsSheetFrame } from './SettingsSheetFrame';
 
 export type SettingsOption<T extends string> = {
@@ -39,10 +40,11 @@ export function SettingsOptionModal<T extends string>({
   onClose,
   isDark,
 }: Props<T>) {
-  const surfaceBg = isDark ? '#2a2724' : '#ebe6de';
-  const textColor = isDark ? '#e8e3dd' : '#2b2623';
-  const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.12)';
-  const handleColor = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(43,38,35,0.28)';
+  const vestmentAccent = useVestmentAccent();
+  const surfaceBg = isDark ? colors.darkSurfaceElevated : colors.card;
+  const textColor = isDark ? colors.darkInk : colors.ink;
+  const borderColor = isDark ? colors.darkBorderSubtle : colors.borderSubtle;
+  const handleColor = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(43,38,35,0.22)';
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const sheetHeight = Math.round(windowHeight * (windowWidth < 600 ? 2 / 3 : 0.6));
 
@@ -70,9 +72,9 @@ export function SettingsOptionModal<T extends string>({
                 styles.option,
                 {
                   backgroundColor: selected
-                    ? colors.accentWine
+                    ? vestmentAccent.accent
                     : pressed
-                      ? 'rgba(139,46,60,0.14)'
+                      ? vestmentAccent.accentMuted
                       : 'transparent',
                 },
               ]}
@@ -88,13 +90,13 @@ export function SettingsOptionModal<T extends string>({
                 <View style={styles.leading}>{tintLeading(option.leading, selected)}</View>
               ) : null}
               <Text
-                style={[styles.optionLabel, { color: selected ? SELECTED_FG : textColor }]}
+                style={[styles.optionLabel, { color: selected ? vestmentAccent.onAccent : textColor }]}
                 numberOfLines={2}
               >
                 {option.label}
               </Text>
               {selected ? (
-                <Feather name="check" size={18} color={SELECTED_FG} />
+                <Feather name="check" size={18} color={vestmentAccent.onAccent} />
               ) : (
                 <View style={styles.checkPlaceholder} />
               )}

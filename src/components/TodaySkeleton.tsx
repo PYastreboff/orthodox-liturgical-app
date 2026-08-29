@@ -9,8 +9,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
-import { cardElevation } from '../theme/cards';
-import { colors } from '../theme/tokens';
+import { surfaceCard } from '../theme/cards';
+import { radii } from '../theme/tokens';
 
 type Props = {
   isDark: boolean;
@@ -57,16 +57,12 @@ export function TodaySkeleton({ isDark }: Props) {
 
   const pulse = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
-  const cardBg = isDark ? colors.darkSurface : colors.card;
-  const border = isDark ? colors.darkBorder : 'rgba(43,38,35,0.1)';
-
   return (
     <Animated.View style={[styles.root, pulse]} accessibilityLabel={t('a11y.loading')}>
       <View
         style={[
           styles.gospelCard,
-          cardElevation(isDark),
-          { backgroundColor: cardBg, borderColor: border },
+          surfaceCard(isDark, { radius: radii.xxl }),
         ]}
       >
         <View style={styles.gospelBody}>
@@ -84,8 +80,7 @@ export function TodaySkeleton({ isDark }: Props) {
             key={i}
             style={[
               styles.tile,
-              cardElevation(isDark),
-              { backgroundColor: cardBg, borderColor: border },
+              surfaceCard(isDark, { radius: radii.lg }),
             ]}
           >
             <SkeletonBlock height={40} width={40} isDark={isDark} />
@@ -104,7 +99,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   gospelCard: {
-    borderRadius: 22,
+    borderRadius: 28,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
   },
@@ -120,7 +115,7 @@ const styles = StyleSheet.create({
   },
   tile: {
     width: '47.8%',
-    borderRadius: 18,
+    borderRadius: 20,
     borderWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: 14,
     paddingVertical: 16,

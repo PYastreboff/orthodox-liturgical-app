@@ -6,7 +6,7 @@ import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useFontScale } from '../hooks/useFontScale';
 import type { CommemorationEntry } from '../lib/liturgical/commemorations';
-import { colors } from '../theme/tokens';
+import { colors, radii } from '../theme/tokens';
 
 type Props = {
   entry: CommemorationEntry;
@@ -129,7 +129,7 @@ export function CommemorationCard({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 12,
+    borderRadius: radii.lg,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
   },

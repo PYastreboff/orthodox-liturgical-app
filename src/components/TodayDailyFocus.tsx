@@ -7,7 +7,9 @@ import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useFontScale } from '../hooks/useFontScale';
 import type { ReadingExcerpt } from '../lib/liturgical/hymnExcerpt';
 import { usePreferences } from '../state/PreferencesContext';
-import { cardElevation } from '../theme/cards';
+import { useLiturgicalVestmentAccent } from '../state/VestmentAccentContext';
+import { cardElevation, chipSurface, iconBadgeSurface, surfaceCard } from '../theme/cards';
+import { radii, typography } from '../theme/tokens';
 import { colors } from '../theme/tokens';
 import { SectionIcon } from './SectionIcon';
 
@@ -44,10 +46,9 @@ export function TodayDailyFocus({
   const { text } = useFontScale();
   const router = useRouter();
   const { setReadingsCategoryFilter } = usePreferences();
-  const cardBg = isDark ? colors.darkSurface : colors.card;
-  const muted = isDark ? '#a39e98' : colors.muted;
-  const accent = isDark ? colors.tabActiveDark : colors.accentWine;
-  const accentSoft = isDark ? 'rgba(232,201,122,0.14)' : 'rgba(107,45,60,0.1)';
+  const vestmentAccent = useLiturgicalVestmentAccent();
+  const muted = isDark ? '#9a948d' : colors.muted;
+  const accent = vestmentAccent.accent;
   const commemoration = feastName ?? saintName;
   const hasContent = loading || gospel || commemoration;
 
@@ -65,7 +66,7 @@ export function TodayDailyFocus({
       onPress={openGospel}
       style={({ pressed }) => [
         styles.shell,
-        cardElevation(isDark),
+        surfaceCard(isDark, { radius: radii.xxl, elevated: true }),
         {
           opacity: pressed ? 0.97 : 1,
           transform: [{ scale: pressed ? 0.992 : 1 }],
@@ -76,31 +77,25 @@ export function TodayDailyFocus({
       accessibilityHint={t('today.dailyFocusHint')}
       {...hoverAccessibilityProps(t('today.dailyFocusA11y'), { role: 'button' })}
     >
-      <View
-        style={[
-          styles.card,
-          {
-            backgroundColor: cardBg,
-            borderColor: isDark ? colors.darkBorder : borderColor,
-          },
-        ]}
-      >
+      <View style={styles.card}>
         <View style={styles.body}>
           <View style={styles.headerRow}>
-            <View style={[styles.iconBadge, { backgroundColor: accentSoft }]}>
-              <SectionIcon name="daily-gospel" color={accent} size={18} />
+            <View style={iconBadgeSurface(vestmentAccent.accentSoft)}>
+              <SectionIcon name="daily-gospel" color={accent} size={20} />
             </View>
             <View style={styles.headerText}>
-              <Text style={[styles.eyebrow, text(11, 14), { color: accent }]}>
+              <Text style={[styles.eyebrow, text(typography.eyebrow.fontSize, typography.eyebrow.lineHeight), { color: accent }]}>
                 {t('today.dailyFocusEyebrow')}
               </Text>
               {!loading && gospel?.citation ? (
-                <Text style={[styles.citation, text(13, 17), { color: textColor }]} numberOfLines={1}>
+                <Text style={[styles.citation, text(14, 18), { color: textColor }]} numberOfLines={1}>
                   {gospel.citation}
                 </Text>
               ) : null}
             </View>
-            <Feather name="arrow-up-right" size={18} color={muted} />
+            <View style={[styles.arrowBadge, { backgroundColor: vestmentAccent.accentMuted }]}>
+              <Feather name="arrow-up-right" size={16} color={muted} />
+            </View>
           </View>
 
           {loading ? (
@@ -109,7 +104,7 @@ export function TodayDailyFocus({
             </Text>
           ) : gospel ? (
             <Text
-              style={[styles.passage, text(16, 25), { color: textColor }]}
+              style={[styles.passage, text(16, 26), { color: textColor }]}
               numberOfLines={6}
             >
               {gospel.excerpt}
@@ -128,14 +123,15 @@ export function TodayDailyFocus({
 
           <View style={styles.footer}>
             <View style={styles.chipRow}>
-              <Chip label={fastLabel} textColor={textColor} isDark={isDark} text={text} />
+              <Chip label={fastLabel} textColor={textColor} accentMuted={vestmentAccent.accentMuted} isDark={isDark} text={text} />
               {toneLabel ? (
-                <Chip label={toneLabel} textColor={textColor} isDark={isDark} text={text} />
+                <Chip label={toneLabel} textColor={textColor} accentMuted={vestmentAccent.accentMuted} isDark={isDark} text={text} />
               ) : null}
               {commemoration ? (
                 <Chip
                   label={commemoration}
                   textColor={textColor}
+                  accentMuted={vestmentAccent.accentMuted}
                   isDark={isDark}
                   text={text}
                   wide
@@ -155,24 +151,20 @@ export function TodayDailyFocus({
 function Chip({
   label,
   textColor,
+  accentMuted,
   isDark,
   text,
   wide = false,
 }: {
   label: string;
   textColor: string;
+  accentMuted: string;
   isDark: boolean;
   text: (size: number, lineHeight: number) => { fontSize: number; lineHeight: number };
   wide?: boolean;
 }) {
   return (
-    <View
-      style={[
-        styles.chip,
-        wide ? styles.chipWide : null,
-        { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(107,45,60,0.07)' },
-      ]}
-    >
+    <View style={[chipSurface(accentMuted, isDark), wide ? styles.chipWide : null]}>
       <Text style={[styles.chipText, text(11, 14), { color: textColor }]} numberOfLines={1}>
         {label}
       </Text>
@@ -182,73 +174,66 @@ function Chip({
 
 const styles = StyleSheet.create({
   shell: {
-    marginTop: 16,
-    marginBottom: 6,
+    marginTop: 18,
+    marginBottom: 8,
   },
   card: {
-    borderRadius: 22,
-    borderWidth: StyleSheet.hairlineWidth,
-    overflow: 'hidden',
+    position: 'relative',
   },
   body: {
-    paddingVertical: 18,
-    paddingHorizontal: 18,
-    gap: 12,
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    gap: 14,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
-  },
-  iconBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    gap: 14,
   },
   headerText: {
     flex: 1,
     minWidth: 0,
-    gap: 2,
+    gap: 3,
+  },
+  arrowBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: radii.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   eyebrow: {
-    fontWeight: '800',
-    textTransform: 'uppercase',
-    letterSpacing: 1.1,
+    fontWeight: typography.eyebrow.fontWeight,
+    textTransform: typography.eyebrow.textTransform,
+    letterSpacing: typography.eyebrow.letterSpacing,
   },
   citation: {
     fontWeight: '700',
-    letterSpacing: 0.2,
+    letterSpacing: 0.1,
   },
   loadingLine: {
     fontStyle: 'italic',
   },
   passage: {
     fontFamily: SCRIPTURE_SERIF,
-    letterSpacing: 0.15,
+    letterSpacing: 0.12,
   },
   emptyPassage: {
     fontStyle: 'italic',
   },
   gospelLabel: {
-    marginTop: -6,
+    marginTop: -8,
     fontStyle: 'italic',
   },
   footer: {
-    gap: 10,
+    gap: 12,
     marginTop: 2,
   },
   chipRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
-  },
-  chip: {
-    borderRadius: 999,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    maxWidth: '48%',
+    gap: 8,
   },
   chipWide: {
     maxWidth: '100%',
@@ -259,6 +244,6 @@ const styles = StyleSheet.create({
   },
   readMore: {
     fontWeight: '700',
-    letterSpacing: 0.2,
+    letterSpacing: 0.3,
   },
 });

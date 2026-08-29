@@ -13,6 +13,7 @@ import { SplashGate } from '../src/components/SplashGate';
 import { WebViewportBootstrap } from '../src/components/WebViewportBootstrap';
 import { DayNavigationProvider } from '../src/state/DayNavigationContext';
 import { PreferencesProvider } from '../src/state/PreferencesContext';
+import { VestmentAccentProvider } from '../src/state/VestmentAccentContext';
 
 const WEB_SAFE_AREA_METRICS: Metrics = {
   insets: { top: 0, left: 0, right: 0, bottom: 0 },
@@ -67,8 +68,10 @@ export default function RootLayout() {
             <AppThemeProvider>
               <SplashGate>
                 <DayNavigationProvider>
-                  <LiturgicalRemindersSync />
-                  <RootStack />
+                  <VestmentAccentProvider>
+                    <LiturgicalRemindersSync />
+                    <RootStack />
+                  </VestmentAccentProvider>
                 </DayNavigationProvider>
               </SplashGate>
             </AppThemeProvider>

@@ -6,7 +6,7 @@ export const navigationThemeLight = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: colors.accentGold,
+    primary: colors.accentWine,
     background: colors.parchment,
     card: colors.card,
     text: colors.ink,

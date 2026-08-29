@@ -3,8 +3,9 @@ import { useTheme } from '@react-navigation/native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useScreenSafePadding } from '../hooks/useScreenSafePadding';
+import { cardElevation } from '../theme/cards';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
-import { colors } from '../theme/tokens';
+import { colors, radii } from '../theme/tokens';
 
 type Props = {
   title: string;
@@ -17,15 +18,15 @@ export function StackScreenHeader({ title, backLabel, onBack }: Props) {
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
   const screenSafe = useScreenSafePadding();
-  const backBorder = isDark ? colors.darkBorder : colors.border;
-  const backBg = isDark ? colors.darkSurface : colors.card;
+  const backBorder = isDark ? colors.darkBorderSubtle : colors.borderSubtle;
+  const backBg = isDark ? colors.darkSurfaceElevated : colors.card;
 
   return (
     <View
       style={[
         styles.topBar,
         {
-          paddingTop: screenSafe.paddingTop + 8,
+          paddingTop: screenSafe.paddingTop + 10,
           paddingLeft: screenSafe.paddingLeft,
           paddingRight: screenSafe.paddingRight,
         },
@@ -33,7 +34,11 @@ export function StackScreenHeader({ title, backLabel, onBack }: Props) {
     >
       <Pressable
         onPress={onBack}
-        style={[styles.backBtn, { backgroundColor: backBg, borderColor: backBorder }]}
+        style={[
+          styles.backBtn,
+          cardElevation(isDark),
+          { backgroundColor: backBg, borderColor: backBorder },
+        ]}
         accessibilityRole="button"
         accessibilityLabel={backLabel}
       >
@@ -56,13 +61,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: 10,
+    paddingBottom: 14,
     position: 'relative',
   },
   backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 42,
+    height: 42,
+    borderRadius: radii.md,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',
@@ -70,12 +75,12 @@ const styles = StyleSheet.create({
   },
   topTitle: {
     position: 'absolute',
-    left: 56,
-    right: 56,
+    left: 58,
+    right: 58,
     textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '700',
-    letterSpacing: 0.15,
+    fontSize: 17,
+    fontWeight: '800',
+    letterSpacing: 0.2,
   },
   topSpacer: {
     width: 40,

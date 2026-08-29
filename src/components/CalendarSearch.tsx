@@ -16,10 +16,12 @@ import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useCalendarSearch } from '../hooks/useCalendarSearch';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
+import { useVestmentAccent } from '../state/VestmentAccentContext';
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
+import { chipSurface } from '../theme/cards';
 import { CommemorationListMarker } from './CommemorationListMarker';
-import { colors } from '../theme/tokens';
+import { colors, radii } from '../theme/tokens';
 
 type Props = {
   calendar: PrimaryCalendar;
@@ -91,7 +93,12 @@ function SearchResultRow({
       onPress={onPress}
       style={({ pressed }) => [
         styles.resultRow,
-        { backgroundColor: cardBg, borderColor, opacity: pressed ? 0.88 : 1 },
+        {
+          backgroundColor: cardBg,
+          borderColor: borderColor,
+          opacity: pressed ? 0.92 : 1,
+          transform: [{ scale: pressed ? 0.99 : 1 }],
+        },
       ]}
       accessibilityRole="button"
       accessibilityLabel={`${formatResultDate(result.date, intlLocale)} — ${displayName}`}
@@ -146,6 +153,7 @@ export function CalendarSearch({
   } = useCalendarSearch(calendar, year, lang);
 
   const phoneLayout = usePhoneLayout();
+  const vestmentAccent = useVestmentAccent();
   const wrapPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
 
   const inputBg = isDark ? colors.darkSurface : colors.card;
@@ -154,7 +162,7 @@ export function CalendarSearch({
   return (
     <View style={[styles.wrap, padded ? { paddingHorizontal: wrapPaddingX } : null]}>
       <Text style={[styles.label, { color: textColor }]}>{t('calendar.searchTitle')}</Text>
-      <View style={[styles.inputRow, { backgroundColor: inputBg, borderColor }]}>
+      <View style={[styles.inputRow, { backgroundColor: inputBg, borderColor: isDark ? colors.darkBorderSubtle : colors.borderSubtle }]}>
         <Feather name="search" size={18} color={mutedColor} style={styles.searchIcon} />
         <TextInput
           value={query}
@@ -188,10 +196,13 @@ export function CalendarSearch({
               onPress={() => setFilter(item)}
               style={[
                 styles.filterChip,
-                {
-                  borderColor: active ? colors.accentWine : borderColor,
-                  backgroundColor: active ? colors.accentWine : 'transparent',
-                },
+                chipSurface(vestmentAccent.accentMuted, isDark),
+                active
+                  ? {
+                      borderColor: vestmentAccent.accent,
+                      backgroundColor: vestmentAccent.accent,
+                    }
+                  : null,
               ]}
               accessibilityRole="button"
               accessibilityState={{ selected: active }}
@@ -199,7 +210,7 @@ export function CalendarSearch({
               <Text
                 style={[
                   styles.filterChipText,
-                  { color: active ? '#fff' : textColor },
+                  { color: active ? vestmentAccent.onAccent : textColor },
                 ]}
               >
                 {filterLabel(t, item)}
@@ -215,7 +226,7 @@ export function CalendarSearch({
 
       {loadingYear && query.trim().length >= 2 ? (
         <View style={styles.loadingRow}>
-          <ActivityIndicator size="small" color={colors.accentWine} />
+          <ActivityIndicator size="small" color={vestmentAccent.accent} />
           <Text style={[styles.hint, { color: mutedColor }]}>{t('calendar.searchLoading')}</Text>
         </View>
       ) : null}
@@ -249,18 +260,19 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   label: {
-    fontSize: 15,
-    fontWeight: '700',
-    lineHeight: 20,
-    letterSpacing: 0.15,
+    fontSize: 11,
+    fontWeight: '800',
+    lineHeight: 14,
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 12,
-    minHeight: 44,
-    paddingHorizontal: 12,
+    borderRadius: radii.lg,
+    minHeight: 48,
+    paddingHorizontal: 14,
   },
   searchIcon: {
     marginRight: 8,
@@ -307,9 +319,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderRadius: radii.lg,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   resultDateCol: {
     width: 92,

@@ -3,7 +3,9 @@ import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
-import { colors } from '../../theme/tokens';
+import { useVestmentAccent } from '../../state/VestmentAccentContext';
+import { cardElevation, iconBadgeSurface } from '../../theme/cards';
+import { colors, radii } from '../../theme/tokens';
 import { SETTINGS_CARD_HORIZONTAL_INSET } from './settingsLayout';
 
 type Props = {
@@ -38,12 +40,16 @@ export function SettingsLinkRow({
   showDivider = false,
 }: Props) {
   const mutedColor = isDark ? '#a39e98' : colors.muted;
-  const iconColor = isDark ? colors.tabActiveDark : colors.accentWine;
+  const vestmentAccent = useVestmentAccent();
+  const iconColor = vestmentAccent.accent;
   const interactive = onPress != null && trailing == null;
 
   const leadingNode =
     leading ??
     (icon ? <Feather name={icon} size={18} color={iconColor} /> : null);
+  const leadingWrapped = leadingNode ? (
+    <View style={iconBadgeSurface(vestmentAccent.accentSoft)}>{leadingNode}</View>
+  ) : null;
 
   const trailingNode =
     trailing ??
@@ -66,7 +72,7 @@ export function SettingsLinkRow({
 
   const content = (
     <>
-      {leadingNode}
+      {leadingWrapped}
       <View style={styles.textCol}>
         <Text style={[styles.label, { color: isDark ? colors.darkInk : colors.ink }]}>{label}</Text>
         {hint ? <Text style={[styles.hint, { color: mutedColor }]}>{hint}</Text> : null}
@@ -102,11 +108,12 @@ export const settingsLinkListInset = {
 };
 
 export const settingsListCard = (isDark: boolean) => ({
-  borderRadius: 14,
+  borderRadius: radii.xl,
   borderWidth: StyleSheet.hairlineWidth,
   overflow: 'hidden' as const,
   backgroundColor: isDark ? colors.darkSurface : colors.card,
-  borderColor: isDark ? colors.darkBorder : colors.border,
+  borderColor: isDark ? colors.darkBorderSubtle : colors.borderSubtle,
+  ...cardElevation(isDark),
 });
 
 const styles = StyleSheet.create({
@@ -116,10 +123,10 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 4,
-    minHeight: 52,
+    gap: 14,
+    paddingVertical: 15,
+    paddingHorizontal: 16,
+    minHeight: 56,
   },
   rowPressed: {
     opacity: 0.72,
