@@ -435,19 +435,17 @@ export function isHolyWeekWeekdayHeadline(
 }
 
 /**
- * Twelve great feasts and fixed feast cells — major-feast UI (hero, Date block, About Today).
- * Level-6 orthocal ranks (e.g. apostle feasts) keep feast titles and typikon chips but not red styling.
+ * Major-feast UI (hero red border, Date block, About Today) — only when orthocal ranks
+ * feast_level ≥ 7 (Lord / Theotokos major feasts). Level-6 ranks and transferred commemorations
+ * on Holy Week weekdays keep feast titles and typikon chips but not major-feast styling.
  */
 export function isGreatFeastDayForFeastsHighlight(
   day: OrthocalDay | null | undefined,
-  appearanceKey: string,
-  dayTitle: string,
+  _appearanceKey: string,
+  _dayTitle: string,
   _feastRank: FeastRankDisplay | null | undefined,
 ): boolean {
-  if (transferredGreatFeastOnHolyWeekDay(day, appearanceKey, dayTitle)) return true;
-  if (isOrthocalGreatFeastLevel(day)) return true;
-  if (isOrthocalMajorFeastLevel(day)) return true;
-  return false;
+  return isOrthocalMajorFeastLevel(day);
 }
 
 /** @alias isGreatFeastDayForFeastsHighlight */

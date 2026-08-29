@@ -1,4 +1,5 @@
 import { isMeatFastRule } from './meatFast';
+import { hasOrthocalFastAbstentions, isOrthocalFastFreeDay } from '../api/orthocal';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
 import type { OrthocalDay } from '../api/orthocal';
@@ -128,7 +129,11 @@ function normalizeFastText(value: string): string {
 function orthocalRelaxesWeeklyFast(day: {
   fast_level: number;
   fast_exception_desc?: string;
+  fast_abstentions?: string[];
 }): boolean {
+  if (hasOrthocalFastAbstentions(day)) {
+    return true;
+  }
   if (day.fast_level >= 1) return true;
   const exception = day.fast_exception_desc?.trim();
   if (!exception) return false;
@@ -169,6 +174,7 @@ export function shouldApplyWeeklyFastOverride(
 ): boolean {
   if (!isWeeklyFastForCivilDate(civil)) return false;
   if (!day) return true;
+  if (hasOrthocalFastAbstentions(day)) return false;
   if (isMeatFastRule(day)) return false;
   if (day.fast_level >= 1) return false;
   if (orthocalRelaxesWeeklyFast(day)) return false;

@@ -31,6 +31,7 @@ function mockDay(partial: Partial<OrthocalDay>): OrthocalDay {
     fast_level_desc: 'Strict Fast',
     fast_exception: 0,
     fast_exception_desc: '',
+    fast_abstentions: ['meat', 'fish', 'dairy', 'eggs', 'wine', 'oil'],
     saints: [],
     service_notes: [],
     abbreviated_reading_indices: [],
@@ -61,12 +62,20 @@ const cases: Array<{
   },
   {
     name: 'wine and oil allowed',
-    day: mockDay({ fast_level: 5, fast_exception_desc: 'Wine and Oil Allowed' }),
+    day: mockDay({
+      fast_level: 5,
+      fast_exception_desc: 'Wine and Oil Allowed',
+      fast_abstentions: ['meat', 'fish', 'dairy', 'eggs'],
+    }),
     expect: { allowed: 'oil,plant,wine', notAllowed: 'dairy,eggs,fish,meat' },
   },
   {
     name: 'oil allowed only',
-    day: mockDay({ fast_level: 5, fast_exception_desc: 'Oil Allowed' }),
+    day: mockDay({
+      fast_level: 5,
+      fast_exception_desc: 'Oil Allowed',
+      fast_abstentions: ['meat', 'fish', 'dairy', 'eggs', 'wine'],
+    }),
     expect: { allowed: 'oil,plant', notAllowed: 'dairy,eggs,fish,meat,wine' },
   },
   {
@@ -74,12 +83,18 @@ const cases: Array<{
     day: mockDay({
       fast_level: 5,
       fast_exception_desc: 'Fish, Wine and Oil are Allowed',
+      fast_abstentions: ['meat', 'dairy', 'eggs'],
     }),
     expect: { allowed: 'fish,oil,plant,wine', notAllowed: 'dairy,eggs,meat' },
   },
   {
     name: 'meat fast',
-    day: mockDay({ fast_level: 1, fast_level_desc: 'Fast', fast_exception_desc: 'Meat Fast' }),
+    day: mockDay({
+      fast_level: 1,
+      fast_level_desc: 'Fast',
+      fast_exception_desc: 'Meat Fast',
+      fast_abstentions: ['meat'],
+    }),
     expect: {
       allowed: 'dairy,eggs,fish,oil,plant,wine',
       notAllowed: 'meat',
@@ -91,6 +106,7 @@ const cases: Array<{
       fast_level: 0,
       fast_level_desc: 'No Fast',
       fast_exception_desc: 'Meat Fast',
+      fast_abstentions: ['meat'],
     }),
     weeklyFast: true,
     expect: {
@@ -105,6 +121,7 @@ const cases: Array<{
       fast_level: 1,
       fast_level_desc: 'Fast',
       fast_exception_desc: '',
+      fast_abstentions: ['meat'],
     }),
     expect: {
       allowed: 'dairy,eggs,fish,oil,plant,wine',
@@ -117,6 +134,7 @@ const cases: Array<{
       fast_level: 2,
       fast_level_desc: 'Lenten Fast',
       fast_exception_desc: '',
+      fast_abstentions: ['meat', 'fish', 'dairy', 'eggs', 'wine', 'oil'],
     }),
     expect: { allowed: 'plant', notAllowed: 'dairy,eggs,fish,meat,oil,wine' },
     icons: { fish: false, wine: false, oil: false },
@@ -127,6 +145,7 @@ const cases: Array<{
       fast_level: 2,
       fast_level_desc: 'Lenten Fast',
       fast_exception_desc: 'Wine and Oil are Allowed',
+      fast_abstentions: ['meat', 'fish', 'dairy', 'eggs'],
     }),
     expect: { allowed: 'oil,plant,wine', notAllowed: 'dairy,eggs,fish,meat' },
     icons: { fish: false, wine: true, oil: true },
@@ -137,6 +156,7 @@ const cases: Array<{
       fast_level: 2,
       fast_level_desc: 'Lenten Fast',
       fast_exception_desc: 'Fish, Wine and Oil are Allowed',
+      fast_abstentions: ['meat', 'dairy', 'eggs'],
     }),
     expect: { allowed: 'fish,oil,plant,wine', notAllowed: 'dairy,eggs,meat' },
     icons: { fish: true, wine: true, oil: true },
@@ -147,6 +167,7 @@ const cases: Array<{
       fast_level: 2,
       fast_level_desc: 'Lenten Fast',
       fast_exception_desc: 'No overrides',
+      fast_abstentions: ['meat', 'fish', 'dairy', 'eggs', 'wine', 'oil'],
     }),
     expect: { allowed: 'plant', notAllowed: 'dairy,eggs,fish,meat,oil,wine' },
     icons: { fish: false, wine: false, oil: false },
@@ -199,6 +220,25 @@ const cases: Array<{
       exceptionNote: 'Fish, wine, and oil allowed',
     },
     icons: { fish: true, wine: true, oil: true },
+  },
+  {
+    name: 'legacy orthocal without fast_abstentions — wine and oil from exception text',
+    day: mockDay({
+      fast_level: 5,
+      fast_exception_desc: 'Wine and Oil Allowed',
+      fast_abstentions: undefined as unknown as string[],
+    }),
+    expect: { allowed: 'plant', notAllowed: 'dairy,eggs,fish,meat,oil,wine' },
+  },
+  {
+    name: 'fast free — empty abstentions',
+    day: mockDay({
+      fast_level: 0,
+      fast_level_desc: 'No Fast',
+      fast_exception_desc: 'Fast Free',
+      fast_abstentions: [],
+    }),
+    expect: { allowed: 'all', notAllowed: '' },
   },
   {
     name: 'cheesefare Tue — no orthocal yet',

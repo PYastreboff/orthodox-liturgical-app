@@ -509,7 +509,6 @@ const en = {
       'Great and Holy Friday is a day of total fast from food.',
     explainMeatFast:
       'Cheesefare week: abstain from meat; dairy, eggs, fish, wine, and oil are allowed.',
-    explainFastFree: 'Orthocal marks this as a fast-free day despite the calendar season.',
   },
   calendarHint: {
     julian: 'Saints and readings from orthocal Julian rubrics for this civil date.',
@@ -2199,7 +2198,6 @@ const ru = {
       'В Великую и Святую Пятницу — полное воздержание от пищи.',
     explainMeatFast:
       'Сырная седмица: без мяса; молочное, яйца, рыба, вино и масло разрешены.',
-    explainFastFree: 'Orthocal отмечает этот день как пост-free, несмотря на календарный сезон.',
   },
   calendarHint: {
     julian: 'Святые и чтения — юлианские рубрики orthocal для этой гражданской даты.',

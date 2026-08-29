@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { PlainDate } from '../calendar/julianGregorian';
 import type { OrthocalCalendar, OrthocalDay } from './orthocal';
 
-const STORAGE_KEY = '@orthodaily/orthocal-days/v1';
+const STORAGE_KEY = '@orthodaily/orthocal-days/v2';
 /** ~13 months of daily lookups for two calendar modes. */
 const MAX_ENTRIES = 400;
 

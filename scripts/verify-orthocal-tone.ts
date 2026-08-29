@@ -22,6 +22,7 @@ function day(partial: Partial<OrthocalDay> & Pick<OrthocalDay, 'pascha_distance'
     fast_level_desc: '',
     fast_exception: 0,
     fast_exception_desc: '',
+    fast_abstentions: [],
     saints: [],
     service_notes: [],
     abbreviated_reading_indices: [],

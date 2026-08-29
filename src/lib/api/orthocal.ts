@@ -44,8 +44,8 @@ export type OrthocalDay = {
   fast_level_desc: string;
   fast_exception: number;
   fast_exception_desc: string;
-  /** Foods to abstain from that day (orthocal.info). */
-  fast_abstentions?: string[];
+  /** Foods to abstain from that day (orthocal.info API). */
+  fast_abstentions: string[];
   saints: string[];
   service_notes: string[];
   abbreviated_reading_indices: number[];
@@ -168,31 +168,78 @@ export function formatOrthocalFastLabel(day: OrthocalDay): string {
   return label;
 }
 
-/** Orthocal FastLevels: 0 NoFast, 1 Fast, 2 Lenten, 3 Apostles, 4 Dormition, 5 Nativity.
- *  Food lists come from fast_exception / fast_abstentions, not from the level number. */
-const FAST_FOODS_BY_LEVEL: Record<number, string> = {
-  0: 'All standard foods are allowed.',
-  1: 'Fast day — typically Wed/Fri strict unless an exception applies.',
-  2: 'Lenten Fast season — foods follow that day’s wine/oil/fish exception.',
-  3: 'Apostles Fast season — foods follow that day’s wine/oil/fish exception.',
-  4: 'Dormition Fast season — foods follow that day’s wine/oil/fish exception.',
-  5: 'Nativity Fast season — foods follow that day’s wine/oil/fish exception.',
-};
+/** Canonical abstention tokens from orthocal `fast_abstentions`. */
+export type OrthocalFastAbstention = 'meat' | 'dairy' | 'eggs' | 'fish' | 'wine' | 'oil';
 
-export function fastingFoodsForLevel(fastLevel: number, fallbackKey: string): string {
-  if (FAST_FOODS_BY_LEVEL[fastLevel] !== undefined) {
-    return FAST_FOODS_BY_LEVEL[fastLevel];
+const ORTHOCAL_FAST_ABSTENTION_SET = new Set<OrthocalFastAbstention>([
+  'meat',
+  'dairy',
+  'eggs',
+  'fish',
+  'wine',
+  'oil',
+]);
+
+function normalizeOrthocalFastText(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Foods orthocal marks as abstained that day. Empty array = no fast / all foods allowed. */
+export function orthocalFastAbstentions(day: Pick<OrthocalDay, 'fast_abstentions'>): string[] {
+  return day.fast_abstentions ?? [];
+}
+
+export function hasOrthocalFastAbstentions(
+  day: Pick<OrthocalDay, 'fast_abstentions'>,
+): day is OrthocalDay & { fast_abstentions: string[] } {
+  return Array.isArray(day.fast_abstentions);
+}
+
+/** True when orthocal reports no abstentions (fast free / feast day). */
+export function isOrthocalFastFreeDay(
+  day: Pick<OrthocalDay, 'fast_level' | 'fast_exception_desc' | 'fast_abstentions'>,
+): boolean {
+  if (hasOrthocalFastAbstentions(day)) {
+    return day.fast_abstentions.length === 0;
   }
-  if (fallbackKey.includes('lent')) {
-    return FAST_FOODS_BY_LEVEL[5];
+  if ((day.fast_level ?? 0) >= 1) return false;
+  const exception = day.fast_exception_desc?.trim();
+  if (!exception) return true;
+  const normalized = normalizeOrthocalFastText(exception);
+  return normalized === 'fast free' || normalized === 'fast free day' || normalized === 'no fast';
+}
+
+/** Cheesefare week meat fast — only `meat` is abstained. */
+export function isOrthocalMeatFastDay(
+  day: Pick<OrthocalDay, 'fast_abstentions' | 'fast_exception_desc' | 'fast_level_desc' | 'pascha_distance'>,
+): boolean {
+  if (hasOrthocalFastAbstentions(day)) {
+    const abstentions = day.fast_abstentions.map((entry) => entry.toLowerCase());
+    return abstentions.length === 1 && abstentions[0] === 'meat';
   }
-  if (fallbackKey === 'wednesday_fast' || fallbackKey === 'friday_fast') {
-    return FAST_FOODS_BY_LEVEL[5];
+  const exception = day.fast_exception_desc?.trim();
+  if (exception) {
+    const normalized = normalizeOrthocalFastText(exception);
+    if (normalized === 'meat fast' || normalized.endsWith(' meat fast')) return true;
   }
-  if (fallbackKey.includes('fast')) {
-    return 'Plant-based foods; wine and oil may be allowed depending on the day.';
+  const levelDesc = day.fast_level_desc?.trim();
+  if (levelDesc) {
+    const normalized = normalizeOrthocalFastText(levelDesc);
+    if (normalized === 'meat fast' || normalized.endsWith(' meat fast')) return true;
   }
-  return FAST_FOODS_BY_LEVEL[0];
+  return day.pascha_distance >= -55 && day.pascha_distance <= -49;
+}
+
+export function orthocalFastAbstentionKinds(
+  day: Pick<OrthocalDay, 'fast_abstentions'>,
+): OrthocalFastAbstention[] {
+  return orthocalFastAbstentions(day).filter((entry): entry is OrthocalFastAbstention =>
+    ORTHOCAL_FAST_ABSTENTION_SET.has(entry.toLowerCase() as OrthocalFastAbstention),
+  );
 }
 
 export type LiturgicalVerseLine = {
