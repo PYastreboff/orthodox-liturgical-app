@@ -66,6 +66,8 @@ export function DaySectionPage({ section }: Props) {
     return null;
   }
 
+  const showDayIntro = section !== 'bible';
+
   return (
     <>
       <Head>
@@ -93,22 +95,24 @@ export function DaySectionPage({ section }: Props) {
                 },
               ]}
             >
-              <View style={[styles.intro, surfaceCard(isDark, { radius: radii.xl })]}>
-                <View style={iconBadgeSurface(vestmentAccent.accentSoft)}>
-                  <SectionIcon name={icon} color={iconColor} size={26} />
+              {showDayIntro ? (
+                <View style={[styles.intro, surfaceCard(isDark, { radius: radii.xl })]}>
+                  <View style={iconBadgeSurface(vestmentAccent.accentSoft)}>
+                    <SectionIcon name={icon} color={iconColor} size={26} />
+                  </View>
+                  <View style={styles.introText}>
+                    <Text
+                      style={[styles.introDay, { color: theme.colors.text }]}
+                      numberOfLines={2}
+                    >
+                      {model.dashboard.dayTitle}
+                    </Text>
+                    <Text style={[styles.introDate, { color: muted }]} numberOfLines={2}>
+                      {model.gregorianDateLabel}
+                    </Text>
+                  </View>
                 </View>
-                <View style={styles.introText}>
-                  <Text
-                    style={[styles.introDay, { color: theme.colors.text }]}
-                    numberOfLines={2}
-                  >
-                    {model.dashboard.dayTitle}
-                  </Text>
-                  <Text style={[styles.introDate, { color: muted }]} numberOfLines={2}>
-                    {model.gregorianDateLabel}
-                  </Text>
-                </View>
-              </View>
+              ) : null}
 
               {model.waitingForDay ? (
                 <TodaySkeleton isDark={isDark} />
