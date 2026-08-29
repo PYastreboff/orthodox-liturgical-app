@@ -20,11 +20,9 @@ import {
   type TodaySectionId,
 } from '../../lib/today/todaySections';
 import { SERVING_ROLE_PHRASE_LABEL_KEYS } from '../../lib/liturgical/servingRoles';
-import { iconBadgeSurface, surfaceCard } from '../../theme/cards';
-import { colors, radii } from '../../theme/tokens';
+import { colors } from '../../theme/tokens';
 import { useVestmentAccent } from '../../state/VestmentAccentContext';
 import { useResolvedColorScheme } from '../../theme/useResolvedColorScheme';
-import { useTheme } from '@react-navigation/native';
 import { Redirect, useRootNavigationState } from 'expo-router';
 import Head from 'expo-router/head';
 
@@ -35,7 +33,6 @@ type Props = {
 };
 
 export function DaySectionPage({ section }: Props) {
-  const theme = useTheme();
   const rootNavigationState = useRootNavigationState();
   const { t } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
@@ -52,6 +49,9 @@ export function DaySectionPage({ section }: Props) {
   const vestmentAccent = useVestmentAccent();
   const iconColor = vestmentAccent.accent;
   const muted = isDark ? '#a39e98' : colors.muted;
+  const pageSubtitle = [model.dashboard.dayTitle, model.gregorianDateLabel]
+    .filter((line, index, all) => line && all.indexOf(line) === index)
+    .join(' · ');
 
   const goBack = useStackBack('/(tabs)');
 
@@ -62,8 +62,6 @@ export function DaySectionPage({ section }: Props) {
   if (!isSectionVisibleForRole(section, model.servingRole)) {
     return <Redirect href="/(tabs)" />;
   }
-
-  const showDayIntro = section !== 'bible';
 
   return (
     <>
@@ -78,8 +76,12 @@ export function DaySectionPage({ section }: Props) {
           <View style={styles.pageInner}>
             <StackScreenHeader
               title={title}
+              subtitle={pageSubtitle}
               backLabel={t('today.back')}
               onBack={goBack}
+              icon={<SectionIcon name={icon} color={iconColor} size={22} />}
+              accentSoft={vestmentAccent.accentSoft}
+              mutedColor={muted}
             />
             <AppScrollView
               contentContainerStyle={[
@@ -92,25 +94,6 @@ export function DaySectionPage({ section }: Props) {
                 },
               ]}
             >
-              {showDayIntro ? (
-                <View style={[styles.intro, surfaceCard(isDark, { radius: radii.xl })]}>
-                  <View style={iconBadgeSurface(vestmentAccent.accentSoft)}>
-                    <SectionIcon name={icon} color={iconColor} size={26} />
-                  </View>
-                  <View style={styles.introText}>
-                    <Text
-                      style={[styles.introDay, { color: theme.colors.text }]}
-                      numberOfLines={2}
-                    >
-                      {model.dashboard.dayTitle}
-                    </Text>
-                    <Text style={[styles.introDate, { color: muted }]} numberOfLines={2}>
-                      {model.gregorianDateLabel}
-                    </Text>
-                  </View>
-                </View>
-              ) : null}
-
               {model.waitingForDay ? (
                 <TodaySkeleton isDark={isDark} />
               ) : model.error ? (
@@ -136,30 +119,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     width: '100%',
     alignSelf: 'center',
-    paddingTop: 4,
+    paddingTop: 0,
     gap: 0,
-  },
-  intro: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    marginBottom: 18,
-  },
-  introText: {
-    flex: 1,
-    minWidth: 0,
-    gap: 2,
-  },
-  introDay: {
-    fontSize: 17,
-    fontWeight: '800',
-    letterSpacing: 0.1,
-  },
-  introDate: {
-    fontSize: 13,
-    lineHeight: 18,
   },
   statusError: {
     color: colors.accentWine,

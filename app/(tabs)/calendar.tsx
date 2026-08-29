@@ -4,18 +4,20 @@ import {
   View,
 } from 'react-native';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import Head from 'expo-router/head';
 
 import { AppScrollView } from '../../src/components/AppScrollView';
 import { CalendarSearch } from '../../src/components/CalendarSearch';
+import { DevotionalPageHeader } from '../../src/components/DevotionalPageHeader';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
-import { PhonePageHeader } from '../../src/components/PhonePageHeader';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
+import { useLiturgicalVestmentAccent } from '../../src/state/VestmentAccentContext';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
@@ -34,6 +36,8 @@ export default function CalendarScreen() {
 
   const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
+  const vestmentAccent = useLiturgicalVestmentAccent();
+  const muted = isDark ? '#a39e98' : colors.muted;
   const [cursor, setCursor] = useState(thisMonth);
 
   const setCursorMonth = useCallback((date: Date) => {
@@ -99,17 +103,19 @@ export default function CalendarScreen() {
       ]}
     >
       <View style={styles.introSection}>
-        <PhonePageHeader
+        <DevotionalPageHeader
+          icon={<Feather name="calendar" size={22} color={vestmentAccent.accent} />}
+          accentSoft={vestmentAccent.accentSoft}
           title={t('calendar.title')}
           subtitle={t('calendar.subtitleShort')}
           textColor={theme.colors.text}
-          mutedColor={theme.dark ? '#a39e98' : colors.muted}
+          mutedColor={muted}
         />
         <CalendarSearch
           calendar={primaryCalendar}
           year={cursor.getFullYear()}
           textColor={theme.colors.text}
-          mutedColor={theme.dark ? '#a39e98' : colors.muted}
+          mutedColor={muted}
           cardBg={theme.colors.card}
           borderColor={theme.colors.border}
           isDark={theme.dark}

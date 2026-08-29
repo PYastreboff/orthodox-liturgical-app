@@ -176,12 +176,9 @@ export function RecipeDetailView({
           accessibilityLabel={t('recipes.back')}
           hitSlop={8}
         >
-          <Feather
-            name="chevron-left"
-            size={22}
-            color="#fff"
-            style={styles.backFabIcon}
-          />
+          <View style={styles.backFabIconSlot} pointerEvents="none">
+            <Feather name="chevron-left" size={22} color="#fff" style={styles.backFabIcon} />
+          </View>
         </Pressable>
         <Pressable
           onPress={handleShare}
@@ -445,8 +442,16 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: 'rgba(255,255,255,0.25)',
   },
+  backFabIconSlot: {
+    width: 22,
+    height: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   backFabIcon: {
-    marginLeft: -2,
+    lineHeight: 22,
+    textAlign: 'center',
+    transform: [{ translateX: -1 }],
   },
   shareFab: {
     position: Platform.OS === 'web' ? ('fixed' as 'absolute') : 'absolute',

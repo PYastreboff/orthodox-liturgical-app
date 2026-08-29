@@ -56,24 +56,21 @@ function parsePayload(data: unknown): { sections: ChrysostomSection[]; source: s
   return { sections: valid, source: payload.source ?? '' };
 }
 
-async function fetchFromUrl(url: string): Promise<{ sections: ChrysostomSection[]; source: string }> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
-  try {
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: { Accept: 'application/json' },
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data: unknown = await response.json();
-    return parsePayload(data);
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
 function hasAlignedUnits(sections: ChrysostomSection[]): boolean {
   return sections.some((section) => (section.units?.length ?? 0) > 0);
+}
+
+function payloadVersion(data: LiturgyPayload): number {
+  return typeof data.version === 'number' ? data.version : 0;
+}
+
+function preferNewerSections(
+  current: { sections: ChrysostomSection[]; source: string; version: number },
+  candidate: { sections: ChrysostomSection[]; source: string; version: number },
+): { sections: ChrysostomSection[]; source: string; version: number } {
+  if (!hasAlignedUnits(candidate.sections)) return current;
+  if (!hasAlignedUnits(current.sections)) return candidate;
+  return candidate.version >= current.version ? candidate : current;
 }
 
 export async function fetchChrysostomLiturgy(options?: {
@@ -84,23 +81,41 @@ export async function fetchChrysostomLiturgy(options?: {
 
   inflight = (async () => {
     try {
+      const bundled = parsePayload(bundledLiturgy);
+      let best = {
+        sections: bundled.sections,
+        source: bundled.source || 'Bundled liturgy library',
+        version: payloadVersion(bundledLiturgy as LiturgyPayload),
+      };
+
       for (const url of libraryUrls()) {
         try {
-          const { sections, source } = await fetchFromUrl(url);
-          if (hasAlignedUnits(sections)) {
-            memoryCache = sections;
-            memorySource = source;
-            return sections;
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 20000);
+          try {
+            const response = await fetch(url, {
+              signal: controller.signal,
+              headers: { Accept: 'application/json' },
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data: unknown = await response.json();
+            const remote = parsePayload(data);
+            best = preferNewerSections(best, {
+              sections: remote.sections,
+              source: remote.source,
+              version: payloadVersion(data as LiturgyPayload),
+            });
+          } finally {
+            clearTimeout(timeout);
           }
         } catch {
           // try next URL
         }
       }
 
-      const bundled = parsePayload(bundledLiturgy);
-      memoryCache = bundled.sections;
-      memorySource = bundled.source || 'Bundled liturgy library';
-      return bundled.sections;
+      memoryCache = best.sections;
+      memorySource = best.source;
+      return best.sections;
     } finally {
       inflight = null;
     }

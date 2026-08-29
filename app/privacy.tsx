@@ -1,4 +1,5 @@
 import Head from 'expo-router/head';
+import { Feather } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 
@@ -12,6 +13,7 @@ import {
   PRIVACY_POLICY_LAST_UPDATED,
   PRIVACY_POLICY_SECTIONS,
 } from '../src/lib/legal/privacyPolicy';
+import { useVestmentAccent } from '../src/state/VestmentAccentContext';
 import { useResolvedColorScheme } from '../src/theme/useResolvedColorScheme';
 import { colors } from '../src/theme/tokens';
 
@@ -22,6 +24,7 @@ export default function PrivacyPolicyScreen() {
   const screenSafe = useScreenSafePadding();
   const insets = useLayoutSafeAreaInsets();
   const muted = isDark ? '#a39e98' : colors.muted;
+  const vestmentAccent = useVestmentAccent();
   const goBack = useStackBack('/settings');
 
   return (
@@ -37,8 +40,12 @@ export default function PrivacyPolicyScreen() {
         <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
           <StackScreenHeader
             title={t('privacy.title')}
+            subtitle={t('privacy.intro')}
             backLabel={t('privacy.back')}
             onBack={goBack}
+            icon={<Feather name="shield" size={22} color={vestmentAccent.accent} />}
+            accentSoft={vestmentAccent.accentSoft}
+            mutedColor={muted}
           />
         <ScrollView
           contentContainerStyle={[

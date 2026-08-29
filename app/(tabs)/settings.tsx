@@ -20,7 +20,7 @@ import {
   PayPalMark,
 } from '../../src/components/PayPalLogo';
 import { AppScrollView } from '../../src/components/AppScrollView';
-import { PhonePageHeader } from '../../src/components/PhonePageHeader';
+import { DevotionalPageHeader } from '../../src/components/DevotionalPageHeader';
 import {
   SettingsLinkRow,
   settingsLinkListInset,
@@ -58,7 +58,7 @@ import type { FontScalePreference } from '../../src/theme/fontScale';
 import type { ClergyRole } from '../../src/types/liturgical';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
-import { useVestmentAccent } from '../../src/state/VestmentAccentContext';
+import { useVestmentAccent, useLiturgicalVestmentAccent } from '../../src/state/VestmentAccentContext';
 import { iconBadgeSurface } from '../../src/theme/cards';
 import { colors } from '../../src/theme/tokens';
 
@@ -164,6 +164,7 @@ export default function SettingsScreen() {
   const nativeReminders = supportsLocalNotifications();
   const muted = isDark ? '#a39e98' : colors.muted;
   const vestmentAccent = useVestmentAccent();
+  const liturgicalVestmentAccent = useLiturgicalVestmentAccent();
   const roleIconColor = vestmentAccent.accent;
 
   const servingRoleLabel = t(SERVING_ROLE_LABEL_KEYS[servingRole]);
@@ -476,7 +477,7 @@ export default function SettingsScreen() {
           contentContainerStyle={[
             styles.container,
             {
-              paddingTop: screenSafe.paddingTop + 20,
+              paddingTop: screenSafe.paddingTop + 16,
               paddingLeft: screenSafe.paddingLeft,
               paddingRight: screenSafe.paddingRight,
               paddingBottom: scrollBottomPadding,
@@ -484,7 +485,9 @@ export default function SettingsScreen() {
           ]}
         >
           <View style={styles.pageHeader}>
-            <PhonePageHeader
+            <DevotionalPageHeader
+              icon={<Feather name="settings" size={22} color={liturgicalVestmentAccent.accent} />}
+              accentSoft={liturgicalVestmentAccent.accentSoft}
               title={t('settings.title')}
               subtitle={t('settings.subtitleShort')}
               textColor={theme.colors.text}
@@ -818,7 +821,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   pageHeader: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   tipJarCard: {
     marginTop: 18,

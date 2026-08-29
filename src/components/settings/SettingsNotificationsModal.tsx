@@ -11,6 +11,7 @@ function tintLeading(node: ReactNode, selected: boolean): ReactNode {
 
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import type { NotificationReminderKind } from '../../lib/notifications/liturgicalReminders';
+import { useVestmentAccent } from '../../state/VestmentAccentContext';
 import { colors } from '../../theme/tokens';
 import { SettingsSheetFrame } from './SettingsSheetFrame';
 
@@ -52,6 +53,7 @@ export function SettingsNotificationsModal({
   onTestPress,
   testDisabled = false,
 }: Props) {
+  const vestmentAccent = useVestmentAccent();
   const surfaceBg = isDark ? '#2a2724' : '#ebe6de';
   const textColor = isDark ? '#e8e3dd' : '#2b2623';
   const mutedColor = isDark ? '#a39e98' : colors.muted;
@@ -139,11 +141,7 @@ export function SettingsNotificationsModal({
           accessibilityState={{ disabled: testDisabled }}
           {...hoverAccessibilityProps(testLabel, { role: 'button' })}
         >
-          <Feather
-            name="bell"
-            size={18}
-            color={isDark ? colors.tabActiveDark : colors.accentWine}
-          />
+          <Feather name="bell" size={18} color={vestmentAccent.accent} />
           <View style={styles.textCol}>
             <Text style={[styles.testLabel, { color: textColor }]}>{testLabel}</Text>
             {testHint ? (

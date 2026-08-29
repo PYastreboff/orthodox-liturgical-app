@@ -2,17 +2,17 @@ import { Feather } from '@expo/vector-icons';
 import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
+import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
+import { colors, radii } from '../../theme/tokens';
+import { SettingsSheetFrame } from './SettingsSheetFrame';
+
 const SELECTED_FG = '#fff';
+const PRESSED_TINT = 'rgba(139,46,60,0.14)';
 
 function tintLeading(node: ReactNode, selected: boolean): ReactNode {
   if (!selected || !isValidElement(node)) return node;
   return cloneElement(node as ReactElement<{ color?: string }>, { color: SELECTED_FG });
 }
-
-import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
-import { useVestmentAccent } from '../../state/VestmentAccentContext';
-import { colors, radii } from '../../theme/tokens';
-import { SettingsSheetFrame } from './SettingsSheetFrame';
 
 export type SettingsOption<T extends string> = {
   id: T;
@@ -40,7 +40,6 @@ export function SettingsOptionModal<T extends string>({
   onClose,
   isDark,
 }: Props<T>) {
-  const vestmentAccent = useVestmentAccent();
   const surfaceBg = isDark ? colors.darkSurfaceElevated : colors.card;
   const textColor = isDark ? colors.darkInk : colors.ink;
   const borderColor = isDark ? colors.darkBorderSubtle : colors.borderSubtle;
@@ -72,9 +71,9 @@ export function SettingsOptionModal<T extends string>({
                 styles.option,
                 {
                   backgroundColor: selected
-                    ? vestmentAccent.accent
+                    ? colors.accentWine
                     : pressed
-                      ? vestmentAccent.accentMuted
+                      ? PRESSED_TINT
                       : 'transparent',
                 },
               ]}
@@ -90,13 +89,13 @@ export function SettingsOptionModal<T extends string>({
                 <View style={styles.leading}>{tintLeading(option.leading, selected)}</View>
               ) : null}
               <Text
-                style={[styles.optionLabel, { color: selected ? vestmentAccent.onAccent : textColor }]}
+                style={[styles.optionLabel, { color: selected ? SELECTED_FG : textColor }]}
                 numberOfLines={2}
               >
                 {option.label}
               </Text>
               {selected ? (
-                <Feather name="check" size={18} color={vestmentAccent.onAccent} />
+                <Feather name="check" size={18} color={SELECTED_FG} />
               ) : (
                 <View style={styles.checkPlaceholder} />
               )}

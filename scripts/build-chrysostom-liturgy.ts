@@ -66,7 +66,7 @@ const sections = SECTION_IDS.map((id) => {
 });
 
 const payload = {
-  version: 7,
+  version: 8,
   updated: new Date().toISOString().slice(0, 10),
   source:
     'Divine Liturgy of St John Chrysostom — St Justin Martyr Orthodox Church congregational text (LITURGY-for-website.pdf); Greek and Church Slavonic aligned translations.',

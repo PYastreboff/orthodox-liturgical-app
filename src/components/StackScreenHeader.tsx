@@ -1,20 +1,34 @@
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import type { ReactNode } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useScreenSafePadding } from '../hooks/useScreenSafePadding';
 import { cardElevation } from '../theme/cards';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { colors, radii } from '../theme/tokens';
+import { DevotionalPageHeader } from './DevotionalPageHeader';
 
 type Props = {
   title: string;
+  subtitle?: string;
   backLabel: string;
   onBack: () => void;
+  icon: ReactNode;
+  accentSoft: string;
+  mutedColor: string;
 };
 
-/** Circular back + centered title — shared by recipes, privacy, legend, etc. */
-export function StackScreenHeader({ title, backLabel, onBack }: Props) {
+/** Back control plus devotional title block — shared by day sections, recipes, privacy, etc. */
+export function StackScreenHeader({
+  title,
+  subtitle,
+  backLabel,
+  onBack,
+  icon,
+  accentSoft,
+  mutedColor,
+}: Props) {
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
   const screenSafe = useScreenSafePadding();
@@ -24,9 +38,9 @@ export function StackScreenHeader({ title, backLabel, onBack }: Props) {
   return (
     <View
       style={[
-        styles.topBar,
+        styles.wrap,
         {
-          paddingTop: screenSafe.paddingTop + 10,
+          paddingTop: screenSafe.paddingTop + 16,
           paddingLeft: screenSafe.paddingLeft,
           paddingRight: screenSafe.paddingRight,
         },
@@ -42,27 +56,31 @@ export function StackScreenHeader({ title, backLabel, onBack }: Props) {
         accessibilityRole="button"
         accessibilityLabel={backLabel}
       >
-        <Feather name="chevron-left" size={22} color={theme.colors.text} />
+        <View style={styles.backIconSlot} pointerEvents="none">
+          <Feather
+            name="chevron-left"
+            size={22}
+            color={theme.colors.text}
+            style={styles.backIcon}
+          />
+        </View>
       </Pressable>
-      <Text
-        pointerEvents="none"
-        style={[styles.topTitle, { color: theme.colors.text }]}
-        numberOfLines={1}
-      >
-        {title}
-      </Text>
-      <View style={styles.topSpacer} />
+      <DevotionalPageHeader
+        icon={icon}
+        accentSoft={accentSoft}
+        title={title}
+        subtitle={subtitle}
+        textColor={theme.colors.text}
+        mutedColor={mutedColor}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingBottom: 14,
-    position: 'relative',
+  wrap: {
+    gap: 12,
+    paddingBottom: 16,
   },
   backBtn: {
     width: 42,
@@ -71,19 +89,17 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1,
+    alignSelf: 'flex-start',
   },
-  topTitle: {
-    position: 'absolute',
-    left: 58,
-    right: 58,
+  backIconSlot: {
+    width: 22,
+    height: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backIcon: {
+    lineHeight: 22,
     textAlign: 'center',
-    fontSize: 17,
-    fontWeight: '800',
-    letterSpacing: 0.2,
-  },
-  topSpacer: {
-    width: 40,
-    height: 40,
+    transform: [{ translateX: -1 }],
   },
 });
