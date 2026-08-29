@@ -1,17 +1,18 @@
 import { MaterialTopTabBar, type MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
-import { Platform, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { Animated, Platform, StyleSheet, View } from 'react-native';
 
 import { TabBarBleedBackground } from './TabBarBleedBackground';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
 import { useVestmentAccent } from '../state/VestmentAccentContext';
 import { tabBarChrome } from '../theme/cards';
 import { TAB_BAR_CONTENT_HEIGHT, TAB_BAR_EDGE_PAD_PX } from '../theme/layout';
-import { radii } from '../theme/tokens';
+import { colors, radii } from '../theme/tokens';
 import { tabBarFloatInsets } from '../theme/tabBarFloat';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 
 export function tabBarBackground(isDark: boolean): string {
-  return isDark ? 'rgba(24, 22, 20, 0.92)' : 'rgba(255, 255, 255, 0.94)';
+  return isDark ? colors.darkSurface : colors.card;
 }
 
 const SELECTION_INSET_X = 3;
@@ -19,6 +20,7 @@ const SELECTION_INSET_Y = 5;
 
 /** Bottom-positioned floating pill tab bar (phone + web). */
 export function MainTabBar(props: MaterialTopTabBarProps) {
+  const { position, state } = props;
   const isDark = useResolvedColorScheme() === 'dark';
   const insets = useLayoutSafeAreaInsets();
   const vestmentAccent = useVestmentAccent();
@@ -26,7 +28,22 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
   const float = tabBarFloatInsets(isNativePhone, insets.bottom);
   const tabBarBg = tabBarBackground(isDark);
   const chrome = tabBarChrome(isDark);
-  const activeIndex = props.state.index;
+  const [barWidth, setBarWidth] = useState(0);
+  const tabCount = state.routes.length;
+  const slotWidth = tabCount > 0 ? barWidth / tabCount : 0;
+  const inputRange = state.routes.map((_, index) => index);
+  const outputRange =
+    slotWidth > 0
+      ? state.routes.map((_, index) => index * slotWidth + SELECTION_INSET_X)
+      : state.routes.map(() => 0);
+  const selectionTranslateX =
+    slotWidth > 0
+      ? position.interpolate({
+          inputRange,
+          outputRange,
+          extrapolate: 'clamp',
+        })
+      : null;
 
   return (
     <View
@@ -47,20 +64,23 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
         ]}
       >
         <TabBarBleedBackground color={tabBarBg} bleedPx={TAB_BAR_EDGE_PAD_PX} />
-        <View style={styles.tabBarRow}>
+        <View
+          style={styles.tabBarRow}
+          onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}
+        >
           <View pointerEvents="none" style={styles.selectionLayer}>
-            {props.state.routes.map((route, index) => (
-              <View key={route.key} style={styles.selectionSlot}>
-                {index === activeIndex ? (
-                  <View
-                    style={[
-                      styles.selectionFill,
-                      { backgroundColor: vestmentAccent.accentSoft },
-                    ]}
-                  />
-                ) : null}
-              </View>
-            ))}
+            {selectionTranslateX ? (
+              <Animated.View
+                style={[
+                  styles.selectionFill,
+                  {
+                    width: slotWidth - SELECTION_INSET_X * 2,
+                    backgroundColor: vestmentAccent.accentSoft,
+                    transform: [{ translateX: selectionTranslateX }],
+                  },
+                ]}
+              />
+            ) : null}
           </View>
           <MaterialTopTabBar {...props} />
         </View>
@@ -92,18 +112,11 @@ const styles = StyleSheet.create({
   },
   selectionLayer: {
     ...StyleSheet.absoluteFillObject,
-    flexDirection: 'row',
-    alignItems: 'stretch',
-  },
-  selectionSlot: {
-    flex: 1,
-    alignSelf: 'stretch',
   },
   selectionFill: {
-    flex: 1,
-    alignSelf: 'stretch',
-    marginHorizontal: SELECTION_INSET_X,
-    marginVertical: SELECTION_INSET_Y,
+    position: 'absolute',
+    top: SELECTION_INSET_Y,
+    bottom: SELECTION_INSET_Y,
     borderRadius: radii.pill,
   },
 });

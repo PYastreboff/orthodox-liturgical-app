@@ -70,20 +70,12 @@ export function chipSurface(accentMuted: string, isDark = false): ViewStyle {
 }
 
 export function tabBarChrome(isDark: boolean): ViewStyle {
-  const backgroundColor = isDark ? 'rgba(24, 22, 20, 0.92)' : 'rgba(255, 255, 255, 0.94)';
-
   return {
-    backgroundColor,
+    backgroundColor: isDark ? colors.darkSurface : colors.card,
     borderRadius: radii.xxl,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: isDark ? colors.darkBorderSubtle : colors.borderSubtle,
     overflow: 'hidden',
     ...cardElevation(isDark),
-    ...(Platform.OS === 'web'
-      ? ({
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-        } as ViewStyle)
-      : null),
   };
 }
