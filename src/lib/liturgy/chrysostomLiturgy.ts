@@ -47,6 +47,10 @@ export function chrysostomTitleKey(id: ChrysostomSectionId): string {
   return `liturgy.chrysostom.${id}.title`;
 }
 
+export function chrysostomNavKey(id: ChrysostomSectionId): string {
+  return `liturgy.chrysostom.${id}.nav`;
+}
+
 /** @deprecated Use chrysostomSectionUnits */
 export function chrysostomParagraphs(id: ChrysostomSectionId, lang: UiLanguage): string[] {
   return chrysostomSectionParagraphs(getCachedChrysostomLiturgy() ?? [], id, lang);

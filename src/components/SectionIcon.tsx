@@ -10,6 +10,7 @@ export type SectionIconName =
   | 'about-today'
   | 'feasts'
   | 'saints'
+  | 'commemorations'
   | 'fasting'
   | 'recipes'
   | 'vestments'
@@ -33,6 +34,7 @@ const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
   'about-today': 'dayAbout.sectionTitle',
   feasts: 'today.sectionFeasts',
   saints: 'today.sectionSaints',
+  commemorations: 'today.sectionCommemorations',
   fasting: 'today.sectionFasting',
   recipes: 'today.sectionRecipes',
   vestments: 'today.sectionVestments',
@@ -75,6 +77,8 @@ export function SectionIcon({ name, color, size = SECTION_ICON_SIZE }: Props) {
         return <MaterialCommunityIcons name="star-four-points-outline" size={size} color={color} />;
       case 'saints':
         return <MaterialCommunityIcons name="account-outline" size={size} color={color} />;
+      case 'commemorations':
+        return <MaterialCommunityIcons name="calendar-star" size={size} color={color} />;
       case 'fasting':
         return <MaterialCommunityIcons name="baguette" size={size} color={color} />;
       case 'recipes':

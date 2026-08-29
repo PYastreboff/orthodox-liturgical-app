@@ -1,15 +1,20 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
+import { AppScrollView } from './AppScrollView';
+import { JesusPrayerRopeLink } from './JesusPrayerRopeLink';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useFontScale } from '../hooks/useFontScale';
 import {
   PRAYER_IDS,
   prayerParagraphs,
+  prayerTitleKey,
   type PrayerId,
 } from '../lib/prayers/prayers';
+import { surfaceCard } from '../theme/cards';
+import { radii } from '../theme/tokens';
 
 type Props = {
   textColor: string;
@@ -18,6 +23,8 @@ type Props = {
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };
+  variant?: 'tab' | 'embedded';
+  scrollBottomPadding?: number;
 };
 
 const PRAYER_SERIF = Platform.select({
@@ -37,52 +44,47 @@ function isRubricLine(paragraph: string): boolean {
 
 function PrayerRow({
   id,
+  expanded,
+  onToggle,
   textColor,
   mutedColor,
-  borderColor,
   isDark,
   bodyType,
   hintType,
+  isLast,
 }: {
   id: PrayerId;
+  expanded: boolean;
+  onToggle: () => void;
   textColor: string;
   mutedColor: string;
-  borderColor: string;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };
+  isLast: boolean;
 }) {
   const { t, lang } = useAppTranslation();
   const { text } = useFontScale();
-  const [expanded, setExpanded] = useState(false);
   const paragraphs = prayerParagraphs(id, lang);
   const prayerType = text(14.5, 21);
   const rubricType = text(12.5, 18);
   const singleLine = paragraphs.length === 1 && !isRubricLine(paragraphs[0] ?? '');
+  const title = t(prayerTitleKey(id));
+  const rowDivider = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)';
 
   return (
-    <View
-      style={[
-        styles.prayerCard,
-        {
-          backgroundColor: isDark ? 'rgba(255,255,255,0.045)' : 'rgba(43,38,35,0.035)',
-          borderColor,
-        },
-      ]}
-    >
+    <View>
       <Pressable
-        onPress={() => setExpanded((value) => !value)}
-        style={styles.prayerHeader}
+        onPress={onToggle}
+        style={({ pressed }) => [styles.row, { opacity: pressed ? 0.78 : 1 }]}
         accessibilityRole="button"
         accessibilityState={{ expanded }}
-        {...hoverAccessibilityProps(t(`prayers.${id}.title`), { role: 'button' })}
+        {...hoverAccessibilityProps(title, { role: 'button' })}
       >
-        <View style={styles.prayerHeaderText}>
-          <Text style={[styles.prayerTitle, bodyType, { color: textColor }]}>
-            {t(`prayers.${id}.title`)}
-          </Text>
+        <View style={styles.rowCopy}>
+          <Text style={[styles.rowTitle, bodyType, { color: textColor }]}>{title}</Text>
           {!expanded ? (
-            <Text style={[styles.prayerSummary, hintType, { color: mutedColor }]} numberOfLines={2}>
+            <Text style={[styles.rowSummary, hintType, { color: mutedColor }]} numberOfLines={2}>
               {t(`prayers.${id}.summary`)}
             </Text>
           ) : null}
@@ -96,9 +98,9 @@ function PrayerRow({
       {expanded ? (
         <View
           style={[
-            styles.prayerBody,
+            styles.rowBody,
             {
-              borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(43,38,35,0.08)',
+              borderTopColor: rowDivider,
             },
           ]}
         >
@@ -124,6 +126,7 @@ function PrayerRow({
           })}
         </View>
       ) : null}
+      {!isLast ? <View style={[styles.divider, { backgroundColor: rowDivider }]} /> : null}
     </View>
   );
 }
@@ -135,58 +138,104 @@ export function PrayersSectionBody({
   isDark,
   bodyType,
   hintType,
+  variant = 'embedded',
+  scrollBottomPadding = 24,
 }: Props) {
-  return (
-    <View style={styles.list}>
-      {PRAYER_IDS.map((id) => (
-        <PrayerRow
-          key={id}
-          id={id}
-          textColor={textColor}
-          mutedColor={mutedColor}
-          borderColor={borderColor}
-          isDark={isDark}
-          bodyType={bodyType}
-          hintType={hintType}
-        />
-      ))}
-    </View>
+  const [expandedId, setExpandedId] = useState<PrayerId | null>(null);
+
+  const togglePrayer = useCallback((id: PrayerId) => {
+    setExpandedId((current) => (current === id ? null : id));
+  }, []);
+
+  const content = (
+    <>
+      <View style={[styles.prayerCard, surfaceCard(isDark, { radius: radii.lg })]}>
+        {PRAYER_IDS.map((id, index) => (
+          <PrayerRow
+            key={id}
+            id={id}
+            expanded={expandedId === id}
+            onToggle={() => togglePrayer(id)}
+            textColor={textColor}
+            mutedColor={mutedColor}
+            isDark={isDark}
+            bodyType={bodyType}
+            hintType={hintType}
+            isLast={index === PRAYER_IDS.length - 1}
+          />
+        ))}
+      </View>
+      <JesusPrayerRopeLink
+        textColor={textColor}
+        mutedColor={mutedColor}
+        borderColor={borderColor}
+        isDark={isDark}
+      />
+    </>
   );
+
+  if (variant === 'tab') {
+    return (
+      <View style={styles.root}>
+        <AppScrollView
+          style={styles.scroll}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollBottomPadding }]}
+        >
+          {content}
+        </AppScrollView>
+      </View>
+    );
+  }
+
+  return <View style={styles.embeddedRoot}>{content}</View>;
 }
 
 const styles = StyleSheet.create({
-  list: {
-    gap: 12,
+  root: {
+    flex: 1,
+  },
+  embeddedRoot: {
+    gap: 16,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    gap: 16,
+    paddingTop: 4,
   },
   prayerCard: {
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
   },
-  prayerHeader: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    minHeight: 56,
   },
-  prayerHeaderText: {
+  rowCopy: {
     flex: 1,
     minWidth: 0,
     gap: 3,
   },
-  prayerTitle: {
+  rowTitle: {
     fontWeight: '700',
     letterSpacing: 0.15,
   },
-  prayerSummary: {
+  rowSummary: {
     opacity: 0.88,
   },
-  prayerBody: {
-    paddingHorizontal: 14,
+  rowBody: {
+    paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: 14,
     borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    marginLeft: 16,
   },
   prayerParagraph: {
     opacity: 0.96,

@@ -39,8 +39,74 @@ function normalizeRole(word: string): LiturgyRole {
   if (key.includes('choir') || key.includes('хор') || key === 'χορος') return 'choir';
   if (key.includes('people') || key.includes('народ') || key === 'λαος') return 'people';
   if (key.includes('reader') || key.includes('чтец') || key === 'αναγνωστης') return 'reader';
-  if (key.includes('clergy')) return 'clergy';
+  if (key.includes('clergy') || key.includes('сослуж')) return 'clergy';
   return 'celebrant';
+}
+
+function parseRoleLine(trimmed: string): ParsedLiturgyLine | null {
+  const enSpeech = trimmed.match(EN_ROLE_SPEECH);
+  if (enSpeech) {
+    const role = normalizeRole(enSpeech[1]);
+    const speech = enSpeech[4].trim();
+    return {
+      kind: 'role-speech',
+      role,
+      label: enSpeech[1].toUpperCase(),
+      direction: enSpeech[3]?.trim(),
+      speech,
+    };
+  }
+
+  const ruSpeech = trimmed.match(RU_ROLE_SPEECH);
+  if (ruSpeech) {
+    const role = normalizeRole(ruSpeech[1]);
+    return {
+      kind: 'role-speech',
+      role,
+      label: ruSpeech[1],
+      speech: ruSpeech[2].trim(),
+    };
+  }
+
+  const elSpeech = trimmed.match(EL_ROLE_SPEECH);
+  if (elSpeech) {
+    const role = normalizeRole(elSpeech[1]);
+    return {
+      kind: 'role-speech',
+      role,
+      label: elSpeech[1].toUpperCase(),
+      speech: elSpeech[2].trim(),
+    };
+  }
+
+  const enOnly = trimmed.match(EN_ROLE_ONLY);
+  if (enOnly) {
+    return {
+      kind: 'role-only',
+      role: normalizeRole(enOnly[1]),
+      label: enOnly[1].toUpperCase(),
+      direction: enOnly[3]?.trim(),
+    };
+  }
+
+  const ruOnly = trimmed.match(RU_ROLE_ONLY);
+  if (ruOnly) {
+    return {
+      kind: 'role-only',
+      role: normalizeRole(ruOnly[1]),
+      label: ruOnly[1],
+    };
+  }
+
+  if (EL_ROLE_ONLY.test(trimmed)) {
+    return {
+      kind: 'role-only',
+      role: normalizeRole(trimmed),
+      label: trimmed,
+    };
+  }
+
+  return null;
 }
 
 function isCreedTitle(text: string): boolean {
@@ -174,92 +240,19 @@ export function parseLiturgyLine(line: string, lang: UiLanguage): ParsedLiturgyL
   const devotional = devotionalFromLine(trimmed);
   if (devotional) return devotional;
 
-  if (lang === 'en') {
-    const speechMatch = trimmed.match(EN_ROLE_SPEECH);
-    if (speechMatch) {
-      const speech = speechMatch[4].trim();
-      const congregationalDevotional = isCongregationalRole(normalizeRole(speechMatch[1]))
-        ? devotionalFromSpeech(speech)
+  const roleLine = parseRoleLine(trimmed);
+  if (roleLine) {
+    if (roleLine.kind === 'role-speech') {
+      const congregationalDevotional = isCongregationalRole(roleLine.role)
+        ? devotionalFromSpeech(roleLine.speech)
         : null;
       if (congregationalDevotional) return congregationalDevotional;
-
-      const role = normalizeRole(speechMatch[1]);
-      return {
-        kind: 'role-speech',
-        role,
-        label: speechMatch[1].toUpperCase(),
-        direction: speechMatch[3]?.trim(),
-        speech: speechMatch[4].trim(),
-      };
     }
-    const roleOnly = trimmed.match(EN_ROLE_ONLY);
-    if (roleOnly) {
-      return {
-        kind: 'role-only',
-        role: normalizeRole(roleOnly[1]),
-        label: roleOnly[1].toUpperCase(),
-        direction: roleOnly[3]?.trim(),
-      };
-    }
-    if (isLitanyDeaconLine(trimmed, 'en')) {
-      return { kind: 'role-speech', role: 'deacon', label: 'DEACON', speech: trimmed };
-    }
+    return roleLine;
   }
 
-  if (lang === 'ru') {
-    const speechMatch = trimmed.match(RU_ROLE_SPEECH);
-    if (speechMatch) {
-      const speech = speechMatch[2].trim();
-      const congregationalDevotional = isCongregationalRole(normalizeRole(speechMatch[1]))
-        ? devotionalFromSpeech(speech)
-        : null;
-      if (congregationalDevotional) return congregationalDevotional;
-
-      const role = normalizeRole(speechMatch[1]);
-      return {
-        kind: 'role-speech',
-        role,
-        label: speechMatch[1],
-        speech: speech,
-      };
-    }
-    const roleOnly = trimmed.match(RU_ROLE_ONLY);
-    if (roleOnly) {
-      return {
-        kind: 'role-only',
-        role: normalizeRole(roleOnly[1]),
-        label: roleOnly[1],
-      };
-    }
-  }
-
-  if (lang === 'el') {
-    const speechMatch = trimmed.match(EL_ROLE_SPEECH);
-    if (speechMatch) {
-      const speech = speechMatch[2].trim();
-      const congregationalDevotional = isCongregationalRole(normalizeRole(speechMatch[1]))
-        ? devotionalFromSpeech(speech)
-        : null;
-      if (congregationalDevotional) return congregationalDevotional;
-
-      const role = normalizeRole(speechMatch[1]);
-      return {
-        kind: 'role-speech',
-        role,
-        label: speechMatch[1].toUpperCase(),
-        speech: speech,
-      };
-    }
-    if (EL_ROLE_ONLY.test(trimmed)) {
-      return {
-        kind: 'role-only',
-        role: normalizeRole(trimmed),
-        label: trimmed,
-      };
-    }
-    if (isLitanyDeaconLine(trimmed, 'el')) {
-      return { kind: 'role-speech', role: 'deacon', label: 'ΔΙΑΚΟΝΟΣ', speech: trimmed };
-    }
+  if (isLitanyDeaconLine(trimmed, lang)) {
+    return { kind: 'role-speech', role: 'deacon', label: 'DEACON', speech: trimmed };
   }
 
   if (isHeadingLine(trimmed)) {

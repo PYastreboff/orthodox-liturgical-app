@@ -1,5 +1,4 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { Redirect, useLocalSearchParams, useRootNavigationState } from 'expo-router';
 
 import { DaySectionPage } from '../../src/components/day/DaySectionPage';
 import {
@@ -9,20 +8,19 @@ import {
 import { usePreferences } from '../../src/state/PreferencesContext';
 
 export default function DaySectionScreen() {
-  const router = useRouter();
+  const rootNavigationState = useRootNavigationState();
   const { servingRole } = usePreferences();
   const params = useLocalSearchParams<{ section?: string | string[] }>();
   const raw = Array.isArray(params.section) ? params.section[0] : params.section;
   const section = raw && isTodaySectionId(raw) ? raw : null;
+  const invalid = !section || !isSectionVisibleForRole(section, servingRole);
 
-  useEffect(() => {
-    if (!section || !isSectionVisibleForRole(section, servingRole)) {
-      router.replace('/(tabs)');
-    }
-  }, [section, servingRole, router]);
-
-  if (!section || !isSectionVisibleForRole(section, servingRole)) {
+  if (!rootNavigationState?.key) {
     return null;
+  }
+
+  if (invalid) {
+    return <Redirect href="/(tabs)" />;
   }
 
   return <DaySectionPage section={section} />;

@@ -25,9 +25,8 @@ import { colors, radii } from '../../theme/tokens';
 import { useVestmentAccent } from '../../state/VestmentAccentContext';
 import { useResolvedColorScheme } from '../../theme/useResolvedColorScheme';
 import { useTheme } from '@react-navigation/native';
-import { useRouter } from 'expo-router';
+import { Redirect, useRootNavigationState } from 'expo-router';
 import Head from 'expo-router/head';
-import { useEffect } from 'react';
 
 const CONTENT_MAX = 800;
 
@@ -37,7 +36,7 @@ type Props = {
 
 export function DaySectionPage({ section }: Props) {
   const theme = useTheme();
-  const router = useRouter();
+  const rootNavigationState = useRootNavigationState();
   const { t } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
   const screenSafe = useScreenSafePadding();
@@ -56,14 +55,12 @@ export function DaySectionPage({ section }: Props) {
 
   const goBack = useStackBack('/(tabs)');
 
-  useEffect(() => {
-    if (!isSectionVisibleForRole(section, model.servingRole)) {
-      router.replace('/(tabs)');
-    }
-  }, [section, model.servingRole, router]);
+  if (!rootNavigationState?.key) {
+    return null;
+  }
 
   if (!isSectionVisibleForRole(section, model.servingRole)) {
-    return null;
+    return <Redirect href="/(tabs)" />;
   }
 
   const showDayIntro = section !== 'bible';

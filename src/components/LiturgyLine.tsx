@@ -1,6 +1,7 @@
 import { Platform, StyleSheet, Text } from 'react-native';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
+import { translate } from '../i18n/translate';
 import { useFontScale } from '../hooks/useFontScale';
 import {
   liturgyRoleLabelKey,
@@ -41,10 +42,9 @@ function roleColor(role: LiturgyRole, isDark: boolean) {
 
 function roleLabel(
   parsed: ParsedLiturgyLine & { kind: 'role-only' | 'role-speech' },
-  showTranslatedLabel: boolean,
-  t: (key: string) => string,
+  lang: LiturgyTextLang,
 ): string {
-  return showTranslatedLabel ? t(liturgyRoleLabelKey(parsed.role)) : parsed.label;
+  return translate(lang, liturgyRoleLabelKey(parsed.role));
 }
 
 export function LiturgyLine({
@@ -62,7 +62,6 @@ export function LiturgyLine({
   const rubricType = text(compact ? 11.5 : 12.5, compact ? 17 : 18);
   const headingType = text(compact ? 12 : 13, compact ? 16 : 18);
   const roleType = text(compact ? 10 : 11, compact ? 14 : 16);
-  const showTranslatedLabel = lang === 'en' || lang === 'ru';
 
   if (!line.trim()) {
     return null;
@@ -88,7 +87,7 @@ export function LiturgyLine({
         </Text>
       );
     case 'role-only': {
-      const label = roleLabel(parsed, showTranslatedLabel, t);
+      const label = roleLabel(parsed, lang);
       const fg = roleColor(parsed.role, isDark);
       return (
         <Text style={[styles.paragraph, speechType, { color: textColor, fontFamily: LITURGY_SERIF }]}>
@@ -100,7 +99,7 @@ export function LiturgyLine({
       );
     }
     case 'role-speech': {
-      const label = roleLabel(parsed, showTranslatedLabel, t);
+      const label = roleLabel(parsed, lang);
       const fg = roleColor(parsed.role, isDark);
       return (
         <Text style={[styles.paragraph, speechType, { color: textColor, fontFamily: LITURGY_SERIF }]}>

@@ -1,6 +1,10 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
+import { AppScrollView } from './AppScrollView';
+import { CompareSidePicker } from './CompareSidePicker';
+import { LiturgyLanguageToggle } from './LiturgyLanguageToggle';
+import { LiturgyLine } from './LiturgyLine';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useChrysostomLiturgy } from '../hooks/useChrysostomLiturgy';
 import {
@@ -12,10 +16,8 @@ import {
 import type { LiturgyDisplayMode, LiturgyTextLang } from '../lib/liturgy/liturgyViewMode';
 import { liturgyCompareHasSelection } from '../lib/liturgy/liturgyViewMode';
 import { expandLiturgyDisplayLines } from '../lib/liturgy/liturgySanitize';
-import { LiturgyLanguageToggle } from './LiturgyLanguageToggle';
-import { CompareSidePicker } from './CompareSidePicker';
-import { LiturgyLine } from './LiturgyLine';
-import { colors } from '../theme/tokens';
+import { surfaceCard } from '../theme/cards';
+import { colors, radii } from '../theme/tokens';
 
 type Props = {
   textColor: string;
@@ -24,6 +26,8 @@ type Props = {
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };
+  variant?: 'tab' | 'embedded';
+  scrollBottomPadding?: number;
 };
 
 function sectionHasContent(
@@ -95,66 +99,56 @@ function LiturgySectionBlock({
 
   const titleColor = isDark ? '#e8c97a' : colors.accentWine;
 
-  if (mode.kind === 'compare') {
-    const left = mode.left;
-    const right = mode.right;
-    const hasSelection = liturgyCompareHasSelection(mode);
-    const leftLines = left ? chrysostomSectionParagraphs(sections, id, left) : [];
-    const rightLines = right ? chrysostomSectionParagraphs(sections, id, right) : [];
-    const rowCount = Math.max(leftLines.length, rightLines.length);
+  const body = (() => {
+    if (mode.kind === 'compare') {
+      const left = mode.left;
+      const right = mode.right;
+      const hasSelection = liturgyCompareHasSelection(mode);
+      const leftLines = left ? chrysostomSectionParagraphs(sections, id, left) : [];
+      const rightLines = right ? chrysostomSectionParagraphs(sections, id, right) : [];
+      const rowCount = Math.max(leftLines.length, rightLines.length);
+
+      if (!hasSelection) return null;
+
+      return (
+        <View style={styles.compareBody}>
+          {Array.from({ length: rowCount }, (_, row) => (
+            <View key={`${id}-compare-${row}`} style={styles.compareRow}>
+              <View style={[styles.compareCell, styles.compareCellFlex]}>
+                {left ? (
+                  <CompareCell
+                    lines={[leftLines[row] ?? '']}
+                    lang={left}
+                    textColor={textColor}
+                    mutedColor={mutedColor}
+                    isDark={isDark}
+                  />
+                ) : null}
+              </View>
+              <View style={[styles.columnDivider, { backgroundColor: borderColor }]} />
+              <View style={[styles.compareCell, styles.compareCellFlex]}>
+                {right ? (
+                  <CompareCell
+                    lines={[rightLines[row] ?? '']}
+                    lang={right}
+                    textColor={textColor}
+                    mutedColor={mutedColor}
+                    isDark={isDark}
+                  />
+                ) : null}
+              </View>
+            </View>
+          ))}
+        </View>
+      );
+    }
+
+    const lang = mode.lang;
+    const lines = chrysostomSectionParagraphs(sections, id, lang)
+      .flatMap((line) => expandLiturgyDisplayLines(line))
+      .filter((line) => line.trim());
 
     return (
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, bodyType, { color: titleColor }]}>{title}</Text>
-        </View>
-
-        {hasSelection ? (
-          <View style={styles.compareBody}>
-            {Array.from({ length: rowCount }, (_, row) => (
-              <View key={`${id}-compare-${row}`} style={styles.compareRow}>
-                <View style={[styles.compareCell, styles.compareCellFlex]}>
-                  {left ? (
-                    <CompareCell
-                      lines={[leftLines[row] ?? '']}
-                      lang={left}
-                      textColor={textColor}
-                      mutedColor={mutedColor}
-                      isDark={isDark}
-                    />
-                  ) : null}
-                </View>
-                <View style={[styles.columnDivider, { backgroundColor: borderColor }]} />
-                <View style={[styles.compareCell, styles.compareCellFlex]}>
-                  {right ? (
-                    <CompareCell
-                      lines={[rightLines[row] ?? '']}
-                      lang={right}
-                      textColor={textColor}
-                      mutedColor={mutedColor}
-                      isDark={isDark}
-                    />
-                  ) : null}
-                </View>
-              </View>
-            ))}
-          </View>
-        ) : null}
-      </View>
-    );
-  }
-
-  const lang = mode.lang;
-  const lines = chrysostomSectionParagraphs(sections, id, lang)
-    .flatMap((line) => expandLiturgyDisplayLines(line))
-    .filter((line) => line.trim());
-
-  return (
-    <View style={styles.section}>
-      <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, bodyType, { color: titleColor }]}>{title}</Text>
-      </View>
-
       <View style={styles.lines}>
         {lines.map((line, index) => (
           <View key={`${id}-${index}`} style={styles.lineItem}>
@@ -168,6 +162,58 @@ function LiturgySectionBlock({
           </View>
         ))}
       </View>
+    );
+  })();
+
+  return (
+    <View style={[styles.sectionCard, surfaceCard(isDark, { radius: radii.lg })]}>
+      <View style={styles.sectionHeader}>
+        <Text style={[styles.sectionTitle, bodyType, { color: titleColor }]}>{title}</Text>
+      </View>
+      {body}
+    </View>
+  );
+}
+
+function LiturgyToolbar({
+  mode,
+  onChange,
+  isDark,
+  hintType,
+  mutedColor,
+}: {
+  mode: LiturgyDisplayMode;
+  onChange: (mode: LiturgyDisplayMode) => void;
+  isDark: boolean;
+  hintType: { fontSize: number; lineHeight: number };
+  mutedColor: string;
+}) {
+  const { t } = useAppTranslation();
+
+  return (
+    <View style={styles.toolbarStack}>
+      <LiturgyLanguageToggle mode={mode} onChange={onChange} isDark={isDark} fullWidth />
+      {mode.kind === 'compare' ? (
+        <>
+          <CompareSidePicker<LiturgyTextLang>
+            left={mode.left}
+            right={mode.right}
+            onChangeLeft={(left) => onChange({ kind: 'compare', left, right: mode.right })}
+            onChangeRight={(right) => onChange({ kind: 'compare', left: mode.left, right })}
+            options={[
+              { value: 'en', label: 'EN' },
+              { value: 'el', label: 'ΕΛ' },
+              { value: 'ru', label: 'ЧС' },
+            ]}
+            leftLabel={t('readings.compareColumnLeft')}
+            rightLabel={t('readings.compareColumnRight')}
+            isDark={isDark}
+          />
+          <Text style={[hintType, styles.compareHint, { color: mutedColor }]}>
+            {t('liturgy.chrysostom.compareHint')}
+          </Text>
+        </>
+      ) : null}
     </View>
   );
 }
@@ -179,14 +225,42 @@ export function ChrysostomLiturgyBody({
   isDark,
   bodyType,
   hintType,
+  variant = 'embedded',
+  scrollBottomPadding = 24,
 }: Props) {
   const { t } = useAppTranslation();
   const liturgy = useChrysostomLiturgy();
   const [mode, setMode] = useState<LiturgyDisplayMode>({ kind: 'single', lang: 'en' });
 
-  return (
-    <View style={styles.list}>
-      <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t('liturgy.chrysostom.intro')}</Text>
+  const visibleSectionIds = useMemo(() => {
+    if (liturgy.status !== 'ready') return [];
+    return CHRYSOSTOM_SECTION_IDS.filter((id) => sectionHasContent(liturgy.sections, id));
+  }, [liturgy]);
+
+  const showSections =
+    liturgy.status === 'ready' &&
+    (mode.kind !== 'compare' || liturgyCompareHasSelection(mode));
+
+  const content = (
+    <>
+      {liturgy.status === 'ready' ? (
+        <View style={[styles.topCard, surfaceCard(isDark, { radius: radii.lg })]}>
+          <Text style={[styles.intro, hintType, { color: mutedColor }]}>
+            {t('liturgy.chrysostom.intro')}
+          </Text>
+          <LiturgyToolbar
+            mode={mode}
+            onChange={setMode}
+            isDark={isDark}
+            hintType={hintType}
+            mutedColor={mutedColor}
+          />
+        </View>
+      ) : (
+        <Text style={[styles.intro, hintType, { color: mutedColor }]}>
+          {t('liturgy.chrysostom.intro')}
+        </Text>
+      )}
 
       {liturgy.status === 'loading' ? (
         <View style={styles.centered}>
@@ -202,68 +276,74 @@ export function ChrysostomLiturgyBody({
             <Text style={[bodyType, styles.retry, { color: textColor }]}>{t('recipes.retry')}</Text>
           </Pressable>
         </View>
-      ) : (
-        <>
-          <View style={styles.toolbar}>
-            <LiturgyLanguageToggle mode={mode} onChange={setMode} isDark={isDark} />
-          </View>
-
-          {mode.kind === 'compare' ? (
-            <CompareSidePicker<LiturgyTextLang>
-              left={mode.left}
-              right={mode.right}
-              onChangeLeft={(left) => setMode({ kind: 'compare', left, right: mode.right })}
-              onChangeRight={(right) => setMode({ kind: 'compare', left: mode.left, right })}
-              options={[
-                { value: 'en', label: 'EN' },
-                { value: 'el', label: 'ΕΛ' },
-                { value: 'ru', label: 'ЧС' },
-              ]}
-              leftLabel={t('readings.compareColumnLeft')}
-              rightLabel={t('readings.compareColumnRight')}
+      ) : showSections ? (
+        <View style={styles.sections}>
+          {visibleSectionIds.map((id) => (
+            <LiturgySectionBlock
+              key={id}
+              id={id}
+              sections={liturgy.sections}
+              mode={mode}
+              textColor={textColor}
+              mutedColor={mutedColor}
+              borderColor={borderColor}
               isDark={isDark}
+              bodyType={bodyType}
             />
-          ) : null}
-
-          {mode.kind !== 'compare' || liturgyCompareHasSelection(mode) ? (
-            <>
-              {CHRYSOSTOM_SECTION_IDS.map((id) => (
-                <LiturgySectionBlock
-                  key={id}
-                  id={id}
-                  sections={liturgy.sections}
-                  mode={mode}
-                  textColor={textColor}
-                  mutedColor={mutedColor}
-                  borderColor={borderColor}
-                  isDark={isDark}
-                  bodyType={bodyType}
-                />
-              ))}
-            </>
-          ) : null}
-        </>
-      )}
+          ))}
+        </View>
+      ) : null}
 
       <Text style={[styles.disclaimer, hintType, { color: mutedColor }]}>
         {t('liturgy.chrysostom.disclaimer')}
       </Text>
-    </View>
+    </>
   );
+
+  if (variant === 'tab') {
+    return (
+      <View style={styles.root}>
+        <AppScrollView
+          style={styles.scroll}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollBottomPadding }]}
+        >
+          {content}
+        </AppScrollView>
+      </View>
+    );
+  }
+
+  return <View style={styles.embeddedRoot}>{content}</View>;
 }
 
 const styles = StyleSheet.create({
-  list: {
+  root: {
+    flex: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    gap: 16,
+    paddingTop: 4,
+  },
+  embeddedRoot: {
+    gap: 16,
+  },
+  topCard: {
     gap: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
   intro: {
-    opacity: 0.92,
     lineHeight: 20,
   },
-  toolbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+  toolbarStack: {
+    gap: 12,
+  },
+  compareHint: {
+    lineHeight: 18,
+    opacity: 0.9,
   },
   centered: {
     alignItems: 'center',
@@ -280,11 +360,16 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginTop: 2,
   },
-  section: {
-    paddingTop: 20,
+  sections: {
+    gap: 12,
+  },
+  sectionCard: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 14,
   },
   sectionHeader: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
   sectionTitle: {
     fontWeight: '800',

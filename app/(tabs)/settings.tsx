@@ -9,12 +9,16 @@ import {
   View,
 } from 'react-native';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
-import Constants from 'expo-constants';
 import Head from 'expo-router/head';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 import { OrthoDailyLogo } from '../../src/components/OrthoDailyLogo';
+import {
+  PAYPAL_BUTTON_BLUE,
+  PAYPAL_BUTTON_BLUE_PRESSED,
+  PayPalMark,
+} from '../../src/components/PayPalLogo';
 import { AppScrollView } from '../../src/components/AppScrollView';
 import { PhonePageHeader } from '../../src/components/PhonePageHeader';
 import {
@@ -28,7 +32,7 @@ import {
   type NotificationToggleOption,
 } from '../../src/components/settings/SettingsNotificationsModal';
 import { SettingsPersonalDaysModal } from '../../src/components/settings/SettingsPersonalDaysModal';
-import type { PersonalDayKind } from '../../src/lib/personalDays';
+import { getAppVersion } from '../../src/lib/appVersion';
 import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
 import { LanguageGlyphIcon } from '../../src/components/settings/LanguageGlyphIcon';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
@@ -55,6 +59,7 @@ import type { ClergyRole } from '../../src/types/liturgical';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { useVestmentAccent } from '../../src/state/VestmentAccentContext';
+import { iconBadgeSurface } from '../../src/theme/cards';
 import { colors } from '../../src/theme/tokens';
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/peter-yastreboff-6a9664313/';
@@ -447,7 +452,7 @@ export default function SettingsScreen() {
     setPermissionHint(false);
   }, [t, uiLanguage]);
 
-  const version = Constants.expoConfig?.version ?? '0.1.0';
+  const version = getAppVersion();
   const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
   const pageBg = theme.colors.background;
@@ -621,13 +626,20 @@ export default function SettingsScreen() {
             </View>
           </View>
 
-          <View style={[settingsListCard(isDark), styles.tipJarCard]}>
+          <View
+            style={[
+              settingsListCard(isDark),
+              styles.tipJarCard,
+              {
+                backgroundColor: vestmentAccent.accentMuted,
+                borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(107, 45, 60, 0.08)',
+              },
+            ]}
+          >
             <View style={styles.tipJarInner}>
-              <Feather
-                name="coffee"
-                size={22}
-                color={vestmentAccent.accent}
-              />
+              <View style={iconBadgeSurface(vestmentAccent.accentSoft)}>
+                <Feather name="coffee" size={18} color={vestmentAccent.accent} />
+              </View>
               <Text style={[styles.tipJarTitle, { color: theme.colors.text }]}>
                 {t('settings.tipJarTitle')}
               </Text>
@@ -641,13 +653,15 @@ export default function SettingsScreen() {
                 style={({ pressed }) => [
                   styles.tipJarButton,
                   {
-                    backgroundColor: vestmentAccent.accent,
-                    opacity: pressed ? 0.9 : 1,
+                    backgroundColor: pressed ? PAYPAL_BUTTON_BLUE_PRESSED : PAYPAL_BUTTON_BLUE,
+                    opacity: pressed ? 0.96 : 1,
                     transform: [{ scale: pressed ? 0.98 : 1 }],
                   },
                 ]}
               >
-                <Feather name="external-link" size={15} color="#fff" />
+                <View style={styles.tipJarButtonMarkChip}>
+                  <PayPalMark height={14} />
+                </View>
                 <Text style={styles.tipJarButtonLabel}>{t('settings.tipJarButton')}</Text>
               </Pressable>
             </View>
@@ -831,15 +845,29 @@ const styles = StyleSheet.create({
     marginTop: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 999,
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    minWidth: 200,
+    shadowColor: '#003087',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  tipJarButtonMarkChip: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 3,
   },
   tipJarButtonLabel: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
+    letterSpacing: 0.1,
   },
   footer: {
     marginTop: 8,

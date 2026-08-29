@@ -11,7 +11,7 @@ import { withLayoutContext } from 'expo-router';
 
 const { Navigator } = createMaterialTopTabNavigator();
 
-/** Bottom tabs that can be swiped between (Today ↔ Calendar ↔ Settings). */
+/** Bottom tabs that can be swiped between (Today ↔ Calendar ↔ Prayers ↔ Liturgy ↔ Settings). */
 export const SwipeTabs = withLayoutContext<
   MaterialTopTabNavigationOptions,
   typeof Navigator,

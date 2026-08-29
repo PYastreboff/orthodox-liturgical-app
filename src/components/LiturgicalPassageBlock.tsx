@@ -193,6 +193,8 @@ type SectionProps = {
   verseNumberColor: string;
   headingColor: string;
   topGap?: boolean;
+  /** Extra space before the first section on the readings page. */
+  leadingGap?: boolean;
   sideBySide?: boolean;
   rightItems?: LiturgicalTextItem[];
   leftLang?: ReadingsSingleLanguage | null;
@@ -210,6 +212,7 @@ export function LiturgicalTextSectionBlock({
   verseNumberColor,
   headingColor,
   topGap,
+  leadingGap,
   sideBySide,
   rightItems,
   leftLang = null,
@@ -225,7 +228,7 @@ export function LiturgicalTextSectionBlock({
   const resolvedMuted = mutedColor ?? textColor;
 
   return (
-    <View style={topGap ? styles.sectionGap : null}>
+    <View style={[topGap ? styles.sectionGap : null, leadingGap ? styles.sectionLeadingGap : null]}>
       <View style={styles.sectionHeadingRow}>
         <LiturgicalReadingIcon category={category} color={headingColor} size={22} />
         <Text style={[styles.sectionHeading, headingType, { color: headingColor }]}>
@@ -268,6 +271,9 @@ export function LiturgicalTextSectionBlock({
 const styles = StyleSheet.create({
   sectionGap: {
     marginTop: 14,
+  },
+  sectionLeadingGap: {
+    marginTop: 8,
   },
   sectionHeadingRow: {
     flexDirection: 'row',

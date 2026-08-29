@@ -17,6 +17,7 @@ export const TODAY_SECTION_IDS = [
   'priestGuide',
   'readings',
   'bible',
+  'commemorations',
   'feasts',
   'saints',
 ] as const;
@@ -55,6 +56,12 @@ const BASE_TILES: readonly TodayTileDef[] = [
   { id: 'liturgy', icon: 'liturgy', titleKey: 'today.tileLiturgy', href: '/day/liturgy' },
   { id: 'readings', icon: 'readings', titleKey: 'today.tileReadings', href: '/day/readings' },
   { id: 'bible', icon: 'bible', titleKey: 'today.tileBible', href: '/day/bible' },
+  {
+    id: 'commemorations',
+    icon: 'commemorations',
+    titleKey: 'today.tileCommemorations',
+    href: '/day/commemorations',
+  },
   { id: 'feasts', icon: 'feasts', titleKey: 'today.tileFeasts', href: '/day/feasts' },
   { id: 'saints', icon: 'saints', titleKey: 'today.tileSaints', href: '/day/saints' },
   { id: 'services', icon: 'services', titleKey: 'today.tileServices', href: '/day/services' },
@@ -70,40 +77,16 @@ export function todaySectionTitleKey(section: TodaySectionId, servingRole: Clerg
       ? 'today.churchDressPageTitle'
       : 'today.vestmentsPageTitle';
   }
-  switch (section) {
-    case 'date':
-      return 'today.sectionDate';
-    case 'fasting':
-      return 'today.sectionFasting';
-    case 'prayers':
-      return 'today.sectionPrayers';
-    case 'jesusPrayer':
-      return 'today.sectionJesusPrayer';
-    case 'liturgy':
-      return 'today.sectionLiturgy';
-    case 'services':
-      return 'today.sectionServices';
-    case 'choirGuide':
-      return 'today.sectionChoirGuide';
-    case 'altarRoles':
-      return 'today.sectionAltarRoles';
-    case 'readerGuide':
-      return 'today.sectionReaderGuide';
-    case 'deaconGuide':
-      return 'today.sectionDeaconGuide';
-    case 'priestGuide':
-      return 'today.sectionPriestGuide';
-    case 'readings':
-      return 'today.sectionReadings';
-    case 'bible':
-      return 'today.sectionBible';
-    case 'feasts':
-      return 'today.sectionFeasts';
-    case 'saints':
-      return 'today.sectionSaints';
-    default:
-      return 'today.sectionDate';
+  return todayTileTitleKey(section, servingRole);
+}
+
+function todayTileTitleKey(section: TodaySectionId, servingRole: ClergyRole): string {
+  if (section === 'vestments') {
+    return tileTitleKeyForVestments(servingRole);
   }
+  const tile = BASE_TILES.find((entry) => entry.id === section);
+  if (tile) return tile.titleKey;
+  return tileTitleKeyForGuide(section);
 }
 
 export function todaySectionIcon(section: TodaySectionId, servingRole: ClergyRole): SectionIconName {
@@ -143,6 +126,8 @@ export function todaySectionIcon(section: TodaySectionId, servingRole: ClergyRol
       return 'feasts';
     case 'saints':
       return 'saints';
+    case 'commemorations':
+      return 'commemorations';
     default:
       return 'date';
   }
@@ -184,7 +169,7 @@ function tileTitleKeyForGuide(section: TodaySectionId): string {
     case 'priestGuide':
       return 'today.tilePriestGuide';
     default:
-      return todaySectionTitleKey(section, 'layperson');
+      return 'today.tileDate';
   }
 }
 

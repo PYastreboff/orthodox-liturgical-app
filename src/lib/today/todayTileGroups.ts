@@ -1,7 +1,7 @@
 import type { ClergyRole } from '../../types/liturgical';
 import { todayHomeTiles, type TodaySectionId, type TodayTileDef } from './todaySections';
 
-export type TodayTileGroupId = 'worship' | 'theDay' | 'serving';
+export type TodayTileGroupId = 'scripture' | 'theDay' | 'serving';
 
 export type TodayTileGroup = {
   id: TodayTileGroupId;
@@ -11,14 +11,14 @@ export type TodayTileGroup = {
 const GROUP_ORDER: readonly { id: TodayTileGroupId; titleKey: string; tileIds: readonly TodaySectionId[] }[] =
   [
     {
-      id: 'worship',
-      titleKey: 'today.groupWorship',
-      tileIds: ['jesusPrayer', 'prayers', 'liturgy', 'readings', 'bible'],
-    },
-    {
       id: 'theDay',
       titleKey: 'today.groupTheDay',
-      tileIds: ['date', 'fasting', 'feasts', 'saints', 'services'],
+      tileIds: ['date', 'fasting', 'commemorations', 'services'],
+    },
+    {
+      id: 'scripture',
+      titleKey: 'today.groupScripture',
+      tileIds: ['readings', 'bible'],
     },
     {
       id: 'serving',

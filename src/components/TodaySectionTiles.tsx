@@ -1,14 +1,14 @@
 import { useRouter, type Href } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
-import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { todayTileGroups } from '../lib/today/todayTileGroups';
 import { todaySectionTitleKey, type TodaySectionId } from '../lib/today/todaySections';
 import type { ClergyRole } from '../types/liturgical';
 import { useLiturgicalVestmentAccent } from '../state/VestmentAccentContext';
-import { iconBadgeSurface, surfaceCard } from '../theme/cards';
+import { surfaceCard } from '../theme/cards';
 import { radii, typography } from '../theme/tokens';
 import { SectionIcon } from './SectionIcon';
 
@@ -47,11 +47,11 @@ export function TodaySectionTiles({
 }: Props) {
   const { t } = useAppTranslation();
   const router = useRouter();
-  const phone = usePhoneLayout();
   const vestmentAccent = useLiturgicalVestmentAccent();
   const groups = todayTileGroups(servingRole);
   const iconColor = vestmentAccent.accent;
   const sectionMuted = isDark ? '#8a8480' : '#7a746e';
+  const rowDivider = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)';
 
   return (
     <View style={styles.root}>
@@ -60,37 +60,28 @@ export function TodaySectionTiles({
           <Text style={[styles.groupTitle, typography.eyebrow, { color: sectionMuted }]}>
             {t(group.titleKey)}
           </Text>
-          <View style={[styles.grid, phone ? styles.gridPhone : styles.gridWide]}>
-            {tiles.map((tile) => {
+          <View style={[styles.groupCard, surfaceCard(isDark, { radius: radii.lg })]}>
+            {tiles.map((tile, index) => {
               const title = tileLabel(tile.id, tile.titleKey, servingRole, t);
+              const isLast = index === tiles.length - 1;
               return (
                 <Pressable
                   key={tile.id}
                   onPress={() => router.push(tile.href as Href)}
                   style={({ pressed }) => [
-                    styles.tileShell,
-                    phone ? styles.tilePhone : styles.tileWide,
-                    surfaceCard(isDark, { radius: radii.lg }),
-                    {
-                      opacity: pressed ? 0.94 : 1,
-                      transform: [{ scale: pressed ? 0.98 : 1 }],
-                    },
+                    styles.row,
+                    !isLast && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: rowDivider },
+                    { opacity: pressed ? 0.72 : 1 },
                   ]}
                   accessibilityRole="button"
                   accessibilityLabel={title}
                   {...hoverAccessibilityProps(title, { role: 'button' })}
                 >
-                  <View style={styles.tile}>
-                    <View style={iconBadgeSurface(vestmentAccent.accentSoft)}>
-                      <SectionIcon name={tile.icon} color={iconColor} size={20} />
-                    </View>
-                    <Text
-                      style={[styles.tileLabel, { color: textColor }]}
-                      numberOfLines={2}
-                    >
-                      {title}
-                    </Text>
-                  </View>
+                  <SectionIcon name={tile.icon} color={iconColor} size={18} />
+                  <Text style={[styles.rowLabel, { color: textColor }]} numberOfLines={2}>
+                    {title}
+                  </Text>
+                  <Feather name="chevron-right" size={16} color={sectionMuted} />
                 </Pressable>
               );
             })}
@@ -103,50 +94,33 @@ export function TodaySectionTiles({
 
 const styles = StyleSheet.create({
   root: {
-    gap: 24,
-    marginTop: 12,
+    gap: 20,
+    marginTop: 8,
     marginBottom: 10,
   },
   group: {
-    gap: 12,
+    gap: 8,
   },
   groupTitle: {
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
+    opacity: 0.9,
   },
-  grid: {
+  groupCard: {
+    overflow: 'hidden',
+  },
+  row: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 12,
-  },
-  gridPhone: {},
-  gridWide: {
-    gap: 14,
-  },
-  tileShell: {},
-  tile: {
-    paddingVertical: 18,
-    paddingHorizontal: 16,
-    minHeight: 104,
-    gap: 14,
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    minHeight: 52,
   },
-  tilePhone: {
-    width: '47.8%',
-    flexGrow: 1,
-  },
-  tileWide: {
-    width: '31%',
-    minWidth: 160,
-    flexGrow: 1,
-  },
-  tileLabel: {
-    width: '100%',
-    fontSize: 14,
-    fontWeight: '700',
-    letterSpacing: 0.1,
-    lineHeight: 18,
-    textAlign: 'center',
+  rowLabel: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: 0.05,
+    lineHeight: 20,
   },
 });

@@ -461,7 +461,7 @@ export function DayHero({
 const styles = StyleSheet.create({
   heroShell: {
     borderRadius: 28,
-    marginBottom: 18,
+    marginBottom: 10,
     width: '100%',
     alignSelf: 'stretch',
     overflow: 'hidden',

@@ -1,8 +1,8 @@
-import Constants from 'expo-constants';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { SPLASH_BACKGROUND } from '../brand/splash';
 import { useAppTranslation } from '../i18n/useAppTranslation';
+import { getAppVersion } from '../lib/appVersion';
 import { OrthoDailyLogo } from './OrthoDailyLogo';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 /** Branded launch screen — matches assets/splash.png (wine/gold cross on dark ground). */
 export function AppSplashScreen({ logoSize = 148 }: Props) {
   const { t } = useAppTranslation();
-  const version = Constants.expoConfig?.version ?? '0.1.0';
+  const version = getAppVersion();
   const versionLabel = t('a11y.appVersion', { version });
 
   return (

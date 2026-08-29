@@ -6,7 +6,6 @@ import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useBibleChapter } from '../hooks/useBibleChapter';
 import { useFontScale } from '../hooks/useFontScale';
-import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { BibleBookPickerModal } from './BibleBookPickerModal';
 import { BibleChapterPickerModal } from './BibleChapterPickerModal';
 import { BibleTranslationToggle } from './BibleTranslationToggle';
@@ -31,7 +30,6 @@ export function BibleSectionBody({
 }: Props) {
   const { t } = useAppTranslation();
   const { text } = useFontScale();
-  const phone = usePhoneLayout();
   const headingType = text(16, 22);
   const verseType = text(11, 13);
   const labelType = text(13, 18);
@@ -43,11 +41,12 @@ export function BibleSectionBody({
 
   return (
     <View style={styles.cardBody}>
-      <View style={[styles.toolbar, phone ? styles.toolbarPhone : null]}>
+      <View style={styles.toolbar}>
         <BibleTranslationToggle
           value={bible.translation}
           onChange={bible.setTranslation}
           isDark={isDark}
+          fullWidth
         />
       </View>
 
@@ -168,12 +167,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   toolbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  toolbarPhone: {
-    justifyContent: 'flex-start',
+    width: '100%',
   },
   navRow: {
     gap: 10,

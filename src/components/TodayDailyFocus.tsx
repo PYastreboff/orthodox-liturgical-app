@@ -8,19 +8,14 @@ import { useFontScale } from '../hooks/useFontScale';
 import type { ReadingExcerpt } from '../lib/liturgical/hymnExcerpt';
 import { usePreferences } from '../state/PreferencesContext';
 import { useLiturgicalVestmentAccent } from '../state/VestmentAccentContext';
-import { cardElevation, chipSurface, iconBadgeSurface, surfaceCard } from '../theme/cards';
+import { iconBadgeSurface, surfaceCard } from '../theme/cards';
 import { radii, typography } from '../theme/tokens';
 import { colors } from '../theme/tokens';
 import { SectionIcon } from './SectionIcon';
 
 type Props = {
   gospel: ReadingExcerpt | null;
-  fastLabel: string;
-  toneLabel: string;
-  saintName: string | null;
-  feastName: string | null;
   textColor: string;
-  borderColor: string;
   isDark: boolean;
   loading?: boolean;
 };
@@ -33,12 +28,7 @@ const SCRIPTURE_SERIF = Platform.select({
 
 export function TodayDailyFocus({
   gospel,
-  fastLabel,
-  toneLabel,
-  saintName,
-  feastName,
   textColor,
-  borderColor,
   isDark,
   loading = false,
 }: Props) {
@@ -49,10 +39,8 @@ export function TodayDailyFocus({
   const vestmentAccent = useLiturgicalVestmentAccent();
   const muted = isDark ? '#9a948d' : colors.muted;
   const accent = vestmentAccent.accent;
-  const commemoration = feastName ?? saintName;
-  const hasContent = loading || gospel || commemoration;
 
-  if (!hasContent) {
+  if (!loading && !gospel) {
     return null;
   }
 
@@ -109,11 +97,7 @@ export function TodayDailyFocus({
             >
               {gospel.excerpt}
             </Text>
-          ) : (
-            <Text style={[styles.emptyPassage, text(15, 22), { color: muted }]}>
-              {t('today.dailyFocusNoGospel')}
-            </Text>
-          )}
+          ) : null}
 
           {!loading && gospel?.label ? (
             <Text style={[styles.gospelLabel, text(12, 16), { color: muted }]} numberOfLines={1}>
@@ -121,60 +105,18 @@ export function TodayDailyFocus({
             </Text>
           ) : null}
 
-          <View style={styles.footer}>
-            <View style={styles.chipRow}>
-              <Chip label={fastLabel} textColor={textColor} accentMuted={vestmentAccent.accentMuted} isDark={isDark} text={text} />
-              {toneLabel ? (
-                <Chip label={toneLabel} textColor={textColor} accentMuted={vestmentAccent.accentMuted} isDark={isDark} text={text} />
-              ) : null}
-              {commemoration ? (
-                <Chip
-                  label={commemoration}
-                  textColor={textColor}
-                  accentMuted={vestmentAccent.accentMuted}
-                  isDark={isDark}
-                  text={text}
-                  wide
-                />
-              ) : null}
-            </View>
-            <Text style={[styles.readMore, text(13, 18), { color: accent }]}>
-              {t('today.dailyFocusReadMore')}
-            </Text>
-          </View>
+          <Text style={[styles.readMore, text(13, 18), { color: accent }]}>
+            {t('today.dailyFocusReadMore')}
+          </Text>
         </View>
       </View>
     </Pressable>
   );
 }
 
-function Chip({
-  label,
-  textColor,
-  accentMuted,
-  isDark,
-  text,
-  wide = false,
-}: {
-  label: string;
-  textColor: string;
-  accentMuted: string;
-  isDark: boolean;
-  text: (size: number, lineHeight: number) => { fontSize: number; lineHeight: number };
-  wide?: boolean;
-}) {
-  return (
-    <View style={[chipSurface(accentMuted, isDark), wide ? styles.chipWide : null]}>
-      <Text style={[styles.chipText, text(11, 14), { color: textColor }]} numberOfLines={1}>
-        {label}
-      </Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   shell: {
-    marginTop: 18,
+    marginTop: 10,
     marginBottom: 8,
   },
   card: {
@@ -219,31 +161,13 @@ const styles = StyleSheet.create({
     fontFamily: SCRIPTURE_SERIF,
     letterSpacing: 0.12,
   },
-  emptyPassage: {
-    fontStyle: 'italic',
-  },
   gospelLabel: {
     marginTop: -8,
     fontStyle: 'italic',
   },
-  footer: {
-    gap: 12,
-    marginTop: 2,
-  },
-  chipRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  chipWide: {
-    maxWidth: '100%',
-    flexShrink: 1,
-  },
-  chipText: {
-    fontWeight: '600',
-  },
   readMore: {
     fontWeight: '700',
     letterSpacing: 0.3,
+    marginTop: 2,
   },
 });

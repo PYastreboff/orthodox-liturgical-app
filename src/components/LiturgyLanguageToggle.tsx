@@ -22,6 +22,7 @@ type Props = {
   mode: LiturgyDisplayMode;
   onChange: (mode: LiturgyDisplayMode) => void;
   isDark: boolean;
+  fullWidth?: boolean;
 };
 
 function selectedIndexFor(mode: LiturgyDisplayMode): number {
@@ -31,7 +32,7 @@ function selectedIndexFor(mode: LiturgyDisplayMode): number {
   return 2;
 }
 
-export function LiturgyLanguageToggle({ mode, onChange, isDark }: Props) {
+export function LiturgyLanguageToggle({ mode, onChange, isDark, fullWidth = false }: Props) {
   const { t } = useAppTranslation();
   const trackBg = isDark ? '#2a2724' : '#ebe6de';
   const inactiveText = isDark ? '#a39e98' : colors.muted;
@@ -78,7 +79,7 @@ export function LiturgyLanguageToggle({ mode, onChange, isDark }: Props) {
 
   return (
     <View
-      style={[styles.track, { backgroundColor: trackBg }]}
+      style={[styles.track, { backgroundColor: trackBg }, fullWidth && styles.trackFullWidth]}
       onLayout={(e: LayoutChangeEvent) => setTrackWidth(e.nativeEvent.layout.width)}
     >
       {segmentWidth > 0 ? (
@@ -141,6 +142,10 @@ const styles = StyleSheet.create({
     minWidth: 168,
     height: 32,
     alignSelf: 'flex-start',
+  },
+  trackFullWidth: {
+    width: '100%',
+    alignSelf: 'stretch',
   },
   pill: {
     position: 'absolute',

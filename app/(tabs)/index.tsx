@@ -104,12 +104,7 @@ export default function TodayScreen() {
           {!model.waitingForDay ? (
             <TodayDailyFocus
               gospel={firstGospelExcerpt(model.gospelPreviewSections)}
-              fastLabel={model.dashboard.fastSummaryLabel}
-              toneLabel={model.dashboard.toneLabel}
-              saintName={model.saints[0]?.name ?? null}
-              feastName={model.feasts[0]?.name ?? null}
               textColor={theme.colors.text}
-              borderColor={theme.colors.border}
               isDark={model.isDark}
               loading={model.refreshing}
             />

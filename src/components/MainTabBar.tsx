@@ -3,38 +3,30 @@ import { Platform, StyleSheet, View } from 'react-native';
 
 import { TabBarBleedBackground } from './TabBarBleedBackground';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
+import { useVestmentAccent } from '../state/VestmentAccentContext';
 import { tabBarChrome } from '../theme/cards';
 import { TAB_BAR_CONTENT_HEIGHT, TAB_BAR_EDGE_PAD_PX } from '../theme/layout';
+import { radii } from '../theme/tokens';
 import { tabBarFloatInsets } from '../theme/tabBarFloat';
-import { isIosSafariBrowser } from '../theme/webViewport';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 
 export function tabBarBackground(isDark: boolean): string {
   return isDark ? 'rgba(24, 22, 20, 0.92)' : 'rgba(255, 255, 255, 0.94)';
 }
 
-function extraBottomPadPx(): number {
-  if (Platform.OS === 'web') {
-    return isIosSafariBrowser() ? 6 : TAB_BAR_EDGE_PAD_PX;
-  }
-  if (Platform.OS === 'android') return TAB_BAR_EDGE_PAD_PX + 1;
-  return TAB_BAR_EDGE_PAD_PX;
-}
+const SELECTION_INSET_X = 3;
+const SELECTION_INSET_Y = 5;
 
 /** Bottom-positioned floating pill tab bar (phone + web). */
 export function MainTabBar(props: MaterialTopTabBarProps) {
   const isDark = useResolvedColorScheme() === 'dark';
   const insets = useLayoutSafeAreaInsets();
+  const vestmentAccent = useVestmentAccent();
   const isNativePhone = Platform.OS !== 'web';
   const float = tabBarFloatInsets(isNativePhone, insets.bottom);
-  const iosSafariBrowser = Platform.OS === 'web' && isIosSafariBrowser();
-  const extraBottom = extraBottomPadPx();
-  const tabBarBottomPad =
-    extraBottom +
-    (Platform.OS === 'android' && insets.bottom === 0 ? 8 : iosSafariBrowser ? 4 : 0);
-  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + tabBarBottomPad;
   const tabBarBg = tabBarBackground(isDark);
   const chrome = tabBarChrome(isDark);
+  const activeIndex = props.state.index;
 
   return (
     <View
@@ -51,14 +43,27 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
         style={[
           styles.floatingBar,
           chrome,
-          {
-            height: tabBarHeight,
-            paddingBottom: tabBarBottomPad,
-          },
+          { height: TAB_BAR_CONTENT_HEIGHT },
         ]}
       >
-        <TabBarBleedBackground color={tabBarBg} bleedPx={extraBottom} />
-        <MaterialTopTabBar {...props} />
+        <TabBarBleedBackground color={tabBarBg} bleedPx={TAB_BAR_EDGE_PAD_PX} />
+        <View style={styles.tabBarRow}>
+          <View pointerEvents="none" style={styles.selectionLayer}>
+            {props.state.routes.map((route, index) => (
+              <View key={route.key} style={styles.selectionSlot}>
+                {index === activeIndex ? (
+                  <View
+                    style={[
+                      styles.selectionFill,
+                      { backgroundColor: vestmentAccent.accentSoft },
+                    ]}
+                  />
+                ) : null}
+              </View>
+            ))}
+          </View>
+          <MaterialTopTabBar {...props} />
+        </View>
       </View>
     </View>
   );
@@ -79,5 +84,26 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
     ...(Platform.OS === 'web' ? ({ boxShadow: 'none' } as const) : null),
+  },
+  tabBarRow: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'stretch',
+  },
+  selectionLayer: {
+    ...StyleSheet.absoluteFillObject,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  selectionSlot: {
+    flex: 1,
+    alignSelf: 'stretch',
+  },
+  selectionFill: {
+    flex: 1,
+    alignSelf: 'stretch',
+    marginHorizontal: SELECTION_INSET_X,
+    marginVertical: SELECTION_INSET_Y,
+    borderRadius: radii.pill,
   },
 });

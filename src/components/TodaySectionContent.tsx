@@ -693,6 +693,7 @@ export function TodaySectionContent({ section, model }: Props) {
                 verseNumberColor={verseNumberColor}
                 headingColor={theme.colors.text}
                 topGap={index > 0}
+                leadingGap={index === 0}
                 sideBySide={sideBySide}
                 leftLang={readingsCompareSides.left}
                 rightLang={readingsCompareSides.right}
@@ -733,6 +734,55 @@ export function TodaySectionContent({ section, model }: Props) {
             primaryFeastTitle={dashboard.feastsHighlightTitle}
             isDark={isDark}
           />
+        ),
+      );
+
+    case 'commemorations':
+      return wrap(
+        waitingForDay ? (
+          <Text style={[styles.cardHint, type.hint, { color: muted }]}>
+            {t('today.loadingCommemorations')}
+          </Text>
+        ) : (
+          <View style={styles.commemorationsStack}>
+            <View style={styles.commemorationBlock}>
+              <Text style={[styles.commemorationHeading, type.body, { color: theme.colors.text }]}>
+                {t('today.sectionFeasts')}
+              </Text>
+              <CommemorationEntryList
+                entries={feasts}
+                emptyMessage={t('today.noFeasts')}
+                textColor={theme.colors.text}
+                mutedColor={muted}
+                borderColor={theme.colors.border}
+                bodyType={type.body}
+                hintType={type.hint}
+                isMajorFeastDay={dashboard.isMajorFeastDay}
+                primaryFeastTitle={dashboard.feastsHighlightTitle}
+                isDark={isDark}
+              />
+            </View>
+            <View style={styles.commemorationBlock}>
+              <Text style={[styles.commemorationHeading, type.body, { color: theme.colors.text }]}>
+                {t('today.sectionSaints')}
+              </Text>
+              <CommemorationEntryList
+                entries={saints}
+                emptyMessage={t('today.noSaints')}
+                textColor={theme.colors.text}
+                mutedColor={muted}
+                borderColor={theme.colors.border}
+                bodyType={type.body}
+                hintType={type.hint}
+                isDark={isDark}
+              />
+            </View>
+            {showOrthocalContentNote ? (
+              <Text style={[styles.cardHint, type.hint, { color: muted }]}>
+                {t('today.orthocalContentNote')}
+              </Text>
+            ) : null}
+          </View>
         ),
       );
 
@@ -792,6 +842,16 @@ const styles = StyleSheet.create({
   },
   cardBody: {
     gap: 0,
+  },
+  commemorationsStack: {
+    gap: 22,
+  },
+  commemorationBlock: {
+    gap: 10,
+  },
+  commemorationHeading: {
+    fontWeight: '800',
+    letterSpacing: 0.12,
   },
   body: {},
   readingsToolbar: {

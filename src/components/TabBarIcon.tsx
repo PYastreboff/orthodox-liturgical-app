@@ -1,10 +1,11 @@
 import { StyleSheet, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { HoverAccessible } from './HoverAccessible';
 import { OrthodoxCrossGlyph } from './OrthodoxCrossGlyph';
+import { TAB_BAR_CONTENT_HEIGHT } from '../theme/layout';
 
-type TabName = 'today' | 'calendar' | 'settings';
+type TabName = 'today' | 'calendar' | 'prayers' | 'liturgy' | 'settings';
 
 type Props = {
   name: TabName;
@@ -15,7 +16,7 @@ type Props = {
   a11yCurrentTabLabel: string;
 };
 
-export const TAB_ICON_SIZE = 22;
+export const TAB_ICON_SIZE = 26;
 const ICON_SIZE = TAB_ICON_SIZE;
 
 export function TabBarIcon({
@@ -34,6 +35,10 @@ export function TabBarIcon({
         return <OrthodoxCrossGlyph size={size} color={color} />;
       case 'calendar':
         return <Feather name="calendar" size={size} color={color} />;
+      case 'prayers':
+        return <MaterialCommunityIcons name="hands-pray" size={size} color={color} />;
+      case 'liturgy':
+        return <MaterialCommunityIcons name="church" size={size} color={color} />;
       case 'settings':
         return <Feather name="settings" size={size} color={color} />;
       default:
@@ -42,28 +47,35 @@ export function TabBarIcon({
   })();
 
   return (
-    <HoverAccessible label={label} accessibilityRole="button" style={styles.iconSlot}>
+    <HoverAccessible label={label} accessibilityRole="button" style={styles.hitArea}>
       <View style={styles.iconCenter}>{icon}</View>
     </HoverAccessible>
   );
 }
 
 const styles = StyleSheet.create({
-  iconSlot: {
-    width: TAB_ICON_SIZE,
-    height: TAB_ICON_SIZE,
+  hitArea: {
+    flex: 1,
+    width: '100%',
+    height: TAB_BAR_CONTENT_HEIGHT,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconCenter: {
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 1,
   },
 });
 
-const TAB_A11Y_KEY: Record<TabName, 'tabs.a11yToday' | 'tabs.a11yCalendar' | 'tabs.a11ySettings'> = {
+const TAB_A11Y_KEY: Record<
+  TabName,
+  'tabs.a11yToday' | 'tabs.a11yCalendar' | 'tabs.a11yPrayers' | 'tabs.a11yLiturgy' | 'tabs.a11ySettings'
+> = {
   today: 'tabs.a11yToday',
   calendar: 'tabs.a11yCalendar',
+  prayers: 'tabs.a11yPrayers',
+  liturgy: 'tabs.a11yLiturgy',
   settings: 'tabs.a11ySettings',
 };
 
