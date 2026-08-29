@@ -1,0 +1,1465 @@
+{
+  "opening": [
+    {
+      "en": "PRIEST: Blessed is the Kingdom of the Father, and of the Son, and of the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Εὐλογημένη ἡ βασιλεία τοῦ Πατρὸς καὶ τοῦ Υἱοῦ καὶ τοῦ Ἁγίου Πνεύματος, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων.",
+      "ru": "Священник: Благословено Царство Отца и Сына и Святаго Духа, ныне и присно и во веки веков."
+    },
+    {
+      "en": "CHOIR: Amen",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    }
+  ],
+  "great_litany": [
+    {
+      "en": "PRIEST: In peace let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἐν εἰρήνῃ τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: Миром Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For the peace from above and for the salvation of our souls, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τῆς ἄνωθεν εἰρήνης καὶ τῆς σωτηρίας τῶν ψυχῶν ἡμῶν, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О свышнем мире и спасении душ наших, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For the peace of the whole world and for the welfare for the Holy Churches of God, and the union of all, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τῆς εἰρήνης τοῦ σύμπαντος κόσμου, εὐσταθείας τῶν ἁγίων τοῦ Θεοῦ Ἐκκλησιῶν καὶ τῆς τῶν πάντων ἑνώσεως, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О мире всего мира, благостоянии святых Божиих церквей и соединении всех, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For this holy house and for those who enter with faith, reverence, and the fear of God, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τοῦ ἁγίου οἴκου τούτου καὶ τῶν μετὰ πίστεως, εὐλαβείας καὶ φόβου Θεοῦ εἰσιόντων ἐν αὐτῷ, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О святом храме сем и о входящих в онь с верою, благоговением и страхом Божиим, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For our Metropolitan , for our (Arch) Bishop , for the honorable priesthood, the diaconate in Christ, for all the clergy and the people, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τοῦ Μητροπολίτου ἡμῶν, τοῦ (Ἀρχ)ιεπισκόπου ἡμῶν, τοῦ τιμίου πρεσβυτερίου, τῆς ἐν Χριστῷ διακονίας, παντὸς τοῦ κλήρου καὶ τοῦ λαοῦ, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О Митрополите нашем, об (Арх)иепископе нашем, о честном пресвитерстве, о диаконстве во Христе, о всем клире и народе, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For the president of our country, for all civil authorities, and for those who serve in the armed forces, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τοῦ Προέδρου τῆς χώρας ἡμῶν, πάσης ἀρχῆς καὶ ἐξουσίας καὶ τοῦ στρατοῦ ἡμῶν, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О председателе страны нашей, о всей власти и воинстве, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For this city, for every city and countryside, and for the faithful dwelling in them, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τῆς πόλεως ταύτης, πάσης πόλεως καὶ χώρας καὶ τῶν πίστει οἰκούντων ἐν αὐταῖς, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О граде сем, о всяком граде и стране и о верою живущих в них, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For seasonable weather, for abundance of the fruits of the earth, and for peaceful times, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ εὐκρασίας ἀέρων, εὐφορίας τῶν καρπῶν τῆς γῆς καὶ καιρῶν εἰρηνικῶν, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О благорастворении воздухов, о плодоношении земных и о времени мирном, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For travelers by land, by sea, and by air; for the sick and the suffering; for captives and their salvation, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ πλεόντων, ὁδοιπορούντων, νοσούντων, καμνόντων, αἰχμαλώτων καὶ τῆς σωτηρίας αὐτῶν, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О плавающих, путешествующих, недугующих, страждущих, плененных и о спасении их, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For our deliverance from all affliction, wrath, danger, and necessity, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τοῦ ῥυσθῆναι ἡμᾶς ἀπὸ πάσης θλίψεως, ὀργῆς, κινδύνου καὶ ἀνάγκης, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О избавлении нас от всякой скорби, гнева и нужды, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Help us, save us, have mercy on us, and keep us O God by Thy grace.",
+      "el": "ΙΕΡΕΥΣ: Ἀντίλαβου, σῶσον, ἐλέησον καὶ διαφύλαξον ἡμᾶς, ὁ Θεός, τῇ σῇ χάριτι.",
+      "ru": "Священник: Заступи, спаси, помилуй и сохрани нас, Боже, Твоею благодатию."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Commemorating our most holy, most pure, most blessed and glorious Lady Theotokos and ever-virgin Mary, with all the saints, let us commend ourselves and each other, and all our life unto Christ our God.",
+      "el": "ΙΕΡΕΥΣ: Τῆς παναγίας, ἀχράντου, ὑπερευλογημένης καὶ ἐνδόξου Δεσποίνης ἡμῶν Θεοτόκου καὶ ἀειπαρθένου Μαρίας μετὰ πάντων τῶν ἁγίων μνημονεύσαντες, ἑαυτοὺς καὶ ἀλλήλους καὶ πάντα τὸν βίον ἡμῶν Χριστῷ τῷ Θεῷ παραθώμεθα.",
+      "ru": "Священник: Пресвятую, пречистую, преблагословенную Владычицу нашу Богородицу и Приснодеву Марию со всеми святыми помянувше, сами себе и друг друга и весь живот наш Христу Богу предадим."
+    },
+    {
+      "en": "CHOIR: To Thee, O Lord.",
+      "el": "ΧΟΡΟΣ: Σοί, Κύριε.",
+      "ru": "Хор: Тебе, Господи."
+    },
+    {
+      "en": "PRIEST: O Lord our God, Thy power is beyond compare. Thy glory cannot be understood. Thy mercy cannot be measured. Thy love cannot be expressed. Look down on us and on this holy house with pity, O Master, and impart the riches of Thy mercy and Thy compassion to us and to those who pray with us. For unto Thee are due all honor and glory and worship: to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Κύριε ὁ Θεὸς ἡμῶν, ἡ δύναμίς σου ἀνεκδιήγητος καὶ ἡ δόξα σου ἀκατάληπτος.",
+      "ru": "Священник: Господи Боже наш, сила Твоя неизреченна и слава Твоя непостижима."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    }
+  ],
+  "antiphons": [
+    {
+      "en": "Bless the Lord, O my soul! Blessed art Thou, O Lord!",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Bless the Lord, O my soul; and all that is within me, bless His holy name!",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Bless the Lord, O my soul, and forget not all His benefits.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Who forgives all your iniquity, who heals all your diseases.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Who redeems your life from the pit, who crowns you with steadfast love and",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "mercy.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Who satisfies you with good as long as you live so that your youth is renewed",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "like the eagle’s.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "The Lord works vindication and justice for all who are oppressed.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "He made known His ways to Moses, His acts to the people of Israel.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "The Lord is merciful and gracious, slow to anger and abounding in steadfast",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "love.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "He will not always chide, nor will He keep His anger for ever.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "He does not deal with us according to our sins, nor requite us according to our",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "iniquities.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "For as the heavens are high above the earth, so great is His steadfast love",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "toward those who fear Him.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "As far as the east is from the west, so far does He remove our transgressions",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "from us.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "As a father pities his children, so the Lord pities those who fear Him.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "For He knows our frame; He remembers that we are dust.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "As for man, his days are like grass; he",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "flourishes like a flower of the field.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "For the wind passes over it, and it is gone, and its place know it no more.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "But the steadfast love of the Lord is from everlasting to everlasting upon those",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "who fear Him. And His righteousness to children’s children, to those who keep",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "His covenant and remember to do His commandments.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "The Lord has established His throne in the heavens, and His kingdom rules over",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "all.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Bless the Lord, O you His angels, you mighty ones who do His word, hearkening",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "to the voice of His word!",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Bless the Lord, all His hosts, His ministers that do His will!",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Bless the Lord, all His works, in all places of His dominion.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Glory to the Father and to the Son and to the Holy Spirit.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Now and ever and unto ages of ages. Amen.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Bless the Lord, O my soul, and all that is within me, bless His holy name.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "Blessed art Thou, O Lord.",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "PRIEST: Again and again in peace, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἔτι καὶ ἔτι ἐν εἰρήνῃ τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: Паки и паки миром Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Help us, save us, have mercy on us, and keep us O God by Thy grace.",
+      "el": "ΙΕΡΕΥΣ: Ἀντίλαβου, σῶσον, ἐλέησον καὶ διαφύλαξον ἡμᾶς, ὁ Θεός, τῇ σῇ χάριτι.",
+      "ru": "Священник: Заступи, спаси, помилуй и сохрани нас, Боже, Твоею благодатию."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Commemorating our most holy, most pure, most blessed and glorious Lady Theotokos and ever-virgin Mary, with all the saints, let us commend ourselves and each other, and all our life unto Christ our God.",
+      "el": "ΙΕΡΕΥΣ: Τῆς παναγίας, ἀχράντου, ὑπερευλογημένης καὶ ἐνδόξου Δεσποίνης ἡμῶν Θεοτόκου καὶ ἀειπαρθένου Μαρίας μετὰ πάντων τῶν ἁγίων μνημονεύσαντες, ἑαυτοὺς καὶ ἀλλήλους καὶ πάντα τὸν βίον ἡμῶν Χριστῷ τῷ Θεῷ παραθώμεθα.",
+      "ru": "Священник: Пресвятую, пречистую, преблагословенную Владычицу нашу Богородицу и Приснодеву Марию со всеми святыми помянувше, сами себе и друг друга и весь живот наш Христу Богу предадим."
+    },
+    {
+      "en": "CHOIR: To Thee, O Lord",
+      "el": "ΧΟΡΟΣ: Σοί, Κύριε.",
+      "ru": "Хор: Тебе, Господи."
+    },
+    {
+      "en": "PRIEST: O Lord our God, save Thy people and bless Thine inheritance. Preserve the fullness of Thy Church. Sanctify those who love the beauty of Thy house; glorify them in return by Thy divine power, and forsake us not who put our hope in Thee . For Thine is the majesty, and Thine is the Kingdom and the power and the glory: of the Father, and of the Son, and of the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Ὅτι σὸν τὸ κράτος καὶ σὴ ἡ βασιλεία καὶ ἡ δύναμις καὶ ἡ δόξα, τοῦ Πατρὸς καὶ τοῦ Υἱοῦ καὶ τοῦ Ἁγίου Πνεύματος, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων.",
+      "ru": "Священник: Яко Твоя держава и Твое есть Царство и сила и слава, Отца и Сына и Святаго Духа, ныне и присно и во веки веков."
+    },
+    {
+      "en": "CHOIR: Amen. The Second Antiphon Glory to the Father and to the Son and to the Holy Spirit. Praise the Lord, O my soul! I will praise the Lord as long as I live; I will sing praises to my God while I have being. Put not your trust in princes, in sons of men in whom there is no salvation. When his breath departs, he returns to his earth; on that very day his plans perish. Blessed is he whose help is the God of Jacob, whose hope is in the Lord his God. Who made heaven and earth, the sea and all that is in them. Who keeps his faith forever; who executes justice for the oppressed; who gives food to the hungry. The Lord sets the prisoners free; the Lord opens the eyes of the blind. The Lord lifts up those who are bowed down; the Lord loves the righteous. The Lord watches over the sojourners, He up holds the widows and the fatherless; but the way of the wicked he will bring to ruin. The Lord will reign forever. Thy God O Zion, to all generations. Now and ever and unto ages of ages. Amen. Only-begotten Son and immortal Word of God, Who for our sake didst will to be incarnate of the holy Theotokos and ever- virgin Mary, Who for our sakes became man and was crucified, Who is one of the Holy Trinity, glorified with the Father and the Holy Spirit: O Christ our God, trampling down death by death, save us!",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: Again and again in peace, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἔτι καὶ ἔτι ἐν εἰρήνῃ τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: Паки и паки миром Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Help us, save us, have mercy on us, and keep us O God by Thy grace.",
+      "el": "ΙΕΡΕΥΣ: Ἀντίλαβου, σῶσον, ἐλέησον καὶ διαφύλαξον ἡμᾶς, ὁ Θεός, τῇ σῇ χάριτι.",
+      "ru": "Священник: Заступи, спаси, помилуй и сохрани нас, Боже, Твоею благодатию."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Commemorating our most holy, most pure, most blessed and glorious Lady Theotokos and ever-virgin Mary, with all the saints, let us commend ourselves and each other, and all our life unto Christ our God.",
+      "el": "ΙΕΡΕΥΣ: Τῆς παναγίας, ἀχράντου, ὑπερευλογημένης καὶ ἐνδόξου Δεσποίνης ἡμῶν Θεοτόκου καὶ ἀειπαρθένου Μαρίας μετὰ πάντων τῶν ἁγίων μνημονεύσαντες, ἑαυτοὺς καὶ ἀλλήλους καὶ πάντα τὸν βίον ἡμῶν Χριστῷ τῷ Θεῷ παραθώμεθα.",
+      "ru": "Священник: Пресвятую, пречистую, преблагословенную Владычицу нашу Богородицу и Приснодеву Марию со всеми святыми помянувше, сами себе и друг друга и весь живот наш Христу Богу предадим."
+    },
+    {
+      "en": "CHOIR: To Thee, O Lord. O Thou who hast bestowed on us these common and accordant prayers, and dost promise that when two or three are gathered together in Thy name, Thou wilt grant their requests, fulfil even now the requests of Thy servants as is expedient for them, granting us in this present age the knowledge of Thy truth, and in that to come, life eternal. For Thou art a good God who lovest man, and unto Thee do we send up glory, to the Father, and to the Son, and to the Holy Spirit, now and ever, and unto ages of ages.",
+      "el": "ΧΟΡΟΣ: Σοί, Κύριε.",
+      "ru": "Хор: Тебе, Господи."
+    },
+    {
+      "en": "CHOIR: Amen. In Thy Kingdom remember us, O Lord, when Thou comest into Thy Kingdom. Blessed are the poor in spirit, for theirs is the Kingdom of Heaven. Blessed are those who mourn, for they shall be comforted. Blessed are the meek, for they shall inherit the earth. Blessed are those who hunger and thirst after righteousness, for they shall be filled. Blessed are the merciful, for they shall obtain mercy. Blessed are the pure in heart, for they shall see God. Blessed are the peacemakers, for they shall be called the sons of God. Blessed are those who are persecuted for righteousness’ sake, for theirs is the Kingdom of Heaven. Blessed are you when men shall revile you and persecute you, and shall say all manner of evil against you falsely for my sake. Rejoice and be exceedingly glad, for great is your reward in heaven.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: O Master, Lord our God, who hast appointed in heaven ranks and hosts of angels and archangels for the service of Thy glory, make there to be with our entrance an entrance of holy angels serving with us, and with us glorifying Thy goodness. For to Thee belong all glory, honor and worship, to the Father, and to the Son, and to the Holy Spirit, now and ever, and unto ages of ages. Amen. Wisdom! Let us attend!",
+      "el": "ΙΕΡΕΥΣ: Δέσποτα, Κύριε ὁ Θεὸς ἡμῶν, ὁ καταστήσας ἐν οὐρανῷ τάξεις καὶ στρατιὰς ἀγγέλων.",
+      "ru": "Священник: Владыко, Господи Боже наш, устроивый на небеси чины и воинства ангелов."
+    },
+    {
+      "en": "CHOIR: O Come, let us worship and fall down before Christ. Save us, O Son of God, who art risen from the dead, who sing unto Thee, Alleluia.",
+      "el": "ΧΟΡΟΣ: Δεῦτε, προσκυνήσωμεν καὶ προπέσωμεν Χριστῷ· δεῦτε, μετὰ πίστεως προσέλθωμεν καὶ φιλανθρωπίας πλησθῶμεν, ὅτι Χριστὸς ἐστιν ὁ Υἱὸς τοῦ Θεοῦ.",
+      "ru": "Хор: Приидите, поклонимся и припадим Христу; приидите, с верою приблизимся и исполнимся человеколюбия, яко Христос есть Сын Божий."
+    },
+    {
+      "en": "PRIEST: O holy God: who dost rest in the Saints: who art hymned by the Seraphim with the thrice-holy cry, and glorified by the Cherubim, and worshipped by every heavenly power; who out of nothing hast brought all things into being; who hast created man after Thine own image and likeness, and hast adorned him with Thine every gift; who givest to him who asks wisdom and understanding; who dost not despise the sinner, but instead hast appointed repentance unto salvation; who hast vouchsafed to us, Thy humble and unworthy servants, even in this hour to stand before the glory of Thy holy altar, and to offer worship and praise which are due unto Thee. Thyself, O Master, accept even from the mouths of us sinners the thrice-holy hymn, and visit us in Thy goodness. Forgive us every transgression, both voluntary and involuntary. Sanctify our souls and bodies, and enable us to serve Thee in holiness all the days of our life. Through the intercessions of the holy Theotokos and of all the saints who from the beginning of the world have been well-pleasing to Thee. For holy art Thou, O our God, and unto Thee we ascribe glory: to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Ἅγιε ὁ Θεός, ὁ ἐν ἁγίοις ἀναπαυόμενος.",
+      "ru": "Священник: Святый Боже, во святых почивающий."
+    },
+    {
+      "en": "CHOIR: Holy God. Holy Mighty, Holy Immortal have mercy on us. (3x) Glory to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages, Amen. Holy Immortal have mercy on us! Holy God. Holy Mighty, Holy Immortal have mercy on us.",
+      "el": "ΧΟΡΟΣ: Ἅγιος ὁ Θεός, Ἅγιος ἰσχυρός, Ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς (τρίς).",
+      "ru": "Хор: Святый Боже, Святый Крепкий, Святый Бессмертный, помилуй нас (трижды)."
+    }
+  ],
+  "readings": [
+    {
+      "en": "PRIEST: Blessed is He that comes in the name of the Lord. Blessed art Thou on the Throne of the glory of Thy Kingdom, who sittest upon the Cherubim; always now and ever and unto ages of ages. Let us attend! Peace be unto all!",
+      "el": "ΙΕΡΕΥΣ: Εὐλογημένος ὁ ἐρχόμενος ἐν ὀνόματι Κυρίου.",
+      "ru": "Священник: Благословен Грядый во имя Господне."
+    },
+    {
+      "en": "READER: And to your spirit.",
+      "el": "ΑΝΑΓΝΩΣΤΗΣ: Καὶ τῷ πνεύματί σου.",
+      "ru": "Чтец: И со духом Твоим."
+    },
+    {
+      "en": "PRIEST: Wisdom!",
+      "el": "ΙΕΡΕΥΣ: Σοφία!",
+      "ru": "Священник: Премудрость!"
+    },
+    {
+      "en": "READER: The prokeimenon in the , tone: (and the reader immediately chants the prokeimenon of the day)",
+      "el": "ΑΝΑΓΝΩΣΤΗΣ: Τὸ προκείμενον τῷ ἤχῳ τῷ ____.",
+      "ru": "Чтец: Прокимен гласа ____."
+    },
+    {
+      "en": "CHOIR: (sing the prokeimenon of the day)",
+      "el": "ΧΟΡΟΣ: (ψάλλουσι τὸ προκείμενον τῆς ἡμέρας.)",
+      "ru": "Хор: (поют прокимен дня.)"
+    },
+    {
+      "en": "READER: (chants the verse of the prokeimenon)",
+      "el": "ΑΝΑΓΝΩΣΤΗΣ: Τὸ προκείμενον τῷ ἤχῳ τῷ ____.",
+      "ru": "Чтец: Прокимен гласа ____."
+    },
+    {
+      "en": "CHOIR: (sing the prokeimenon of the day)",
+      "el": "ΧΟΡΟΣ: (ψάλλουσι τὸ προκείμενον τῆς ἡμέρας.)",
+      "ru": "Хор: (поют прокимен дня.)"
+    },
+    {
+      "en": "READER: (chants the first part of the prokeimenon)",
+      "el": "ΑΝΑΓΝΩΣΤΗΣ: Τὸ προκείμενον τῷ ἤχῳ τῷ ____.",
+      "ru": "Чтец: Прокимен гласа ____."
+    },
+    {
+      "en": "CHOIR: (sing the second part of the prokeimenon)",
+      "el": "ΧΟΡΟΣ: (ψάλλουσι τὸ δεύτερον μέρος τοῦ προκειμένου.)",
+      "ru": "Хор: (поют вторую часть прокимена.)"
+    },
+    {
+      "en": "PRIEST: Wisdom!",
+      "el": "ΙΕΡΕΥΣ: Σοφία!",
+      "ru": "Священник: Премудрость!"
+    },
+    {
+      "en": "READER: The reading is from:",
+      "el": "ΑΝΑΓΝΩΣΤΗΣ: Τὸ ἀνάγνωσμα ἀπό:",
+      "ru": "Чтец: Чтение от:"
+    },
+    {
+      "en": "PRIEST: Let us attend!",
+      "el": "ΙΕΡΕΥΣ: Πρόσχωμεν!",
+      "ru": "Священник: Вонмите!"
+    },
+    {
+      "en": "READER: (chants the Epistle.)",
+      "el": "ΑΝΑΓΝΩΣΤΗΣ: Πρὸς ____ ὁ Ἀπόστολος ____.",
+      "ru": "Чтец: Послание святого Апостола ____ к ____."
+    },
+    {
+      "en": "PRIEST: Peace be unto you, reader.",
+      "el": "ΙΕΡΕΥΣ: Εἰρήνη σοι, ἀναγνῶστα.",
+      "ru": "Священник: Мир тебе, чтец."
+    },
+    {
+      "en": "READER: And to your spirit. Alleluia! Alleluia! Alleluia!",
+      "el": "ΑΝΑΓΝΩΣΤΗΣ: Καὶ τῷ πνεύματί σου.",
+      "ru": "Чтец: И со духом Твоим."
+    },
+    {
+      "en": "CHOIR: Alleluia! Alleluia! Alleluia!",
+      "el": "ΧΟΡΟΣ: Ἀλληλούϊα!",
+      "ru": "Хор: Аллилуия!"
+    },
+    {
+      "en": "READER: (chants the first Alleluia verse of the day.)",
+      "el": "ΑΝΑΓΝΩΣΤΗΣ: (ψάλλει τὸ πρῶτον Ἀλληλούϊα τῆς ἡμέρας.)",
+      "ru": "Чтец: (поет первое Аллилуия дня.)"
+    },
+    {
+      "en": "CHOIR: Alleluia! Alleluia! Alleluia!",
+      "el": "ΧΟΡΟΣ: Ἀλληλούϊα!",
+      "ru": "Хор: Аллилуия!"
+    },
+    {
+      "en": "READER: (chants the second Alleluia verse of the day.)",
+      "el": "ΑΝΑΓΝΩΣΤΗΣ: (ψάλλει τὸ δεύτερον Ἀλληλούϊα τῆς ἡμέρας.)",
+      "ru": "Чтец: (поет второе Аллилуия дня.)"
+    },
+    {
+      "en": "CHOIR: Alleluia! Alleluia! Alleluia! Gospel",
+      "el": "ΧΟΡΟΣ: Ἀλληλούϊα!",
+      "ru": "Хор: Аллилуия!"
+    },
+    {
+      "en": "PRIEST: Illumine our hearts, O Master, who loves mankind with the pure light of Thy Divine knowledge. Open the eyes of our minds to the understanding of Thy Gospel teachings. Implant also in us the fear of Thy blessed commandments, that trampling down all carnal desires, we may enter upon a spiritual manner of living, both thinking and doing such things as are well-pleasing unto Thee. For Thou art the illumination of our souls and bodies, O Christ our God, and unto Thee we ascribe glory, together with Thy Father, who is from everlasting, and Thine all-holy, good, and life-creating Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Φώτισον, Δέσποτα, ὁ φιλάνθρωπος, τὰς καρδίας ἡμῶν τῷ καθαρῷ φωτὶ τῆς θείας σου γνώσεως.",
+      "ru": "Священник: Просвети, Владыко Человеколюбче, сердца наша чистым светом Божественного Твоего ведения."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: Wisdom! Let us attend! Let us listen to the holy Gospel! Peace be unto all!",
+      "el": "ΙΕΡΕΥΣ: Σοφία! Ἀνάσχωμεν! Ἀκροάσωμεν τοῦ ἁγίου Εὐαγγελίου! Εἰρήνη πᾶσι!",
+      "ru": "Священник: Премудрость! Простите! Будем внимать святому Евангелию! Мир всем!"
+    },
+    {
+      "en": "CHOIR: And to your spirit.",
+      "el": "ΧΟΡΟΣ: Καὶ μετὰ τοῦ πνεύματός σου.",
+      "ru": "Хор: И со духом Твоим."
+    },
+    {
+      "en": "PRIEST: The reading from the holy Gospel according to Saint_______________.",
+      "el": "ΙΕΡΕΥΣ: Τὸ κατὰ ____ ἅγιον Εὐαγγέλιον.",
+      "ru": "Священник: Чтение святого Евангелия от святого ____."
+    },
+    {
+      "en": "CHOIR: Glory to Thee, O Lord, glory to Thee.",
+      "el": "ΧΟΡΟΣ: Δόξα Σοι, Κύριε, δόξα Σοι.",
+      "ru": "Хор: Слава Тебе, Господи, слава Тебе."
+    },
+    {
+      "en": "PRIEST: Let us attend!",
+      "el": "ΙΕΡΕΥΣ: Πρόσχωμεν!",
+      "ru": "Священник: Вонмите!"
+    },
+    {
+      "en": "CHOIR: Glory to Thee, O Lord, glory to Thee.",
+      "el": "ΧΟΡΟΣ: Δόξα Σοι, Κύριε, δόξα Σοι.",
+      "ru": "Хор: Слава Тебе, Господи, слава Тебе."
+    },
+    {
+      "en": "PRIEST: Let us say with all our soul and with all our mind, let us say.",
+      "el": "ΙΕΡΕΥΣ: Εἴπωμεν ἐξ ὅλης τῆς ψυχῆς καὶ ἐξ ὅλης τῆς διανοίας ἡμῶν, εἴπωμεν·",
+      "ru": "Священник: Рекнем от всей души и от всего разума нашего, речем:"
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: O Lord almighty, the God of our Fathers, we pray Thee, hear us and have mercy.",
+      "el": "ΧΟΡΟΣ: Πάτερ ἡμῶν, ὁ ἐν τοῖς οὐρανοῖς, ἁγιασθήτω τὸ ὄνομά σου, ἐλθέτω ἡ βασιλεία σου, γενηθήτω τὸ θέλημά σου, ὡς ἐν οὐρανῷ καὶ ἐπὶ γῆς. Τὸν ἄρτον ἡμῶν τὸν ἐπιούσιον δὸς ἡμῖν σήμερον, καὶ ἄφες ἡμῖν τὰ ὀφειλήματα ἡμῶν, ὡς καὶ ἡμεῖς ἀφίεμεν τοῖς ὀφειλέταις ἡμῶν· καὶ μὴ εἰσενέγκῃς ἡμᾶς εἰς πειρασμόν, ἀλλὰ ῥῦσαι ἡμᾶς ἀπὸ τοῦ πονηροῦ.",
+      "ru": "Хор: Отче наш, Иже еси на небесех, да святится имя Твое, да приидет Царствие Твое, да будет воля Твоя, яко на небеси и на земли. Хлеб наш насущный даждь нам днесь, и остави нам долги наша, якоже и мы оставляем должником нашим; и не введи нас во искушение, но избави нас от лукаваго."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Have mercy on us, O God, according to Thy great mercy, we pray Thee, hear us and have mercy.",
+      "el": "ΙΕΡΕΥΣ: Ἐλέησον ἡμᾶς, ὁ Θεός, κατὰ τὸ πολὺ ἔλεός σου, δεόμεθά σου, εἰσάκουσον καὶ ἐλέησον.",
+      "ru": "Священник: Помилуй нас, Боже, по велицей Твоей милости, молим Тя, услыши и помилуй."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy. (3x)",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Again we pray for our Metropolitan , for our (Arch) Bishop , for priests, deacons, and all other clergy; and for all our brethren in Christ.",
+      "el": "ΙΕΡΕΥΣ: Πάλιν δεηθῶμεν ὑπὲρ τοῦ Μητροπολίτου ἡμῶν καὶ τοῦ (Ἀρχ)ιεπισκόπου ἡμῶν, τῶν ἱερέων, διακόνων καὶ παντὸς τοῦ κλήρου.",
+      "ru": "Священник: Паки помолимся о Митрополите нашем и об (Арх)иепископе нашем, о священниках, диаконах и всем клире."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy. (3x)",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Again we pray for the president of our country, for all civil authorities, and for the armed forces.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τοῦ Προέδρου τῆς χώρας ἡμῶν, πάσης ἀρχῆς καὶ ἐξουσίας καὶ τοῦ στρατοῦ ἡμῶν, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О председателе страны нашей, о всей власти и воинстве, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy. (3x)",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Again we pray for the blessed and ever-memorable founders of this holy house; and for all our fathers and brethren, the Orthodox departed this life before us who here and in all the world lie asleep in the Lord.",
+      "el": "ΧΟΡΟΣ: Πάτερ ἡμῶν, ὁ ἐν τοῖς οὐρανοῖς, ἁγιασθήτω τὸ ὄνομά σου, ἐλθέτω ἡ βασιλεία σου, γενηθήτω τὸ θέλημά σου, ὡς ἐν οὐρανῷ καὶ ἐπὶ γῆς. Τὸν ἄρτον ἡμῶν τὸν ἐπιούσιον δὸς ἡμῖν σήμερον, καὶ ἄφες ἡμῖν τὰ ὀφειλήματα ἡμῶν, ὡς καὶ ἡμεῖς ἀφίεμεν τοῖς ὀφειλέταις ἡμῶν· καὶ μὴ εἰσενέγκῃς ἡμᾶς εἰς πειρασμόν, ἀλλὰ ῥῦσαι ἡμᾶς ἀπὸ τοῦ πονηροῦ.",
+      "ru": "Хор: Отче наш, Иже еси на небесех, да святится имя Твое, да приидет Царствие Твое, да будет воля Твоя, яко на небеси и на земли. Хлеб наш насущный даждь нам днесь, и остави нам долги наша, якоже и мы оставляем должником нашим; и не введи нас во искушение, но избави нас от лукаваго."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy. (3x)",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Again we pray for mercy, life, peace, health, salvation, and visitation for the servants of God , and for the pardon and remission of their sins.",
+      "el": "ΙΕΡΕΥΣ: Πάλιν δεηθῶμεν ὑπὲρ ἐλέους, ζωῆς, εἰρήνης, ὑγείας, σωτηρίας καὶ ἐπισκέψεως τῶν δούλων τοῦ Θεοῦ ____.",
+      "ru": "Священник: Паки помолимся о милости, жизни, мире, здравии, спасении и посещении рабов Божиих ____."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy. (3x)",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Again we pray for those who bear fruit and do good works in this holy and all- venerable house; for those who labor and those who sing; and for all the people here present, who await Thy great and rich mercy.",
+      "el": "ΙΕΡΕΥΣ: Πάλιν δεηθῶμεν ὑπὲρ τῶν καρποφορούντων καὶ εὐποιούντων ἐν τῷ ἁγίῳ καὶ πανσεβασμίῳ οἴκῳ τούτῳ.",
+      "ru": "Священник: Паки помолимся о приносящих плоды и добро творящих в святом и всечестном храме сем."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy. (3x)",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: O Lord, our God, accept this fervent supplication of Thy servants, and have mercy on us according to the multitude of Thy mercy. Send down Thy bounties upon us and upon all Thy people, who await the rich mercy that comes from Thee. For Thou art a merciful God and lovest mankind, and unto Thee we ascribe glory: to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Κύριε ὁ Θεὸς ἡμῶν, δέξαι τὴν ἐκτενῆ δέησιν τῶν δούλων σου.",
+      "ru": "Священник: Господи Боже наш, приими усердную молитву рабов Твоих."
+    },
+    {
+      "en": "CHOIR: Amen. The Litany of The Catechumens",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: Pray to the Lord you catechumens.",
+      "el": "ΙΕΡΕΥΣ: Προσεύξασθε, οἱ κατηχούμενοι, τῷ Κυρίῳ.",
+      "ru": "Священник: Помолитеся Господу, оглашаемии."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Let us, the faithful, pray for the catechumens that the Lord will have mercy on them.",
+      "el": "ΙΕΡΕΥΣ: Οἱ πιστοί, δεηθῶμεν ὑπὲρ τῶν κατηχουμένων, ἵνα ὁ Κύριος αὐτοὺς ἐλεήσῃ.",
+      "ru": "Священник: Вернии, помолимся об оглашаемых, да Господь помилует их."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: That He will teach them the word of truth.",
+      "el": "ΙΕΡΕΥΣ: Ὅπως διδάξῃ αὐτοὺς τὸν λόγον τῆς ἀληθείας.",
+      "ru": "Священник: Да научит их слову истины."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: That he will reveal to them the Gospel of righteousness.",
+      "el": "ΙΕΡΕΥΣ: Ὅπως ἀποκαλύψῃ αὐτοῖς τὸ εὐαγγέλιον τῆς δικαιοσύνης.",
+      "ru": "Священник: Да откроет им Евангелие правды."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: That He will unite them to His Holy, Catholic, and Apostolic Church.",
+      "el": "ΙΕΡΕΥΣ: Ὅπως ἑνώσῃ αὐτοὺς τῇ ἁγίᾳ, καθολικῇ καὶ ἀποστολικῇ αὐτοῦ Ἐκκλησίᾳ.",
+      "ru": "Священник: Да соединит их со Святою, Кафолическую и Апостольскую Церковию Своею."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Help them, save them, have mercy on them, and keep them, O God, by Thy grace.",
+      "el": "ΙΕΡΕΥΣ: Ἀντίλαβου αὐτῶν, σῶσον, ἐλέησον καὶ διαφύλαξον αὐτούς, ὁ Θεός, τῇ σῇ χάριτι.",
+      "ru": "Священник: Заступи их, спаси, помилуй и сохрани их, Боже, Твоею благодатию."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Bow your heads unto the Lord, you catechumens.",
+      "el": "ΙΕΡΕΥΣ: Κλίνατε τὸν κάραν τῷ Κυρίῳ.",
+      "ru": "Священник: Приклоните главы ваши Господу."
+    },
+    {
+      "en": "CHOIR: To Thee, O Lord.",
+      "el": "ΧΟΡΟΣ: Σοί, Κύριε.",
+      "ru": "Хор: Тебе, Господи."
+    },
+    {
+      "en": "PRIEST: That with us they may glorify Thine all-honorable and majestic name: of the Father, and of the Son, and of the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Ὅπως σὺν ἡμῖν δοξάσωσι τὸ παντίμον καὶ μεγαλοπρεπὲς ὄνομά σου, τοῦ Πατρὸς καὶ τοῦ Υἱοῦ καὶ τοῦ Ἁγίου Πνεύματος, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων.",
+      "ru": "Священник: Да с нами прославят всечестное и великолепное имя Твое, Отца и Сына и Святаго Духа, ныне и присно и во веки веков."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: (All catechumens depart. Depart all catechumens. All that are catechumens depart. Let no catechumen remain.) Let us the faithful, again and again in peace pray unto the Lord.",
+      "el": "ΙΕΡΕΥΣ: Πάντες οἱ κατηχούμενοι, ἐξέλθετε. Οἱ κατηχούμενοι, ἐξέλθετε. Ἔτι καὶ ἔτι ἐν εἰρήνῃ τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: Вси оглашаемии, изыдите. Оглашаемии, изыдите. Паки и паки миром Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Help us, save us, and have mercy on us, and keep us, O God, by Thy grace.",
+      "el": "ΙΕΡΕΥΣ: Ἀντίλαβου, σῶσον, ἐλέησον καὶ διαφύλαξον ἡμᾶς, ὁ Θεός, τῇ σῇ χάριτι.",
+      "ru": "Священник: Заступи, спаси, помилуй и сохрани нас, Боже, Твоею благодатию."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Wisdom! We thank Thee, O Lord God of hosts, who has accounted us worthy to stand even now before Thy holy altar, and to fall down before Thy compassion for our sins and for the errors of all Thy people. And enable us also, whom Thou hast placed in this Thy service, by the power of Thy Holy Spirit, blamelessly and without offence, in the pure witness of our conscience, to call upon Thee at all times and in every place; that hearing us Thou mayest be merciful to us according to the mul titude of Thy great goodness. For unto Thee are due all honor, glory, and worship: to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Σοφία! Εὐχαριστοῦμέν σοι, Κύριε ὁ Θεὸς τῶν δυνάμεων.",
+      "ru": "Священник: Премудрость! Благодарим Тя, Господи Боже сил."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: Again and again in peace, let us pray to the Lord",
+      "el": "ΙΕΡΕΥΣ: Ἔτι καὶ ἔτι ἐν εἰρήνῃ τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: Паки и паки миром Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Help us, save us, have mercy on us, and keep us, O God, by Thy grace.",
+      "el": "ΙΕΡΕΥΣ: Ἀντίλαβου, σῶσον, ἐλέησον καὶ διαφύλαξον ἡμᾶς, ὁ Θεός, τῇ σῇ χάριτι.",
+      "ru": "Священник: Заступи, спаси, помилуй и сохрани нас, Боже, Твоею благодатию."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Wisdom! Again and oftentimes we fall down before Thee, O God who lovest mankind, that looking down upon our petitions Thou wouldst cleanse our souls and bodies from all defilement of flesh and spirit; and grant us to stand blamelessly and without condemnation before Thy holy altar. Grant also to those who pray with us, O God, growth in life and faith and spiritual understanding. Grant them to worship Thee blamelessly with fear and love, and to partake without condemnation of Thy Holy Mysteries, and to be accounted worthy of Thy heavenly Kingdom. That guarded always by Thy might we may ascribe glory unto Thee: to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Σοφία! Ἔτι καὶ πολλάκις προπίπτομέν σοι, ὁ φιλάνθρωπε Θεός.",
+      "ru": "Священник: Премудрость! Паки и ныне падше пред Тобою, Боже Человеколюбче."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    }
+  ],
+  "cherubic": [
+    {
+      "en": "CHOIR: Let us who mystically represent the cherubim who sing the Thrice Holy hymn to the life creating Trinity now lay aside all earthly cares.",
+      "el": "ΧΟΡΟΣ: Οἱ τὰ Χερουβὶμ μυστικῶς εἰκονίζοντες καὶ τῇ ζωοποιῷ Τριάδι τὸν Τρισάγιον ὕμνον προσάδοντες.",
+      "ru": "Хор: Яже Херувимы тайно образующе и Животворящей Троице Трисвятую песнь припевающе."
+    },
+    {
+      "en": "CHOIR: Amen. That we may receive the King of all who comes invisibly up borne by angelic hosts. Alleluia, Alleluia, Alleluia, The Litany of Supplication",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: Let us complete our prayer unto the Lord.",
+      "el": "ΙΕΡΕΥΣ: Τὴν προσευχὴν ἡμῶν τῷ Κυρίῳ πληρώσωμεν.",
+      "ru": "Священник: Молитву нашу Господу совершим."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For the precious gifts now offered, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τῶν τιμίων δώρων τῶν προσφερομένων, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О драгоценных Дарах, ныне приносимых, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For this holy house, and for those who enter with faith, reverence, and the fear of God, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τοῦ ἁγίου οἴκου τούτου καὶ τῶν μετὰ πίστεως, εὐλαβείας καὶ φόβου Θεοῦ εἰσιόντων ἐν αὐτῷ, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О святом храме сем и о входящих в онь с верою, благоговением и страхом Божиим, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Help us, save us, have mercy on us, and keep us, O God, by Thy grace.",
+      "el": "ΙΕΡΕΥΣ: Ἀντίλαβου, σῶσον, ἐλέησον καὶ διαφύλαξον ἡμᾶς, ὁ Θεός, τῇ σῇ χάριτι.",
+      "ru": "Священник: Заступи, спаси, помилуй и сохрани нас, Боже, Твоею благодатию."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: That the whole day be perfect, holy, peaceful, and sinless, let us ask of the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἵνα τελειωθῇ ἡ ἡμέρα ἡμῶν ἁγία, εἰρηνικὴ καὶ ἀναμάρτητος, τοῦ Κυρίου αἰτησώμεθα.",
+      "ru": "Священник: Да совершится день наш свят, мирен и безгрешен, Господа просим."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: An angel of peace, a faithful guide,a guardian of our souls and bodies,let us ask of the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἄγγελον εἰρήνης, πιστὸν ὁδηγόν, φύλακα τῶν ψυχῶν καὶ τῶν σωμάτων ἡμῶν, τοῦ Κυρίου αἰτησώμεθα.",
+      "ru": "Священник: Ангела мира, верного наставника, хранителя душ и тел наших, Господа просим."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: Pardon and remission of our sins and transgressions, let us ask of the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἄφεσιν καὶ ἄνεσιν τῶν ἁμαρτιῶν καὶ τῶν παραπτωμάτων ἡμῶν, τοῦ Κυρίου αἰτησώμεθα.",
+      "ru": "Священник: Оставление и прощение грехов и прегрешений наших, Господа просим."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: All things that are good and profitable for our souls, and peace for the world, let us ask of the Lord.",
+      "el": "ΙΕΡΕΥΣ: Πάντα τὰ πρὸς σωτηρίαν ἡμῶν καὶ εἰρήνην τοῦ κόσμου, τοῦ Κυρίου αἰτησώμεθα.",
+      "ru": "Священник: О всяком ко спасению нашему и мире мира, Господа просим."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: That we may complete the remaining time of our life in peace and repentance, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἵνα τὸν ὑπόλοιπον χρόνον τῆς ζωῆς ἡμῶν ἐν εἰρήνῃ καὶ μετανοίᾳ τελειώσωμεν, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: Да пребывающее время жизни нашей в мире и покаянии скончам, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: A Christian ending to our life: painless, blameless, and peaceful; and a good defense before the dread judgement seat of Christ, let us ask of the Lord.",
+      "el": "ΙΕΡΕΥΣ: Χριστιανὸν τὸ τέλος τῆς ζωῆς ἡμῶν, ἀνόδυνον, ἀνεπαίδεκτον καὶ εἰρηνικόν, καὶ ἀγαθὴν ἀπολογίαν τὴν ἐπὶ τοῦ φοβεροῦ βήματος τοῦ Χριστοῦ, τοῦ Κυρίου αἰτησώμεθα.",
+      "ru": "Священник: Христианский кончины жизни нашей, безболезненной, непостыдной и мирной, и доброго ответа на страшном суде Христовом, Господа просим."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: Commemorating our most holy, most pure, most blessed and glorious Lady Theotokos and ever virgin Mary, with all the saints, let us commend ourselves and each other, and all our life unto Christ our God.",
+      "el": "ΙΕΡΕΥΣ: Τῆς παναγίας, ἀχράντου, ὑπερευλογημένης καὶ ἐνδόξου Δεσποίνης ἡμῶν Θεοτόκου καὶ ἀειπαρθένου Μαρίας μετὰ πάντων τῶν ἁγίων μνημονεύσαντες, ἑαυτοὺς καὶ ἀλλήλους καὶ πάντα τὸν βίον ἡμῶν Χριστῷ τῷ Θεῷ παραθώμεθα.",
+      "ru": "Священник: Пресвятую, пречистую, преблагословенную Владычицу нашу Богородицу и Приснодеву Марию со всеми святыми помянувше, сами себе и друг друга и весь живот наш Христу Богу предадим."
+    },
+    {
+      "en": "CHOIR: To Thee, O Lord. The Offertory Prayer",
+      "el": "ΧΟΡΟΣ: Σοί, Κύριε.",
+      "ru": "Хор: Тебе, Господи."
+    },
+    {
+      "en": "PRIEST: O Lord God almighty, who alone art holy, who acceptest the sacrifice of praise from those who call upon Thee with their whole heart. Accept also the prayer of us sinners, and bear it to Thy holy altar, enabling us to offer unto Thee gifts and spiritual sacrifices for our sins and for the errors of all Thy people. Make us worthy to find grace in Thy sight, that our sacrifice may be acceptable unto Thee, and that the good spirit of Thy grace may dwell upon us and upon these Gifts here offered, and upon all Thy people. Through the compassions of Thine only-begotten Son, with whom Thou art blessed, together with Thine all-holy, good, and life-creating Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Κύριε ὁ Θεὸς ὁ παντοκράτωρ, ὁ μόνος ἅγιος.",
+      "ru": "Священник: Господи Боже Вседержителю, Един Свят."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    }
+  ],
+  "creed": [
+    {
+      "en": "The Peace",
+      "el": "",
+      "ru": ""
+    },
+    {
+      "en": "PRIEST: Peace be unto all.",
+      "el": "ΙΕΡΕΥΣ: Εἰρήνη πᾶσι.",
+      "ru": "Священник: Мир всем."
+    },
+    {
+      "en": "CHOIR: And to your spirit.",
+      "el": "ΧΟΡΟΣ: Καὶ μετὰ τοῦ πνεύματός σου.",
+      "ru": "Хор: И со духом Твоим."
+    },
+    {
+      "en": "PRIEST: Let us love one another, that with one mind we may confess.",
+      "el": "ΙΕΡΕΥΣ: Ἀγαπήσωμεν ἀλλήλους, ἵνα ὁμοθυμαδὸν ὁμολογήσωμεν.",
+      "ru": "Священник: Возлюбим друг друга, да единомысленно исповем."
+    },
+    {
+      "en": "CHOIR: Father, Son, and Holy Spirit, the Trinity one in essence, and undivided.",
+      "el": "ΧΟΡΟΣ: Πατὴρ, Υἱὸς καὶ Ἅγιον Πνεῦμα· Τριὰς ὁμοούσιος καὶ ἀδιαίρετος!",
+      "ru": "Хор: Отец, Сын и Святой Дух! Троица единосущная и нераздельная!"
+    },
+    {
+      "en": "PRIEST: The doors! The doors! In wisdom, let us attend!",
+      "el": "ΙΕΡΕΥΣ: Αἱ θύραι, αἱ θύραι· ἐν σοφίᾳ προσέχωμεν.",
+      "ru": "Священник: Двери, двери! Мудростию вонмите."
+    },
+    {
+      "en": "__CREED_TITLE__",
+      "el": "__CREED_TITLE__",
+      "ru": "__CREED_TITLE__"
+    },
+    {
+      "en": "CHOIR: I believe in one God, the Father almighty, Maker of heaven and earth, and of all things visible and invisible.",
+      "el": "ΧΟΡΟΣ: Πιστεύω εἰς ἕνα Θεόν, Πατέρα, Παντοκράτορα, ποιητὴν οὐρανοῦ καὶ γῆς, ὁρατῶν τε πάντων καὶ ἀοράτων.",
+      "ru": "Хор: Верую во едина Бога Отца, Вседержителя, Творца небесе и земли, видимых же и невидимых."
+    },
+    {
+      "en": "CHOIR: And in one Lord Jesus Christ, the only-begotten Son of God, begotten of the Father before all ages; Light of Light, true God of true God; begotten, not made; of one essence with the Father; by whom all things were made.",
+      "el": "ΧΟΡΟΣ: Καὶ εἰς ἕνα Κύριον Ἰησοῦν Χριστόν, τὸν Υἱὸν τοῦ Θεοῦ τὸν μονογενῆ, τὸν ἐκ τοῦ Πατρὸς γεννηθέντα πρὸ πάντων τῶν αἰώνων· φῶς ἐκ φωτός, Θεὸν ἀληθινὸν ἐκ Θεοῦ ἀληθινοῦ, γεννηθέντα οὐ ποιηθέντα, ὁμοούσιον τῷ Πατρί, διʼ οὗ τὰ πάντα ἐγένετο.",
+      "ru": "Хор: И во едина Господа Иисуса Христа, Сына Божия, Единороднаго, Рожденнаго от Отца прежде всех век: Света от Света, Бога истинна от Бога истинна, Рожденнаго, не сотвореннаго, единосущна Отцу, Имже вся быша."
+    },
+    {
+      "en": "CHOIR: Who for us men and for our salvation came down from heaven, and was incarnate of the Holy Spirit and the Virgin Mary, and became man; was crucified for us under Pontius Pilate, and suffered and was buried; rose on the third day according to the Scriptures; ascended into heaven and sits at the right hand of the Father; and shall come again with glory to judge the living and the dead; whose Kingdom shall have no end.",
+      "el": "ΧΟΡΟΣ: Τὸν διʼ ἡμᾶς τοὺς ἀνθρώπους καὶ διὰ τὴν ἡμετέραν σωτηρίαν κατελθόντα ἐκ τῶν οὐρανῶν καὶ σαρκωθέντα ἐκ Πνεύματος Ἁγίου καὶ Μαρίας τῆς Παρθένου καὶ ἐνανθρωπήσαντα· σταυρωθέντα τε ὑπὲρ ἡμῶν ἐπὶ Ποντίου Πιλάτου, καὶ παθόντα καὶ ταφέντα· καὶ ἀναστάντα τῇ τρίτῃ ἡμέρᾳ κατὰ τὰς Γραφάς· καὶ ἀνελθόντα εἰς τοὺς οὐρανοὺς καὶ καθεζόμενον ἐκ δεξιῶν τοῦ Πατρός· καὶ πάλιν ἐρχόμενον μετὰ δόξης κρῖναι ζῶντας καὶ νεκρούς, οὗ τῆς βασιλείας οὐκ ἔσται τέλος.",
+      "ru": "Хор: Ради нас человек и ради нашего спасения сшедшаго с небес и воплотившагося от Духа Святаго и Марии Девы, и вочеловечшагося; распята бывшаго за ны при Понтийстем Пилате, и страдавшаго, и погребеннаго; воскресшаго в третий день по Писаниям, и возшедшаго на небеса, и седящаго одесную Отца; и паки грядущаго со славою судити живым и мертвым, Егоже Царствию не будет конца."
+    },
+    {
+      "en": "CHOIR: And in the Holy Spirit, the Lord, the Giver of Life, who proceeds from the Father; who with the Father and the Son is worshipped and glorified; who spoke by the prophets. In one, Holy, Catholic, and Apostolic Church.",
+      "el": "ΧΟΡΟΣ: Καὶ εἰς τὸ Πνεῦμα τὸ Ἅγιον, τὸ Κύριον, τὸ ζωοποιόν, τὸ ἐκ τοῦ Πατρὸς ἐκπορευόμενον, τὸ σὺν Πατρὶ καὶ Υἱῷ συμπροσκυνούμενον καὶ συνδοξαζόμενον, τὸ λαλῆσαν διὰ τῶν προφητῶν· εἰς μίαν, ἁγίαν, καθολικὴν καὶ ἀποστολικὴν Ἐκκλησίαν.",
+      "ru": "Хор: И в Единаго Святаго, Животворящаго и Сущаго Духа, Иже от Отца исходит, Иже с Отцем и Сыном покланяема и сославима, глаголавшаго пророки. И во едину, Святую, Соборную и Апостольскую Церковь."
+    },
+    {
+      "en": "CHOIR: I acknowledge one baptism for the remission of sins.",
+      "el": "ΧΟΡΟΣ: Ὁμολογῶ ἓν βάπτισμα εἰς ἄφεσιν ἁμαρτιῶν.",
+      "ru": "Хор: Исповедую едино Крещение во оставление грехов."
+    },
+    {
+      "en": "CHOIR: I look for the resurrection of the dead, and the life of the world to come. Amen.",
+      "el": "ΧΟΡΟΣ: Προσδοκῶ ἀνάστασιν νεκρῶν καὶ ζωὴν τοῦ μέλλοντος αἰῶνος. Ἀμήν.",
+      "ru": "Хор: Чаю воскресения мертвых, и жизни будущаго века. Аминь."
+    }
+  ],
+  "anaphora": [
+    {
+      "en": "PRIEST: Let us stand aright! Let us stand with fear! Let us attend, that we may offer the Holy Oblation in peace.",
+      "el": "ΙΕΡΕΥΣ: Στῶμεν καλῶς· στῶμεν μετὰ φόβου· προσέχωμεν τὴν ἁγίαν ἀναφορὰν ἐν εἰρήνῃ προσφέρειν.",
+      "ru": "Священник: Станем добре, станем со страхом; вонмим, святое возношение в мире приносити."
+    },
+    {
+      "en": "CHOIR: A mercy of peace. A sacrifice of praise.",
+      "el": "ΧΟΡΟΣ: Ἔλεον εἰρήνης, θυσίαν αἰνέσεως.",
+      "ru": "Хор: Милость мира, жертву хваления."
+    },
+    {
+      "en": "PRIEST: The grace of our Lord Jesus Christ, the love of God the Father, and the communion of the Holy Spirit be with all of you.",
+      "el": "ΙΕΡΕΥΣ: Ἡ χάρις τοῦ Κυρίου ἡμῶν Ἰησοῦ Χριστοῦ καὶ ἡ ἀγάπη τοῦ Θεοῦ καὶ Πατρὸς καὶ ἡ κοινωνία τοῦ Ἁγίου Πνεύματος εἴη μετὰ πάντων ὑμῶν.",
+      "ru": "Священник: Благодать Господа нашего Иисуса Христа, и любовь Бога и Отца, и причастие Святаго Духа буди со всеми вами."
+    },
+    {
+      "en": "CHOIR: And with your spirit.",
+      "el": "ΧΟΡΟΣ: Καὶ μετὰ τοῦ πνεύματός σου.",
+      "ru": "Хор: И со духом Твоим."
+    },
+    {
+      "en": "PRIEST: Let us lift up our hearts.",
+      "el": "ΙΕΡΕΥΣ: Ἄνω σχῶμεν τὰς καρδίας.",
+      "ru": "Священник: Имамы сердца на небеса."
+    },
+    {
+      "en": "CHOIR: We lift them up unto the Lord.",
+      "el": "ΧΟΡΟΣ: Ἔχομεν πρὸς τὸν Κύριον.",
+      "ru": "Хор: Имеем ко Господу."
+    },
+    {
+      "en": "PRIEST: Let us give thanks unto the Lord.",
+      "el": "ΙΕΡΕΥΣ: Εὐχαριστήσωμεν τῷ Κυρίῳ.",
+      "ru": "Священник: Благодарим Господа."
+    },
+    {
+      "en": "CHOIR: It is meet and right, to worship the Father, and the Son, and the Holy Spirit; the Trinity, one in essence and undivided.",
+      "el": "ΧΟΡΟΣ: Ἄξιον καὶ δίκαιόν ἐστι προσκυνεῖν Πατέρα, Υἱὸν καὶ ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀδιαίρετον.",
+      "ru": "Хор: Достойно и праведно есть поклонятися Отцу, Сыну и Святому Духу, Троице единосущной и нераздельной."
+    },
+    {
+      "en": "PRIEST: It is meet and right to sing of Thee, to bless Thee, to praise Thee, to give thanks to Thee, and to Worship Thee in every place of Thy dominion: for Thou art God ineffable, inconceivable, invisible, incomprehensible, ever-existing, and eternally the same, Thou and Thine only-begotten Son and Thy Holy Spirit. Thou it was who brought us from non- existence into being, and when we had fallen away didst raise us up again, and didst not cease to do all things until Thou hadst brought us up to heaven, and hadst endowed us with Thy Kingdom which is to come. For all these things we give thanks to Thee, and to Thine only-begotten Son, and to Thy Holy Spirit: for all things of which we know and of which we know not, whether manifest or unseen; and we thank Thee for this Liturgy which Thou hast found worthy to accept at our hands, though there stand by Thee thousands of archangels and hosts of angels, the Cherubim and the Seraphim, six- winged, many-eyed, who soar aloft, borne on their pinions. Singing the triumphant hymn, shouting, proclaiming, and saying:",
+      "el": "ΙΕΡΕΥΣ: Ἄξιόν ἐστι καὶ δίκαιον ὑμνεῖν σε.",
+      "ru": "Священник: Достойно и праведно есть пети Тя."
+    },
+    {
+      "en": "CHOIR: Holy, Holy, Holy, Lord of Sabaoth, heaven and earth are full of Thy glory. Hosanna in the highest. Blessed is he that cometh in the name of the Lord. Hosanna in the highest.",
+      "el": "ΧΟΡΟΣ: Ἅγιος, Ἅγιος, Ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ τῆς δόξης σου· Ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος ἐν ὀνόματι Κυρίου· Ὡσαννὰ ἐν τοῖς ὑψίστοις.",
+      "ru": "Хор: Свят, Свят, Свят Господь Саваоф; исполнь небо и земля славы Твоея; Осанна в вышних. Благословен Грядый во имя Господне; Осанна в вышних."
+    },
+    {
+      "en": "PRIEST: With these blessed powers, O Master who lovest mankind, we also cry aloud and say: Holy art Thou and Thine only-begotten Son, and Thy Holy Spirit! Holy art Thou and all- holy, and magnificent is Thy glory! Who hast so loved the world to give Thine only - begotten Son, that whoever believes in Him should not perish, but have everlasting life; who when He had come and had fulfilled all the dispensation for us, in the night in which He was given up -- or rather, gave Himself up for the life of the world -- took bread in His holy, pure, and blameless hands; and when He had given thanks and blessed it, and hallowed it, and broken it, He gave it to His holy disciples and apostles, saying: Take! Eat! This is My Body which is broken for you, for the remission of sins.",
+      "el": "ΙΕΡΕΥΣ: Λάβετε, φάγετε· τοῦτό μού ἐστι τὸ Σῶμα, τὸ ὑπὲρ ὑμῶν κλώμενον, εἰς ἄφεσιν ἁμαρτιῶν.",
+      "ru": "Священник: Приимите, ядите, сие есть Тело Мое, за вас ломаемое во оставление грехов."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: And likewise, after supper, he took the cup, saying: Drink of it, all of you! This is My Blood of the New Testament, which is shed for you and for many for the remission of sins!",
+      "el": "ΙΕΡΕΥΣ: Ὁμοίως μετὰ τὸ δειπνῆσαι, λαβὼν τὸ ποτήριον, λέγων· Πίετε ἐξ αὐτοῦ πάντες.",
+      "ru": "Священник: Подобно и по вечери, взяв чашу, глаголя: Пийте от нея вси."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: Remembering this saving commandment and all those things which have come to pass for us: the Cross, the Tomb, the Resurrection on the third day, the Ascension into heaven, the Sitting at the right hand, and the second and glorious coming. Thine own of Thine own we offer unto Thee, in behalf of all and for all.",
+      "el": "ΙΕΡΕΥΣ: Τῶν σωτηρίων ταύτην ὑπομνησθέντες ἐντολὴν καὶ πάντα τὰ ὑπὲρ ἡμῶν γεγονότα, σταυρόν, τάφον, τριήμερον ἀνάστασιν, ἀνάληψιν, ἐκ δεξιῶν καθέδραν, δευτέραν καὶ ἐνδόξον παρουσίαν, τὰ σὰ ἐκ τῶν σῶν σοὶ προσφέρομεν κατὰ πάντα καὶ διὰ πάντα.",
+      "ru": "Священник: Поминающе убо спасительную сию заповедь и вся, яже о нас бывшая: крест, гроб, тридневное воскресение, на небеса восшествие, одесную седение, второе и славное пришествие, Твоя от Твоих Тебе приносяще, о всех и за вся."
+    },
+    {
+      "en": "CHOIR: We hymn Thee, we bless Thee, we give thanks unto Thee, O Lord, and we pray unto Thee, O our God.",
+      "el": "ΧΟΡΟΣ: Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σὲ προσκυνοῦμεν, σὲ δοξάζομεν, σοὶ εὐχαριστοῦμεν, διὰ τὸ μέγα σου ἔλεος.",
+      "ru": "Хор: Тебя поем, Тебя благословим, Тебя поклоняемся, Тебя славим, Тебе благодарим, яко велико Твое милосердие."
+    },
+    {
+      "en": "PRIEST: Again we offer unto Thee this reasonable and bloodless worship, and ask Thee, and pray Thee, and supplicate Thee: send down Thy Holy Spirit upon us and upon these Gifts here offered. And make this Bread the precious Body of Thy Christ.",
+      "el": "ΙΕΡΕΥΣ: Πάλιν προσφέρομέν σοι τὴν λογικὴν ταύτην καὶ ἀναίμακτον λατρείαν, καὶ δεόμεθα καὶ προσευχόμεθα καὶ ἱκετεύομεν· ἐξαπόστειλον τὸ Πνεῦμά σου τὸ ἅγιον ἐφʼ ἡμᾶς καὶ ἐπὶ τὰ προκείμενα Δῶρα ταῦτα.",
+      "ru": "Священник: Паки приносим Ти сию разумную и бескровную службу, и молимся и просим: ниспошли Духа Твоего Святаго на нас и на предлежащия Дары сия."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: And that which is in this cup, the precious blood of Thy Christ.",
+      "el": "ΙΕΡΕΥΣ: Καὶ τὸ ἐν ταύτῃ, τίμιον Αἷμα τοῦ Χριστοῦ σου.",
+      "ru": "Священник: И яже в ней, драгоценная Кровь Христа Твоего."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: Making the change by Thy Holy Spirit.",
+      "el": "ΙΕΡΕΥΣ: Μεταβαλὼν τῷ Πνεύματί σου τῷ Ἁγίῳ.",
+      "ru": "Священник: Пременяя Духом Твоим Святым."
+    },
+    {
+      "en": "CHOIR: Amen. Amen. Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: That they may be to those who partake for the purification of soul, for the remission of sins, for the communion of Thy Holy Spirit, for the fulfillment of the Kingdom of Heaven, for boldness towards Thee, and not for judgement or condemnation. Again we offer unto Thee this reasonable worship for those who have fallen asleep in the faith: ancestors, fathers, patriarchs, prophets, apostles, preachers, evangelists, martyrs, confessors, ascetics, and every righteous spirit made perfect in faith. Especially for our most holy, most pure, most blessed, and glorious Lady Theotokos, and ever-virgin Mary.",
+      "el": "ΙΕΡΕΥΣ: Ἵνα εἰς καθαρισμὸν ψυχῆς καὶ ἄφεσιν ἁμαρτιῶν γένηται τοῖς μεταλαμβάνουσιν.",
+      "ru": "Священник: Да будут приемлющим во очищение души и во оставление грехов."
+    },
+    {
+      "en": "CHOIR: It is truly meet to to bless you, O Theotokos, ever blessed and most pure, and the Mother of our God. More honorable than the Cherubim and more glorious beyond compare than the Seraphim, without corruption you gave birth to God the Word, true Theotokos, we magnify you.",
+      "el": "ΧΟΡΟΣ: Ἄξιόν ἐστιν ὡς ἀληθῶς μακαρίζειν σε τὴν Θεοτόκον, τὴν ἀειμακάριστον καὶ παναγίαν καὶ μακαριωτέραν τῶν Χερουβίμ καὶ ἐνδοξοτέραν ἀσυγκρίτως τῶν Σεραφίμ.",
+      "ru": "Хор: Достойно есть яко воистину блажити Тя, Богородицу, присноблаженную и пренепорочную и Матерь Бога нашего."
+    },
+    {
+      "en": "PRIEST: For the holy, Prophet, Forerunner, and Baptist John; the holy, glorious, and all-laudable apostles; Saint , whom we commemorate today; and all Thy saints, at whose supplication look down upon us, O God. Remember all those who have fallen asleep before us in the hope of resurrection to eternal life, especially ; grant them rest, O God, wher the light of Thy countenance shines on them. Again we entreat Thee: Remember, O Lord, all the Orthodox Episcopate, who rightly teach the word of Thy truth; all the priests, the deacons in Christ, and every order of the clergy. Again we offer unto Thee this reasonable worship: for the whole world; for the Holy, Catholic, and Apostolic Church; for those who live in chastity and holiness of life; for all civil authorities; grant them, O Lord, peaceful times, that we, in their tranquility, may lead a calm and peaceful life in all Godliness and sanctity. Among the first, remember, O Lord, His Beatitude, our Metropolitan ; His Eminence (His Grace), our Archbishop (our Bishop) ; Grant them for Thy holy churches in peace, safety, honor, health, and length of days, rightly to define the word of Thy truth.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τοῦ ἁγίου Προφήτου, Προδρόμου καὶ Βαπτιστοῦ Ἰωάννου.",
+      "ru": "Священник: О святом Пророке, Предтече и Крестителе Иоанне."
+    },
+    {
+      "en": "CHOIR: And all mankind.",
+      "el": "ΧΟΡΟΣ: Καὶ παντὸς ἀνθρωπότητος.",
+      "ru": "Хор: И всего человечества."
+    },
+    {
+      "en": "PRIEST: Remember, O Lord, the city in which we dwell; every city and country; those who with faith dwell in them. Remember, O Lord, travelers by land, by sea, and by air; the sick and the suffering; captives and their salvation. Remember, O Lord, those who bring offerings and do good in Thy holy churches; those who remember the poor; and upon us all send forth Thy mercies. And grant that with one mouth and one heart, we may praise Thine all- honorable and majestic name: of the Father, and of the Son, and of the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Μνήσθητι, Κύριε, τῆς πόλεως ταύτης ἐν ᾗ κατοικοῦμεν.",
+      "ru": "Священник: Помяни, Господи, град сей, в котором живем."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: And the mercies of our great God and Savior, Jesus Christ, shall be with all of you.",
+      "el": "ΙΕΡΕΥΣ: Καὶ τὸ ἔλεος τοῦ μεγάλου καὶ σωτῆρος ἡμῶν Θεοῦ Ἰησοῦ Χριστοῦ μετὰ πάντων ὑμῶν.",
+      "ru": "Священник: И милость великаго Бога и Спасителя нашего Иисуса Христа со всеми вами."
+    },
+    {
+      "en": "CHOIR: And with Thy spirit.",
+      "el": "ΧΟΡΟΣ: Καὶ μετὰ τοῦ πνεύματός σου.",
+      "ru": "Хор: И со духом Твоим."
+    },
+    {
+      "en": "PRIEST: Having remembered all the saints, again and again in peace, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Πάντων τῶν ἁγίων μνημονεύσαντες, ἔτι καὶ ἔτι ἐν εἰρήνῃ τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: Всех святых помянувше, паки и паки миром Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For the precious Gifts offered and sanctified, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τῶν τιμίων δώρων τῶν προσφερόντων καὶ ἁγιασθέντων, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О драгоценных Дарах, приносимых и освященных, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: That our God, who loves mankind, receiving them upon His holy, heavenly, and ideal altar as a sweet spiritual fragrance, will send down on us in return His divine grace and the gift of the Holy Spirit, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἵνα ὁ φιλάνθρωπος Θεὸς ἡμῶν, δεξάμενος αὐτὰ ἐπὶ τῷ ἁγίῳ αὐτοῦ θυσιαστηρίῳ, ἀντιπέμψῃ ἡμῖν τὴν θείαν αὐτοῦ χάριν καὶ τὴν δωρεὰν τοῦ ἁγίου Πνεύματος, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: Да Бог наш, человеколюбец, приим Дары на святом жертвеннике Своем, ниспошлет нам благодать Свою и дар Святаго Духа, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: For our deliverance from all affliction, wrath, danger, and necessity, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ὑπὲρ τοῦ ῥυσθῆναι ἡμᾶς ἀπὸ πάσης θλίψεως, ὀργῆς, κινδύνου καὶ ἀνάγκης, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: О избавлении нас от всякой скорби, гнева и нужды, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Help us, save us, have mercy on us, and keep us, O God, by Thy grace.",
+      "el": "ΙΕΡΕΥΣ: Ἀντίλαβου, σῶσον, ἐλέησον καὶ διαφύλαξον ἡμᾶς, ὁ Θεός, τῇ σῇ χάριτι.",
+      "ru": "Священник: Заступи, спаси, помилуй и сохрани нас, Боже, Твоею благодатию."
+    },
+    {
+      "en": "CHOIR: Lord have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: That the whole day be perfect, holy, peaceful, and sinless, let us ask of the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἵνα τελειωθῇ ἡ ἡμέρα ἡμῶν ἁγία, εἰρηνικὴ καὶ ἀναμάρτητος, τοῦ Κυρίου αἰτησώμεθα.",
+      "ru": "Священник: Да совершится день наш свят, мирен и безгрешен, Господа просим."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: An angel of peace, a faithful guide, a guardian of our souls and bodies, let us ask of the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἄγγελον εἰρήνης, πιστὸν ὁδηγόν, φύλακα τῶν ψυχῶν καὶ τῶν σωμάτων ἡμῶν, τοῦ Κυρίου αἰτησώμεθα.",
+      "ru": "Священник: Ангела мира, верного наставника, хранителя душ и тел наших, Господа просим."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: Pardon and remission of our sins and transgressions, let us ask of the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἄφεσιν καὶ ἄνεσιν τῶν ἁμαρτιῶν καὶ τῶν παραπτωμάτων ἡμῶν, τοῦ Κυρίου αἰτησώμεθα.",
+      "ru": "Священник: Оставление и прощение грехов и прегрешений наших, Господа просим."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: All things that are good and profitable for our souls, and peace for the world, let us ask of the Lord.",
+      "el": "ΙΕΡΕΥΣ: Πάντα τὰ πρὸς σωτηρίαν ἡμῶν καὶ εἰρήνην τοῦ κόσμου, τοῦ Κυρίου αἰτησώμεθα.",
+      "ru": "Священник: О всяком ко спасению нашему и мире мира, Господа просим."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: That we may complete the remaining time of our life in peace and repentance, let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Ἵνα τὸν ὑπόλοιπον χρόνον τῆς ζωῆς ἡμῶν ἐν εἰρήνῃ καὶ μετανοίᾳ τελειώσωμεν, τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: Да пребывающее время жизни нашей в мире и покаянии скончам, Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: A Christian ending to our life: painless, blameless, and peaceful; and a good defense before the dread judgement seat of Christ, let us ask of the Lord.",
+      "el": "ΙΕΡΕΥΣ: Χριστιανὸν τὸ τέλος τῆς ζωῆς ἡμῶν, ἀνόδυνον, ἀνεπαίδεκτον καὶ εἰρηνικόν, καὶ ἀγαθὴν ἀπολογίαν τὴν ἐπὶ τοῦ φοβεροῦ βήματος τοῦ Χριστοῦ, τοῦ Κυρίου αἰτησώμεθα.",
+      "ru": "Священник: Христианский кончины жизни нашей, безболезненной, непостыдной и мирной, и доброго ответа на страшном суде Христовом, Господа просим."
+    },
+    {
+      "en": "CHOIR: Grant it, O Lord.",
+      "el": "ΧΟΡΟΣ: Παράσχοι, Κύριε.",
+      "ru": "Хор: Подай, Господи."
+    },
+    {
+      "en": "PRIEST: Having asked for the unity of the Faith, and the communion of the Holy Spirit, let us commend ourselves and each other, and all our lives unto Christ our God.",
+      "el": "ΙΕΡΕΥΣ: Τῆς ἑνότητος τῆς πίστεως καὶ τῆς κοινωνίας τοῦ ἁγίου Πνεύματος δεηθέντες, ἑαυτοὺς καὶ ἀλλήλους καὶ πάντα τὸν βίον ἡμῶν Χριστῷ τῷ Θεῷ παραθώμεθα.",
+      "ru": "Священник: Единства веры и общения Святаго Духа испросивше, себе и друг друга и весь живот наш Христу Богу предадим."
+    },
+    {
+      "en": "CHOIR: To Thee, O Lord.",
+      "el": "ΧΟΡΟΣ: Σοί, Κύριε.",
+      "ru": "Хор: Тебе, Господи."
+    },
+    {
+      "en": "PRIEST: Unto Thee we commend our whole life and hope, O Master who lovest mankind. We ask Thee, and pray Thee, and supplicate Thee: Make us worthy to partake of the heavenly and awesome Mysteries of this sacred and spiritual table with a pure conscience: for remission of sins, for forgiveness of transgressions, for the communion of the Holy Spirit, for the inheritance of the Kingdom of Heaven, for boldness towards Thee, but not for judgement of condemnation. And make us worthy, O Master, that with boldness and without condemnation, we may dare to call on Thee, the heavenly God, as Father, and to say:",
+      "el": "ΙΕΡΕΥΣ: Σοὶ παραθεμένους τὸν πάντα βίον ἡμῶν καὶ τὴν ἐλπίδα, Δέσποτα φιλάνθρωπε, ἀξίωσον ἡμᾶς μεταλαβεῖν τῶν ἐπουρανίων καὶ φρικτῶν σου Μυστηρίων.",
+      "ru": "Священник: Тебе предавше весь живот наш и упование, Владыко Человеколюбче, сподоби нас причаститися небесных и страшных Таин Твоих."
+    },
+    {
+      "en": "__LORDS_PRAYER_TITLE__",
+      "el": "__LORDS_PRAYER_TITLE__",
+      "ru": "__LORDS_PRAYER_TITLE__"
+    },
+    {
+      "en": "CHOIR: Our Father, who art in heaven, hallowed be Thy name. Thy kingdom come; Thy will be done on earth as it is in heaven. Give us this day our daily bread, and forgive us our debts as we forgive our debtors. And lead us not into temptation, but deliver us from the evil one.",
+      "el": "ΧΟΡΟΣ: Πάτερ ἡμῶν, ὁ ἐν τοῖς οὐρανοῖς, ἁγιασθήτω τὸ ὄνομά σου, ἐλθέτω ἡ βασιλεία σου, γενηθήτω τὸ θέλημά σου, ὡς ἐν οὐρανῷ καὶ ἐπὶ γῆς. Τὸν ἄρτον ἡμῶν τὸν ἐπιούσιον δὸς ἡμῖν σήμερον, καὶ ἄφες ἡμῖν τὰ ὀφειλήματα ἡμῶν, ὡς καὶ ἡμεῖς ἀφίεμεν τοῖς ὀφειλέταις ἡμῶν· καὶ μὴ εἰσενέγκῃς ἡμᾶς εἰς πειρασμόν, ἀλλὰ ῥῦσαι ἡμᾶς ἀπὸ τοῦ πονηροῦ.",
+      "ru": "Хор: Отче наш, Иже еси на небесех, да святится имя Твое, да приидет Царствие Твое, да будет воля Твоя, яко на небеси и на земли. Хлеб наш насущный даждь нам днесь, и остави нам долги наша, якоже и мы оставляем должником нашим; и не введи нас во искушение, но избави нас от лукаваго."
+    },
+    {
+      "en": "PRIEST: For Thine is the Kingdom, and the power, and the glory: of the Father, and of the Son, and of the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Ὅτι σὸν ἐστὶ τὸ κράτος καὶ ἡ βασιλεία καὶ ἡ δύναμις καὶ ἡ δόξα, τοῦ Πατρὸς καὶ τοῦ Υἱοῦ καὶ τοῦ Ἁγίου Πνεύματος, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων.",
+      "ru": "Священник: Яко Твоя есть держава и Царство и сила и слава, Отца и Сына и Святаго Духа, ныне и присно и во веки веков."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: Peace be unto all!",
+      "el": "ΙΕΡΕΥΣ: Εἰρήνη πᾶσι.",
+      "ru": "Священник: Мир всем."
+    },
+    {
+      "en": "CHOIR: And to your spirit.",
+      "el": "ΧΟΡΟΣ: Καὶ μετὰ τοῦ πνεύματός σου.",
+      "ru": "Хор: И со духом Твоим."
+    },
+    {
+      "en": "PRIEST: Bow your heads unto the Lord.",
+      "el": "ΙΕΡΕΥΣ: Κλίνατε τὸν κάραν τῷ Κυρίῳ.",
+      "ru": "Священник: Приклоните главы ваши Господу."
+    },
+    {
+      "en": "CHOIR: To Thee, O Lord.",
+      "el": "ΧΟΡΟΣ: Σοί, Κύριε.",
+      "ru": "Хор: Тебе, Господи."
+    },
+    {
+      "en": "PRIEST: We give thanks unto Thee, O King invisible, who by Thy measureless power didst make all things, and in the greatness of Thy mercy didst bring all things from non-existence into being. Look down from heaven, O Master, upon those who have bowed their heads unto Thee, the awesome God. Do Thou, Thyself, O Master, distribute these Gifts here offered, unto all of us for good, according to the individual need of each; sail with those who sail, travel with those who travel by land and by air; heal the sick, O Thou who art the physician of our souls and bodies. Through the grace and compassion and love toward mankind of Thine only- begotten Son, with whom Thou art blessed, together with Thine all-holy, good, and life-creating Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Εὐχαριστοῦμέν σοι, Βασιλεῦ ἀόρατε.",
+      "ru": "Священник: Благодарим Тя, Царю невидимый."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: Attend, O Lord Jesus Christ our God, out of Thy holy, dwelling place, from the throne of glory of Thy Kingdom; and come to sanctify us, O Thou who sittest on high with the Father, and art here invisibly present with us; and by Thy mighty hand impart unto us Thy most pure Body and precious Blood, and through us to all the people. O God cleanse me, a sinner, and have mercy on me. (3x) Let us attend! Holy things for the holy!",
+      "el": "ΙΕΡΕΥΣ: Πρόσχωμεν, Κύριε Ἰησοῦ Χριστὲ ὁ Θεὸς ἡμῶν.",
+      "ru": "Священник: Вонмите, Господи Иисусе Христе, Боже наш."
+    }
+  ],
+  "communion": [
+    {
+      "en": "CHOIR: I believe, O Lord, and I confess that Thou art truly the Christ, the Son of the Living God, who camest into the world to save sinners, of whom I am first. I believe also that this is truly Thine own most pure Body, and that this is truly Thine own precious Blood. Therefore, I pray Thee: have mercy upon me and forgive my transgressions both voluntary and involuntary, of word and of deed, committed in knowledge or in ignorance. And make me worthy to partake without condemnation of Thy most pure Mysteries, for the remission of my sins and unto life everlasting. Amen. Of Thy Mystical Supper, O Son of God, accept me today as a communicant: for I will not speak of Thy Mystery to Thine enemies, neither like Judas will I give Thee a kiss; but like the thief will I confess Thee: Remember me, O Lord, in Thy Kingdom. How shall I, who am unworthy, enter into the splendor of Your saints? If I dare to enter into the bridal chamber, my clothing will accuse me, since it is not a wedding garment; and being bound up, I shall be cast out by the angels. In Your love, Lord, cleanse my soul and save me. Loving Master, Lord Jesus Christ, my God, let not these holy Gifts be to my condemnation because of my unworthiness, but for the cleansing and sanctification of soul and body and the pledge of the future life and kingdom. It is good for me to cling to God and to place in Him the hope of my salvation. May the communion of Thy holy Mysteries be neither to my judgement, nor to my condemnation, O Lord, but to the healing of my soul and body.",
+      "el": "ΧΟΡΟΣ: Πιστεύω, Κύριε, καὶ ὁμολογῶ ὅτι σὺ εἶ ἀληθῶς ὁ Χριστός, ὁ Υἱὸς τοῦ Θεοῦ τοῦ ζῶντος.",
+      "ru": "Хор: Верую, Господи, и исповедую, яко Ты еси воистину Христос, Сын Бога Живаго."
+    },
+    {
+      "en": "PRIEST: In the fear of God, and with faith draw near!",
+      "el": "ΙΕΡΕΥΣ: Μετὰ φόβου Θεοῦ καὶ πίστεως προσέλθετε.",
+      "ru": "Священник: Со страхом Божиим и верою приступите."
+    },
+    {
+      "en": "PRIEST: Having beheld the Resurrection of Christ, let us bow down before the holy Lord Jesus, the only sinless One. Thy Cross do we worship, O Christ, and Thy holy Resurrection we hymn and glorify, for Thou art our God; we know no other than Thee; Thy name do we name. Come, all ye faithful, let us worship Christ's holy Resurrection, for, behold, through the Cross joy hath come into all the world. Ever blessing the Lord, let us hymn His Resurrection. By enduring the Cross for us, by death hath He abolished death. Shine, shine, O New Jerusalem, for the glory of the Lord hath risen upon Thee. Dance and rejoice, O Zion, and, Thou, O pure Theotokos, exult in the rising of Him Thou didst bear. O great and holiest Pascha, Christ. O Wisdom and Word of God and Power, grant us truly to partake of Thee in the day without evening of Thy Kingdom. Wash away, O Lord, the sins of all those here commemorated by Thine precious Blood, through the prayers of Thy saints. O God, save Thy people, and bless Thine inheritance.",
+      "el": "ΙΕΡΕΥΣ: Θεωρήσαντες τὴν Ἀνάστασιν τοῦ Χριστοῦ.",
+      "ru": "Священник: Видевше Воскресение Христово."
+    },
+    {
+      "en": "CHOIR: We have seen the true Light. We have received the heavenly Spirit. We have found the true Faith, worshipping the undivided Trinity, for He hath saved us.",
+      "el": "ΧΟΡΟΣ: Εἴδομεν τὸ φῶς τὸ ἀληθινόν, ἐλάβομεν Πνεῦμα ἐπουράνιον· εὕρομεν πίστιν Ὀρθοδόξων.",
+      "ru": "Хор: Видехом свет истинный, прияхом Духа небеснаго; обретохом веру православную."
+    },
+    {
+      "en": "PRIEST: Be Thou exalted, O God, above the heavens and Thy glory over all the earth. Blessed is our God, always, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Ὑψώθητι, ὁ Θεός, ὑπὲρ τοὺς οὐρανούς.",
+      "ru": "Священник: Вознесися, Боже, над небеса."
+    },
+    {
+      "en": "CHOIR: Let our mouths be filled with Thy praise, O Lord, that we may hymn Thy glory, for Thou hast made us worthy to partake of Thy holy, immortal and life-creating Mysteries. Preserve us in Thy holiness, that all the day long we may meditate on Thy righteousness. Alleluia. Alleluia. Alleluia",
+      "el": "ΧΟΡΟΣ: Πληρωθήτω τὸ στόμα ἡμῶν αἰνέσεώς σου, Κύριε.",
+      "ru": "Хор: Да исполнится уста наша хвалением Твоим, Господи."
+    },
+    {
+      "en": "PRIEST: Let us attend! Having partaken of the divine, holy, most pure, immortal, heavenly, life-creating, and awesome Mysteries of Christ, let us worthily give thanks unto the Lord.",
+      "el": "ΙΕΡΕΥΣ: Πρόσχωμεν!",
+      "ru": "Священник: Вонмите!"
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Help us, save us, have mercy on us, and keep us, O God, by Thy Grace.",
+      "el": "ΙΕΡΕΥΣ: Ἀντίλαβου, σῶσον, ἐλέησον καὶ διαφύλαξον ἡμᾶς, ὁ Θεός, τῇ σῇ χάριτι.",
+      "ru": "Священник: Заступи, спаси, помилуй и сохрани нас, Боже, Твоею благодатию."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: Asking that the whole day be perfect, holy, peaceful, and sinless, let us commend ourselves and each other, and all our life unto Christ our God.",
+      "el": "ΙΕΡΕΥΣ: Αἰτούμενοι τελεσθῆναι τὴν ἡμέραν ἡμῶν ἁγίαν, εἰρηνικὴν καὶ ἀναμάρτητον, ἑαυτοὺς καὶ ἀλλήλους καὶ πάντα τὸν βίον ἡμῶν Χριστῷ τῷ Θεῷ παραθώμεθα.",
+      "ru": "Священник: Прося да совершится день наш свят, мирен и безгрешен, себе и друг друга и весь живот наш Христу Богу предадим."
+    },
+    {
+      "en": "CHOIR: To Thee, O Lord.",
+      "el": "ΧΟΡΟΣ: Σοί, Κύριε.",
+      "ru": "Хор: Тебе, Господи."
+    },
+    {
+      "en": "PRIEST: We thank Thee, O Master who lovest mankind, Benefactor of our souls, that Thou hast made us worthy this day of Thy heavenly and immortal mysteries. Make straight our path; strengthen us all in Thy fear; guard our life; make firm our steps; through the prayers and intercessions of the glorious Theotokos and ever-virgin Mary, and of all Thy saints. For Thou art our Sanctification, and unto Thee we ascribe glory: to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Εὐχαριστοῦμέν σοι, Δέσποτα φιλάνθρωπε, εὐεργέτα τῶν ψυχῶν ἡμῶν, ὅτι καὶ ἐν τῇ ἡμέρᾳ ταύτῃ κατηξίωσας ἡμᾶς τῶν ἐπουρανίων καὶ ἀθανάτων σου μυστηρίων.",
+      "ru": "Священник: Благодарим Тя, Владыко Человеколюбче, Благодетелю душ наших, яко и в день сей сподобил еси нас небесных и бессмертных Таин Твоих."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    }
+  ],
+  "dismissal": [
+    {
+      "en": "PRIEST: Let us go forth in peace.",
+      "el": "ΙΕΡΕΥΣ: Ἐν εἰρήνῃ προέλθωμεν.",
+      "ru": "Священник: С миром изыдите."
+    },
+    {
+      "en": "CHOIR: In the name of the Lord.",
+      "el": "ΧΟΡΟΣ: Во имя Господне.",
+      "ru": "Хор: Во имя Господне."
+    },
+    {
+      "en": "PRIEST: Let us pray to the Lord.",
+      "el": "ΙΕΡΕΥΣ: Τοῦ Κυρίου δεηθῶμεν.",
+      "ru": "Священник: Господу помолимся."
+    },
+    {
+      "en": "CHOIR: Lord, have mercy.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: O Lord, who blesses those who bless Thee, and sanctifiest those who trust in Thee: Save Thy people and bless Thine inheritance. Preserve the fullness of Thy Church. Sanctify those who love the beauty of Thy house; glorify them in return by Thy divine power, and forsake us not who put our hope in Thee. Give peace to thy world, to Thy churches, to Thy priests, to all those in civil authority, and to all Thy people. For every good gift and every perfect gift is from above, coming down from Thee, the Father of Lights, and unto Thee we ascribe glory, thanksgiving and worship: to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Κύριε, ὁ εὐλογῶν τοὺς εὐλογοῦντάς σε.",
+      "ru": "Священник: Господи, благословляйи благословляющия Тя."
+    },
+    {
+      "en": "CHOIR: Blessed be the name of the Lord henceforth and forever more (3X)",
+      "el": "ΧΟΡΟΣ: Благословенно имя Господне.",
+      "ru": "Хор: Благословенно имя Господне."
+    },
+    {
+      "en": "PRIEST: The blessing of the Lord be upon you through, His grace and love for mankind always, now and ever and unto ages of ages.",
+      "el": "ΙΕΡΕΥΣ: Εὐλογία Κυρίου ἐφʼ ὑμᾶς, διὰ τῆς αὐτοῦ χάριτος καὶ φιλανθρωπίας.",
+      "ru": "Священник: Благословение Господне на вас, по благодати Его и человеколюбию."
+    },
+    {
+      "en": "CHOIR: Amen. The Dismissal",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    },
+    {
+      "en": "PRIEST: Glory to Thee, O Christ our God and our Hope, glory to Thee!",
+      "el": "ΙΕΡΕΥΣ: Δόξα Σοι, Χριστὲ ὁ Θεὸς ἡμῶν καὶ ἡ ἐλπὶς ἡμῶν, δόξα Σοι!",
+      "ru": "Священник: Слава Тебе, Христе Боже наш и упование наше, слава Тебе!"
+    },
+    {
+      "en": "CHOIR: Glory to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages. Amen. Lord, have mercy. Lord, have mercy. Father bless.",
+      "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+      "ru": "Хор: Господи, помилуй."
+    },
+    {
+      "en": "PRIEST: May (He who rose from the dead,) Christ our true God, through the prayers of His most pure Mother; of the holy, glorious, and all-laudable apostles; of our father among the saints, John Chrysostom, Archbishop of Constantinople; of Saint (patron of this church); of Saint(s) , whom we commemorate today; of the holy and righteous Ancestors of God, Joachim and Anna; and of all the saints: have mercy on us and save us, for He is good and loves mankind.",
+      "el": "ΧΟΡΟΣ: Πάτερ ἡμῶν, ὁ ἐν τοῖς οὐρανοῖς, ἁγιασθήτω τὸ ὄνομά σου, ἐλθέτω ἡ βασιλεία σου, γενηθήτω τὸ θέλημά σου, ὡς ἐν οὐρανῷ καὶ ἐπὶ γῆς. Τὸν ἄρτον ἡμῶν τὸν ἐπιούσιον δὸς ἡμῖν σήμερον, καὶ ἄφες ἡμῖν τὰ ὀφειλήματα ἡμῶν, ὡς καὶ ἡμεῖς ἀφίεμεν τοῖς ὀφειλέταις ἡμῶν· καὶ μὴ εἰσενέγκῃς ἡμᾶς εἰς πειρασμόν, ἀλλὰ ῥῦσαι ἡμᾶς ἀπὸ τοῦ πονηροῦ.",
+      "ru": "Хор: Отче наш, Иже еси на небесех, да святится имя Твое, да приидет Царствие Твое, да будет воля Твоя, яко на небеси и на земли. Хлеб наш насущный даждь нам днесь, и остави нам долги наша, якоже и мы оставляем должником нашим; и не введи нас во искушение, но избави нас от лукаваго."
+    },
+    {
+      "en": "CHOIR: Amen.",
+      "el": "ΧΟΡΟΣ: Ἀμήν.",
+      "ru": "Хор: Аминь."
+    }
+  ]
+}

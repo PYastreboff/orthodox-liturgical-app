@@ -17,6 +17,11 @@ import {
 import type { UiLanguage } from '../i18n/types';
 import type { ClergyRole } from '../types/liturgical';
 import { parsePersonalDays, type PersonalDay } from '../lib/personalDays';
+import {
+  isTextLanguage,
+  normalizeTextLanguage,
+  type TextLanguage,
+} from '../lib/readings/textLanguage';
 import type { FontScalePreference } from '../theme/fontScale';
 import {
   DEFAULT_TODAY_COLLAPSED,
@@ -25,7 +30,7 @@ import {
   type TodayCollapsibleKey,
 } from './todayUiState';
 
-export type TextLanguage = 'en' | 'chu' | 'both';
+export type { TextLanguage } from '../lib/readings/textLanguage';
 export type { UiLanguage };
 export type ColorSchemePreference = 'system' | 'light' | 'dark';
 export type { PrimaryCalendar };
@@ -184,12 +189,10 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         if (parsed.primaryCalendar === 'julian' || parsed.primaryCalendar === 'gregorian') {
           setPrimaryCalendarState(parsed.primaryCalendar);
         }
-        if (
-          parsed.defaultTextLang === 'en' ||
-          parsed.defaultTextLang === 'chu' ||
-          parsed.defaultTextLang === 'both'
-        ) {
-          setDefaultTextLangState(parsed.defaultTextLang);
+        if (isTextLanguage(parsed.defaultTextLang)) {
+          setDefaultTextLangState(normalizeTextLanguage(parsed.defaultTextLang));
+        } else if (parsed.defaultTextLang === 'both' || parsed.defaultTextLang === 'both-el') {
+          setDefaultTextLangState('compare');
         }
         if (isLiturgicalTextCategoryFilter(parsed.readingsCategoryFilter)) {
           setReadingsCategoryFilterState(parsed.readingsCategoryFilter);

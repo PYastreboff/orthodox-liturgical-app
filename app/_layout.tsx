@@ -26,11 +26,10 @@ function RootStack() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: theme.colors.background },
+          contentStyle: { backgroundColor: 'transparent' },
           animation: 'slide_from_right',
-          gestureEnabled: true,
-          fullScreenGestureEnabled: true,
-          // Keep Today mounted so swipe-back can reveal it under a transparent day card.
+          gestureEnabled: false,
+          fullScreenGestureEnabled: false,
           freezeOnBlur: false,
         }}
       >

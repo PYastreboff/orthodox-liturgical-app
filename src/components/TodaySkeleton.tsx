@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
   tileGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'center',
     gap: 10,
   },
   tile: {
@@ -124,6 +125,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 16,
     minHeight: 96,
+    alignItems: 'center',
+    gap: 8,
   },
   block: {
     borderRadius: 8,

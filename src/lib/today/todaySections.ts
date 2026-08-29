@@ -16,6 +16,7 @@ export const TODAY_SECTION_IDS = [
   'deaconGuide',
   'priestGuide',
   'readings',
+  'bible',
   'feasts',
   'saints',
 ] as const;
@@ -53,6 +54,7 @@ const BASE_TILES: readonly TodayTileDef[] = [
   },
   { id: 'liturgy', icon: 'liturgy', titleKey: 'today.tileLiturgy', href: '/day/liturgy' },
   { id: 'readings', icon: 'readings', titleKey: 'today.tileReadings', href: '/day/readings' },
+  { id: 'bible', icon: 'bible', titleKey: 'today.tileBible', href: '/day/bible' },
   { id: 'feasts', icon: 'feasts', titleKey: 'today.tileFeasts', href: '/day/feasts' },
   { id: 'saints', icon: 'saints', titleKey: 'today.tileSaints', href: '/day/saints' },
   { id: 'services', icon: 'services', titleKey: 'today.tileServices', href: '/day/services' },
@@ -93,6 +95,8 @@ export function todaySectionTitleKey(section: TodaySectionId, servingRole: Clerg
       return 'today.sectionPriestGuide';
     case 'readings':
       return 'today.sectionReadings';
+    case 'bible':
+      return 'today.sectionBible';
     case 'feasts':
       return 'today.sectionFeasts';
     case 'saints':
@@ -133,6 +137,8 @@ export function todaySectionIcon(section: TodaySectionId, servingRole: ClergyRol
       return 'priest-guide';
     case 'readings':
       return 'readings';
+    case 'bible':
+      return 'bible';
     case 'feasts':
       return 'feasts';
     case 'saints':

@@ -1,6 +1,6 @@
 import type { UiLanguage } from '../../i18n/types';
-
 import { getCachedChrysostomLiturgy } from './chrysostomLiturgyRemote';
+import { sectionUnits, unitLine, type LiturgyUnit } from './liturgyUnit';
 
 export const CHRYSOSTOM_SECTION_IDS = [
   'opening',
@@ -16,19 +16,38 @@ export const CHRYSOSTOM_SECTION_IDS = [
 
 export type ChrysostomSectionId = (typeof CHRYSOSTOM_SECTION_IDS)[number];
 
-type LocalizedLines = Record<UiLanguage, string[]>;
-
 export type ChrysostomSection = {
   id: ChrysostomSectionId;
-  paragraphs: LocalizedLines;
+  units?: LiturgyUnit[];
+  paragraphs?: Partial<Record<UiLanguage, string[]>>;
 };
 
-export function chrysostomParagraphs(id: ChrysostomSectionId, lang: UiLanguage): string[] {
-  const section = getCachedChrysostomLiturgy()?.find((s) => s.id === id);
+export function chrysostomSectionUnits(
+  sections: readonly ChrysostomSection[],
+  id: ChrysostomSectionId,
+): LiturgyUnit[] {
+  const section = sections.find((entry) => entry.id === id);
   if (!section) return [];
-  return section.paragraphs[lang]?.length ? section.paragraphs[lang] : section.paragraphs.en;
+  return sectionUnits(section);
+}
+
+export function chrysostomSectionParagraphs(
+  sections: readonly ChrysostomSection[],
+  id: ChrysostomSectionId,
+  lang: UiLanguage,
+): string[] {
+  const section = sections.find((entry) => entry.id === id);
+  if (!section) return [];
+  const paragraphs = section.paragraphs?.[lang];
+  if (paragraphs?.length) return paragraphs;
+  return chrysostomSectionUnits(sections, id).map((unit) => unitLine(unit, lang));
 }
 
 export function chrysostomTitleKey(id: ChrysostomSectionId): string {
   return `liturgy.chrysostom.${id}.title`;
+}
+
+/** @deprecated Use chrysostomSectionUnits */
+export function chrysostomParagraphs(id: ChrysostomSectionId, lang: UiLanguage): string[] {
+  return chrysostomSectionParagraphs(getCachedChrysostomLiturgy() ?? [], id, lang);
 }

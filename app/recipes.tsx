@@ -1,25 +1,27 @@
 import { useTheme } from '@react-navigation/native';
-import { useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import { StyleSheet, View } from 'react-native';
 
 import { AppScrollView } from '../src/components/AppScrollView';
 import { RecipesLibrary } from '../src/components/RecipesLibrary';
 import { StackScreenHeader } from '../src/components/StackScreenHeader';
+import { SwipeBackShell } from '../src/components/SwipeBackShell';
 import { useLayoutSafeAreaInsets } from '../src/hooks/useLayoutSafeAreaInsets';
 import { useScreenSafePadding } from '../src/hooks/useScreenSafePadding';
+import { useStackBack } from '../src/hooks/useStackBack';
 import { useAppTranslation } from '../src/i18n/useAppTranslation';
 import { useResolvedColorScheme } from '../src/theme/useResolvedColorScheme';
 import { colors } from '../src/theme/tokens';
 
 export default function RecipesScreen() {
   const theme = useTheme();
-  const router = useRouter();
   const { t } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
   const screenSafe = useScreenSafePadding();
   const insets = useLayoutSafeAreaInsets();
   const muted = isDark ? '#a39e98' : colors.muted;
+
+  const goBack = useStackBack('/(tabs)');
 
   return (
     <>
@@ -27,12 +29,13 @@ export default function RecipesScreen() {
         <title>{t('recipes.browserTitle')}</title>
         <meta name="description" content={t('recipes.pageIntro')} />
       </Head>
-      <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
-        <StackScreenHeader
-          title={t('recipes.pageTitle')}
-          backLabel={t('recipes.back')}
-          onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
-        />
+      <SwipeBackShell onBack={goBack}>
+        <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
+          <StackScreenHeader
+            title={t('recipes.pageTitle')}
+            backLabel={t('recipes.back')}
+            onBack={goBack}
+          />
         <AppScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={[
@@ -52,7 +55,8 @@ export default function RecipesScreen() {
             contentBottom={8}
           />
         </AppScrollView>
-      </View>
+        </View>
+      </SwipeBackShell>
     </>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import type { OrthocalDay, OrthocalVerse } from '../lib/api/orthocal';
 import { applyChurchSlavonicToSections } from '../lib/bible/churchSlavonicScripture';
+import { applyGreekToSections } from '../lib/bible/greekScripture';
 import { overlayTypikonSlavonicHymns } from '../lib/liturgical/menaion/overlayTypikonSlavonicHymns';
 import {
   buildLiturgicalTextSections,
@@ -9,8 +10,16 @@ import {
   type LiturgicalTextCategory,
   type LiturgicalTextSection,
 } from '../lib/liturgical/liturgicalTexts';
+import {
+  needsGreekSections,
+  needsSlavonicSections,
+  readingsSideBySide,
+  type ReadingsCompareSides,
+  type ReadingsSingleLanguage,
+  type TextLanguage,
+} from '../lib/readings/textLanguage';
 import { translate } from '../i18n/translate';
-import type { TextLanguage, UiLanguage } from '../state/PreferencesContext';
+import type { UiLanguage } from '../state/PreferencesContext';
 
 const SCRIPTURE_CATEGORIES = new Set<LiturgicalTextCategory>([
   'epistle',
@@ -20,11 +29,12 @@ const SCRIPTURE_CATEGORIES = new Set<LiturgicalTextCategory>([
   'communion',
 ]);
 
-function annotateNonScriptureForSlavonic(
+function annotateNonScriptureForTranslation(
   sections: LiturgicalTextSection[],
   lang: UiLanguage,
+  noteKey: 'vestments.slavonicNoText' | 'readings.greekNoText',
 ): LiturgicalTextSection[] {
-  const note = translate(lang, 'vestments.slavonicNoText');
+  const note = translate(lang, noteKey);
   return sections.map((section) => {
     if (SCRIPTURE_CATEGORIES.has(section.id) || !section.items.length) return section;
     return {
@@ -50,11 +60,35 @@ function englishPassagesByCitation(day: OrthocalDay | null): Map<string, Orthoca
   return map;
 }
 
+export function sectionsForReadingsLanguage(
+  lang: ReadingsSingleLanguage | null,
+  englishSections: LiturgicalTextSection[],
+  slavonicSections: LiturgicalTextSection[] | null,
+  greekSections: LiturgicalTextSection[] | null,
+): LiturgicalTextSection[] | null {
+  if (!lang) return null;
+  if (lang === 'en') return englishSections;
+  if (lang === 'chu') return slavonicSections;
+  return greekSections;
+}
+
+export function loadingForReadingsLanguage(
+  lang: ReadingsSingleLanguage | null,
+  loadingSlavonic: boolean,
+  loadingGreek: boolean,
+): boolean {
+  if (!lang) return false;
+  if (lang === 'chu') return loadingSlavonic;
+  if (lang === 'el') return loadingGreek;
+  return false;
+}
+
 export function useLiturgicalTexts(
   day: OrthocalDay | null,
   textLang: TextLanguage,
   uiLanguage: UiLanguage = 'en',
   options: BuildLiturgicalTextsOptions = {},
+  compareSides: ReadingsCompareSides = { left: null, right: null },
 ) {
   const julianMonthDay = options.julianMonthDay;
   const appearanceKey = options.appearanceKey;
@@ -75,48 +109,109 @@ export function useLiturgicalTexts(
   const passageMap = useMemo(() => englishPassagesByCitation(day), [day]);
 
   const [slavonicSections, setSlavonicSections] = useState<LiturgicalTextSection[] | null>(null);
+  const [greekSections, setGreekSections] = useState<LiturgicalTextSection[] | null>(null);
   const [loadingSlavonic, setLoadingSlavonic] = useState(false);
+  const [loadingGreek, setLoadingGreek] = useState(false);
+
+  const sideBySide = readingsSideBySide(textLang);
+  const loadSlavonic = needsSlavonicSections(textLang, compareSides);
+  const loadGreek = needsGreekSections(textLang, compareSides);
 
   useEffect(() => {
-    if (textLang === 'en' || !day) {
+    if (!loadSlavonic) {
       setSlavonicSections(null);
       setLoadingSlavonic(false);
-      return;
-    }
-
-    let cancelled = false;
-    setLoadingSlavonic(true);
-
-    applyChurchSlavonicToSections(englishSections, passageMap).then((scriptureSlavonic) => {
-      if (cancelled) return;
-
-      const withHymns = overlayTypikonSlavonicHymns(
-        scriptureSlavonic,
-        day,
-        { julianMonthDay, appearanceKey },
-        uiLanguage,
-      );
-      setSlavonicSections(annotateNonScriptureForSlavonic(withHymns, uiLanguage));
+    } else if (!day) {
+      setSlavonicSections(null);
       setLoadingSlavonic(false);
-    });
+    } else {
+      let cancelled = false;
+      setLoadingSlavonic(true);
 
-    return () => {
-      cancelled = true;
-    };
-  }, [day, englishSections, passageMap, textLang, uiLanguage, julianMonthDay, appearanceKey]);
+      applyChurchSlavonicToSections(englishSections, passageMap).then((scriptureSlavonic) => {
+        if (cancelled) return;
+
+        const withHymns = overlayTypikonSlavonicHymns(
+          scriptureSlavonic,
+          day,
+          { julianMonthDay, appearanceKey },
+          uiLanguage,
+        );
+        setSlavonicSections(annotateNonScriptureForTranslation(withHymns, uiLanguage, 'vestments.slavonicNoText'));
+        setLoadingSlavonic(false);
+      });
+
+      return () => {
+        cancelled = true;
+      };
+    }
+  }, [day, englishSections, passageMap, loadSlavonic, uiLanguage, julianMonthDay, appearanceKey]);
+
+  useEffect(() => {
+    if (!loadGreek) {
+      setGreekSections(null);
+      setLoadingGreek(false);
+    } else if (!day) {
+      setGreekSections(null);
+      setLoadingGreek(false);
+    } else {
+      let cancelled = false;
+      setLoadingGreek(true);
+
+      applyGreekToSections(englishSections, passageMap).then((translated) => {
+        if (cancelled) return;
+        setGreekSections(annotateNonScriptureForTranslation(translated, uiLanguage, 'readings.greekNoText'));
+        setLoadingGreek(false);
+      });
+
+      return () => {
+        cancelled = true;
+      };
+    }
+  }, [day, englishSections, passageMap, loadGreek, uiLanguage]);
 
   const displaySections = useMemo(() => {
-    if (textLang === 'chu') {
-      return slavonicSections ?? englishSections;
-    }
+    if (textLang === 'chu') return slavonicSections ?? englishSections;
+    if (textLang === 'el') return greekSections ?? englishSections;
     return englishSections;
-  }, [englishSections, slavonicSections, textLang]);
+  }, [englishSections, greekSections, slavonicSections, textLang]);
+
+  const leftSections = useMemo(
+    () =>
+      sectionsForReadingsLanguage(
+        sideBySide ? compareSides.left : null,
+        englishSections,
+        slavonicSections,
+        greekSections,
+      ),
+    [compareSides.left, englishSections, greekSections, sideBySide, slavonicSections],
+  );
+
+  const rightSections = useMemo(
+    () =>
+      sectionsForReadingsLanguage(
+        sideBySide ? compareSides.right : null,
+        englishSections,
+        slavonicSections,
+        greekSections,
+      ),
+    [compareSides.right, englishSections, greekSections, sideBySide, slavonicSections],
+  );
+
+  const leftLoading = loadingForReadingsLanguage(compareSides.left, loadingSlavonic, loadingGreek);
+  const rightLoading = loadingForReadingsLanguage(compareSides.right, loadingSlavonic, loadingGreek);
 
   return {
     englishSections,
     slavonicSections,
+    greekSections,
     displaySections,
+    leftSections,
+    rightSections,
     loadingSlavonic,
-    sideBySide: textLang === 'both',
+    loadingGreek,
+    leftLoading,
+    rightLoading,
+    sideBySide,
   };
 }

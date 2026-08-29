@@ -1,8 +1,8 @@
-import { Platform, StyleSheet, Text, View } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { AppScrollView } from '../AppScrollView';
 import { StackScreenHeader } from '../StackScreenHeader';
+import { SwipeBackShell } from '../SwipeBackShell';
 import { SectionIcon } from '../SectionIcon';
 import { TodaySectionContent } from '../TodaySectionContent';
 import { TodaySkeleton } from '../TodaySkeleton';
@@ -10,7 +10,7 @@ import { VestmentPageBackground } from '../VestmentPageBackground';
 import { useLayoutSafeAreaInsets } from '../../hooks/useLayoutSafeAreaInsets';
 import { usePhoneLayout } from '../../hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../../hooks/useScreenSafePadding';
-import { useSwipeToBack } from '../../hooks/useSwipeToBack';
+import { useStackBack } from '../../hooks/useStackBack';
 import { useTodayDayModel } from '../../hooks/useTodayDayModel';
 import { useAppTranslation } from '../../i18n/useAppTranslation';
 import {
@@ -23,10 +23,9 @@ import { SERVING_ROLE_PHRASE_LABEL_KEYS } from '../../lib/liturgical/servingRole
 import { colors } from '../../theme/tokens';
 import { useResolvedColorScheme } from '../../theme/useResolvedColorScheme';
 import { useTheme } from '@react-navigation/native';
-import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import Head from 'expo-router/head';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
 const CONTENT_MAX = 800;
 
@@ -52,12 +51,7 @@ export function DaySectionPage({ section }: Props) {
   const iconColor = isDark ? colors.tabActiveDark : colors.accentWine;
   const muted = isDark ? '#a39e98' : colors.muted;
 
-  const goBack = useCallback(() => {
-    if (router.canGoBack()) router.back();
-    else router.replace('/(tabs)');
-  }, [router]);
-
-  const { panHandlers, animatedStyle, dimStyle } = useSwipeToBack(goBack);
+  const goBack = useStackBack('/(tabs)');
 
   useEffect(() => {
     if (!isSectionVisibleForRole(section, model.servingRole)) {
@@ -74,108 +68,80 @@ export function DaySectionPage({ section }: Props) {
       <Head>
         <title>{`${title} - OrthoDaily`}</title>
       </Head>
-      <View style={styles.shell}>
-        <Animated.View pointerEvents="none" style={[styles.blurWrap, dimStyle]}>
-          <BlurView
-            intensity={Platform.OS === 'ios' ? 48 : 70}
-            tint={isDark ? 'dark' : 'light'}
-            style={StyleSheet.absoluteFill}
-            {...(Platform.OS === 'android'
-              ? ({ experimentalBlurMethod: 'dimezisBlurView' } as const)
-              : null)}
-          />
-        </Animated.View>
-        <Animated.View style={[styles.page, animatedStyle]} {...panHandlers}>
-          <VestmentPageBackground
-            appearance={model.appearance}
-            gradientEnabled={model.showVestmentGradient}
-          >
-            <View style={styles.pageInner}>
-              <StackScreenHeader
-                title={title}
-                backLabel={t('today.back')}
-                onBack={goBack}
-              />
-              <AppScrollView
-                contentContainerStyle={[
-                  styles.content,
+      <SwipeBackShell onBack={goBack} blurReveal>
+        <VestmentPageBackground
+          appearance={model.appearance}
+          gradientEnabled={model.showVestmentGradient}
+        >
+          <View style={styles.pageInner}>
+            <StackScreenHeader
+              title={title}
+              backLabel={t('today.back')}
+              onBack={goBack}
+            />
+            <AppScrollView
+              contentContainerStyle={[
+                styles.content,
+                {
+                  paddingLeft: screenSafe.paddingLeft,
+                  paddingRight: screenSafe.paddingRight,
+                  paddingBottom: insets.bottom + 32,
+                  maxWidth: phone ? undefined : CONTENT_MAX,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.intro,
                   {
-                    paddingLeft: screenSafe.paddingLeft,
-                    paddingRight: screenSafe.paddingRight,
-                    paddingBottom: insets.bottom + 32,
-                    maxWidth: phone ? undefined : CONTENT_MAX,
+                    backgroundColor: isDark ? colors.darkSurface : colors.card,
+                    borderColor: theme.colors.border,
                   },
                 ]}
               >
                 <View
                   style={[
-                    styles.intro,
+                    styles.introIcon,
                     {
-                      backgroundColor: isDark ? colors.darkSurface : colors.card,
-                      borderColor: theme.colors.border,
+                      backgroundColor: isDark
+                        ? 'rgba(255,255,255,0.08)'
+                        : 'rgba(107,45,60,0.1)',
                     },
                   ]}
                 >
-                  <View
-                    style={[
-                      styles.introIcon,
-                      {
-                        backgroundColor: isDark
-                          ? 'rgba(255,255,255,0.08)'
-                          : 'rgba(107,45,60,0.1)',
-                      },
-                    ]}
-                  >
-                    <SectionIcon name={icon} color={iconColor} size={26} />
-                  </View>
-                  <View style={styles.introText}>
-                    <Text
-                      style={[styles.introDay, { color: theme.colors.text }]}
-                      numberOfLines={2}
-                    >
-                      {model.dashboard.dayTitle}
-                    </Text>
-                    <Text style={[styles.introDate, { color: muted }]} numberOfLines={2}>
-                      {model.gregorianDateLabel}
-                    </Text>
-                  </View>
+                  <SectionIcon name={icon} color={iconColor} size={26} />
                 </View>
-
-                {model.waitingForDay ? (
-                  <TodaySkeleton isDark={isDark} />
-                ) : model.error ? (
-                  <Text style={[styles.statusError, model.type.status]}>
-                    {t('today.offline', { error: model.error })}
+                <View style={styles.introText}>
+                  <Text
+                    style={[styles.introDay, { color: theme.colors.text }]}
+                    numberOfLines={2}
+                  >
+                    {model.dashboard.dayTitle}
                   </Text>
-                ) : (
-                  <TodaySectionContent section={section} model={model} />
-                )}
-              </AppScrollView>
-            </View>
-          </VestmentPageBackground>
-        </Animated.View>
-      </View>
+                  <Text style={[styles.introDate, { color: muted }]} numberOfLines={2}>
+                    {model.gregorianDateLabel}
+                  </Text>
+                </View>
+              </View>
+
+              {model.waitingForDay ? (
+                <TodaySkeleton isDark={isDark} />
+              ) : model.error ? (
+                <Text style={[styles.statusError, model.type.status]}>
+                  {t('today.offline', { error: model.error })}
+                </Text>
+              ) : (
+                <TodaySectionContent section={section} model={model} />
+              )}
+            </AppScrollView>
+          </View>
+        </VestmentPageBackground>
+      </SwipeBackShell>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  shell: {
-    flex: 1,
-    overflow: 'hidden',
-    backgroundColor: 'transparent',
-  },
-  blurWrap: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  page: {
-    flex: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: -2, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 10,
-  },
   pageInner: {
     flex: 1,
   },

@@ -5,11 +5,17 @@ import { Platform, Pressable, StyleSheet, Text, View, Vibration } from 'react-na
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useFontScale } from '../hooks/useFontScale';
+import {
+  isDividerCount,
+  normalizeRopeLength,
+  ROPE_LENGTH_PRESETS,
+  type RopeLength,
+} from '../lib/prayers/jesusPrayerRope';
 import { prayerParagraphs } from '../lib/prayers/prayers';
 import { colors } from '../theme/tokens';
+import { PrayerRopeVisual } from './PrayerRopeVisual';
 
 const TARGET_STORAGE_KEY = '@orthoDaily/jesusPrayerTarget';
-const TARGET_PRESETS = [33, 50, 100, 300] as const;
 
 type Props = {
   textColor: string;
@@ -26,9 +32,9 @@ const PRAYER_SERIF = Platform.select({
   default: 'Georgia, "Times New Roman", serif',
 });
 
-function pulse() {
+function pulse(strong = false) {
   if (Platform.OS === 'web') return;
-  Vibration.vibrate(8);
+  Vibration.vibrate(strong ? 16 : 8);
 }
 
 export function JesusPrayerRopeBody({
@@ -41,7 +47,7 @@ export function JesusPrayerRopeBody({
 }: Props) {
   const { t, lang } = useAppTranslation();
   const { text } = useFontScale();
-  const [target, setTarget] = useState<number>(100);
+  const [target, setTarget] = useState<RopeLength>(100);
   const [count, setCount] = useState(0);
   const [ready, setReady] = useState(false);
 
@@ -52,9 +58,7 @@ export function JesusPrayerRopeBody({
         const stored = await AsyncStorage.getItem(TARGET_STORAGE_KEY);
         if (cancelled) return;
         const parsed = stored ? Number.parseInt(stored, 10) : NaN;
-        if (TARGET_PRESETS.includes(parsed as (typeof TARGET_PRESETS)[number])) {
-          setTarget(parsed);
-        }
+        setTarget(normalizeRopeLength(parsed));
       } finally {
         if (!cancelled) setReady(true);
       }
@@ -64,7 +68,7 @@ export function JesusPrayerRopeBody({
     };
   }, []);
 
-  const selectTarget = useCallback(async (value: number) => {
+  const selectTarget = useCallback(async (value: RopeLength) => {
     setTarget(value);
     setCount(0);
     await AsyncStorage.setItem(TARGET_STORAGE_KEY, String(value));
@@ -73,8 +77,9 @@ export function JesusPrayerRopeBody({
   const increment = useCallback(() => {
     setCount((prev) => {
       const next = prev + 1;
-      if (next >= target) pulse();
-      else if (next % 10 === 0) pulse();
+      if (next >= target) pulse(true);
+      else if (isDividerCount(next, target)) pulse(true);
+      else pulse();
       return next;
     });
   }, [target]);
@@ -85,13 +90,13 @@ export function JesusPrayerRopeBody({
 
   const prayerText = prayerParagraphs('jesus', lang)[0] ?? '';
   const complete = count >= target;
-  const progress = target > 0 ? Math.min(count / target, 1) : 0;
-  const beadCount = Math.min(target, 33);
-  const filledBeads = Math.round(progress * beadCount);
+  const atDivider = !complete && isDividerCount(count, target);
   const cardBg = isDark ? colors.darkSurface : colors.card;
   const accent = isDark ? colors.tabActiveDark : colors.accentWine;
-  const beadActive = accent;
-  const beadIdle = isDark ? '#3a342c' : '#e8dfd2';
+  const knotActive = accent;
+  const knotIdle = isDark ? '#3a342c' : '#e8dfd2';
+  const dividerIdle = isDark ? '#4a4338' : '#c9b9a4';
+  const dividerActive = isDark ? colors.accentGold : colors.accentWine;
 
   return (
     <View style={styles.root}>
@@ -111,7 +116,7 @@ export function JesusPrayerRopeBody({
           {t('jesusPrayer.targetLabel')}
         </Text>
         <View style={styles.targetChips}>
-          {TARGET_PRESETS.map((preset) => {
+          {ROPE_LENGTH_PRESETS.map((preset) => {
             const active = target === preset;
             return (
               <Pressable
@@ -154,7 +159,7 @@ export function JesusPrayerRopeBody({
           styles.counterTap,
           {
             backgroundColor: cardBg,
-            borderColor: complete ? accent : borderColor,
+            borderColor: complete || atDivider ? accent : borderColor,
             opacity: pressed ? 0.94 : 1,
           },
         ]}
@@ -164,26 +169,28 @@ export function JesusPrayerRopeBody({
         {...hoverAccessibilityProps(t('jesusPrayer.tapA11y'), { role: 'button' })}
       >
         <Text style={[styles.countLabel, hintType, { color: mutedColor }]}>
-          {complete ? t('jesusPrayer.complete') : t('jesusPrayer.countLabel')}
+          {complete
+            ? t('jesusPrayer.complete')
+            : atDivider
+              ? t('jesusPrayer.dividerLabel')
+              : t('jesusPrayer.countLabel')}
         </Text>
-        <Text style={[styles.countValue, text(56, 60), { color: complete ? accent : textColor }]}>
+        <Text style={[styles.countValue, text(56, 60), { color: complete || atDivider ? accent : textColor }]}>
           {count}
         </Text>
         <Text style={[styles.countOf, hintType, { color: mutedColor }]}>
           {t('jesusPrayer.ofTarget', { target })}
         </Text>
 
-        <View style={styles.beadRow} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          {Array.from({ length: beadCount }, (_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.bead,
-                { backgroundColor: index < filledBeads ? beadActive : beadIdle },
-              ]}
-            />
-          ))}
-        </View>
+        <PrayerRopeVisual
+          length={target}
+          count={count}
+          isDark={isDark}
+          knotActive={knotActive}
+          knotIdle={knotIdle}
+          dividerActive={dividerActive}
+          dividerIdle={dividerIdle}
+        />
       </Pressable>
 
       <View style={styles.actions}>
@@ -270,25 +277,13 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.8,
     fontSize: 11,
+    textAlign: 'center',
   },
   countValue: {
     fontWeight: '300',
     fontVariant: ['tabular-nums'],
   },
   countOf: {},
-  beadRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 5,
-    marginTop: 16,
-    maxWidth: 280,
-  },
-  bead: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-  },
   actions: {
     alignItems: 'center',
   },

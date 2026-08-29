@@ -84,7 +84,6 @@ export function TodaySectionTiles({
                   <View
                     style={[
                       styles.tile,
-                      phone ? styles.tilePhoneLayout : null,
                       {
                         backgroundColor: tileBg,
                         borderColor: isDark ? colors.darkBorder : borderColor,
@@ -95,11 +94,7 @@ export function TodaySectionTiles({
                       <SectionIcon name={tile.icon} color={iconColor} size={20} />
                     </View>
                     <Text
-                      style={[
-                        styles.tileLabel,
-                        phone ? styles.tileLabelPhone : null,
-                        { color: textColor },
-                      ]}
+                      style={[styles.tileLabel, { color: textColor }]}
                       numberOfLines={2}
                     >
                       {title}
@@ -134,6 +129,7 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'center',
     gap: 10,
   },
   gridPhone: {},
@@ -148,9 +144,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     minHeight: 96,
     gap: 12,
-    justifyContent: 'flex-end',
-  },
-  tilePhoneLayout: {
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -175,8 +168,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.05,
     lineHeight: 19,
-  },
-  tileLabelPhone: {
     textAlign: 'center',
   },
 });

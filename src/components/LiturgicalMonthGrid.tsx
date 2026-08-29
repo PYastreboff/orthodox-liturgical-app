@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';
 import { CalendarFastingFoodIcon, calendarFastingFoodIconColor } from './CalendarFastingFoodIcon';
@@ -289,6 +289,56 @@ function monthNavButtonElevation(isDark: boolean) {
       };
 }
 
+type MonthNavButtonProps = {
+  direction: 'prev' | 'next';
+  onPress: () => void;
+  label: string;
+  size: number;
+  iconColor: string;
+  buttonColors: { backgroundColor: string; borderColor: string };
+  buttonShadow: ReturnType<typeof monthNavButtonElevation>;
+};
+
+function CalendarMonthNavButton({
+  direction,
+  onPress,
+  label,
+  size,
+  iconColor,
+  buttonColors,
+  buttonShadow,
+}: MonthNavButtonProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.navBtn,
+        buttonShadow,
+        buttonColors,
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          opacity: pressed ? 0.86 : 1,
+        },
+      ]}
+      hitSlop={8}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      {...hoverAccessibilityProps(label, { role: 'button' })}
+    >
+      <View style={styles.navIconSlot} pointerEvents="none">
+        <Feather
+          name={direction === 'prev' ? 'chevron-left' : 'chevron-right'}
+          size={22}
+          color={iconColor}
+          style={direction === 'prev' ? styles.navIconLeft : styles.navIconRight}
+        />
+      </View>
+    </Pressable>
+  );
+}
+
 type Props = {
   visibleMonth: Date;
   onChangeMonth: (delta: -1 | 1) => void;
@@ -360,6 +410,7 @@ export function LiturgicalMonthGrid({
     [isDark, theme.colors.border],
   );
   const monthNavButtonShadow = useMemo(() => monthNavButtonElevation(isDark), [isDark]);
+  const monthNavButtonSize = isCompact ? 48 : 44;
   const loadingCellBg = getCalendarCellStyle('weekday', undefined, isDark).backgroundColor;
 
   return (
@@ -371,28 +422,26 @@ export function LiturgicalMonthGrid({
       }}
     >
       <View style={[styles.monthNav, isCompact ? styles.monthNavCompact : null]}>
-        <Pressable
+        <CalendarMonthNavButton
+          direction="prev"
           onPress={() => onChangeMonth(-1)}
-          style={({ pressed }) => [
-            styles.navBtn,
-            monthNavButtonShadow,
-            isCompact ? styles.navBtnCompact : null,
-            monthNavButtonColors,
-            { opacity: pressed ? 0.86 : 1 },
-          ]}
-          hitSlop={12}
-          accessibilityRole="button"
-          accessibilityLabel={t('today.prevDay')}
-        >
-          <MaterialCommunityIcons
-            name="chevron-left"
-            size={isCompact ? 30 : 28}
-            color={theme.colors.text}
-            style={styles.navBtnIcon}
-          />
-        </Pressable>
+          label={t('calendar.prevMonth')}
+          size={monthNavButtonSize}
+          iconColor={theme.colors.text}
+          buttonColors={monthNavButtonColors}
+          buttonShadow={monthNavButtonShadow}
+        />
         <View style={styles.monthTitleWrap}>
-          <Text style={[styles.monthTitle, isCompact ? styles.monthTitleCompact : null, { color: theme.colors.text }]}>
+          <Text
+            style={[
+              styles.monthTitle,
+              isCompact ? styles.monthTitleCompact : null,
+              { color: theme.colors.text },
+            ]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.85}
+          >
             {title}
           </Text>
           {loading ? (
@@ -413,26 +462,15 @@ export function LiturgicalMonthGrid({
             </View>
           ) : null}
         </View>
-        <Pressable
+        <CalendarMonthNavButton
+          direction="next"
           onPress={() => onChangeMonth(1)}
-          style={({ pressed }) => [
-            styles.navBtn,
-            monthNavButtonShadow,
-            isCompact ? styles.navBtnCompact : null,
-            monthNavButtonColors,
-            { opacity: pressed ? 0.86 : 1 },
-          ]}
-          hitSlop={12}
-          accessibilityRole="button"
-          accessibilityLabel={t('today.nextDay')}
-        >
-          <MaterialCommunityIcons
-            name="chevron-right"
-            size={isCompact ? 30 : 28}
-            color={theme.colors.text}
-            style={styles.navBtnIcon}
-          />
-        </Pressable>
+          label={t('calendar.nextMonth')}
+          size={monthNavButtonSize}
+          iconColor={theme.colors.text}
+          buttonColors={monthNavButtonColors}
+          buttonShadow={monthNavButtonShadow}
+        />
       </View>
 
       {canGoToThisMonth && onGoToThisMonth ? (
@@ -1288,17 +1326,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: 8,
     marginBottom: 10,
   },
   monthNavCompact: {
     marginBottom: 6,
+    gap: 6,
   },
   monthTitleCompact: {
     fontSize: 17,
-  },
-  navBtnCompact: {
-    minWidth: 54,
-    minHeight: 54,
   },
   thisMonthBtn: {
     alignSelf: 'center',
@@ -1319,11 +1355,12 @@ const styles = StyleSheet.create({
   },
   monthTitleWrap: {
     flex: 1,
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
   },
   monthLoadingWrap: {
     flexDirection: 'row',
@@ -1359,17 +1396,22 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   navBtn: {
-    minWidth: 50,
-    minHeight: 50,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 14,
+    flexShrink: 0,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  navBtnIcon: {
-    marginLeft: -1,
+  navIconSlot: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navIconLeft: {
+    transform: [{ translateX: -1 }],
+  },
+  navIconRight: {
+    transform: [{ translateX: 1 }],
   },
   gridArea: {
     position: 'relative',

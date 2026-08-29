@@ -1,11 +1,12 @@
-import { useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 
 import { StackScreenHeader } from '../src/components/StackScreenHeader';
+import { SwipeBackShell } from '../src/components/SwipeBackShell';
 import { useLayoutSafeAreaInsets } from '../src/hooks/useLayoutSafeAreaInsets';
 import { useScreenSafePadding } from '../src/hooks/useScreenSafePadding';
+import { useStackBack } from '../src/hooks/useStackBack';
 import { useAppTranslation } from '../src/i18n/useAppTranslation';
 import {
   PRIVACY_POLICY_LAST_UPDATED,
@@ -16,12 +17,12 @@ import { colors } from '../src/theme/tokens';
 
 export default function PrivacyPolicyScreen() {
   const theme = useTheme();
-  const router = useRouter();
   const { t } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
   const screenSafe = useScreenSafePadding();
   const insets = useLayoutSafeAreaInsets();
   const muted = isDark ? '#a39e98' : colors.muted;
+  const goBack = useStackBack('/settings');
 
   return (
     <>
@@ -32,12 +33,13 @@ export default function PrivacyPolicyScreen() {
           content="Privacy Policy for OrthoDaily — how the app stores preferences and loads liturgical data."
         />
       </Head>
-      <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
-        <StackScreenHeader
-          title={t('privacy.title')}
-          backLabel={t('privacy.back')}
-          onBack={() => (router.canGoBack() ? router.back() : router.replace('/settings'))}
-        />
+      <SwipeBackShell onBack={goBack}>
+        <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
+          <StackScreenHeader
+            title={t('privacy.title')}
+            backLabel={t('privacy.back')}
+            onBack={goBack}
+          />
         <ScrollView
           contentContainerStyle={[
             styles.content,
@@ -63,7 +65,8 @@ export default function PrivacyPolicyScreen() {
             </View>
           ))}
         </ScrollView>
-      </View>
+        </View>
+      </SwipeBackShell>
     </>
   );
 }

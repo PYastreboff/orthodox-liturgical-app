@@ -37,7 +37,8 @@ export function appendMenaionLiturgy(
 
   const englishHymns = majorFeastHymnsEn(julianMonthDay, appearanceKey);
   const useChuHymns = textLang === 'chu';
-  const useEnHymns = textLang === 'en' || textLang === 'both';
+  const useEnHymns =
+    textLang === 'en' || textLang === 'compare' || textLang === 'el';
 
   if (typikonFeast) {
     const titleRu = typikonFeast.titleRu;

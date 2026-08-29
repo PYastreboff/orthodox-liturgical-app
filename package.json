@@ -15,7 +15,7 @@
     "verify:liturgical-colors": "npx tsx scripts/verify-liturgical-colors.ts",
     "verify:fuzzy-search": "npx tsx scripts/verify-fuzzy-search.ts",
     "export:recipes": "npx tsx scripts/export-recipes-json.ts",
-    "export:liturgy": "npx tsx scripts/build-chrysostom-liturgy.ts",
+    "export:liturgy": "python3 scripts/generate-st-justin-canonical.py && npx tsx scripts/build-chrysostom-liturgy.ts",
     "verify:fasting": "npx tsx scripts/verify-fasting-exceptions.ts",
     "verify:tone": "npx tsx scripts/verify-orthocal-tone.ts",
     "build:ios": "eas build --platform ios --profile preview",

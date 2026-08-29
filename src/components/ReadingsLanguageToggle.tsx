@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
+import { LayoutChangeEvent, Pressable, StyleSheet, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Animated, {
   Easing,
@@ -11,12 +11,12 @@ import Animated, {
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
-import type { TextLanguage } from '../state/PreferencesContext';
+import type { TextLanguage } from '../lib/readings/textLanguage';
 import { colors } from '../theme/tokens';
 
 const TIMING = { duration: 200, easing: Easing.bezier(0.42, 0, 0.58, 1) };
 const TRACK_PADDING = 2;
-const SEGMENTS = 3;
+const SEGMENTS = 4;
 
 type Props = {
   value: TextLanguage;
@@ -27,7 +27,8 @@ type Props = {
 function selectedIndexFor(value: TextLanguage): number {
   if (value === 'en') return 0;
   if (value === 'chu') return 1;
-  return 2;
+  if (value === 'el') return 2;
+  return 3;
 }
 
 export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
@@ -66,9 +67,13 @@ export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
     ),
   }));
 
-  const switchToEnglish = t('readings.langEnglish');
-  const switchToSlavonic = t('readings.langSlavonic');
-  const sideBySide = t('readings.langSideBySide');
+  const elLabelStyle = useAnimatedStyle(() => ({
+    color: interpolateColor(
+      Math.max(0, 1 - Math.min(1, Math.abs(progress.value - 2) * 1.4)),
+      [0, 1],
+      [inactiveText, '#ffffff'],
+    ),
+  }));
 
   return (
     <View
@@ -84,7 +89,7 @@ export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
         onPress={() => onChange('en')}
         accessibilityRole="button"
         accessibilityState={{ selected: value === 'en' }}
-        {...hoverAccessibilityProps(switchToEnglish, { role: 'button' })}
+        {...hoverAccessibilityProps(t('readings.langEnglish'), { role: 'button' })}
       >
         <Animated.Text style={[styles.segmentLabel, enLabelStyle]}>EN</Animated.Text>
       </Pressable>
@@ -94,19 +99,33 @@ export function ReadingsLanguageToggle({ value, onChange, isDark }: Props) {
         onPress={() => onChange('chu')}
         accessibilityRole="button"
         accessibilityState={{ selected: value === 'chu' }}
-        {...hoverAccessibilityProps(switchToSlavonic, { role: 'button' })}
+        {...hoverAccessibilityProps(t('readings.langSlavonic'), { role: 'button' })}
       >
         <Animated.Text style={[styles.segmentLabel, csLabelStyle]}>ЧС</Animated.Text>
       </Pressable>
 
       <Pressable
         style={styles.segment}
-        onPress={() => onChange('both')}
+        onPress={() => onChange('el')}
         accessibilityRole="button"
-        accessibilityState={{ selected: value === 'both' }}
-        {...hoverAccessibilityProps(sideBySide, { role: 'button' })}
+        accessibilityState={{ selected: value === 'el' }}
+        {...hoverAccessibilityProps(t('readings.langGreek'), { role: 'button' })}
       >
-        <Feather name="columns" size={13} color={value === 'both' ? '#ffffff' : inactiveText} />
+        <Animated.Text style={[styles.segmentLabel, elLabelStyle]}>ΕΛ</Animated.Text>
+      </Pressable>
+
+      <Pressable
+        style={styles.segment}
+        onPress={() => onChange('compare')}
+        accessibilityRole="button"
+        accessibilityState={{ selected: value === 'compare' }}
+        {...hoverAccessibilityProps(t('readings.langSideBySide'), { role: 'button' })}
+      >
+        <Feather
+          name="columns"
+          size={13}
+          color={value === 'compare' ? '#ffffff' : inactiveText}
+        />
       </Pressable>
     </View>
   );
@@ -118,7 +137,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: TRACK_PADDING,
     position: 'relative',
-    minWidth: 132,
+    minWidth: 168,
     height: 28,
   },
   pill: {
@@ -134,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
-    minWidth: 32,
+    minWidth: 34,
   },
   segmentLabel: {
     fontSize: 11,

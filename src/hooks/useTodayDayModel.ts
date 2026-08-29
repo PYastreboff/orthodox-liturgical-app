@@ -24,6 +24,8 @@ import {
   partitionCommemorations,
 } from '../lib/liturgical/commemorations';
 import { LITURGICAL_TEXT_SECTION_ORDER } from '../lib/liturgical/liturgicalTexts';
+import type { ReadingsCompareSides } from '../lib/readings/textLanguage';
+import type { TextLanguage } from '../lib/readings/textLanguage';
 import { buildDayDashboard } from '../lib/liturgical/dayDashboard';
 import { buildLiturgicalDayAbout } from '../lib/liturgical/liturgicalDayAbout';
 import { vestmentGuidanceForRole } from '../lib/liturgical/vestments';
@@ -125,18 +127,41 @@ export function useTodayDayModel() {
     [appearance, civilPlain, liturgicalDay, uiLanguage],
   );
   const isGreatFeastRankDay = dashboard.feastRank.glyph === 'great_feast';
+  const [readingsCompareSides, setReadingsCompareSides] = useState<ReadingsCompareSides>({
+    left: null,
+    right: null,
+  });
+
+  const setReadingsTextLang = useCallback(
+    (value: TextLanguage) => {
+      if (value === 'compare') {
+        setReadingsCompareSides({ left: null, right: null });
+      }
+      setDefaultTextLang(value);
+    },
+    [setDefaultTextLang],
+  );
+
   const {
     englishSections,
-    slavonicSections,
     displaySections,
-    loadingSlavonic,
+    slavonicSections,
+    greekSections,
+    leftSections,
+    rightSections,
     sideBySide,
+    leftLoading,
+    rightLoading,
+    loadingSlavonic,
+    loadingGreek,
   } = useLiturgicalTexts(liturgicalDay, defaultTextLang, uiLanguage, {
     julianMonthDay,
     appearanceKey: appearance.key,
-  });
+  }, readingsCompareSides);
   const [readingsCategoryMenuOpen, setReadingsCategoryMenuOpen] = useState(false);
-  const readingsSourceSections = sideBySide ? englishSections : displaySections;
+  const readingsSourceSections = sideBySide
+    ? (leftSections ?? rightSections ?? [])
+    : displaySections;
   const readingsAvailableCategories = useMemo(
     () =>
       LITURGICAL_TEXT_SECTION_ORDER.filter((id) =>
@@ -308,7 +333,9 @@ export function useTodayDayModel() {
     primaryCalendar,
     showVestmentGradient,
     defaultTextLang,
-    setDefaultTextLang,
+    setDefaultTextLang: setReadingsTextLang,
+    readingsCompareSides,
+    setReadingsCompareSides,
     readingsCategoryFilter,
     setReadingsCategoryFilter,
     servingRole,
@@ -330,8 +357,14 @@ export function useTodayDayModel() {
     dashboard,
     isGreatFeastRankDay,
     slavonicSections,
-    loadingSlavonic,
+    greekSections,
+    leftSections,
+    rightSections,
     sideBySide,
+    leftLoading,
+    rightLoading,
+    loadingSlavonic,
+    loadingGreek,
     readingsCategoryMenuOpen,
     setReadingsCategoryMenuOpen,
     readingsAvailableCategories,

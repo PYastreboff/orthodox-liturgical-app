@@ -1,6 +1,5 @@
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import { useState } from 'react';
 import {
@@ -21,6 +20,7 @@ import { useShareRecipe } from '../hooks/useShareRecipe';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../hooks/useScreenSafePadding';
+import { useStackBack } from '../hooks/useStackBack';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import {
   recipeIngredients,
@@ -40,6 +40,7 @@ import {
 import { recipeImageSource } from '../lib/recipes/recipeImages';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { colors } from '../theme/tokens';
+import { SwipeBackShell } from './SwipeBackShell';
 
 const TITLE_SERIF = Platform.select({
   ios: 'Georgia',
@@ -102,7 +103,6 @@ export function RecipeDetailView({
   shareBasePath = '/recipes',
 }: Props) {
   const theme = useTheme();
-  const router = useRouter();
   const { t, lang } = useAppTranslation();
   const { shareRecipe } = useShareRecipe();
   const isDark = useResolvedColorScheme() === 'dark';
@@ -136,10 +136,7 @@ export function RecipeDetailView({
   const contentPadLeft = Math.max(screenSafe.paddingLeft, CONTENT_PAD);
   const contentPadRight = Math.max(screenSafe.paddingRight, CONTENT_PAD);
 
-  const goBack = () => {
-    if (router.canGoBack()) router.back();
-    else router.replace(backFallbackRoute);
-  };
+  const goBack = useStackBack(backFallbackRoute);
 
   const handleShare = () => {
     void shareRecipe({
@@ -164,7 +161,8 @@ export function RecipeDetailView({
         <title>{`${title} - OrthoDaily`}</title>
         <meta name="description" content={summary} />
       </Head>
-      <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
+      <SwipeBackShell onBack={goBack}>
+        <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
         <Pressable
           onPress={goBack}
           style={[
@@ -399,7 +397,8 @@ export function RecipeDetailView({
             ) : null}
           </View>
         </ScrollView>
-      </View>
+        </View>
+      </SwipeBackShell>
     </>
   );
 }

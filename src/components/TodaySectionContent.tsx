@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { readingsCompareHasSelection } from '../lib/readings/textLanguage';
 
 import { DayPagePanel } from './day/DayPagePanel';
 import { AltarServerRoleTable } from './AltarServerRoleTable';
@@ -12,11 +13,13 @@ import { FastingFoodList } from './FastingFoodList';
 import { FastingRecipesPreview } from './FastingRecipesPreview';
 import { FastSummaryPill } from './FastSummaryPill';
 import { LiturgicalTextSectionBlock } from './LiturgicalPassageBlock';
+import { CompareSidePicker } from './CompareSidePicker';
 import { LiturgicalTextsCategoryToggle } from './LiturgicalTextsCategoryToggle';
 import { PriestGuideTable } from './PriestGuideTable';
 import { PrayersSectionBody } from './PrayersSectionBody';
 import { JesusPrayerRopeBody } from './JesusPrayerRopeBody';
 import { ChrysostomLiturgyBody } from './ChrysostomLiturgyBody';
+import { BibleSectionBody } from './BibleSectionBody';
 import { ReaderGuideTable } from './ReaderGuideTable';
 import { ReadingsLanguageToggle } from './ReadingsLanguageToggle';
 import { TodayPersonalDays } from './TodayPersonalDays';
@@ -125,10 +128,13 @@ export function TodaySectionContent({ section, model }: Props) {
     setReadingsCategoryMenuOpen,
     defaultTextLang,
     setDefaultTextLang,
+    readingsCompareSides,
+    setReadingsCompareSides,
     readingsVisibleSections,
-    slavonicSections,
+    rightSections,
     sideBySide,
-    loadingSlavonic,
+    leftLoading,
+    rightLoading,
     feasts,
     saints,
     showOrthocalContentNote,
@@ -476,6 +482,18 @@ export function TodaySectionContent({ section, model }: Props) {
         />,
       );
 
+    case 'bible':
+      return wrap(
+        <BibleSectionBody
+          textColor={theme.colors.text}
+          mutedColor={muted}
+          borderColor={theme.colors.border}
+          isDark={isDark}
+          bodyType={type.body}
+          hintType={type.hint}
+        />,
+      );
+
     case 'vestments':
       return wrap(
         <View style={styles.cardBody}>
@@ -661,11 +679,23 @@ export function TodaySectionContent({ section, model }: Props) {
               isDark={isDark}
             />
           </View>
-          {readingsVisibleSections.length === 0 ? (
-            <Text style={[styles.cardHint, type.hint, { color: muted }]}>
-              {t('readings.noneForDay')}
-            </Text>
-          ) : (
+          {sideBySide ? (
+            <CompareSidePicker
+              left={readingsCompareSides.left}
+              right={readingsCompareSides.right}
+              onChangeLeft={(left) => setReadingsCompareSides((sides) => ({ ...sides, left }))}
+              onChangeRight={(right) => setReadingsCompareSides((sides) => ({ ...sides, right }))}
+              options={[
+                { value: 'en', label: 'EN' },
+                { value: 'chu', label: 'ЧС' },
+                { value: 'el', label: 'ΕΛ' },
+              ]}
+              leftLabel={t('readings.compareColumnLeft')}
+              rightLabel={t('readings.compareColumnRight')}
+              isDark={isDark}
+            />
+          ) : null}
+          {readingsVisibleSections.length > 0 ? (
             readingsVisibleSections.map((sectionBlock, index) => (
               <LiturgicalTextSectionBlock
                 key={sectionBlock.id}
@@ -677,15 +707,22 @@ export function TodaySectionContent({ section, model }: Props) {
                 headingColor={theme.colors.text}
                 topGap={index > 0}
                 sideBySide={sideBySide}
-                secondaryItems={
+                leftLang={readingsCompareSides.left}
+                rightLang={readingsCompareSides.right}
+                rightItems={
                   sideBySide
-                    ? slavonicSections?.find((s) => s.id === sectionBlock.id)?.items
+                    ? rightSections?.find((s) => s.id === sectionBlock.id)?.items
                     : undefined
                 }
-                slavonicLoading={sideBySide ? loadingSlavonic : undefined}
+                leftLoading={leftLoading}
+                rightLoading={rightLoading}
                 mutedColor={muted}
               />
             ))
+          ) : sideBySide && !readingsCompareHasSelection(defaultTextLang, readingsCompareSides) ? null : (
+            <Text style={[styles.cardHint, type.hint, { color: muted }]}>
+              {t('readings.noneForDay')}
+            </Text>
           )}
         </View>,
       );

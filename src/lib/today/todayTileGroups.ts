@@ -13,7 +13,7 @@ const GROUP_ORDER: readonly { id: TodayTileGroupId; titleKey: string; tileIds: r
     {
       id: 'worship',
       titleKey: 'today.groupWorship',
-      tileIds: ['jesusPrayer', 'prayers', 'liturgy', 'readings'],
+      tileIds: ['jesusPrayer', 'prayers', 'liturgy', 'readings', 'bible'],
     },
     {
       id: 'theDay',

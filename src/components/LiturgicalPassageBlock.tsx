@@ -1,13 +1,11 @@
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { useFontScale } from '../hooks/useFontScale';
-import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import type { LiturgicalTextCategory, LiturgicalTextItem } from '../lib/liturgical/liturgicalTexts';
 import { noneForDayLabel } from '../lib/liturgical/liturgicalTexts';
+import type { ReadingsSingleLanguage } from '../lib/readings/textLanguage';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { LiturgicalReadingIcon } from './LiturgicalReadingIcon';
-
-const SIDE_BY_SIDE_MIN_WIDTH = 560;
 
 function passageTitle(item: LiturgicalTextItem): string {
   const suffix = item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : '';
@@ -84,95 +82,104 @@ export function LiturgicalPassageBlock({ item, textColor, verseNumberColor }: Pr
   );
 }
 
+function readingsLoadingKey(lang: ReadingsSingleLanguage): string {
+  if (lang === 'chu') return 'today.slavonicLoading';
+  if (lang === 'el') return 'readings.greekLoading';
+  return '';
+}
+
+type CompareColumnProps = {
+  lang: ReadingsSingleLanguage | null;
+  item?: LiturgicalTextItem;
+  loading?: boolean;
+  textColor: string;
+  verseNumberColor: string;
+  mutedColor: string;
+  hintType: { fontSize: number; lineHeight: number };
+  loadingLabel: string;
+};
+
+function CompareColumn({
+  lang,
+  item,
+  loading,
+  textColor,
+  verseNumberColor,
+  mutedColor,
+  hintType,
+  loadingLabel,
+}: CompareColumnProps) {
+  return (
+    <View style={[styles.column, styles.columnFlex]}>
+      {lang && loading && !item ? (
+        <Text style={[styles.loadingHint, hintType, { color: mutedColor }]}>{loadingLabel}</Text>
+      ) : lang && item ? (
+        <PassageBody item={item} textColor={textColor} verseNumberColor={verseNumberColor} />
+      ) : null}
+    </View>
+  );
+}
+
 type SideBySideProps = {
-  englishItem: LiturgicalTextItem;
-  slavonicItem?: LiturgicalTextItem;
-  slavonicLoading?: boolean;
+  leftItem?: LiturgicalTextItem;
+  rightItem?: LiturgicalTextItem;
+  leftLang: ReadingsSingleLanguage | null;
+  rightLang: ReadingsSingleLanguage | null;
+  leftLoading?: boolean;
+  rightLoading?: boolean;
   textColor: string;
   verseNumberColor: string;
   mutedColor: string;
 };
 
 export function LiturgicalPassageBlockSideBySide({
-  englishItem,
-  slavonicItem,
-  slavonicLoading,
+  leftItem,
+  rightItem,
+  leftLang,
+  rightLang,
+  leftLoading,
+  rightLoading,
   textColor,
   verseNumberColor,
   mutedColor,
 }: SideBySideProps) {
   const { t } = useAppTranslation();
   const { text } = useFontScale();
-  const { width } = useWindowDimensions();
-  const phoneLayout = usePhoneLayout();
   const headerType = text(14, 20);
-  const labelType = text(11, 14);
   const hintType = text(12, 16);
-  const horizontal = width >= SIDE_BY_SIDE_MIN_WIDTH;
-  const centerTitles = horizontal && !phoneLayout;
-  const slavonic = slavonicItem ?? englishItem;
-  const titleStyle = centerTitles ? styles.columnTitleCentered : null;
-  const labelStyle = centerTitles ? styles.columnLabelCentered : null;
+  const headingItem = leftItem ?? rightItem;
+  const leftLoadingLabel = leftLang ? t(readingsLoadingKey(leftLang)) : '';
+  const rightLoadingLabel = rightLang ? t(readingsLoadingKey(rightLang)) : '';
 
   return (
     <View style={styles.block}>
-      {!centerTitles ? (
+      {headingItem ? (
         <Text style={[styles.header, headerType, { color: textColor }]}>
-          {passageTitle(englishItem)}
+          {passageTitle(headingItem)}
         </Text>
       ) : null}
-      <View style={horizontal ? styles.columnsRow : styles.columnsStack}>
-        <View style={[styles.column, horizontal ? styles.columnFlex : null]}>
-          {centerTitles ? (
-            <Text style={[styles.columnTitle, headerType, { color: textColor }, titleStyle]}>
-              {passageTitle(englishItem)}
-            </Text>
-          ) : (
-            <Text style={[styles.columnLabel, labelType, { color: mutedColor }, labelStyle]}>
-              {t('readings.langEnglish')}
-            </Text>
-          )}
-          <PassageBody
-            item={englishItem}
-            textColor={textColor}
-            verseNumberColor={verseNumberColor}
-          />
-        </View>
-        <View
-          style={[
-            horizontal ? styles.columnDivider : styles.columnDividerStack,
-            { backgroundColor: mutedColor },
-          ]}
+      <View style={styles.columnsRow}>
+        <CompareColumn
+          lang={leftLang}
+          item={leftItem}
+          loading={leftLoading}
+          textColor={textColor}
+          verseNumberColor={verseNumberColor}
+          mutedColor={mutedColor}
+          hintType={hintType}
+          loadingLabel={leftLoadingLabel}
         />
-        <View style={[styles.column, horizontal ? styles.columnFlex : null]}>
-          {centerTitles ? (
-            <Text style={[styles.columnTitle, headerType, { color: textColor }, titleStyle]}>
-              {passageTitle(slavonic)}
-            </Text>
-          ) : (
-            <Text style={[styles.columnLabel, labelType, { color: mutedColor }, labelStyle]}>
-              {t('readings.langSlavonic')}
-            </Text>
-          )}
-          {slavonicLoading && !slavonicItem ? (
-            <Text
-              style={[
-                styles.loadingHint,
-                hintType,
-                { color: mutedColor },
-                centerTitles ? styles.columnLabelCentered : null,
-              ]}
-            >
-              {t('today.slavonicLoading')}
-            </Text>
-          ) : (
-            <PassageBody
-              item={slavonic}
-              textColor={textColor}
-              verseNumberColor={verseNumberColor}
-            />
-          )}
-        </View>
+        <View style={[styles.columnDivider, { backgroundColor: mutedColor }]} />
+        <CompareColumn
+          lang={rightLang}
+          item={rightItem}
+          loading={rightLoading}
+          textColor={textColor}
+          verseNumberColor={verseNumberColor}
+          mutedColor={mutedColor}
+          hintType={hintType}
+          loadingLabel={rightLoadingLabel}
+        />
       </View>
     </View>
   );
@@ -187,8 +194,11 @@ type SectionProps = {
   headingColor: string;
   topGap?: boolean;
   sideBySide?: boolean;
-  secondaryItems?: LiturgicalTextItem[];
-  slavonicLoading?: boolean;
+  rightItems?: LiturgicalTextItem[];
+  leftLang?: ReadingsSingleLanguage | null;
+  rightLang?: ReadingsSingleLanguage | null;
+  leftLoading?: boolean;
+  rightLoading?: boolean;
   mutedColor?: string;
 };
 
@@ -201,8 +211,11 @@ export function LiturgicalTextSectionBlock({
   headingColor,
   topGap,
   sideBySide,
-  secondaryItems,
-  slavonicLoading,
+  rightItems,
+  leftLang = null,
+  rightLang = null,
+  leftLoading,
+  rightLoading,
   mutedColor,
 }: SectionProps) {
   const { lang } = useAppTranslation();
@@ -224,9 +237,12 @@ export function LiturgicalTextSectionBlock({
           sideBySide ? (
             <LiturgicalPassageBlockSideBySide
               key={`${item.citation}-${item.source ?? ''}-${index}`}
-              englishItem={item}
-              slavonicItem={secondaryItems?.[index]}
-              slavonicLoading={slavonicLoading}
+              leftItem={leftLang ? items[index] : undefined}
+              rightItem={rightLang ? rightItems?.[index] : undefined}
+              leftLang={leftLang}
+              rightLang={rightLang}
+              leftLoading={leftLoading}
+              rightLoading={rightLoading}
               textColor={textColor}
               verseNumberColor={verseNumberColor}
               mutedColor={resolvedMuted}
@@ -290,36 +306,14 @@ const styles = StyleSheet.create({
   columnsRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
+    gap: 8,
     marginTop: 4,
-  },
-  columnsStack: {
-    marginTop: 4,
-    gap: 12,
   },
   column: {
     minWidth: 0,
   },
   columnFlex: {
     flex: 1,
-  },
-  columnLabel: {
-    fontWeight: '700',
-    letterSpacing: 0.4,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  columnLabelCentered: {
-    textAlign: 'center',
-    alignSelf: 'stretch',
-  },
-  columnTitle: {
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  columnTitleCentered: {
-    textAlign: 'center',
-    alignSelf: 'stretch',
   },
   loadingHint: {
     fontStyle: 'italic',
@@ -328,10 +322,6 @@ const styles = StyleSheet.create({
   columnDivider: {
     width: StyleSheet.hairlineWidth,
     alignSelf: 'stretch',
-    opacity: 0.35,
-  },
-  columnDividerStack: {
-    height: StyleSheet.hairlineWidth,
     opacity: 0.35,
   },
 });

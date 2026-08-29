@@ -1,8 +1,10 @@
 /**
- * Remote Chrysostom liturgy text (JSON on GitHub). Not bundled — fetched on first use.
+ * Remote Chrysostom liturgy text (JSON on GitHub). Bundled copy used as fallback.
  */
+import bundledLiturgy from '../../../data/liturgy/chrysostom-liturgy.json';
 import type { ChrysostomSection, ChrysostomSectionId } from './chrysostomLiturgy';
 import { CHRYSOSTOM_SECTION_IDS } from './chrysostomLiturgy';
+import { sectionUnits } from './liturgyUnit';
 
 const DEFAULT_URLS = [
   'https://raw.githubusercontent.com/PYastreboff/orthodox-liturgical-app/main/data/liturgy/chrysostom-liturgy.json',
@@ -34,11 +36,10 @@ function libraryUrls(): string[] {
 function isSection(value: unknown): value is ChrysostomSection {
   if (!value || typeof value !== 'object') return false;
   const s = value as ChrysostomSection;
-  return (
-    typeof s.id === 'string' &&
-    CHRYSOSTOM_SECTION_IDS.includes(s.id as ChrysostomSectionId) &&
-    !!s.paragraphs?.en?.length
-  );
+  if (typeof s.id !== 'string' || !CHRYSOSTOM_SECTION_IDS.includes(s.id as ChrysostomSectionId)) {
+    return false;
+  }
+  return sectionUnits(s).length > 0;
 }
 
 function parsePayload(data: unknown): { sections: ChrysostomSection[]; source: string } {
@@ -71,6 +72,10 @@ async function fetchFromUrl(url: string): Promise<{ sections: ChrysostomSection[
   }
 }
 
+function hasAlignedUnits(sections: ChrysostomSection[]): boolean {
+  return sections.some((section) => (section.units?.length ?? 0) > 0);
+}
+
 export async function fetchChrysostomLiturgy(options?: {
   force?: boolean;
 }): Promise<readonly ChrysostomSection[]> {
@@ -79,19 +84,23 @@ export async function fetchChrysostomLiturgy(options?: {
 
   inflight = (async () => {
     try {
-      let lastError: unknown;
       for (const url of libraryUrls()) {
         try {
           const { sections, source } = await fetchFromUrl(url);
-          memoryCache = sections;
-          memorySource = source;
-          return sections;
-        } catch (error) {
-          lastError = error;
+          if (hasAlignedUnits(sections)) {
+            memoryCache = sections;
+            memorySource = source;
+            return sections;
+          }
+        } catch {
+          // try next URL
         }
       }
-      const message = lastError instanceof Error ? lastError.message : 'Network error';
-      throw new Error(message);
+
+      const bundled = parsePayload(bundledLiturgy);
+      memoryCache = bundled.sections;
+      memorySource = bundled.source || 'Bundled liturgy library';
+      return bundled.sections;
     } finally {
       inflight = null;
     }
