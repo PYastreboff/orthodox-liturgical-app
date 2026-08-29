@@ -10,7 +10,7 @@ import { isIosSafariBrowser } from '../theme/webViewport';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 
 export function tabBarBackground(isDark: boolean): string {
-  return isDark ? 'rgba(24, 22, 20, 0.92)' : 'rgba(247, 243, 236, 0.92)';
+  return isDark ? 'rgba(24, 22, 20, 0.92)' : 'rgba(255, 255, 255, 0.94)';
 }
 
 function extraBottomPadPx(): number {

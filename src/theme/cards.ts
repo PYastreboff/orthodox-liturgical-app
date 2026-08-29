@@ -70,7 +70,7 @@ export function chipSurface(accentMuted: string, isDark = false): ViewStyle {
 }
 
 export function tabBarChrome(isDark: boolean): ViewStyle {
-  const backgroundColor = isDark ? 'rgba(24, 22, 20, 0.92)' : 'rgba(247, 243, 236, 0.92)';
+  const backgroundColor = isDark ? 'rgba(24, 22, 20, 0.92)' : 'rgba(255, 255, 255, 0.94)';
 
   return {
     backgroundColor,
