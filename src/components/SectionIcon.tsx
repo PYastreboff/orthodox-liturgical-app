@@ -21,6 +21,7 @@ export type SectionIconName =
   | 'deacon-guide'
   | 'priest-guide'
   | 'readings'
+  | 'daily-gospel'
   | 'bible'
   | 'prayers'
   | 'jesus-prayer'
@@ -43,6 +44,7 @@ const SECTION_ICON_KEYS: Record<SectionIconName, string> = {
   'deacon-guide': 'today.sectionDeaconGuide',
   'priest-guide': 'today.sectionPriestGuide',
   readings: 'today.sectionReadings',
+  'daily-gospel': 'today.dailyFocusEyebrow',
   bible: 'today.sectionBible',
   prayers: 'today.sectionPrayers',
   'jesus-prayer': 'today.sectionJesusPrayer',
@@ -108,6 +110,10 @@ export function SectionIcon({ name, color, size = SECTION_ICON_SIZE }: Props) {
             size={size}
             color={color}
           />
+        );
+      case 'daily-gospel':
+        return (
+          <MaterialCommunityIcons name="book-clock-outline" size={size} color={color} />
         );
       case 'bible':
         return <Feather name="book-open" size={size} color={color} />;

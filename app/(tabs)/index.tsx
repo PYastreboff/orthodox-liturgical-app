@@ -103,7 +103,7 @@ export default function TodayScreen() {
 
           {!model.waitingForDay ? (
             <TodayDailyFocus
-              gospel={firstGospelExcerpt(model.readingsSourceSections)}
+              gospel={firstGospelExcerpt(model.gospelPreviewSections)}
               fastLabel={model.dashboard.fastSummaryLabel}
               toneLabel={model.dashboard.toneLabel}
               saintName={model.saints[0]?.name ?? null}

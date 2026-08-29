@@ -1,5 +1,5 @@
 import { useRouter, type Href } from 'expo-router';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
@@ -9,6 +9,7 @@ import type { ReadingExcerpt } from '../lib/liturgical/hymnExcerpt';
 import { usePreferences } from '../state/PreferencesContext';
 import { cardElevation } from '../theme/cards';
 import { colors } from '../theme/tokens';
+import { SectionIcon } from './SectionIcon';
 
 type Props = {
   gospel: ReadingExcerpt | null;
@@ -87,7 +88,7 @@ export function TodayDailyFocus({
         <View style={styles.body}>
           <View style={styles.headerRow}>
             <View style={[styles.iconBadge, { backgroundColor: accentSoft }]}>
-              <MaterialCommunityIcons name="book-cross" size={18} color={accent} />
+              <SectionIcon name="daily-gospel" color={accent} size={18} />
             </View>
             <View style={styles.headerText}>
               <Text style={[styles.eyebrow, text(11, 14), { color: accent }]}>

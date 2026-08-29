@@ -29,11 +29,10 @@ const GUIDE_TILE_IDS = new Set<TodaySectionId>([
 function tileLabel(
   tileId: TodaySectionId,
   titleKey: string,
-  phone: boolean,
   servingRole: ClergyRole,
   t: (key: string) => string,
 ): string {
-  if (phone && GUIDE_TILE_IDS.has(tileId)) {
+  if (GUIDE_TILE_IDS.has(tileId)) {
     return t(todaySectionTitleKey(tileId, servingRole));
   }
   return t(titleKey);
@@ -63,7 +62,7 @@ export function TodaySectionTiles({
           </Text>
           <View style={[styles.grid, phone ? styles.gridPhone : styles.gridWide]}>
             {tiles.map((tile) => {
-              const title = tileLabel(tile.id, tile.titleKey, phone, servingRole, t);
+              const title = tileLabel(tile.id, tile.titleKey, servingRole, t);
               return (
                 <Pressable
                   key={tile.id}
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
   },
   tileWide: {
     width: '31%',
-    minWidth: 148,
+    minWidth: 160,
     flexGrow: 1,
   },
   iconCircle: {
@@ -164,6 +163,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tileLabel: {
+    width: '100%',
     fontSize: 15,
     fontWeight: '700',
     letterSpacing: 0.05,

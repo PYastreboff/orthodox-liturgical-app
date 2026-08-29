@@ -19,6 +19,7 @@ import {
 import { startOfLocalDay, toDayIso } from '../lib/calendar/localDate';
 import { getCachedOrthocalDay } from '../lib/api/orthocal';
 import { gospelsFromLiturgicalSections } from '../lib/print/printDay';
+import { sectionsForReadingsLanguage } from './useLiturgicalTexts';
 import {
   buildCommemorationEntries,
   partitionCommemorations,
@@ -26,6 +27,7 @@ import {
 import { LITURGICAL_TEXT_SECTION_ORDER } from '../lib/liturgical/liturgicalTexts';
 import type { ReadingsCompareSides } from '../lib/readings/textLanguage';
 import type { TextLanguage } from '../lib/readings/textLanguage';
+import { readingsLanguageForUi } from '../lib/readings/textLanguage';
 import { buildDayDashboard } from '../lib/liturgical/dayDashboard';
 import { buildLiturgicalDayAbout } from '../lib/liturgical/liturgicalDayAbout';
 import { vestmentGuidanceForRole } from '../lib/liturgical/vestments';
@@ -158,6 +160,16 @@ export function useTodayDayModel() {
     julianMonthDay,
     appearanceKey: appearance.key,
   }, readingsCompareSides);
+  const gospelPreviewSections = useMemo(
+    () =>
+      sectionsForReadingsLanguage(
+        readingsLanguageForUi(uiLanguage),
+        englishSections,
+        slavonicSections,
+        greekSections,
+      ) ?? englishSections,
+    [englishSections, greekSections, slavonicSections, uiLanguage],
+  );
   const [readingsCategoryMenuOpen, setReadingsCategoryMenuOpen] = useState(false);
   const readingsSourceSections = sideBySide
     ? (leftSections ?? rightSections ?? [])
@@ -294,7 +306,7 @@ export function useTodayDayModel() {
       feastHighlight: shareFeastHighlight,
       saints: saints.map((entry) => entry.name),
       feasts: feasts.map((entry) => entry.name),
-      gospels: gospelsFromLiturgicalSections(readingsSourceSections),
+      gospels: gospelsFromLiturgicalSections(gospelPreviewSections),
     });
   }, [
     dashboard.dayTitle,
@@ -304,8 +316,9 @@ export function useTodayDayModel() {
     feasts,
     gregorianDateLabel,
     julianDateLabel,
+    gospelPreviewSections,
     printDay,
-    readingsSourceSections,
+    gospelPreviewSections,
     saints,
     shareFeastHighlight,
   ]);
@@ -369,6 +382,7 @@ export function useTodayDayModel() {
     setReadingsCategoryMenuOpen,
     readingsAvailableCategories,
     readingsSourceSections,
+    gospelPreviewSections,
     readingsVisibleSections,
     feasts,
     saints,

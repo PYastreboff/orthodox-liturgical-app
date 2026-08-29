@@ -33,6 +33,12 @@ export function readingsCompareReady(textLang: TextLanguage, sides: ReadingsComp
   return textLang === 'compare' && sides.left != null && sides.right != null;
 }
 
+export function readingsLanguageForUi(uiLanguage: 'en' | 'ru' | 'el'): ReadingsSingleLanguage {
+  if (uiLanguage === 'el') return 'el';
+  if (uiLanguage === 'ru') return 'chu';
+  return 'en';
+}
+
 export function needsSlavonicSections(textLang: TextLanguage, sides: ReadingsCompareSides): boolean {
   if (textLang === 'chu') return true;
   if (textLang === 'compare') return sides.left === 'chu' || sides.right === 'chu';
@@ -43,4 +49,12 @@ export function needsGreekSections(textLang: TextLanguage, sides: ReadingsCompar
   if (textLang === 'el') return true;
   if (textLang === 'compare') return sides.left === 'el' || sides.right === 'el';
   return false;
+}
+
+export function needsSlavonicForUi(uiLanguage: 'en' | 'ru' | 'el'): boolean {
+  return uiLanguage === 'ru';
+}
+
+export function needsGreekForUi(uiLanguage: 'en' | 'ru' | 'el'): boolean {
+  return uiLanguage === 'el';
 }

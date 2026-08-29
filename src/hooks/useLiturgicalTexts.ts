@@ -11,7 +11,9 @@ import {
   type LiturgicalTextSection,
 } from '../lib/liturgical/liturgicalTexts';
 import {
+  needsGreekForUi,
   needsGreekSections,
+  needsSlavonicForUi,
   needsSlavonicSections,
   readingsSideBySide,
   type ReadingsCompareSides,
@@ -114,8 +116,9 @@ export function useLiturgicalTexts(
   const [loadingGreek, setLoadingGreek] = useState(false);
 
   const sideBySide = readingsSideBySide(textLang);
-  const loadSlavonic = needsSlavonicSections(textLang, compareSides);
-  const loadGreek = needsGreekSections(textLang, compareSides);
+  const loadSlavonic =
+    needsSlavonicSections(textLang, compareSides) || needsSlavonicForUi(uiLanguage);
+  const loadGreek = needsGreekSections(textLang, compareSides) || needsGreekForUi(uiLanguage);
 
   useEffect(() => {
     if (!loadSlavonic) {
