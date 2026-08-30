@@ -1,32 +1,40 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Head from 'expo-router/head';
+import { useLocalSearchParams } from 'expo-router';
 
-import { ChrysostomLiturgyBody } from '../../src/components/ChrysostomLiturgyBody';
+import { WorshipLiturgyBody } from '../../src/components/ChrysostomLiturgyBody';
 import { DevotionalPageHeader } from '../../src/components/DevotionalPageHeader';
 import { useFontScale } from '../../src/hooks/useFontScale';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
-import { useLiturgicalVestmentAccent } from '../../src/state/VestmentAccentContext';
+import { parseWorshipServiceId, type WorshipServiceId } from '../../src/lib/liturgical/worshipNavigation';
+import { useVestmentAccent } from '../../src/state/VestmentAccentContext';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 
-export default function LiturgyScreen() {
+export default function WorshipScreen() {
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
   const { t } = useAppTranslation();
   const { text } = useFontScale();
   const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
-  const vestmentAccent = useLiturgicalVestmentAccent();
+  const vestmentAccent = useVestmentAccent();
+  const params = useLocalSearchParams<{ service?: string }>();
+  const [service, setService] = useState<WorshipServiceId>(() => parseWorshipServiceId(params.service));
   const muted = isDark ? '#a39e98' : colors.muted;
   const bodyType = text(14, 20);
   const hintType = text(13, 20);
   const pageBg = theme.dark ? colors.darkBg : colors.parchment;
+
+  useEffect(() => {
+    setService(parseWorshipServiceId(params.service));
+  }, [params.service]);
 
   useFocusEffect(
     useCallback(() => {
@@ -39,7 +47,7 @@ export default function LiturgyScreen() {
   return (
     <>
       <Head>
-        <title>{t('tabs.browserTitleLiturgy')}</title>
+        <title>{t('tabs.browserTitleWorship')}</title>
       </Head>
       <View style={[styles.page, { backgroundColor: pageBg }]}>
         <View
@@ -55,8 +63,8 @@ export default function LiturgyScreen() {
           <DevotionalPageHeader
             icon={<MaterialCommunityIcons name="church" size={22} color={vestmentAccent.accent} />}
             accentSoft={vestmentAccent.accentSoft}
-            title={t('today.sectionLiturgy')}
-            subtitle={t('tabs.liturgySubtitle')}
+            title={t('tabs.worshipTitle')}
+            subtitle={t('tabs.worshipSubtitle')}
             textColor={theme.colors.text}
             mutedColor={muted}
           />
@@ -70,8 +78,11 @@ export default function LiturgyScreen() {
             },
           ]}
         >
-          <ChrysostomLiturgyBody
+          <WorshipLiturgyBody
             variant="tab"
+            service={service}
+            onServiceChange={setService}
+            showServiceToggle
             textColor={theme.colors.text}
             mutedColor={muted}
             borderColor={theme.colors.border}

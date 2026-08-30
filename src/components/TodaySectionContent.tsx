@@ -33,6 +33,8 @@ import {
 } from '../i18n/feastRank';
 import type { CommemorationEntry } from '../lib/liturgical/commemorations';
 import type { TodaySectionId } from '../lib/today/todaySections';
+import { worshipHrefForServiceKind } from '../lib/liturgical/worshipNavigation';
+import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { isGreatLentSeason } from '../lib/liturgical/lentSeason';
 import { colors } from '../theme/tokens';
 
@@ -547,6 +549,7 @@ export function TodaySectionContent({ section, model }: Props) {
               const prevSlot = dayServices.items[index - 1]?.slot;
               const showSlotHeader = entry.slot !== prevSlot;
               const isLast = index === dayServices.items.length - 1;
+              const worshipHref = worshipHrefForServiceKind(entry.kind);
               return (
                 <View key={`${entry.kind}-${index}`}>
                   {showSlotHeader ? (
@@ -561,7 +564,16 @@ export function TodaySectionContent({ section, model }: Props) {
                       {entry.slotLabel}
                     </Text>
                   ) : null}
-                  <View style={[styles.rowBetween, isLast ? styles.serviceRowLast : null]}>
+                  <Pressable
+                    onPress={() => router.push(worshipHref)}
+                    style={({ pressed }) => [
+                      styles.rowBetween,
+                      isLast ? styles.serviceRowLast : null,
+                      pressed ? styles.serviceRowPressed : null,
+                    ]}
+                    accessibilityRole="button"
+                    {...hoverAccessibilityProps(entry.title, { role: 'button' })}
+                  >
                     <Text
                       style={[
                         styles.body,
@@ -585,7 +597,7 @@ export function TodaySectionContent({ section, model }: Props) {
                     >
                       {entry.categoryLabel}
                     </Text>
-                  </View>
+                  </Pressable>
                 </View>
               );
             })
@@ -972,6 +984,9 @@ const styles = StyleSheet.create({
   },
   serviceRowLast: {
     marginBottom: 0,
+  },
+  serviceRowPressed: {
+    opacity: 0.78,
   },
   commemorationList: {
     gap: 12,

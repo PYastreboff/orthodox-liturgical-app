@@ -10,7 +10,7 @@ import { useFontScale } from '../../src/hooks/useFontScale';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
-import { useLiturgicalVestmentAccent } from '../../src/state/VestmentAccentContext';
+import { useVestmentAccent } from '../../src/state/VestmentAccentContext';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
@@ -22,7 +22,7 @@ export default function PrayersScreen() {
   const { text } = useFontScale();
   const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
-  const vestmentAccent = useLiturgicalVestmentAccent();
+  const vestmentAccent = useVestmentAccent();
   const muted = isDark ? '#a39e98' : colors.muted;
   const bodyType = text(14, 20);
   const hintType = text(13, 20);

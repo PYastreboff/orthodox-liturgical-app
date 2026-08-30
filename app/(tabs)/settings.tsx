@@ -58,7 +58,7 @@ import type { FontScalePreference } from '../../src/theme/fontScale';
 import type { ClergyRole } from '../../src/types/liturgical';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
-import { useVestmentAccent, useLiturgicalVestmentAccent } from '../../src/state/VestmentAccentContext';
+import { useVestmentAccent } from '../../src/state/VestmentAccentContext';
 import { iconBadgeSurface } from '../../src/theme/cards';
 import { colors } from '../../src/theme/tokens';
 
@@ -164,7 +164,6 @@ export default function SettingsScreen() {
   const nativeReminders = supportsLocalNotifications();
   const muted = isDark ? '#a39e98' : colors.muted;
   const vestmentAccent = useVestmentAccent();
-  const liturgicalVestmentAccent = useLiturgicalVestmentAccent();
   const roleIconColor = vestmentAccent.accent;
 
   const servingRoleLabel = t(SERVING_ROLE_LABEL_KEYS[servingRole]);
@@ -486,8 +485,8 @@ export default function SettingsScreen() {
         >
           <View style={styles.pageHeader}>
             <DevotionalPageHeader
-              icon={<Feather name="settings" size={22} color={liturgicalVestmentAccent.accent} />}
-              accentSoft={liturgicalVestmentAccent.accentSoft}
+              icon={<Feather name="settings" size={22} color={vestmentAccent.accent} />}
+              accentSoft={vestmentAccent.accentSoft}
               title={t('settings.title')}
               subtitle={t('settings.subtitleShort')}
               textColor={theme.colors.text}

@@ -1,0 +1,463 @@
+{
+  "version": 1,
+  "updated": "2026-08-30",
+  "source": "Great Vespers — fixed congregational parts (GOARCH / common Orthodox English); variable stichera and aposticha depend on the day.",
+  "sections": [
+    {
+      "id": "opening",
+      "units": [
+        {
+          "en": "PRIEST: Blessed is our God always, now and ever, and unto ages of ages.",
+          "el": "ΙΕΡΕΥΣ: Εὐλογητὸς ὁ Θεὸς ἡμῶν πάντοτε, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων.",
+          "ru": "Священник: Благословен Бог наш всегда, ныне и присно и во веки веков."
+        },
+        {
+          "en": "READER: Amen. Glory to Thee, O our God, glory to Thee.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Ἀμήν. Δόξα σοι, ὁ Θεὸς ἡμῶν, δόξα σοι.",
+          "ru": "Чтец: Аминь. Слава Тебе, Боже наш, слава Тебе."
+        },
+        {
+          "en": "READER: O Heavenly King, O Comforter, the Spirit of Truth, Who art everywhere present and fillest all things; Treasury of good things and Giver of life: Come and abide in us, and cleanse us from every impurity, and save our souls, O Good One.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Βασιλεῦ οὐράνιε, Παράκλητε, τὸ Πνεῦμα τῆς ἀληθείας, ὁ πανταχοῦ παρὼν καὶ τὰ πάντα πληροῦν, ὁ τῶν ἀγαθῶν ταμεῖε καὶ τῆς ζωῆς ὁ χορηγός, ἐλθὲ καὶ σκήνωσον ἐν ἡμῖν, καὶ καθάρισον ἡμᾶς ἀπὸ πάσης κηλῖδος, καὶ σῶσον, Ἀγαθέ, τὰς ψυχὰς ἡμῶν.",
+          "ru": "Чтец: Царю Небесный, Утешителю, Душе истины, Иже везде сый и вся исполняяй, Сокровище благих и Жизни Подателю, прииди и вселися в ны, и очисти ны от всякия скверны, и спаси, Блаже, души наша."
+        },
+        {
+          "en": "READER: Holy God, Holy Mighty, Holy Immortal, have mercy on us. (thrice)",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Ἅγιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς. (τρίς)",
+          "ru": "Чтец: Святый Боже, Святый Крепкий, Святый Безсмертный, помилуй нас. (трижды)"
+        },
+        {
+          "en": "READER: Glory to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages. Amen.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Δόξα Πατρὶ καὶ Υἱῷ καὶ Ἁγίῳ Πνεύματι, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων. Ἀμήν.",
+          "ru": "Чтец: Слава Отцу и Сыну и Святому Духу, ныне и присно и во веки веков. Аминь."
+        },
+        {
+          "en": "READER: Our Father, Who art in heaven, hallowed be Thy name. Thy kingdom come. Thy will be done, on earth as it is in heaven. Give us this day our daily bread; and forgive us our trespasses, as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Πάτερ ἡμῶν ὁ ἐν τοῖς οὐρανοῖς, ἁγιασθήτω τὸ ὄνομά σου· ἐλθέτω ἡ βασιλεία σου· γενηθήτω τὸ θέλημά σου, ὡς ἐν οὐρανῷ καὶ ἐπὶ γῆς· τὸν ἄρτον ἡμῶν τὸν ἐπιούσιον δὸς ἡμῖν σήμερον· καὶ ἄφες ἡμῖν τὰ ὀφειλήματα ἡμῶν, ὡς καὶ ἡμεῖς ἀφίεμεν τοῖς ὀφειλέταις ἡμῶν· καὶ μὴ εἰσενέγκῃς ἡμᾶς εἰς πειρασμόν, ἀλλὰ ῥῦσαι ἡμᾶς ἀπὸ τοῦ πονηροῦ.",
+          "ru": "Чтец: Отче наш, Иже еси на небесех, да святится имя Твое, да приидет Царствие Твое, да будет воля Твоя, яко на небеси и на земли. Хлеб наш насущный даждь нам днесь; и остави нам долги наша, якоже и мы оставляем должником нашим; и не введи нас во искушение, но избави нас от лукаваго."
+        }
+      ],
+      "paragraphs": {
+        "en": [
+          "PRIEST: Blessed is our God always, now and ever, and unto ages of ages.",
+          "READER: Amen. Glory to Thee, O our God, glory to Thee.",
+          "READER: O Heavenly King, O Comforter, the Spirit of Truth, Who art everywhere present and fillest all things; Treasury of good things and Giver of life: Come and abide in us, and cleanse us from every impurity, and save our souls, O Good One.",
+          "READER: Holy God, Holy Mighty, Holy Immortal, have mercy on us. (thrice)",
+          "READER: Glory to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages. Amen.",
+          "READER: Our Father, Who art in heaven, hallowed be Thy name. Thy kingdom come. Thy will be done, on earth as it is in heaven. Give us this day our daily bread; and forgive us our trespasses, as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil."
+        ],
+        "el": [
+          "ΙΕΡΕΥΣ: Εὐλογητὸς ὁ Θεὸς ἡμῶν πάντοτε, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Ἀμήν. Δόξα σοι, ὁ Θεὸς ἡμῶν, δόξα σοι.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Βασιλεῦ οὐράνιε, Παράκλητε, τὸ Πνεῦμα τῆς ἀληθείας, ὁ πανταχοῦ παρὼν καὶ τὰ πάντα πληροῦν, ὁ τῶν ἀγαθῶν ταμεῖε καὶ τῆς ζωῆς ὁ χορηγός, ἐλθὲ καὶ σκήνωσον ἐν ἡμῖν, καὶ καθάρισον ἡμᾶς ἀπὸ πάσης κηλῖδος, καὶ σῶσον, Ἀγαθέ, τὰς ψυχὰς ἡμῶν.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Ἅγιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς. (τρίς)",
+          "ΑΝΑΓΝΩΣΤΗΣ: Δόξα Πατρὶ καὶ Υἱῷ καὶ Ἁγίῳ Πνεύματι, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων. Ἀμήν.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Πάτερ ἡμῶν ὁ ἐν τοῖς οὐρανοῖς, ἁγιασθήτω τὸ ὄνομά σου· ἐλθέτω ἡ βασιλεία σου· γενηθήτω τὸ θέλημά σου, ὡς ἐν οὐρανῷ καὶ ἐπὶ γῆς· τὸν ἄρτον ἡμῶν τὸν ἐπιούσιον δὸς ἡμῖν σήμερον· καὶ ἄφες ἡμῖν τὰ ὀφειλήματα ἡμῶν, ὡς καὶ ἡμεῖς ἀφίεμεν τοῖς ὀφειλέταις ἡμῶν· καὶ μὴ εἰσενέγκῃς ἡμᾶς εἰς πειρασμόν, ἀλλὰ ῥῦσαι ἡμᾶς ἀπὸ τοῦ πονηροῦ."
+        ],
+        "ru": [
+          "Священник: Благословен Бог наш всегда, ныне и присно и во веки веков.",
+          "Чтец: Аминь. Слава Тебе, Боже наш, слава Тебе.",
+          "Чтец: Царю Небесный, Утешителю, Душе истины, Иже везде сый и вся исполняяй, Сокровище благих и Жизни Подателю, прииди и вселися в ны, и очисти ны от всякия скверны, и спаси, Блаже, души наша.",
+          "Чтец: Святый Боже, Святый Крепкий, Святый Безсмертный, помилуй нас. (трижды)",
+          "Чтец: Слава Отцу и Сыну и Святому Духу, ныне и присно и во веки веков. Аминь.",
+          "Чтец: Отче наш, Иже еси на небесех, да святится имя Твое, да приидет Царствие Твое, да будет воля Твоя, яко на небеси и на земли. Хлеб наш насущный даждь нам днесь; и остави нам долги наша, якоже и мы оставляем должником нашим; и не введи нас во искушение, но избави нас от лукаваго."
+        ]
+      }
+    },
+    {
+      "id": "psalm_103",
+      "units": [
+        {
+          "en": "READER: Bless the Lord, O my soul. Blessed art Thou, O Lord.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Εὐλόγει, ἡ ψυχή μου, τὸν Κύριον. Εὐλογητὸς εἶ, Κύριε.",
+          "ru": "Чтец: Благослови, душе моя, Господа. Благословен еси, Господи."
+        },
+        {
+          "en": "READER: O Lord, how manifold are Thy works! In wisdom hast Thou made them all; the earth is full of Thy riches.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Ὡς ἐμεγαλύνθη τὰ ἔργα σου, Κύριε· πάντα ἐν σοφίᾳ ἐποίησας.",
+          "ru": "Чтец: Како возвеличишася дела Твоя, Господи! Вся премудро сотворил еси."
+        },
+        {
+          "en": "READER: Glory to the Father, and to the Son, and to the Holy Spirit.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Δόξα Πατρὶ καὶ Υἱῷ καὶ Ἁγίῳ Πνεύματι.",
+          "ru": "Чтец: Слава Отцу и Сыну и Святому Духу."
+        },
+        {
+          "en": "READER: Both now and ever and unto ages of ages. Amen.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Καὶ νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων. Ἀμήν.",
+          "ru": "Чтец: И ныне и присно и во веки веков. Аминь."
+        },
+        {
+          "en": "READER: Alleluia, alleluia, alleluia. Glory to Thee, O God. (thrice)",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Ἀλληλούϊα, ἀλληλούϊα, ἀλληλούϊα. Δόξα σοι, ὁ Θεός. (τρίς)",
+          "ru": "Чтец: Аллилуия, аллилуия, аллилуия. Слава Тебе, Боже. (трижды)"
+        },
+        {
+          "en": "READER: Lord, have mercy. (thrice) Glory… Both now…",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Κύριε, ἐλέησον. (τρίς) Δόξα… Καὶ νῦν…",
+          "ru": "Чтец: Господи, помилуй. (трижды) Слава… И ныне…"
+        }
+      ],
+      "paragraphs": {
+        "en": [
+          "READER: Bless the Lord, O my soul. Blessed art Thou, O Lord.",
+          "READER: O Lord, how manifold are Thy works! In wisdom hast Thou made them all; the earth is full of Thy riches.",
+          "READER: Glory to the Father, and to the Son, and to the Holy Spirit.",
+          "READER: Both now and ever and unto ages of ages. Amen.",
+          "READER: Alleluia, alleluia, alleluia. Glory to Thee, O God. (thrice)",
+          "READER: Lord, have mercy. (thrice) Glory… Both now…"
+        ],
+        "el": [
+          "ΑΝΑΓΝΩΣΤΗΣ: Εὐλόγει, ἡ ψυχή μου, τὸν Κύριον. Εὐλογητὸς εἶ, Κύριε.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Ὡς ἐμεγαλύνθη τὰ ἔργα σου, Κύριε· πάντα ἐν σοφίᾳ ἐποίησας.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Δόξα Πατρὶ καὶ Υἱῷ καὶ Ἁγίῳ Πνεύματι.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Καὶ νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων. Ἀμήν.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Ἀλληλούϊα, ἀλληλούϊα, ἀλληλούϊα. Δόξα σοι, ὁ Θεός. (τρίς)",
+          "ΑΝΑΓΝΩΣΤΗΣ: Κύριε, ἐλέησον. (τρίς) Δόξα… Καὶ νῦν…"
+        ],
+        "ru": [
+          "Чтец: Благослови, душе моя, Господа. Благословен еси, Господи.",
+          "Чтец: Како возвеличишася дела Твоя, Господи! Вся премудро сотворил еси.",
+          "Чтец: Слава Отцу и Сыну и Святому Духу.",
+          "Чтец: И ныне и присно и во веки веков. Аминь.",
+          "Чтец: Аллилуия, аллилуия, аллилуия. Слава Тебе, Боже. (трижды)",
+          "Чтец: Господи, помилуй. (трижды) Слава… И ныне…"
+        ]
+      }
+    },
+    {
+      "id": "great_litany",
+      "units": [
+        {
+          "en": "DEACON: In peace let us pray to the Lord.",
+          "el": "ΔΙΑΚΟΝΟΣ: Ἐν εἰρήνῃ τοῦ Κυρίου δεηθῶμεν.",
+          "ru": "Диакон: Миром Господу помолимся."
+        },
+        {
+          "en": "CHOIR: Lord, have mercy.",
+          "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ru": "Хор: Господи, помилуй."
+        },
+        {
+          "en": "DEACON: For the peace from above and for the salvation of our souls, let us pray to the Lord.",
+          "el": "ΔΙΑΚΟΝΟΣ: Ὑπὲρ τῆς ἄνωθεν εἰρήνης καὶ τῆς σωτηρίας τῶν ψυχῶν ἡμῶν, τοῦ Κυρίου δεηθῶμεν.",
+          "ru": "Диакон: О свышнем мире и спасении душ наших, Господу помолимся."
+        },
+        {
+          "en": "CHOIR: Lord, have mercy.",
+          "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ru": "Хор: Господи, помилуй."
+        },
+        {
+          "en": "DEACON: For the peace of the whole world, the good estate of the holy churches of God, and the union of all, let us pray to the Lord.",
+          "el": "ΔΙΑΚΟΝΟΣ: Ὑπὲρ τῆς εἰρήνης τοῦ σύμπαντος κόσμου, εὐσταθείας τῶν ἁγίων τοῦ Θεοῦ Ἐκκλησιῶν καὶ τῆς τῶν πάντων ἑνώσεως, τοῦ Κυρίου δεηθῶμεν.",
+          "ru": "Диакон: О мире всего мира, благостоянии святых Божиих церквей и соединении всех, Господу помолимся."
+        },
+        {
+          "en": "CHOIR: Lord, have mercy.",
+          "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ru": "Хор: Господи, помилуй."
+        },
+        {
+          "en": "DEACON: For this holy house and for those who enter it with faith, reverence, and the fear of God, let us pray to the Lord.",
+          "el": "ΔΙΑΚΟΝΟΣ: Ὑπὲρ τοῦ ἁγίου οἴκου τούτου καὶ τῶν μετὰ πίστεως, εὐλαβείας καὶ φόβου Θεοῦ εἰσιόντων ἐν αὐτῷ, τοῦ Κυρίου δεηθῶμεν.",
+          "ru": "Диакон: О святом храме сем и о входящих в онь с верою, благоговением и страхом Божиим, Господу помолимся."
+        },
+        {
+          "en": "CHOIR: Lord, have mercy.",
+          "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ru": "Хор: Господи, помилуй."
+        },
+        {
+          "en": "DEACON: For our deliverance from all affliction, wrath, danger, and necessity, let us pray to the Lord.",
+          "el": "ΔΙΑΚΟΝΟΣ: Ὑπὲρ τοῦ ῥυσθῆναι ἡμᾶς ἀπὸ πάσης θλίψεως, ὀργῆς, κινδύνου καὶ ἀνάγκης, τοῦ Κυρίου δεηθῶμεν.",
+          "ru": "Диакон: О избавлении нас от всякия скорби, гнева и нужды, Господу помолимся."
+        },
+        {
+          "en": "CHOIR: Lord, have mercy.",
+          "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ru": "Хор: Господи, помилуй."
+        },
+        {
+          "en": "DEACON: Help us, save us, have mercy on us, and keep us, O God, by Thy grace.",
+          "el": "ΔΙΑΚΟΝΟΣ: Ἀντίλαβε, σῶσον, ἐλέησον καὶ φύλαξον ἡμᾶς, ὁ Θεός, τῇ σῇ χάριτι.",
+          "ru": "Диакон: Заступися, спаси, помилуй и сохрани нас, Боже, Твоею благодатию."
+        },
+        {
+          "en": "CHOIR: Lord, have mercy.",
+          "el": "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ru": "Хор: Господи, помилуй."
+        },
+        {
+          "en": "DEACON: Commemorating our most holy, pure, blessed, and glorious Lady, the Theotokos and ever-virgin Mary, with all the saints, let us commit ourselves and one another and all our life unto Christ our God.",
+          "el": "ΔΙΑΚΟΝΟΣ: Τῆς παναγίας, ἀχράντου, ὑπερευλογημένης, ἐνδόξου, δεσποίνης ἡμῶν Θεοτόκου καὶ ἀειπαρθένου Μαρίας, μετὰ πάντων τῶν ἁγίων μνημονεύσαντες, ἑαυτοὺς καὶ ἀλλήλους καὶ πᾶσαν τὴν ζωὴν ἡμῶν Χριστῷ τῷ Θεῷ παραθώμεθα.",
+          "ru": "Диакон: Пресвятую, пречистую, преблагословенную, славную Владычицу нашу Богородицу и Приснодеву Марию, со всеми святыми воспомянувше, себе и друг друга и всю живот нашу Христу Богу предадим."
+        },
+        {
+          "en": "CHOIR: To Thee, O Lord.",
+          "el": "ΧΟΡΟΣ: Σοὶ, Κύριε.",
+          "ru": "Хор: Тебе, Господи."
+        }
+      ],
+      "paragraphs": {
+        "en": [
+          "DEACON: In peace let us pray to the Lord.",
+          "CHOIR: Lord, have mercy.",
+          "DEACON: For the peace from above and for the salvation of our souls, let us pray to the Lord.",
+          "CHOIR: Lord, have mercy.",
+          "DEACON: For the peace of the whole world, the good estate of the holy churches of God, and the union of all, let us pray to the Lord.",
+          "CHOIR: Lord, have mercy.",
+          "DEACON: For this holy house and for those who enter it with faith, reverence, and the fear of God, let us pray to the Lord.",
+          "CHOIR: Lord, have mercy.",
+          "DEACON: For our deliverance from all affliction, wrath, danger, and necessity, let us pray to the Lord.",
+          "CHOIR: Lord, have mercy.",
+          "DEACON: Help us, save us, have mercy on us, and keep us, O God, by Thy grace.",
+          "CHOIR: Lord, have mercy.",
+          "DEACON: Commemorating our most holy, pure, blessed, and glorious Lady, the Theotokos and ever-virgin Mary, with all the saints, let us commit ourselves and one another and all our life unto Christ our God.",
+          "CHOIR: To Thee, O Lord."
+        ],
+        "el": [
+          "ΔΙΑΚΟΝΟΣ: Ἐν εἰρήνῃ τοῦ Κυρίου δεηθῶμεν.",
+          "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ΔΙΑΚΟΝΟΣ: Ὑπὲρ τῆς ἄνωθεν εἰρήνης καὶ τῆς σωτηρίας τῶν ψυχῶν ἡμῶν, τοῦ Κυρίου δεηθῶμεν.",
+          "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ΔΙΑΚΟΝΟΣ: Ὑπὲρ τῆς εἰρήνης τοῦ σύμπαντος κόσμου, εὐσταθείας τῶν ἁγίων τοῦ Θεοῦ Ἐκκλησιῶν καὶ τῆς τῶν πάντων ἑνώσεως, τοῦ Κυρίου δεηθῶμεν.",
+          "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ΔΙΑΚΟΝΟΣ: Ὑπὲρ τοῦ ἁγίου οἴκου τούτου καὶ τῶν μετὰ πίστεως, εὐλαβείας καὶ φόβου Θεοῦ εἰσιόντων ἐν αὐτῷ, τοῦ Κυρίου δεηθῶμεν.",
+          "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ΔΙΑΚΟΝΟΣ: Ὑπὲρ τοῦ ῥυσθῆναι ἡμᾶς ἀπὸ πάσης θλίψεως, ὀργῆς, κινδύνου καὶ ἀνάγκης, τοῦ Κυρίου δεηθῶμεν.",
+          "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ΔΙΑΚΟΝΟΣ: Ἀντίλαβε, σῶσον, ἐλέησον καὶ φύλαξον ἡμᾶς, ὁ Θεός, τῇ σῇ χάριτι.",
+          "ΧΟΡΟΣ: Κύριε, ἐλέησον.",
+          "ΔΙΑΚΟΝΟΣ: Τῆς παναγίας, ἀχράντου, ὑπερευλογημένης, ἐνδόξου, δεσποίνης ἡμῶν Θεοτόκου καὶ ἀειπαρθένου Μαρίας, μετὰ πάντων τῶν ἁγίων μνημονεύσαντες, ἑαυτοὺς καὶ ἀλλήλους καὶ πᾶσαν τὴν ζωὴν ἡμῶν Χριστῷ τῷ Θεῷ παραθώμεθα.",
+          "ΧΟΡΟΣ: Σοὶ, Κύριε."
+        ],
+        "ru": [
+          "Диакон: Миром Господу помолимся.",
+          "Хор: Господи, помилуй.",
+          "Диакон: О свышнем мире и спасении душ наших, Господу помолимся.",
+          "Хор: Господи, помилуй.",
+          "Диакон: О мире всего мира, благостоянии святых Божиих церквей и соединении всех, Господу помолимся.",
+          "Хор: Господи, помилуй.",
+          "Диакон: О святом храме сем и о входящих в онь с верою, благоговением и страхом Божиим, Господу помолимся.",
+          "Хор: Господи, помилуй.",
+          "Диакон: О избавлении нас от всякия скорби, гнева и нужды, Господу помолимся.",
+          "Хор: Господи, помилуй.",
+          "Диакон: Заступися, спаси, помилуй и сохрани нас, Боже, Твоею благодатию.",
+          "Хор: Господи, помилуй.",
+          "Диакон: Пресвятую, пречистую, преблагословенную, славную Владычицу нашу Богородицу и Приснодеву Марию, со всеми святыми воспомянувше, себе и друг друга и всю живот нашу Христу Богу предадим.",
+          "Хор: Тебе, Господи."
+        ]
+      }
+    },
+    {
+      "id": "lord_i_have_cried",
+      "units": [
+        {
+          "en": "READER: Lord, I have cried unto Thee, hear me. Hear me, O Lord. Lord, I have cried unto Thee, hear me. Attend to the voice of my supplication when I cry unto Thee.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Κύριε, ἐκέκραξα πρὸς σέ, εἰσάκουσόν μου. Εἰσάκουσόν μου, Κύριε. Κύριε, ἐκέκραξα πρὸς σέ, εἰσάκουσόν μου.",
+          "ru": "Чтец: Господи, воззвах к Тебе, услыши мя. Услыши мя, Господи. Господи, воззвах к Тебе, услыши мя."
+        },
+        {
+          "en": "(Stichera for the day are sung here.)",
+          "el": "(ᾄδονται τὰ στιχηρὰ τῆς ἡμέρας.)",
+          "ru": "(Здесь поются стихиры дня.)"
+        },
+        {
+          "en": "READER: Glory to the Father, and to the Son, and to the Holy Spirit.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Δόξα Πατρὶ καὶ Υἱῷ καὶ Ἁγίῳ Πνεύματι.",
+          "ru": "Чтец: Слава Отцу и Сыну и Святому Духу."
+        },
+        {
+          "en": "READER: Both now and ever and unto ages of ages. Amen.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Καὶ νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων. Ἀμήν.",
+          "ru": "Чтец: И ныне и присно и во веки веков. Аминь."
+        }
+      ],
+      "paragraphs": {
+        "en": [
+          "READER: Lord, I have cried unto Thee, hear me. Hear me, O Lord. Lord, I have cried unto Thee, hear me. Attend to the voice of my supplication when I cry unto Thee.",
+          "(Stichera for the day are sung here.)",
+          "READER: Glory to the Father, and to the Son, and to the Holy Spirit.",
+          "READER: Both now and ever and unto ages of ages. Amen."
+        ],
+        "el": [
+          "ΑΝΑΓΝΩΣΤΗΣ: Κύριε, ἐκέκραξα πρὸς σέ, εἰσάκουσόν μου. Εἰσάκουσόν μου, Κύριε. Κύριε, ἐκέκραξα πρὸς σέ, εἰσάκουσόν μου.",
+          "(ᾄδονται τὰ στιχηρὰ τῆς ἡμέρας.)",
+          "ΑΝΑΓΝΩΣΤΗΣ: Δόξα Πατρὶ καὶ Υἱῷ καὶ Ἁγίῳ Πνεύματι.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Καὶ νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων. Ἀμήν."
+        ],
+        "ru": [
+          "Чтец: Господи, воззвах к Тебе, услыши мя. Услыши мя, Господи. Господи, воззвах к Тебе, услыши мя.",
+          "(Здесь поются стихиры дня.)",
+          "Чтец: Слава Отцу и Сыну и Святому Духу.",
+          "Чтец: И ныне и присно и во веки веков. Аминь."
+        ]
+      }
+    },
+    {
+      "id": "phos_hilaron",
+      "units": [
+        {
+          "en": "READER: O Joyful Light of the holy glory of the immortal, heavenly, holy, blessed Father, O Jesus Christ: Having come to the setting of the sun, having seen the light of evening, we praise the Father, Son, and Holy Spirit, God. Meet it is for Thee at all times to be hymned with reverent voices, O Son of God, Giver of life. Wherefore the world doth glorify Thee.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Φῶς ἱλαρόν, ἁγίας δόξης, ἀθανάτου, Πατρὸς οὐρανίου, ἁγίου, μάκαρος, Ἰησοῦ Χριστέ, ἐλθόντες ἐπὶ τὴν ἡλίου δύσιν, ἰδόντες φῶς ἑσπερινόν, ὑμνοῦμεν Πατέρα, Υἱόν, καὶ ἅγιον Πνεῦμα, Θεόν.",
+          "ru": "Чтец: Свете тихий святыя славы, безсмертнаго, Небеснаго, Святаго, Блаженнаго, Отче, Иисусе Христе: пришедше на захождение солнца, видевше свет вечерний, поем Отца, Сына и Святаго Духа, Бога."
+        },
+        {
+          "en": "READER: Lord, have mercy. (thrice)",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Κύριε, ἐλέησον. (τρίς)",
+          "ru": "Чтец: Господи, помилуй. (трижды)"
+        }
+      ],
+      "paragraphs": {
+        "en": [
+          "READER: O Joyful Light of the holy glory of the immortal, heavenly, holy, blessed Father, O Jesus Christ: Having come to the setting of the sun, having seen the light of evening, we praise the Father, Son, and Holy Spirit, God. Meet it is for Thee at all times to be hymned with reverent voices, O Son of God, Giver of life. Wherefore the world doth glorify Thee.",
+          "READER: Lord, have mercy. (thrice)"
+        ],
+        "el": [
+          "ΑΝΑΓΝΩΣΤΗΣ: Φῶς ἱλαρόν, ἁγίας δόξης, ἀθανάτου, Πατρὸς οὐρανίου, ἁγίου, μάκαρος, Ἰησοῦ Χριστέ, ἐλθόντες ἐπὶ τὴν ἡλίου δύσιν, ἰδόντες φῶς ἑσπερινόν, ὑμνοῦμεν Πατέρα, Υἱόν, καὶ ἅγιον Πνεῦμα, Θεόν.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Κύριε, ἐλέησον. (τρίς)"
+        ],
+        "ru": [
+          "Чтец: Свете тихий святыя славы, безсмертнаго, Небеснаго, Святаго, Блаженнаго, Отче, Иисусе Христе: пришедше на захождение солнца, видевше свет вечерний, поем Отца, Сына и Святаго Духа, Бога.",
+          "Чтец: Господи, помилуй. (трижды)"
+        ]
+      }
+    },
+    {
+      "id": "aposticha",
+      "units": [
+        {
+          "en": "(Aposticha for the day are sung here.)",
+          "el": "(ᾄδονται τὰ ἀποστίχια τῆς ἡμέρας.)",
+          "ru": "(Здесь поются апостихи дня.)"
+        },
+        {
+          "en": "READER: Glory to the Father, and to the Son, and to the Holy Spirit.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Δόξα Πατρὶ καὶ Υἱῷ καὶ Ἁγίῳ Πνεύματι.",
+          "ru": "Чтец: Слава Отцу и Сыну и Святому Духу."
+        },
+        {
+          "en": "READER: Both now and ever and unto ages of ages. Amen.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Καὶ νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων. Ἀμήν.",
+          "ru": "Чтец: И ныне и присно и во веки веков. Аминь."
+        }
+      ],
+      "paragraphs": {
+        "en": [
+          "(Aposticha for the day are sung here.)",
+          "READER: Glory to the Father, and to the Son, and to the Holy Spirit.",
+          "READER: Both now and ever and unto ages of ages. Amen."
+        ],
+        "el": [
+          "(ᾄδονται τὰ ἀποστίχια τῆς ἡμέρας.)",
+          "ΑΝΑΓΝΩΣΤΗΣ: Δόξα Πατρὶ καὶ Υἱῷ καὶ Ἁγίῳ Πνεύματι.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Καὶ νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων. Ἀμήν."
+        ],
+        "ru": [
+          "(Здесь поются апостихи дня.)",
+          "Чтец: Слава Отцу и Сыну и Святому Духу.",
+          "Чтец: И ныне и присно и во веки веков. Аминь."
+        ]
+      }
+    },
+    {
+      "id": "supplication",
+      "units": [
+        {
+          "en": "READER: Now lettest Thou Thy servant depart in peace, O Master, according to Thy word; for mine eyes have seen Thy salvation, which Thou hast prepared before the face of all peoples, a light to enlighten the Gentiles, and the glory of Thy people Israel.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Νῦν ἀπολύεις τὸν δοῦλόν σου, Δέσποτα, κατὰ τὸ ῥῆμά σου, ἐν εἰρήνῃ· ὅτι εἶδον οἱ ὀφθαλμοί μου τὸ σωτήριόν σου.",
+          "ru": "Чтец: Ныне отпущаеши раба Твоего, Владыко, по глаголу Твоему, с миром: яко видеста очи мои спасение Твое."
+        },
+        {
+          "en": "READER: Holy God, Holy Mighty, Holy Immortal, have mercy on us. (thrice)",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Ἅγιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς. (τρίς)",
+          "ru": "Чтец: Святый Боже, Святый Крепкий, Святый Безсмертный, помилуй нас. (трижды)"
+        },
+        {
+          "en": "READER: Glory to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages. Amen.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Δόξα Πατρὶ καὶ Υἱῷ καὶ Ἁγίῳ Πνεύματι, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων. Ἀμήν.",
+          "ru": "Чтец: Слава Отцу и Сыну и Святому Духу, ныне и присно и во веки веков. Аминь."
+        },
+        {
+          "en": "READER: Lord, have mercy. (thrice) Blessed be the name of the Lord from henceforth and for evermore.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Κύριε, ἐλέησον. (τρίς) Εὐλογητὸν τὸ ὄνομα Κυρίου ἀπὸ τοῦ νῦν καὶ ἕως τοῦ αἰῶνος.",
+          "ru": "Чтец: Господи, помилуй. (трижды) Благословенно имя Господне отныне и до века."
+        }
+      ],
+      "paragraphs": {
+        "en": [
+          "READER: Now lettest Thou Thy servant depart in peace, O Master, according to Thy word; for mine eyes have seen Thy salvation, which Thou hast prepared before the face of all peoples, a light to enlighten the Gentiles, and the glory of Thy people Israel.",
+          "READER: Holy God, Holy Mighty, Holy Immortal, have mercy on us. (thrice)",
+          "READER: Glory to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages. Amen.",
+          "READER: Lord, have mercy. (thrice) Blessed be the name of the Lord from henceforth and for evermore."
+        ],
+        "el": [
+          "ΑΝΑΓΝΩΣΤΗΣ: Νῦν ἀπολύεις τὸν δοῦλόν σου, Δέσποτα, κατὰ τὸ ῥῆμά σου, ἐν εἰρήνῃ· ὅτι εἶδον οἱ ὀφθαλμοί μου τὸ σωτήριόν σου.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Ἅγιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς. (τρίς)",
+          "ΑΝΑΓΝΩΣΤΗΣ: Δόξα Πατρὶ καὶ Υἱῷ καὶ Ἁγίῳ Πνεύματι, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων. Ἀμήν.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Κύριε, ἐλέησον. (τρίς) Εὐλογητὸν τὸ ὄνομα Κυρίου ἀπὸ τοῦ νῦν καὶ ἕως τοῦ αἰῶνος."
+        ],
+        "ru": [
+          "Чтец: Ныне отпущаеши раба Твоего, Владыко, по глаголу Твоему, с миром: яко видеста очи мои спасение Твое.",
+          "Чтец: Святый Боже, Святый Крепкий, Святый Безсмертный, помилуй нас. (трижды)",
+          "Чтец: Слава Отцу и Сыну и Святому Духу, ныне и присно и во веки веков. Аминь.",
+          "Чтец: Господи, помилуй. (трижды) Благословенно имя Господне отныне и до века."
+        ]
+      }
+    },
+    {
+      "id": "dismissal",
+      "units": [
+        {
+          "en": "PRIEST: Wisdom.",
+          "el": "ΙΕΡΕΥΣ: Σοφία.",
+          "ru": "Священник: Премудрость."
+        },
+        {
+          "en": "READER: Bless.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Εὐλόγησον.",
+          "ru": "Чтец: Благослови."
+        },
+        {
+          "en": "PRIEST: Blessed is the one who comes in the name of the Lord.",
+          "el": "ΙΕΡΕΥΣ: Εὐλογημένος ὁ ἐρχόμενος ἐν ὀνόματι Κυρίου.",
+          "ru": "Священник: Благословен грядый во имя Господне."
+        },
+        {
+          "en": "READER: The blessing of the Lord be upon you, through His grace and love for mankind, always, now and ever, and unto ages of ages.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Εὐλογία Κυρίου ἐφ' ὑμᾶς, διὰ τῆς αὐτοῦ χάριτος καὶ φιλανθρωπίας, πάντοτε, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων.",
+          "ru": "Чтец: Благословение Господне на вас, по благодати и человеколюбию Его, всегда, ныне и присно и во веки веков."
+        },
+        {
+          "en": "READER: Amen.",
+          "el": "ΑΝΑΓΝΩΣΤΗΣ: Ἀμήν.",
+          "ru": "Чтец: Аминь."
+        }
+      ],
+      "paragraphs": {
+        "en": [
+          "PRIEST: Wisdom.",
+          "READER: Bless.",
+          "PRIEST: Blessed is the one who comes in the name of the Lord.",
+          "READER: The blessing of the Lord be upon you, through His grace and love for mankind, always, now and ever, and unto ages of ages.",
+          "READER: Amen."
+        ],
+        "el": [
+          "ΙΕΡΕΥΣ: Σοφία.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Εὐλόγησον.",
+          "ΙΕΡΕΥΣ: Εὐλογημένος ὁ ἐρχόμενος ἐν ὀνόματι Κυρίου.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Εὐλογία Κυρίου ἐφ' ὑμᾶς, διὰ τῆς αὐτοῦ χάριτος καὶ φιλανθρωπίας, πάντοτε, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων.",
+          "ΑΝΑΓΝΩΣΤΗΣ: Ἀμήν."
+        ],
+        "ru": [
+          "Священник: Премудрость.",
+          "Чтец: Благослови.",
+          "Священник: Благословен грядый во имя Господне.",
+          "Чтец: Благословение Господне на вас, по благодати и человеколюбию Его, всегда, ныне и присно и во веки веков.",
+          "Чтец: Аминь."
+        ]
+      }
+    }
+  ]
+}
