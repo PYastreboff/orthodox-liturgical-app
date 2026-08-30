@@ -3,6 +3,7 @@ import { Feather } from '@expo/vector-icons';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { UiLanguage } from '../i18n/types';
+import { nativeTextInputTypeStyle } from '../lib/ui/nativeTextInputStyle';
 import { radii } from '../theme/tokens';
 
 function searchNoMatchesLabel(language: UiLanguage): string {
@@ -43,6 +44,7 @@ export function LiturgySearchBar({
   const navDisabled = !searchMatchCount;
   const showMatchPosition =
     searchMatchCount !== null && searchMatchCount > 0 && activeMatchIndex !== null;
+  const inputType = nativeTextInputTypeStyle(hintType);
 
   return (
     <View style={[styles.searchRow, compact && styles.searchRowCompact]}>
@@ -53,7 +55,7 @@ export function LiturgySearchBar({
           onChangeText={onSearchQueryChange}
           placeholder={t('liturgy.worship.searchPlaceholder')}
           placeholderTextColor={mutedColor}
-          style={[styles.searchInput, compact && styles.searchInputCompact, hintType, { color: textColor }]}
+          style={[styles.searchInput, compact && styles.searchInputCompact, inputType, { color: textColor }]}
           autoCapitalize="none"
           autoCorrect={false}
           clearButtonMode="while-editing"

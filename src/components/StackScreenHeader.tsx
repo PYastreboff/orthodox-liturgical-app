@@ -42,7 +42,7 @@ export function StackScreenHeader({
   const backBg = isDark ? colors.darkSurfaceElevated : colors.card;
 
   return (
-    <View style={[styles.wrap, { paddingTop: screenSafe.paddingTop + 16 }]}>
+    <View style={[styles.wrap, styles.wrapStretch, { paddingTop: screenSafe.paddingTop + 16 }]}>
       <View
         style={stackContentColumnStyle({
           paddingLeft: screenSafe.paddingLeft,
@@ -86,6 +86,10 @@ export function StackScreenHeader({
 const styles = StyleSheet.create({
   wrap: {
     paddingBottom: 16,
+    width: '100%',
+  },
+  wrapStretch: {
+    alignSelf: 'stretch',
   },
   backBtn: {
     width: 42,

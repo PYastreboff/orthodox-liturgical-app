@@ -16,6 +16,6 @@ export function stackContentColumnStyle(options: {
     paddingRight,
     width: '100%',
     alignSelf: 'center',
-    ...(phone ? null : { maxWidth }),
+    ...(phone ? { alignSelf: 'stretch' as const } : { maxWidth }),
   };
 }
