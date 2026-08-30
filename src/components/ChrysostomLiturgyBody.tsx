@@ -1,4 +1,4 @@
-import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, TextInput, View, type View as RNView } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, TextInput, View, type View as RNView, type ViewStyle } from 'react-native';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Feather } from '@expo/vector-icons';
 import type { ScrollView } from 'react-native';
@@ -413,17 +413,16 @@ function LiturgyToolbar({
             clearButtonMode="while-editing"
             accessibilityLabel={t('liturgy.worship.searchPlaceholder')}
             returnKeyType="search"
-            onKeyPress={
-              Platform.OS === 'web'
-                ? (event) => {
-                    const key = event.nativeEvent.key;
-                    if (key === 'Enter' && event.nativeEvent.shiftKey) {
-                      event.preventDefault();
+            {...(Platform.OS === 'web'
+              ? {
+                  onKeyDown: (event: { shiftKey?: boolean; key?: string; preventDefault?: () => void }) => {
+                    if (event.key === 'Enter' && event.shiftKey) {
+                      event.preventDefault?.();
                       onPreviousMatch();
                     }
-                  }
-                : undefined
-            }
+                  },
+                }
+              : null)}
           />
           {searchQuery ? (
             <Pressable
@@ -1120,7 +1119,7 @@ const styles = StyleSheet.create({
           position: 'sticky',
           top: 0,
           zIndex: 2,
-        } as const)
+        } as unknown as ViewStyle)
       : null),
   },
   intro: {

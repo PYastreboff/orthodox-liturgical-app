@@ -59,11 +59,17 @@ function normEnKey(text: string): string {
     .trim();
 }
 
+const GREEK_ROLE = /^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)$/i;
+const ENGLISH_ROLE = /^(DEACON|PRIEST|CHOIR|PEOPLE|READER)$/i;
+
 function splitMixedLine(line: string): { greek?: string; english?: string } {
   const trimmed = line.trim();
   if (!trimmed || /^(_{3,}|Books|Sources|This is the|LITURGY OF)/i.test(trimmed)) {
     return {};
   }
+
+  if (GREEK_ROLE.test(trimmed)) return { greek: trimmed.toUpperCase() };
+  if (ENGLISH_ROLE.test(trimmed)) return { english: trimmed.toUpperCase() };
 
   const rolePair = trimmed.match(
     /^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)(?:\s+[A-Z][A-Za-z]*)?$/iu,
@@ -89,70 +95,96 @@ function splitMixedLine(line: string): { greek?: string; english?: string } {
   return { greek: cleanParagraph(trimmed) };
 }
 
+function attachGreekRole(role: string, speech: string): string {
+  if (!role) return speech;
+  if (/^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)\s*[:·]/i.test(speech)) return speech;
+  return `${role}: ${speech}`;
+}
+
+function attachEnglishRole(role: string, speech: string): string {
+  if (!role) return speech;
+  if (/^(DEACON|PRIEST|CHOIR|PEOPLE|READER)\b/i.test(speech)) return speech;
+  return `${role}: ${speech}`;
+}
+
 /** Pair Greek fragments with their English translation from a gr-en section slice. */
 export function extractBasilGrEnPairs(sectionText: string): Map<string, string> {
   const pairs = new Map<string, string>();
-  let greekPending: string[] = [];
-  let englishPending: string[] = [];
+  let greekRole = '';
+  let englishRole = '';
+  let greekSpeech = '';
+  let englishSpeech = '';
 
-  const flush = () => {
-    if (!greekPending.length || !englishPending.length) {
-      greekPending = [];
-      englishPending = [];
-      return;
+  const storePair = (el: string, en: string) => {
+    if (!el.trim() || !en.trim()) return;
+    const elLine = attachGreekRole(greekRole, el);
+    const enLine = attachEnglishRole(englishRole, en);
+    pairs.set(normEnKey(en), elLine);
+    pairs.set(normEnKey(enLine), elLine);
+    const speechOnly = en.match(/^(?:DEACON|PRIEST|CHOIR|PEOPLE|READER)(\s*\([^)]*\))?\s*:\s*(.+)$/i);
+    if (speechOnly?.[2]) pairs.set(normEnKey(speechOnly[2]), elLine);
+  };
+
+  const flushSpeechPair = () => {
+    if (greekSpeech && englishSpeech) {
+      storePair(greekSpeech, englishSpeech);
     }
-    const el = greekPending.join(' ').trim();
-    const en = englishPending.join(' ').trim();
-    if (el && en) {
-      pairs.set(normEnKey(en), el);
-      const roleSpeech = en.match(/^(DEACON|PRIEST|CHOIR|PEOPLE|READER)(\s*\([^)]*\))?\s*:\s*(.+)$/i);
-      if (roleSpeech?.[3]) pairs.set(normEnKey(roleSpeech[3]), el);
-      const elRoleSpeech = el.match(/^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)\s*[:·]\s*(.+)$/i);
-      if (elRoleSpeech) pairs.set(normEnKey(en), el);
-    }
-    greekPending = [];
-    englishPending = [];
+    greekSpeech = '';
+    englishSpeech = '';
   };
 
   for (const raw of sectionText.split(/\r?\n/)) {
     const { greek, english } = splitMixedLine(raw);
     if (greek && english) {
-      flush();
-      pairs.set(normEnKey(english), greek.includes(':') ? greek : greek);
-      if (!/^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)$/i.test(greek)) {
-        pairs.set(normEnKey(english), greek);
-      }
+      flushSpeechPair();
+      storePair(greek, english);
+      greekRole = '';
+      englishRole = '';
+      continue;
+    }
+    if (greek && GREEK_ROLE.test(greek)) {
+      flushSpeechPair();
+      greekRole = greek.toUpperCase();
+      continue;
+    }
+    if (english && ENGLISH_ROLE.test(english)) {
+      englishRole = english.toUpperCase();
       continue;
     }
     if (greek) {
-      if (englishPending.length) flush();
-      if (/^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)$/i.test(greek) && greekPending.length) {
-        greekPending.push(greek);
-      } else if (/^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)$/i.test(greek)) {
-        greekPending = [greek];
-      } else {
-        greekPending.push(greek);
-      }
+      if (greekSpeech && englishSpeech) flushSpeechPair();
+      greekSpeech = greekSpeech ? `${greekSpeech} ${greek}` : greek;
       continue;
     }
     if (english) {
-      englishPending.push(english);
+      if (greekSpeech && englishSpeech) flushSpeechPair();
+      englishSpeech = englishSpeech ? `${englishSpeech} ${english}` : english;
       continue;
     }
-    flush();
+    if (!raw.trim()) {
+      continue;
+    }
+    flushSpeechPair();
+    greekRole = '';
+    englishRole = '';
   }
-  flush();
+
+  flushSpeechPair();
   return pairs;
 }
 
 const COMMON_GREEK_BY_EN: Record<string, string> = {
-  'CHOIR: Amen.': 'ΧΟΡΟΣ: Αμήν.',
+  'DEACON: Master, give the blessing.': 'ΔΙΑΚΟΝΟΣ: Εὐλόγησον, Δέσποτα.',
+  'PRIEST: Blessed is the kingdom of the Father and the Son and the Holy Spirit, now and ever and to the ages of ages.':
+    'ΙΕΡΕΥΣ: Εὐλογημένη ἡ βασιλεία τοῦ Πατρὸς καὶ τοῦ Υἱοῦ καὶ τοῦ ἁγίου Πνεύματος, νῦν καὶ ἀεὶ καὶ εἰς τοὺς αἰῶνας τῶν αἰώνων.',
+  'In peace let us pray to the Lord.': 'ΔΙΑΚΟΝΟΣ: Ἐν εἰρήνῃ τοῦ Κυρίου δεηθῶμεν.',
+  'CHOIR: Amen.': 'ΧΟΡΟΣ: Ἀμήν.',
   'CHOIR: To You, O Lord.': 'ΧΟΡΟΣ: Σοὶ Κύριε.',
   'CHOIR: And with your spirit.': 'ΧΟΡΟΣ: Καὶ μετὰ τοῦ πνεύματός σου.',
   'PRIEST: Peace be with all.': 'ΙΕΡΕΥΣ: Ἡ εἰρήνη πᾶσι.',
-  'DEACON: Let us bow our heads to the Lord.': 'ΔΙΑΚΟΝΟΣ: Ἰδοὺ προσκύνωμεν. Κύριε, ἐλέησον.',
-  'CHOIR (after each petition): Lord, have mercy.': 'ΧΟΡΟΣ (μετὰ ἕκαστον αἴτημα): Κύριε, ἐλέησον.',
-  'CHOIR (after each petition): Grant this, O Lord.': 'ΧΟΡΟΣ (μετὰ ἕκαστον αἴτημα): Παράσχου, Κύριε.',
+  'DEACON: Let us bow our heads to the Lord.': 'ΔΙΑΚΟΝΟΣ: Ἰδοὺ προσκύνωμεν. Κύριε, ἐλέησον.',
+  'CHOIR (after each petition): Lord, have mercy.': 'ΧΟΡΟΣ (μετὰ ἕκαστον αἴτημα): Κύριε, ἐλέησον.',
+  'CHOIR (after each petition): Grant this, O Lord.': 'ΧΟΡΟΣ (μετὰ ἕκαστον αἴτημα): Παράσχου, Κύριε.',
   '__CREED_TITLE__': '__CREED_TITLE__',
   '__LORDS_PRAYER_TITLE__': '__LORDS_PRAYER_TITLE__',
 };

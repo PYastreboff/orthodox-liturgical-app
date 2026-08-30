@@ -8,6 +8,13 @@ import type { ChrysostomSectionId } from '../../src/lib/liturgy/chrysostomLiturg
 import { sanitizeLiturgyLines } from '../../src/lib/liturgy/liturgySanitize.ts';
 import { alignLiturgySection } from './alignLiturgySection.ts';
 import { buildBasilGreekParagraphs } from './buildBasilGreek.ts';
+import {
+  applyGreekGlobalTranslations,
+  assembleEnSpineSections,
+  buildRussianOnEnSpine,
+  loadGlobalLiturgyTranslations,
+  loadLiturgyOverrides,
+} from './buildLiturgyFromEnSpine.ts';
 import { normalizeLiturgyParagraphs } from './normalizeLiturgyLang.ts';
 import { parseLiturgyBlock, splitCreedParagraphs } from './parseLiturgySource.ts';
 
@@ -94,9 +101,25 @@ function buildLanguageSections(
 export function buildGoarchDivineLiturgy(config: DivineLiturgySourceConfig) {
   const enSections = buildLanguageSections(config.sourcesDir, config.enFile, 'en', config.enMarkers);
   const ruSections = buildLanguageSections(config.sourcesDir, config.ruFile, 'ru', config.ruMarkers);
-  const elSections = buildLanguageSections(config.sourcesDir, config.elFile, 'el', config.elMarkers);
 
-  return assembleLiturgySections(enSections, ruSections, elSections);
+  const elSections = buildBasilGreekParagraphs({
+    sourcesDir: config.sourcesDir,
+    enBySection: enSections,
+    chrysostomEnBySection: enSections,
+    chrysostomElBySection: new Map(),
+    grEnFile: config.elFile,
+    grEnMarkers: config.elMarkers,
+    overridesFile: 'chrysostom-el-overrides.json',
+  });
+
+  const globalTranslations = loadGlobalLiturgyTranslations(config.sourcesDir);
+  const elOverrides = loadLiturgyOverrides(config.sourcesDir, 'chrysostom-el-overrides.json');
+  const elAligned = applyGreekGlobalTranslations(enSections, elSections, globalTranslations, elOverrides);
+
+  const ruOverrides = loadLiturgyOverrides(config.sourcesDir, 'chrysostom-ru-overrides.json');
+  const ruAligned = buildRussianOnEnSpine(enSections, ruSections, ruOverrides, globalTranslations);
+
+  return assembleEnSpineSections(enSections, ruAligned, elAligned);
 }
 
 export function assembleLiturgySections(
@@ -169,7 +192,14 @@ export function buildBasilGoarchDivineLiturgy(
     elSections.set(id, chrysParagraphs.get(id)!.el);
   }
 
-  return assembleLiturgySections(enSections, ruSections, elSections);
+  const globalTranslations = loadGlobalLiturgyTranslations(sourcesDir);
+  const elOverrides = loadLiturgyOverrides(sourcesDir, args.overridesFile ?? 'basil-el-overrides.json');
+  const elFinal = applyGreekGlobalTranslations(enSections, elSections, globalTranslations, elOverrides);
+
+  const ruOverrides = loadLiturgyOverrides(sourcesDir, 'basil-ru-overrides.json');
+  const ruAligned = buildRussianOnEnSpine(enSections, ruSections, ruOverrides, globalTranslations);
+
+  return assembleEnSpineSections(enSections, ruAligned, elFinal);
 }
 
 export const CHRYSOSTOM_GOARCH_CONFIG: DivineLiturgySourceConfig = {

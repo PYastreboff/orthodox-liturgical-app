@@ -9,8 +9,7 @@ import type { ReadingExcerpt } from '../lib/liturgical/hymnExcerpt';
 import { usePreferences } from '../state/PreferencesContext';
 import { useLiturgicalVestmentAccent } from '../state/VestmentAccentContext';
 import { iconBadgeSurface, surfaceCard } from '../theme/cards';
-import { radii, typography } from '../theme/tokens';
-import { colors } from '../theme/tokens';
+import { colors, radii, typography } from '../theme/tokens';
 import { SectionIcon } from './SectionIcon';
 
 type Props = {
@@ -38,7 +37,7 @@ export function TodayDailyFocus({
   const { setReadingsCategoryFilter } = usePreferences();
   const vestmentAccent = useLiturgicalVestmentAccent();
   const muted = isDark ? '#9a948d' : colors.muted;
-  const accent = vestmentAccent.accent;
+  const accent = vestmentAccent.icon;
 
   if (!loading && !gospel) {
     return null;

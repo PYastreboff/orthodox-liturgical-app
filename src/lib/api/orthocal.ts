@@ -44,8 +44,8 @@ export type OrthocalDay = {
   fast_level_desc: string;
   fast_exception: number;
   fast_exception_desc: string;
-  /** Foods to abstain from that day (orthocal.info API). */
-  fast_abstentions: string[];
+  /** Foods to abstain from that day (orthocal.info API). Omitted on legacy cached payloads. */
+  fast_abstentions?: string[];
   saints: string[];
   service_notes: string[];
   abbreviated_reading_indices: number[];

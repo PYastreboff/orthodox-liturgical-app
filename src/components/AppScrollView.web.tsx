@@ -1,5 +1,5 @@
 import { forwardRef, useEffect } from 'react';
-import { Platform, ScrollView, StyleSheet, type ScrollViewProps } from 'react-native';
+import { Platform, ScrollView, type ScrollViewProps } from 'react-native';
 
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 
@@ -74,19 +74,13 @@ export const AppScrollView = forwardRef<ScrollView, AppScrollViewProps>(
       <ScrollView
         {...props}
         ref={ref}
+        // @ts-expect-error web-only className for scrollbar CSS
         className={WEB_SCROLL_CLASS}
-        // @ts-expect-error data attribute for scrollbar theming on web
         data-color-scheme={colorScheme}
-        style={[styles.webScroll, style]}
+        style={style}
         showsVerticalScrollIndicator={showsVerticalScrollIndicator ?? !phone}
         showsHorizontalScrollIndicator={showsHorizontalScrollIndicator ?? !phone}
       />
     );
   },
 );
-
-const styles = StyleSheet.create({
-  webScroll: {
-    scrollbarWidth: 'thin',
-  },
-});

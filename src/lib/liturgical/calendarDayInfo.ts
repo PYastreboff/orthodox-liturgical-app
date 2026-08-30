@@ -71,9 +71,6 @@ export function saintsFromOrthocalDay(day: OrthocalDay | null): string[] {
   return day.saints.map((s) => sanitizeTypikonProse(s)).filter(Boolean);
 }
 
-function useOrthocalFeastRank(day: OrthocalDay | null, appearanceKey: string): boolean {
-  return shouldUseOrthocalFeastRank(day, appearanceKey);
-}
 
 /** Pink background + red border: Pascha (gold) / Pentecost / Transfiguration or orthocal great feast. */
 export function isCalendarFeastCell(
@@ -96,7 +93,7 @@ export function isCalendarFeastTitleRed(
   dayTitle: string,
 ): boolean {
   if (isCalendarFeastCell(day, appearanceKey, feastRank, dayTitle)) return true;
-  if (!useOrthocalFeastRank(day, appearanceKey)) return false;
+  if (!shouldUseOrthocalFeastRank(day, appearanceKey)) return false;
   if (feastRank?.glyph === 'polyeleos' || feastRank?.glyph === 'vigil') return true;
   if (feastRank?.glyph === 'great_feast') return true;
   if ((day?.feast_level ?? 0) >= ORTHOCAL_POLYELEOS_LEVEL_MIN) {

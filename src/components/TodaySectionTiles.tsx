@@ -49,7 +49,7 @@ export function TodaySectionTiles({
   const router = useRouter();
   const vestmentAccent = useLiturgicalVestmentAccent();
   const groups = todayTileGroups(servingRole);
-  const iconColor = vestmentAccent.accent;
+  const iconColor = vestmentAccent.icon;
   const sectionMuted = isDark ? '#8a8480' : '#7a746e';
   const rowDivider = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)';
 

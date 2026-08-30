@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { colors } from '../theme/tokens';
 
@@ -25,7 +25,7 @@ export function DevotionalStickyChrome({ isDark, children }: Props) {
           ? ({
               backdropFilter: 'blur(16px)',
               WebkitBackdropFilter: 'blur(16px)',
-            } as const)
+            } as ViewStyle)
           : null,
       ]}
     >

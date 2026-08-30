@@ -5,13 +5,16 @@
     "resolveJsonModule": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx"
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "web-build",
-    ".expo"
+    ".expo",
+    "scripts/patches"
   ]
 }

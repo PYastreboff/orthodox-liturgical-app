@@ -1,4 +1,4 @@
-import { StyleSheet, Text, type TextStyle, type ViewStyle } from 'react-native';
+import { StyleSheet, Text, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 
 import type { FastSummaryKind } from '../i18n/fastingLabels';
 import { fastPillStyleForKind } from '../lib/liturgical/fastPillStyle';
@@ -8,7 +8,7 @@ type Props = {
   label: string;
   kind: FastSummaryKind;
   textStyle?: TextStyle;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 };
 
 export function FastSummaryPill({ label, kind, textStyle, style }: Props) {

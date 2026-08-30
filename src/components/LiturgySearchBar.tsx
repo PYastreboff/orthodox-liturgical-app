@@ -40,7 +40,7 @@ export function LiturgySearchBar({
   onNextMatch,
   compact = false,
 }: Props) {
-  const { t, language } = useAppTranslation();
+  const { t, lang } = useAppTranslation();
   const navDisabled = !searchMatchCount;
   const showMatchPosition =
     searchMatchCount !== null && searchMatchCount > 0 && activeMatchIndex !== null;
@@ -93,7 +93,7 @@ export function LiturgySearchBar({
           </Text>
         ) : searchQuery.trim() ? (
           <Text style={[hintType, styles.searchPosition, { color: mutedColor }]}>
-            {searchNoMatchesLabel(language)}
+            {searchNoMatchesLabel(lang)}
           </Text>
         ) : null}
         <Pressable

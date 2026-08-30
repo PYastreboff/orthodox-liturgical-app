@@ -43,7 +43,7 @@ export function BibleChapterPickerModal({
   const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.12)';
   const handleColor = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(43,38,35,0.28)';
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
-  const sheetHeight = Math.round(windowHeight * (windowWidth < 600 ? 0.55 : 0.5));
+  const sheetHeight = Math.round(windowHeight * (windowWidth < 600 ? 0.72 : 0.65));
 
   const chapters = useMemo(
     () => Array.from({ length: book?.chapters ?? 0 }, (_, index) => index + 1),
@@ -69,39 +69,44 @@ export function BibleChapterPickerModal({
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.grid}>
-          {chapters.map((num) => {
-            const selected = num === chapter;
-            return (
-              <Pressable
-                key={num}
-                style={({ pressed }) => [
-                  styles.cell,
-                  {
-                    backgroundColor: selected
-                      ? colors.accentWine
-                      : pressed
-                        ? 'rgba(139,46,60,0.14)'
-                        : isDark
-                          ? 'rgba(255,255,255,0.06)'
-                          : 'rgba(43,38,35,0.06)',
-                  },
-                ]}
-                onPress={() => {
-                  onSelect(num);
-                  onClose();
-                }}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
-                {...hoverAccessibilityProps(String(num), { role: 'button' })}
+        {chapters.map((num) => {
+          const selected = num === chapter;
+          const label = t('bible.chapterLabel', { n: num });
+          return (
+            <Pressable
+              key={num}
+              style={({ pressed }) => [
+                styles.option,
+                {
+                  backgroundColor: selected
+                    ? colors.accentWine
+                    : pressed
+                      ? 'rgba(139,46,60,0.14)'
+                      : 'transparent',
+                },
+              ]}
+              onPress={() => {
+                onSelect(num);
+                onClose();
+              }}
+              accessibilityRole="button"
+              accessibilityState={{ selected }}
+              {...hoverAccessibilityProps(label, { role: 'button' })}
+            >
+              <Text
+                style={[styles.optionLabel, { color: selected ? SELECTED_FG : textColor }]}
+                numberOfLines={1}
               >
-                <Text style={[styles.cellLabel, { color: selected ? SELECTED_FG : textColor }]}>
-                  {num}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+                {label}
+              </Text>
+              {selected ? (
+                <Feather name="check" size={18} color={SELECTED_FG} />
+              ) : (
+                <View style={styles.checkPlaceholder} />
+              )}
+            </Pressable>
+          );
+        })}
       </ScrollView>
     </SettingsSheetFrame>
   );
@@ -112,7 +117,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: 12,
     paddingBottom: 16,
   },
   title: {
@@ -124,22 +128,22 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 8,
   },
-  grid: {
+  option: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    justifyContent: 'flex-start',
-  },
-  cell: {
-    width: 52,
-    height: 44,
-    borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    minHeight: 48,
   },
-  cellLabel: {
-    fontSize: 15,
-    fontWeight: '700',
+  optionLabel: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 21,
     fontVariant: ['tabular-nums'],
+  },
+  checkPlaceholder: {
+    width: 18,
   },
 });

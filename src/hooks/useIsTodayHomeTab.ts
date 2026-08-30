@@ -4,6 +4,6 @@ import { useSegments } from 'expo-router';
 export function useIsTodayHomeTab(): boolean {
   const segments = useSegments();
   if (segments[0] !== '(tabs)') return false;
-  const tab = segments[1];
+  const tab = segments.at(1);
   return tab === undefined || tab === 'index';
 }

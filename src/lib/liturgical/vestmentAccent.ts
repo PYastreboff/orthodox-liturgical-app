@@ -3,8 +3,10 @@ import { colors } from '../../theme/tokens';
 import { liturgicalVestmentColor } from './vestments';
 
 export type VestmentAccent = {
-  /** Primary UI accent — icons, links, active tab. */
+  /** Primary UI accent — fills, selected rows, tab backdrop tint. */
   accent: string;
+  /** Icon and link colour on normal surfaces (readable when accent is a light fill). */
+  icon: string;
   /** Soft tinted surface for icon badges. */
   accentSoft: string;
   /** Soft tinted surface for chips and subtle fills. */
@@ -16,7 +18,6 @@ export type VestmentAccent = {
 };
 
 const WHITE_PILL = '#f0ebe3';
-const GOLD_PILL = '#b08d57';
 const BLACK_PILL = '#121010';
 
 function parseHex(hex: string): { r: number; g: number; b: number } | null {
@@ -69,11 +70,24 @@ function onAccentFor(hex: string): string {
   return lum > 0.58 ? colors.ink : '#ffffff';
 }
 
+function whiteVestmentAccent(pillBg: string, isDark: boolean): VestmentAccent {
+  const accent = isDark ? WHITE_PILL : '#ffffff';
+  const icon = isDark ? WHITE_PILL : colors.ink;
+  return {
+    accent,
+    icon,
+    accentSoft: isDark ? toRgba(WHITE_PILL, 0.18) : WHITE_PILL,
+    accentMuted: isDark ? toRgba(WHITE_PILL, 0.09) : toRgba(WHITE_PILL, 0.55),
+    onAccent: colors.ink,
+    pillBg,
+  };
+}
+
 function resolveAccentColor(pillBg: string, isDark: boolean): string {
   const normalized = pillBg.trim().toLowerCase();
 
   if (normalized === WHITE_PILL) {
-    return isDark ? colors.tabActiveDark : GOLD_PILL;
+    return isDark ? WHITE_PILL : '#ffffff';
   }
 
   if (normalized === BLACK_PILL) {
@@ -93,10 +107,15 @@ export function vestmentAccentForAppearance(
   isDark: boolean,
 ): VestmentAccent {
   const { pillBg } = liturgicalVestmentColor(appearance);
+  if (pillBg.trim().toLowerCase() === WHITE_PILL) {
+    return whiteVestmentAccent(pillBg, isDark);
+  }
+
   const accent = resolveAccentColor(pillBg, isDark);
 
   return {
     accent,
+    icon: accent,
     accentSoft: toRgba(accent, isDark ? 0.16 : 0.12),
     accentMuted: toRgba(accent, isDark ? 0.08 : 0.06),
     onAccent: onAccentFor(accent),
@@ -109,6 +128,7 @@ export function staticAppAccent(isDark: boolean): VestmentAccent {
   const accent = isDark ? colors.tabActiveDark : colors.accentWine;
   return {
     accent,
+    icon: accent,
     accentSoft: isDark ? 'rgba(232, 201, 122, 0.12)' : colors.accentWineSoft,
     accentMuted: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(107, 45, 60, 0.06)',
     onAccent: onAccentFor(accent),

@@ -55,6 +55,7 @@ import type { ColorSchemePreference } from '../../src/state/PreferencesContext';
 import type { UiLanguage } from '../../src/i18n/types';
 import type { PrimaryCalendar } from '../../src/lib/calendar/dateDisplay';
 import type { FontScalePreference } from '../../src/theme/fontScale';
+import type { PersonalDayKind } from '../../src/lib/personalDays';
 import type { ClergyRole } from '../../src/types/liturgical';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';

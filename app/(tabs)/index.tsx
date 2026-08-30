@@ -100,7 +100,6 @@ export default function TodayScreen() {
               gospel={firstGospelExcerpt(model.gospelPreviewSections)}
               textColor={theme.colors.text}
               isDark={model.isDark}
-              loading={model.refreshing}
             />
           ) : null}
 

@@ -1,4 +1,4 @@
-import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View, type View as RNView } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View, type View as RNView, type ViewStyle } from 'react-native';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { ScrollView } from 'react-native';
 
@@ -881,7 +881,7 @@ export function WorshipLiturgyBody({
             ? ({
                 backgroundColor: 'transparent',
                 backgroundImage: `linear-gradient(to bottom, ${pageBg} 0%, ${pageBg} 50%, transparent 50%)`,
-              } as const)
+              } as unknown as ViewStyle)
             : null,
         ]}
         pointerEvents="none"
@@ -1008,7 +1008,7 @@ const styles = StyleSheet.create({
       ? ({
           position: 'sticky',
           top: 0,
-        } as const)
+        } as unknown as ViewStyle)
       : null),
   },
   stickySearchBackdrop: {

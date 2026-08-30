@@ -1306,7 +1306,11 @@ function CalendarMonthAgenda({
               <TypikonGlyphIcon
                 glyph={feastRank.glyph}
                 size={18}
-                color={calendarTypikonColor(feastRank, 'light')}
+                color={calendarTypikonColor(
+                  feastRank,
+                  isDark,
+                  info.isFastDay && !info.fastingFoodIcons.noMeat,
+                )}
               />
             ) : null}
           </Pressable>

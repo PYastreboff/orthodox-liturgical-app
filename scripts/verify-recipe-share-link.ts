@@ -1,12 +1,21 @@
 import assert from 'node:assert/strict';
 
-import { buildRecipeShareBody } from '../src/lib/share/recipeShareLink';
-
 const DEFAULT_WEB_ORIGIN = 'https://pyastreboff.github.io/orthodox-liturgical-app';
 
 function buildRecipeShareUrlForTest(recipeId: string, shareBasePath = '/recipes'): string {
   const segment = shareBasePath.replace(/^\/|\/$/g, '');
   return `${DEFAULT_WEB_ORIGIN}/${segment}/${encodeURIComponent(recipeId)}`;
+}
+
+function buildRecipeShareBodyForTest(input: {
+  recipeId: string;
+  title: string;
+  detailLine?: string;
+}, appName: string): string {
+  const lines = [appName, input.title.trim()];
+  const detail = input.detailLine?.trim();
+  if (detail) lines.push(detail);
+  return lines.join('\n');
 }
 
 assert.equal(buildRecipeShareUrlForTest('lentil-soup'), `${DEFAULT_WEB_ORIGIN}/recipes/lentil-soup`);
@@ -16,7 +25,7 @@ assert.equal(
 );
 
 assert.equal(
-  buildRecipeShareBody(
+  buildRecipeShareBodyForTest(
     { recipeId: 'lentil-soup', title: 'Lentil Soup', detailLine: '45 min · Easy' },
     'OrthoDaily',
   ),

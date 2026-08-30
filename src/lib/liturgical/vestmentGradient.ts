@@ -17,7 +17,7 @@ export type VestmentHeroStyle = {
 /** Two-stop hero gradients keyed by vestment pill colour (light mode). */
 const HERO_GRADIENT_BY_PILL_BG: Record<string, VestmentHeroStyle> = {
   '#b08d57': { gradient: ['#f7f1e4', '#d9c49a'], foreground: '#1e1a16' },
-  '#f0ebe3': { gradient: ['#fffdf6', '#e5d4a8'], foreground: '#1e1a16' },
+  '#f0ebe3': { gradient: ['#ffffff', '#f5f2ec'], foreground: '#1e1a16' },
   '#2f4a6f': { gradient: ['#4a6a94', '#1a2a40'], foreground: '#ffffff' },
   '#8b2e3c': { gradient: ['#b84a58', '#4a1520'], foreground: '#ffffff' },
   '#2d5a3e': { gradient: ['#4a8a62', '#1a3024'], foreground: '#ffffff' },
@@ -34,7 +34,7 @@ function isLightHeroStyle(style: VestmentHeroStyle): boolean {
 /** Dark-mode hero presets — same vestment character as light mode, not flat charcoal. */
 const DARK_HERO_GRADIENT_BY_PILL_BG: Record<string, VestmentHeroStyle> = {
   '#b08d57': { gradient: ['#6d5838', '#3a2f1c'], foreground: colors.darkInk },
-  '#f0ebe3': { gradient: ['#5c542e', '#363018'], foreground: colors.darkInk },
+  '#f0ebe3': { gradient: ['#4a4844', '#2a2826'], foreground: colors.darkInk },
   '#2f4a6f': { gradient: ['#3d5270', '#182030'], foreground: '#e8eef8' },
   '#8b2e3c': { gradient: ['#9a3a48', '#421820'], foreground: '#ffffff' },
   '#2d5a3e': { gradient: ['#3d7254', '#1a3024'], foreground: '#ffffff' },
@@ -117,6 +117,18 @@ function mixColors(
 
 /** Light mode: vestment hue as a soft tint on parchment. */
 function lightModeVestmentGradientStops(pillBg: string): readonly [string, string, string, string] {
+  const normalized = pillBg.trim().toLowerCase();
+  if (normalized === '#f0ebe3') {
+    const base = parseHex(colors.parchment) ?? { r: 247, g: 243, b: 236 };
+    const white = parseHex('#ffffff') ?? { r: 255, g: 255, b: 255 };
+    return [
+      mixColors(base, white, 0.55),
+      mixColors(base, white, 0.72),
+      mixColors(base, white, 0.82),
+      mixColors(base, white, 0.68),
+    ] as const;
+  }
+
   const base = parseHex(colors.parchment) ?? { r: 245, g: 240, b: 232 };
   const baseLight = parseHex(colors.card) ?? { r: 255, g: 252, b: 247 };
   const tint = parseHex(pillBg) ?? { r: 128, g: 128, b: 128 };

@@ -15,24 +15,8 @@ export function tabBarBackground(isDark: boolean): string {
   return isDark ? colors.darkSurface : colors.card;
 }
 
-/** Uniform inset from the bar’s rounded edge — same gap on top, bottom, and sides. */
-const SELECTION_INSET = 5;
-/** Extra width so the pill overlaps adjacent tab slots (within the inset layer). */
-const SELECTION_OVERLAP_X = 8;
-
-function selectionWidthForIndex(index: number, tabCount: number, slotWidth: number): number {
-  if (slotWidth <= 0 || tabCount <= 0) return 0;
-  if (tabCount === 1) return slotWidth;
-  if (index === 0 || index === tabCount - 1) return slotWidth + SELECTION_OVERLAP_X;
-  return slotWidth + SELECTION_OVERLAP_X * 2;
-}
-
-function selectionXForIndex(index: number, tabCount: number, slotWidth: number): number {
-  if (slotWidth <= 0) return 0;
-  if (index === 0) return 0;
-  if (index === tabCount - 1) return index * slotWidth - SELECTION_OVERLAP_X;
-  return index * slotWidth - SELECTION_OVERLAP_X;
-}
+const SELECTION_INSET_X = 3;
+const SELECTION_INSET_Y = 5;
 
 /** Bottom-positioned floating pill tab bar (phone + web). */
 export function MainTabBar(props: MaterialTopTabBarProps) {
@@ -46,24 +30,11 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
   const chrome = tabBarChrome(isDark);
   const [barWidth, setBarWidth] = useState(0);
   const tabCount = state.routes.length;
-  const innerBarWidth = Math.max(0, barWidth - SELECTION_INSET * 2);
-  const slotWidth = tabCount > 0 ? innerBarWidth / tabCount : 0;
+  const slotWidth = tabCount > 0 ? barWidth / tabCount : 0;
   const inputRange = state.routes.map((_, index) => index);
-  const widthOutputRange =
-    slotWidth > 0
-      ? state.routes.map((_, index) => selectionWidthForIndex(index, tabCount, slotWidth))
-      : state.routes.map(() => 0);
-  const selectionWidth =
-    slotWidth > 0
-      ? position.interpolate({
-          inputRange,
-          outputRange: widthOutputRange,
-          extrapolate: 'clamp',
-        })
-      : null;
   const outputRange =
     slotWidth > 0
-      ? state.routes.map((_, index) => selectionXForIndex(index, tabCount, slotWidth))
+      ? state.routes.map((_, index) => index * slotWidth + SELECTION_INSET_X)
       : state.routes.map(() => 0);
   const selectionTranslateX =
     slotWidth > 0
@@ -98,12 +69,12 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
           onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}
         >
           <View pointerEvents="none" style={styles.selectionLayer}>
-            {selectionTranslateX && selectionWidth ? (
+            {selectionTranslateX ? (
               <Animated.View
                 style={[
                   styles.selectionFill,
                   {
-                    width: selectionWidth,
+                    width: slotWidth - SELECTION_INSET_X * 2,
                     backgroundColor: vestmentAccent.accentSoft,
                     transform: [{ translateX: selectionTranslateX }],
                   },
@@ -140,16 +111,12 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
   selectionLayer: {
-    position: 'absolute',
-    top: SELECTION_INSET,
-    bottom: SELECTION_INSET,
-    left: SELECTION_INSET,
-    right: SELECTION_INSET,
+    ...StyleSheet.absoluteFillObject,
   },
   selectionFill: {
     position: 'absolute',
-    top: 0,
-    bottom: 0,
+    top: SELECTION_INSET_Y,
+    bottom: SELECTION_INSET_Y,
     borderRadius: radii.pill,
   },
 });
