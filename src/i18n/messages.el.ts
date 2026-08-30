@@ -569,6 +569,29 @@ export const el = {
       liturgyBasil: 'Θεία Λειτουργία Αγίου Βασιλείου του Μεγάλου',
       liturgyPresanctified: 'Λειτουργία των Προηγιασμένων Δώρων',
     },
+    livestreams: {
+      title: 'Ζωντανά τώρα',
+      liveBadge: 'Ζωντανά',
+      watch: 'Παρακολούθηση',
+      watchA11y: 'Παρακολούθηση ζωντανής μετάδοσης από {name}',
+      loading: 'Έλεγχος ενοριακών μεταδόσεων…',
+      noneLive: 'Δεν υπάρχουν ενοριακές ζωντανές μεταδόσεις αυτή τη στιγμή.',
+      offline: 'Δεν ήταν δυνατός ο έλεγχος των μεταδόσεων. Δοκιμάστε ξανά.',
+      refresh: 'Ανανέωση ζωντανών μεταδόσεων',
+      moreLink: 'Περισσότερες ενοριακές μεταδόσεις (GOARCH)',
+      footnote:
+        'Μεταδόσεις από ορθόδοξους ναούς και μοναστήρια στο YouTube. Τα προγράμματα διαφέρουν — επιβεβαιώστε με κάθε κοινότητα.',
+      channels: {
+        stMarysOca: 'Ορθόδοξος Καθεδρικός Ναός Αγ. Μαρίας, Μιννεάπολη',
+        stElisabethLive: 'Ιερά Μονή Αγ. Ελισάβετ, Μινσκ',
+        sretensky: 'Ιερά Μονή Σρετένσκι, Μόσχα',
+        annunciationSf: 'Καθεδρικός Ναός Ευαγγελισμού, Σαν Φρανσίσκο',
+        stSpyridon: 'Καθεδρικός Ναός Αγ. Σπυρίδωνος, Worcester',
+        saintSophiaDc: 'Καθεδρικός Ναός Αγ. Σοφίας, Ουάσιγκτον',
+        holyTrinityCharlotte: 'Καθεδρικός Ναός Αγ. Τριάδος, Charlotte',
+        holyCrossMonastery: 'Ιερά Μονή Αγ. Σταυρού, Δυτική Βιρτζίνια',
+      },
+    },
   },
   altarRoles: {
     form: {
@@ -1439,7 +1462,7 @@ export const el = {
   },
   a11y: {
     loading: 'Φόρτωση',
-    appVersion: 'OrthoDaily, έκδοση {version}',
+    appVersion: 'OrthoDaily · {version}',
     openDay: 'Άνοιγμα ημέρας στο «Σήμερα»',
     expandSection: 'Ανάπτυξη ενότητας',
     collapseSection: 'Σύμπτυξη ενότητας',
@@ -1503,10 +1526,15 @@ export const el = {
   liturgy: {
     worship: {
       serviceLiturgy: 'Θεία Λειτουργία',
+      serviceChrysostom: 'Χρυσόστ.',
+      serviceBasil: 'Βασίλ.',
       serviceVespers: 'Εσπερινός',
       searchPlaceholder: 'Εύρεση στη λατρεία…',
       searchClear: 'Καθαρισμός αναζήτησης',
       searchMatchCount: '{count} αντιστοιχίες',
+      searchMatchPosition: '{current} από {total}',
+      searchPrevious: 'Προηγούμενη αντιστοιχία',
+      searchNext: 'Επόμενη αντιστοιχία',
       searchNoResults: 'Δεν βρέθηκαν αντιστοιχίες σε αυτή τη λατρεία.',
     },
     vespers: {
@@ -1555,6 +1583,23 @@ export const el = {
       cherubic: { title: 'Χερουβικός ύμνος', nav: 'Χερουβικό' },
       creed: { title: 'Σύμβολο της πίστεως', nav: 'Σύμβολο' },
       anaphora: { title: 'Αναφορά', nav: 'Αναφορά' },
+      communion: { title: 'Μετάληψη', nav: 'Μετάληψη' },
+      dismissal: { title: 'Απόλυση', nav: 'Απόλυση' },
+    },
+    basil: {
+      intro:
+        'Η Θεία Λειτουργία του Αγίου Βασιλείου του Μεγάλου — τις πέντε Κυριακές της Μεγάλης Τεσσαρακοστής, Μ. Πέμπτη, Μ. Σάββατο, 1 Ιανουαρίου και τα προεόρτια Χριστουγέννων και Θεοφανείων (με τυπικά εξαιρέσεις).',
+      disclaimer:
+        'Σταθερά μέρη κατά το ιερατικόν GOARCH. Το ρωσικό ακολουθεί το κείμενο του Χρυσοστόμου όπου οι ακολουθίες συμπίπτουν· η αναφορά διαφέρει.',
+      loading: 'Φόρτωση κειμένου Λειτουργίας…',
+      offline: 'Δεν ήταν δυνατή η φόρτωση του κειμένου. Ελέγξτε τη σύνδεση.',
+      opening: { title: 'Αρχική ευλογία', nav: 'Αρχή' },
+      great_litany: { title: 'Μεγάλη δέηση', nav: 'Δέηση' },
+      antiphons: { title: 'Αντίφωνα & Τρισάγιον', nav: 'Αντίφωνα' },
+      readings: { title: 'Απόστολος & Ευαγγέλιο', nav: 'Αναγνώσματα' },
+      cherubic: { title: 'Χερουβικός ύμνος', nav: 'Χερουβικό' },
+      creed: { title: 'Σύμβολον της Πίστεως', nav: 'Σύμβολον' },
+      anaphora: { title: 'Αγία Αναφορά', nav: 'Αναφορά' },
       communion: { title: 'Μετάληψη', nav: 'Μετάληψη' },
       dismissal: { title: 'Απόλυση', nav: 'Απόλυση' },
     },

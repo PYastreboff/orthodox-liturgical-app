@@ -3,8 +3,11 @@ import { useTheme } from '@react-navigation/native';
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../hooks/useScreenSafePadding';
 import { cardElevation } from '../theme/cards';
+import { STACK_CONTENT_MAX_WIDTH } from '../theme/layout';
+import { stackContentColumnStyle } from '../theme/stackContentColumn';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { colors, radii } from '../theme/tokens';
 import { DevotionalPageHeader } from './DevotionalPageHeader';
@@ -17,6 +20,7 @@ type Props = {
   icon: ReactNode;
   accentSoft: string;
   mutedColor: string;
+  contentMaxWidth?: number;
 };
 
 /** Back control plus devotional title block — shared by day sections, recipes, privacy, etc. */
@@ -28,58 +32,59 @@ export function StackScreenHeader({
   icon,
   accentSoft,
   mutedColor,
+  contentMaxWidth = STACK_CONTENT_MAX_WIDTH,
 }: Props) {
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
+  const phone = usePhoneLayout();
   const screenSafe = useScreenSafePadding();
   const backBorder = isDark ? colors.darkBorderSubtle : colors.borderSubtle;
   const backBg = isDark ? colors.darkSurfaceElevated : colors.card;
 
   return (
-    <View
-      style={[
-        styles.wrap,
-        {
-          paddingTop: screenSafe.paddingTop + 16,
+    <View style={[styles.wrap, { paddingTop: screenSafe.paddingTop + 16 }]}>
+      <View
+        style={stackContentColumnStyle({
           paddingLeft: screenSafe.paddingLeft,
           paddingRight: screenSafe.paddingRight,
-        },
-      ]}
-    >
-      <Pressable
-        onPress={onBack}
-        style={[
-          styles.backBtn,
-          cardElevation(isDark),
-          { backgroundColor: backBg, borderColor: backBorder },
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel={backLabel}
+          phone,
+          maxWidth: contentMaxWidth,
+        })}
       >
-        <View style={styles.backIconSlot} pointerEvents="none">
-          <Feather
-            name="chevron-left"
-            size={22}
-            color={theme.colors.text}
-            style={styles.backIcon}
-          />
-        </View>
-      </Pressable>
-      <DevotionalPageHeader
-        icon={icon}
-        accentSoft={accentSoft}
-        title={title}
-        subtitle={subtitle}
-        textColor={theme.colors.text}
-        mutedColor={mutedColor}
-      />
+        <Pressable
+          onPress={onBack}
+          style={[
+            styles.backBtn,
+            cardElevation(isDark),
+            { backgroundColor: backBg, borderColor: backBorder },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={backLabel}
+        >
+          <View style={styles.backIconSlot} pointerEvents="none">
+            <Feather
+              name="chevron-left"
+              size={22}
+              color={theme.colors.text}
+              style={styles.backIcon}
+            />
+          </View>
+        </Pressable>
+        <DevotionalPageHeader
+          icon={icon}
+          accentSoft={accentSoft}
+          title={title}
+          subtitle={subtitle}
+          textColor={theme.colors.text}
+          mutedColor={mutedColor}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: 12,
     paddingBottom: 16,
   },
   backBtn: {
@@ -90,6 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'flex-start',
+    marginBottom: 12,
   },
   backIconSlot: {
     width: 22,

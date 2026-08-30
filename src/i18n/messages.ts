@@ -569,6 +569,29 @@ const en = {
       liturgyBasil: 'Liturgy of St Basil the Great',
       liturgyPresanctified: 'Liturgy of the Presanctified Gifts',
     },
+    livestreams: {
+      title: 'Live now',
+      liveBadge: 'Live',
+      watch: 'Watch',
+      watchA11y: 'Watch live stream from {name}',
+      loading: 'Checking parish streams…',
+      noneLive: 'No parish streams are live right now.',
+      offline: 'Could not check live streams. Pull to refresh or try again later.',
+      refresh: 'Refresh live streams',
+      moreLink: 'More parish live broadcasts (GOARCH)',
+      footnote:
+        'Streams from Orthodox parishes and monasteries on YouTube. Schedules vary — confirm with each community.',
+      channels: {
+        stMarysOca: "St Mary's Orthodox Cathedral, Minneapolis",
+        stElisabethLive: 'St Elisabeth Convent, Minsk',
+        sretensky: 'Sretensky Monastery, Moscow',
+        annunciationSf: 'Annunciation Cathedral, San Francisco',
+        stSpyridon: 'St Spyridon Cathedral, Worcester',
+        saintSophiaDc: 'Saint Sophia Cathedral, Washington DC',
+        holyTrinityCharlotte: 'Holy Trinity Cathedral, Charlotte',
+        holyCrossMonastery: 'Holy Cross Monastery, West Virginia',
+      },
+    },
   },
   altarRoles: {
     form: {
@@ -1455,7 +1478,7 @@ const en = {
   },
   a11y: {
     loading: 'Loading',
-    appVersion: 'OrthoDaily, version {version}',
+    appVersion: 'OrthoDaily · {version}',
     openDay: 'Opens this day on Today',
     expandSection: 'Expand section',
     collapseSection: 'Collapse section',
@@ -1519,10 +1542,15 @@ const en = {
   liturgy: {
     worship: {
       serviceLiturgy: 'Divine Liturgy',
+      serviceChrysostom: 'St John',
+      serviceBasil: 'St Basil',
       serviceVespers: 'Vespers',
       searchPlaceholder: 'Find in this service…',
       searchClear: 'Clear search',
       searchMatchCount: '{count} matches',
+      searchMatchPosition: '{current} of {total}',
+      searchPrevious: 'Previous match',
+      searchNext: 'Next match',
       searchNoResults: 'No matches in this service.',
     },
     vespers: {
@@ -1564,6 +1592,23 @@ const en = {
       roleCelebrant: 'Celebrant',
       creedTitle: 'The Symbol of Faith',
       lordsPrayerTitle: "The Lord's Prayer",
+      opening: { title: 'Opening blessing', nav: 'Opening' },
+      great_litany: { title: 'Great Litany', nav: 'Litany' },
+      antiphons: { title: 'Antiphons & Trisagion', nav: 'Antiphons' },
+      readings: { title: 'Epistle & Gospel', nav: 'Readings' },
+      cherubic: { title: 'Cherubic Hymn', nav: 'Cherubic' },
+      creed: { title: 'Nicene Creed', nav: 'Creed' },
+      anaphora: { title: 'Anaphora (Eucharistic Canon)', nav: 'Anaphora' },
+      communion: { title: 'Communion & Thanksgiving', nav: 'Communion' },
+      dismissal: { title: 'Dismissal', nav: 'Dismissal' },
+    },
+    basil: {
+      intro:
+        'The Divine Liturgy of St Basil the Great — celebrated on the five Sundays of Great Lent, Holy Thursday, Holy Saturday, January 1, and the eves of Nativity and Theophany (with typikon exceptions). The full fixed text is below; variable hymns and readings depend on the day.',
+      disclaimer:
+        'GOARCH Hieratikon fixed parts. Russian follows the Chrysostom congregational text where the services are parallel; the anaphora differs in length and wording. Follow your parish and bishop.',
+      loading: 'Loading liturgy text…',
+      offline: 'Liturgy text could not be loaded. Check your connection and try again.',
       opening: { title: 'Opening blessing', nav: 'Opening' },
       great_litany: { title: 'Great Litany', nav: 'Litany' },
       antiphons: { title: 'Antiphons & Trisagion', nav: 'Antiphons' },
@@ -2301,6 +2346,29 @@ const ru = {
       liturgyChrysostom: 'Литургия св. Иоанна Златоуста',
       liturgyBasil: 'Литургия св. Василия Великого',
       liturgyPresanctified: 'Литургия Преждеосвященных Даров',
+    },
+    livestreams: {
+      title: 'Сейчас в эфире',
+      liveBadge: 'Эфир',
+      watch: 'Смотреть',
+      watchA11y: 'Смотреть трансляцию: {name}',
+      loading: 'Проверяем трансляции…',
+      noneLive: 'Сейчас нет активных приходских трансляций.',
+      offline: 'Не удалось проверить трансляции. Обновите или попробуйте позже.',
+      refresh: 'Обновить список трансляций',
+      moreLink: 'Другие приходские трансляции (GOARCH)',
+      footnote:
+        'Трансляции православных приходов и монастырей на YouTube. Расписание различается — уточняйте у общины.',
+      channels: {
+        stMarysOca: 'Свято-Никольский собор (OCA), Миннеаполис',
+        stElisabethLive: 'Свято-Елисаветинский монастырь, Минск',
+        sretensky: 'Сретенский монастырь, Москва',
+        annunciationSf: 'Собор Благовещения, Сан-Франциско',
+        stSpyridon: 'Собор св. Спиридона, Вустер',
+        saintSophiaDc: 'Собор св. Софии, Вашингтон',
+        holyTrinityCharlotte: 'Собор Св. Троицы, Шарлотт',
+        holyCrossMonastery: 'Монастырь Св. Креста, Западная Вирджиния',
+      },
     },
   },
   altarRoles: {
@@ -3199,7 +3267,7 @@ const ru = {
   },
   a11y: {
     loading: 'Загрузка',
-    appVersion: 'OrthoDaily, версия {version}',
+    appVersion: 'OrthoDaily · {version}',
     openDay: 'Открыть этот день на «Сегодня»',
     expandSection: 'Развернуть раздел',
     collapseSection: 'Свернуть раздел',
@@ -3263,10 +3331,15 @@ const ru = {
   liturgy: {
     worship: {
       serviceLiturgy: 'Божественная литургия',
+      serviceChrysostom: 'Златоуст',
+      serviceBasil: 'Василий',
       serviceVespers: 'Вечерня',
       searchPlaceholder: 'Найти в службе…',
       searchClear: 'Очистить поиск',
       searchMatchCount: '{count} совпадений',
+      searchMatchPosition: '{current} из {total}',
+      searchPrevious: 'Предыдущее совпадение',
+      searchNext: 'Следующее совпадение',
       searchNoResults: 'В этой службе нет совпадений.',
     },
     vespers: {
@@ -3308,6 +3381,23 @@ const ru = {
       roleCelebrant: 'Священник',
       creedTitle: 'Символ веры',
       lordsPrayerTitle: 'Молитва Господня',
+      opening: { title: 'Начало', nav: 'Начало' },
+      great_litany: { title: 'Великая ектения', nav: 'Ектения' },
+      antiphons: { title: 'Антифоны и Трисвятое', nav: 'Антифоны' },
+      readings: { title: 'Апостол и Евангелие', nav: 'Чтения' },
+      cherubic: { title: 'Херувимская песнь', nav: 'Херувимская' },
+      creed: { title: 'Символ веры', nav: 'Символ' },
+      anaphora: { title: 'Анафора', nav: 'Анафора' },
+      communion: { title: 'Причащение', nav: 'Причащение' },
+      dismissal: { title: 'Отпуст', nav: 'Отпуст' },
+    },
+    basil: {
+      intro:
+        'Божественная литургия святителя Василия Великого — в пять воскресений Великого поста, в Великий четверг и субботу, 1 января и в кануны Рождества и Богоявления (с оговорками по Типикону). Ниже полный текст неизменяемых частей; тропари и чтения зависят от дня.',
+      disclaimer:
+        'Неизменяемые части по иератикону GOARCH. Русский текст взят из литургии Златоуста там, где службы совпадают; анафора длиннее и иначе сформулирована. Следуйте указаниям своего прихода.',
+      loading: 'Загрузка текста литургии…',
+      offline: 'Не удалось загрузить текст литургии. Проверьте соединение и повторите.',
       opening: { title: 'Начало', nav: 'Начало' },
       great_litany: { title: 'Великая ектения', nav: 'Ектения' },
       antiphons: { title: 'Антифоны и Трисвятое', nav: 'Антифоны' },

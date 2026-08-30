@@ -25,6 +25,7 @@ import { TodayPersonalDays } from './TodayPersonalDays';
 import { TypikonSymbol } from './TypikonSymbol';
 import { VestmentIcon } from './VestmentIcon';
 import { CommemorationCard } from './CommemorationCard';
+import { ServiceLivestreamsSection } from './ServiceLivestreamsSection';
 import type { TodayDayModel } from '../hooks/useTodayDayModel';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import {
@@ -605,6 +606,13 @@ export function TodaySectionContent({ section, model }: Props) {
           <Text style={[styles.servicesFootnote, type.hint, { color: muted }]}>
             {dayServices.footnote}
           </Text>
+          <ServiceLivestreamsSection
+            textColor={theme.colors.text}
+            mutedColor={muted}
+            isDark={isDark}
+            bodyType={type.body}
+            hintType={type.hint}
+          />
         </View>,
       );
 

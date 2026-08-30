@@ -6,6 +6,7 @@ import { useTheme } from '@react-navigation/native';
 import { StackScreenHeader } from '../src/components/StackScreenHeader';
 import { SwipeBackShell } from '../src/components/SwipeBackShell';
 import { useLayoutSafeAreaInsets } from '../src/hooks/useLayoutSafeAreaInsets';
+import { usePhoneLayout } from '../src/hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../src/hooks/useScreenSafePadding';
 import { useStackBack } from '../src/hooks/useStackBack';
 import { useAppTranslation } from '../src/i18n/useAppTranslation';
@@ -15,6 +16,8 @@ import {
 } from '../src/lib/legal/privacyPolicy';
 import { useVestmentAccent } from '../src/state/VestmentAccentContext';
 import { useResolvedColorScheme } from '../src/theme/useResolvedColorScheme';
+import { STACK_CONTENT_NARROW_MAX_WIDTH } from '../src/theme/layout';
+import { stackContentColumnStyle } from '../src/theme/stackContentColumn';
 import { colors } from '../src/theme/tokens';
 
 export default function PrivacyPolicyScreen() {
@@ -23,6 +26,7 @@ export default function PrivacyPolicyScreen() {
   const isDark = useResolvedColorScheme() === 'dark';
   const screenSafe = useScreenSafePadding();
   const insets = useLayoutSafeAreaInsets();
+  const phone = usePhoneLayout();
   const muted = isDark ? '#a39e98' : colors.muted;
   const vestmentAccent = useVestmentAccent();
   const goBack = useStackBack('/settings');
@@ -46,15 +50,18 @@ export default function PrivacyPolicyScreen() {
             icon={<Feather name="shield" size={22} color={vestmentAccent.accent} />}
             accentSoft={vestmentAccent.accentSoft}
             mutedColor={muted}
+            contentMaxWidth={STACK_CONTENT_NARROW_MAX_WIDTH}
           />
         <ScrollView
           contentContainerStyle={[
             styles.content,
-            {
+            stackContentColumnStyle({
               paddingLeft: screenSafe.paddingLeft,
               paddingRight: screenSafe.paddingRight,
-              paddingBottom: insets.bottom + 40,
-            },
+              phone,
+              maxWidth: STACK_CONTENT_NARROW_MAX_WIDTH,
+            }),
+            { paddingBottom: insets.bottom + 40 },
           ]}
         >
           <Text style={[styles.updated, { color: muted }]}>
@@ -84,9 +91,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingTop: 12,
-    maxWidth: 720,
-    width: '100%',
-    alignSelf: 'center',
   },
   updated: {
     fontSize: 13,

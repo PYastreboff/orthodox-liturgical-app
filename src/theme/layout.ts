@@ -13,6 +13,10 @@ export const TAB_BAR_EDGE_PAD_PX = 3;
 export const SCREEN_GUTTER_X = 20;
 export const SCREEN_GUTTER_X_PHONE = 10;
 
+/** Readable column width for stack screens (day sections, recipes, etc.) on desktop web. */
+export const STACK_CONTENT_MAX_WIDTH = 800;
+export const STACK_CONTENT_NARROW_MAX_WIDTH = 720;
+
 /** Padding inside collapsible / settings-style section cards. */
 export const SECTION_CARD_PADDING = 16;
 export const SECTION_CARD_PADDING_PHONE = 10;

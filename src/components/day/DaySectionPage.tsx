@@ -20,13 +20,15 @@ import {
   type TodaySectionId,
 } from '../../lib/today/todaySections';
 import { SERVING_ROLE_PHRASE_LABEL_KEYS } from '../../lib/liturgical/servingRoles';
+import { STACK_CONTENT_MAX_WIDTH } from '../../theme/layout';
+import { stackContentColumnStyle } from '../../theme/stackContentColumn';
 import { colors } from '../../theme/tokens';
 import { useVestmentAccent } from '../../state/VestmentAccentContext';
 import { useResolvedColorScheme } from '../../theme/useResolvedColorScheme';
 import { Redirect, useRootNavigationState } from 'expo-router';
 import Head from 'expo-router/head';
 
-const CONTENT_MAX = 800;
+const CONTENT_MAX = STACK_CONTENT_MAX_WIDTH;
 
 type Props = {
   section: TodaySectionId;
@@ -86,12 +88,13 @@ export function DaySectionPage({ section }: Props) {
             <AppScrollView
               contentContainerStyle={[
                 styles.content,
-                {
+                stackContentColumnStyle({
                   paddingLeft: screenSafe.paddingLeft,
                   paddingRight: screenSafe.paddingRight,
-                  paddingBottom: insets.bottom + 32,
-                  maxWidth: phone ? undefined : CONTENT_MAX,
-                },
+                  phone,
+                  maxWidth: CONTENT_MAX,
+                }),
+                { paddingBottom: insets.bottom + 32 },
               ]}
             >
               {model.waitingForDay ? (
@@ -117,9 +120,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    width: '100%',
-    alignSelf: 'center',
-    paddingTop: 0,
     gap: 0,
   },
   statusError: {

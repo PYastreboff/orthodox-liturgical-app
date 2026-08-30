@@ -1,6 +1,7 @@
 import type { OrthocalDay } from '../api/orthocal';
 import type { LiturgicalDayAppearance } from '../calendar/dayAppearance';
 import type { PlainDate } from '../calendar/julianGregorian';
+import { julianCalendarToGregorian } from '../calendar/julianGregorian';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
 
@@ -73,12 +74,65 @@ function item(kind: ServiceKind, slot: ServiceSlot): DayServiceItem {
   };
 }
 
-function isBasilLiturgyDay(appearanceKey: string, liturgical: PlainDate): boolean {
+export function weekdayForLiturgicalDate(liturgical: PlainDate): number {
+  const gregorian = julianCalendarToGregorian(liturgical.year, liturgical.month, liturgical.day);
+  return new Date(gregorian.year, gregorian.month - 1, gregorian.day).getDay();
+}
+
+export function isChristmasEve(liturgical: PlainDate): boolean {
+  return liturgical.month === 12 && liturgical.day === 24;
+}
+
+export function isTheophanyEve(liturgical: PlainDate): boolean {
+  return liturgical.month === 1 && liturgical.day === 5;
+}
+
+export function isNativity(liturgical: PlainDate): boolean {
+  return liturgical.month === 12 && liturgical.day === 25;
+}
+
+export function isTheophany(liturgical: PlainDate): boolean {
+  return liturgical.month === 1 && liturgical.day === 6;
+}
+
+/** Basil vesperal liturgy on Christmas Eve unless the eve falls on Sunday or Monday. */
+export function isBasilChristmasEve(liturgical: PlainDate): boolean {
+  if (!isChristmasEve(liturgical)) return false;
+  const weekday = weekdayForLiturgicalDate(liturgical);
+  return weekday !== 0 && weekday !== 1;
+}
+
+/** Basil on the Nativity feast when Christmas Eve was Sunday or Monday. */
+export function isBasilNativityFeast(liturgical: PlainDate): boolean {
+  if (!isNativity(liturgical)) return false;
+  const eve = { year: liturgical.year, month: 12, day: 24 };
+  const weekday = weekdayForLiturgicalDate(eve);
+  return weekday === 0 || weekday === 1;
+}
+
+/** Basil vesperal liturgy on Theophany Eve unless the eve falls on Sunday or Monday. */
+export function isBasilTheophanyEve(liturgical: PlainDate): boolean {
+  if (!isTheophanyEve(liturgical)) return false;
+  const weekday = weekdayForLiturgicalDate(liturgical);
+  return weekday !== 0 && weekday !== 1;
+}
+
+/** Basil on Theophany when the eve was Sunday or Monday. */
+export function isBasilTheophanyFeast(liturgical: PlainDate): boolean {
+  if (!isTheophany(liturgical)) return false;
+  const eve = { year: liturgical.year, month: 1, day: 5 };
+  const weekday = weekdayForLiturgicalDate(eve);
+  return weekday === 0 || weekday === 1;
+}
+
+export function isBasilLiturgyDay(appearanceKey: string, liturgical: PlainDate): boolean {
   if (appearanceKey === 'lent_sunday') return true;
   if (appearanceKey === 'holy_saturday') return true;
   if (liturgical.month === 1 && liturgical.day === 1) return true;
-  if (liturgical.month === 12 && liturgical.day === 24) return true;
-  if (liturgical.month === 1 && liturgical.day === 5) return true;
+  if (isBasilChristmasEve(liturgical)) return true;
+  if (isBasilNativityFeast(liturgical)) return true;
+  if (isBasilTheophanyEve(liturgical)) return true;
+  if (isBasilTheophanyFeast(liturgical)) return true;
   return false;
 }
 
@@ -178,7 +232,6 @@ function hasBridegroomEvening(
 ): boolean {
   if (appearanceKey === 'palm_sunday') return true;
   if (appearanceKey !== 'holy_week' || paschaDistance == null) return false;
-  // Holy Monday (−6), Tuesday (−5); Wednesday (−4) often still Bridegroom in some places.
   return paschaDistance >= -6 && paschaDistance <= -4;
 }
 
@@ -213,6 +266,26 @@ export function buildDayServices(
   // --- Holy Thursday ---
   if (isHolyThursday(appearanceKey, paschaDistance)) {
     items.push(item('vespers', 'morning'), item('liturgy_basil', 'morning'));
+    return { items, footnoteKey: 'services.footnote' };
+  }
+
+  // --- Annunciation: vesperal Liturgy of St John Chrysostom ---
+  if (appearanceKey === 'annunciation') {
+    items.push(item('vespers', 'morning'), item('liturgy_chrysostom', 'morning'));
+    return { items, footnoteKey: 'services.footnote' };
+  }
+
+  // --- Christmas Eve: Vigil + vesperal Liturgy (Basil or Chrysostom) ---
+  if (isChristmasEve(liturgical)) {
+    const kind = isBasilChristmasEve(liturgical) ? 'liturgy_basil' : 'liturgy_chrysostom';
+    items.push(item('vigil', 'afternoon'), item(kind, 'afternoon'));
+    return { items, footnoteKey: 'services.footnote' };
+  }
+
+  // --- Theophany Eve: Vigil + vesperal Liturgy (Basil or Chrysostom) ---
+  if (isTheophanyEve(liturgical)) {
+    const kind = isBasilTheophanyEve(liturgical) ? 'liturgy_basil' : 'liturgy_chrysostom';
+    items.push(item('vigil', 'afternoon'), item(kind, 'afternoon'));
     return { items, footnoteKey: 'services.footnote' };
   }
 

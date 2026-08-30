@@ -15,7 +15,7 @@ import { colors } from '../theme/tokens';
 
 const TIMING = { duration: 200, easing: Easing.bezier(0.42, 0, 0.58, 1) };
 const TRACK_PADDING = 2;
-const SEGMENTS = 2;
+const SEGMENTS = 3;
 
 type Props = {
   value: WorshipServiceId;
@@ -28,7 +28,7 @@ export function WorshipServiceToggle({ value, onChange, isDark, fullWidth = fals
   const { t } = useAppTranslation();
   const trackBg = isDark ? '#2a2724' : '#ebe6de';
   const inactiveText = isDark ? '#a39e98' : colors.muted;
-  const selectedIndex = value === 'vespers' ? 1 : 0;
+  const selectedIndex = value === 'vespers' ? 2 : value === 'basil' ? 1 : 0;
   const progress = useSharedValue(selectedIndex);
   const [trackWidth, setTrackWidth] = useState(0);
   const segmentWidth =
@@ -43,7 +43,7 @@ export function WorshipServiceToggle({ value, onChange, isDark, fullWidth = fals
     transform: [{ translateX: TRACK_PADDING + progress.value * segmentWidth }],
   }));
 
-  const liturgyStyle = useAnimatedStyle(() => ({
+  const chrysostomStyle = useAnimatedStyle(() => ({
     color: interpolateColor(
       Math.max(0, 1 - Math.min(1, Math.abs(progress.value - 0) * 1.4)),
       [0, 1],
@@ -51,9 +51,17 @@ export function WorshipServiceToggle({ value, onChange, isDark, fullWidth = fals
     ),
   }));
 
-  const vespersStyle = useAnimatedStyle(() => ({
+  const basilStyle = useAnimatedStyle(() => ({
     color: interpolateColor(
       Math.max(0, 1 - Math.min(1, Math.abs(progress.value - 1) * 1.4)),
+      [0, 1],
+      [inactiveText, '#ffffff'],
+    ),
+  }));
+
+  const vespersStyle = useAnimatedStyle(() => ({
+    color: interpolateColor(
+      Math.max(0, 1 - Math.min(1, Math.abs(progress.value - 2) * 1.4)),
       [0, 1],
       [inactiveText, '#ffffff'],
     ),
@@ -72,10 +80,21 @@ export function WorshipServiceToggle({ value, onChange, isDark, fullWidth = fals
         onPress={() => onChange('chrysostom')}
         accessibilityRole="button"
         accessibilityState={{ selected: value === 'chrysostom' }}
-        {...hoverAccessibilityProps(t('liturgy.worship.serviceLiturgy'), { role: 'button' })}
+        {...hoverAccessibilityProps(t('liturgy.worship.serviceChrysostom'), { role: 'button' })}
       >
-        <Animated.Text style={[styles.segmentLabel, liturgyStyle]} numberOfLines={1}>
-          {t('liturgy.worship.serviceLiturgy')}
+        <Animated.Text style={[styles.segmentLabel, chrysostomStyle]} numberOfLines={1}>
+          {t('liturgy.worship.serviceChrysostom')}
+        </Animated.Text>
+      </Pressable>
+      <Pressable
+        style={styles.segment}
+        onPress={() => onChange('basil')}
+        accessibilityRole="button"
+        accessibilityState={{ selected: value === 'basil' }}
+        {...hoverAccessibilityProps(t('liturgy.worship.serviceBasil'), { role: 'button' })}
+      >
+        <Animated.Text style={[styles.segmentLabel, basilStyle]} numberOfLines={1}>
+          {t('liturgy.worship.serviceBasil')}
         </Animated.Text>
       </Pressable>
       <Pressable

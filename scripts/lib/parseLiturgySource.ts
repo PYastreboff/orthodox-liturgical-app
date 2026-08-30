@@ -3,7 +3,7 @@
  * Each paragraph is ideally one role line, heading, rubric, or speech block.
  */
 
-const EN_ROLE = '(?:DEACON|PRIEST|CHOIR|PEOPLE|READER|CLERGY|Exclamation)';
+const EN_ROLE = '(?:DEACON|PRIEST|CHOIR|PEOPLE|READER|Exclamation)';
 const EN_ROLE_SPLIT = new RegExp(
   `(?=\\b${EN_ROLE}(?:\\s*\\([^)]*\\))?\\s*(?::|\\s))`,
   'gi',
@@ -55,8 +55,12 @@ function normalizeEnglishRoleLine(line: string): string {
     trimmed = trimmed.replace(/^##\s*/, '').trim();
   }
 
+  if (/^CLERGY\s+or\s*:\s*CHOIR\s*$/i.test(trimmed)) {
+    return '(Clergy or choir)';
+  }
+
   const colonMatch = trimmed.match(
-    /^(DEACON|PRIEST|CHOIR|PEOPLE|READER|CLERGY|Exclamation)(\s*\([^)]*\))?\s*:\s*(.*)$/i,
+    /^(DEACON|PRIEST|CHOIR|PEOPLE|READER|Exclamation)(\s*\([^)]*\))?\s*:\s*(.*)$/i,
   );
   if (colonMatch) {
     const role = colonMatch[1]!.toUpperCase();
@@ -65,13 +69,13 @@ function normalizeEnglishRoleLine(line: string): string {
     return speech ? `${role}${dir}: ${speech}` : `${role}${dir}`;
   }
 
-  const roleOnly = trimmed.match(/^(DEACON|PRIEST|CHOIR|PEOPLE|READER|CLERGY)(\s*\([^)]*\))?\s*$/i);
+  const roleOnly = trimmed.match(/^(DEACON|PRIEST|CHOIR|PEOPLE|READER)(\s*\([^)]*\))?\s*$/i);
   if (roleOnly) {
     return `${roleOnly[1]!.toUpperCase()}${roleOnly[2] ?? ''}`;
   }
 
   const roleSpeech = trimmed.match(
-    /^(DEACON|PRIEST|CHOIR|PEOPLE|READER|CLERGY)(\s*\([^)]*\))?\s+(.+)$/i,
+    /^(DEACON|PRIEST|CHOIR|PEOPLE|READER)(\s*\([^)]*\))?\s+(.+)$/i,
   );
   if (roleSpeech) {
     return `${roleSpeech[1]!.toUpperCase()}${roleSpeech[2] ?? ''}: ${roleSpeech[3]!.trim()}`;
@@ -153,7 +157,7 @@ export function parseEnglishBlock(block: string): string[] {
       continue;
     }
 
-    const roleOnly = line.match(/^(DEACON|PRIEST|CHOIR|PEOPLE|READER|CLERGY)(\s*\([^)]*\))?\s*$/i);
+    const roleOnly = line.match(/^(DEACON|PRIEST|CHOIR|PEOPLE|READER)(\s*\([^)]*\))?\s*$/i);
     if (roleOnly) {
       flushAcc();
       rolePending = `${roleOnly[1]!.toUpperCase()}${roleOnly[2] ?? ''}`;
@@ -161,7 +165,7 @@ export function parseEnglishBlock(block: string): string[] {
     }
 
     const colonRole = line.match(
-      /^(DEACON|PRIEST|CHOIR|PEOPLE|READER|CLERGY)(\s*\([^)]*\))?\s*:\s*(.*)$/i,
+      /^(DEACON|PRIEST|CHOIR|PEOPLE|READER)(\s*\([^)]*\))?\s*:\s*(.*)$/i,
     );
     if (colonRole) {
       flushAcc();
@@ -353,14 +357,35 @@ export function isGreekContentLine(line: string): boolean {
   return true;
 }
 
+/** Extract Greek (and role labels) from GOARCH gr-en skeleton lines. */
+function extractGreekGrEnLine(line: string): string | null {
+  const trimmed = line.trim();
+  if (!trimmed || isSkipLine(trimmed)) return null;
+  if (/^(Books|Sources|This is the|__________)/i.test(trimmed)) return null;
+
+  const roleWithEnglish = trimmed.match(
+    /^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)(?:\s+[A-Z][A-Za-z]*)?$/iu,
+  );
+  if (roleWithEnglish) return roleWithEnglish[1]!.toUpperCase();
+
+  if (!GREEK_LINE.test(trimmed)) return null;
+
+  const greekOnly = trimmed
+    .replace(/\.\s+(?=[A-Z][a-z]).*$/u, '.')
+    .replace(/\s+[A-Z][A-Za-z0-9 ,;'"()–—\-]*$/u, '')
+    .trim();
+  if (!greekOnly || !GREEK_LINE.test(greekOnly)) return null;
+  return greekOnly;
+}
+
 export function parseGreekBlock(block: string): string[] {
   const paragraphs: string[] = [];
   let rolePending: string | null = null;
 
   for (const rawLine of block.split(/\r?\n/)) {
-    const line = rawLine.trim();
-    if (!line || isSkipLine(line) || !isGreekContentLine(line)) continue;
-    if (/^(Books|Sources|This is the|__________)/i.test(line)) continue;
+    const extracted = extractGreekGrEnLine(rawLine);
+    if (!extracted) continue;
+    const line = extracted;
 
     const roleSpeech = line.match(/^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)\s*[:·]\s*(.+)$/i);
     if (roleSpeech) {
@@ -369,7 +394,7 @@ export function parseGreekBlock(block: string): string[] {
       continue;
     }
 
-    const roleOnly = /^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)\s*$/i.test(line);
+    const roleOnly = /^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)$/i.test(line);
     if (roleOnly) {
       rolePending = line.toUpperCase();
       continue;

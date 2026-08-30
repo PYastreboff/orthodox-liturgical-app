@@ -7,7 +7,7 @@ import { splitCreedClausesFromBody } from './parseLiturgySource.ts';
 
 const RU_EMBEDDED_ROLE = /\s+(?=(?:Священник|Диакон|Чтец|Народ|Хор|Сослужащие)\s*:)/gi;
 const EN_EMBEDDED_ROLE =
-  /\s+(?=(?:DEACON|PRIEST|CHOIR|PEOPLE|READER|CLERGY)(?:\s*\([^)]*\))?\s*:)/gi;
+  /\s+(?=(?:DEACON|PRIEST|CHOIR|PEOPLE|READER)(?:\s*\([^)]*\))?\s*:)/gi;
 
 const RU_SECTION_JUNK =
   /(?:\.\s*|\s+)(?:\d+-й антифон[^.]*|(?:великая|малая|сугубая|просительная)(?:\s*\([^)]*\))?\s*ектения[^.]*|ектения и молитва[^.]*|проповедь[^.]*|В великие \(Двунадесятые\)[^.]*|Диакон читает Евангелие[^.]*|По окончании чтения[^.]*|оглашенных\)[^.]*|верных вторая[^.]*|по причащении[^.]*)\s*$/i;
@@ -196,17 +196,75 @@ function normalizeCreedParagraphs(lines: string[], lang: UiLanguage): string[] {
   return out;
 }
 
+function prefixOpeningDeaconRoles(
+  lines: string[],
+  lang: UiLanguage,
+  sectionId: ChrysostomSectionId,
+): string[] {
+  if (sectionId !== 'opening') return lines;
+
+  return lines.map((line) => {
+    const trimmed = line.trim();
+    if (/^(DEACON|ΔΙΑΚΟΝΟΣ|Диакон)\b/i.test(trimmed)) return line;
+    if (lang === 'en' && /^master,?\s+give the blessing/i.test(trimmed)) {
+      return `DEACON: ${trimmed}`;
+    }
+    if (lang === 'el' && /^εὐλ[όο]γησον,?\s+δ[έε]σποτα/i.test(trimmed.normalize('NFD').replace(/\p{M}/gu, ''))) {
+      return `ΔΙΑΚΟΝΟΣ: ${trimmed}`;
+    }
+    if (lang === 'ru' && /^благослови,?\s+владыко/i.test(trimmed)) {
+      return `Диакон: ${trimmed}`;
+    }
+    return line;
+  });
+}
+
+function mergeOpeningRussianPriest(
+  lines: string[],
+  lang: UiLanguage,
+  sectionId: ChrysostomSectionId,
+): string[] {
+  if (sectionId !== 'opening' || lang !== 'ru') return lines;
+
+  const out: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]!;
+    const next = lines[i + 1];
+    if (
+      /^Священник:/i.test(line) &&
+      next &&
+      !/^(Священник|Диакон|Хор|Чтец|Народ)\s*:/i.test(next.trim())
+    ) {
+      out.push(`${line.replace(/\s+$/, '')} ${next.trim()}`);
+      i++;
+      continue;
+    }
+    out.push(line);
+  }
+  return out;
+}
+
 /** Normalize paragraphs for one language within a section. */
 export function normalizeLiturgyParagraphs(
   lines: string[],
   lang: UiLanguage,
   sectionId: ChrysostomSectionId,
+  options?: { preserveLength?: boolean },
 ): string[] {
-  let normalized = lines.flatMap((line) => splitEmbeddedRoles(line, lang));
+  let normalized = options?.preserveLength
+    ? lines.map((line) => line.trim())
+    : lines.flatMap((line) => splitEmbeddedRoles(line, lang));
   if (lang === 'ru') {
     normalized = normalized.map((line) => fixRussianWordBreaks(line));
   }
   normalized = normalized.map((line) => stripSectionJunk(line, lang));
+
+  if (options?.preserveLength) {
+    if (sectionId === 'opening') {
+      normalized = prefixOpeningDeaconRoles(normalized, lang, sectionId);
+    }
+    return normalized;
+  }
 
   if (lang === 'ru') {
     normalized = reassignRussianLitanyRoles(normalized, sectionId);
@@ -219,6 +277,9 @@ export function normalizeLiturgyParagraphs(
   if (sectionId === 'creed') {
     normalized = normalizeCreedParagraphs(normalized, lang);
   }
+
+  normalized = prefixOpeningDeaconRoles(normalized, lang, sectionId);
+  normalized = mergeOpeningRussianPriest(normalized, lang, sectionId);
 
   return normalized.filter((line) => line.trim().length > 0);
 }

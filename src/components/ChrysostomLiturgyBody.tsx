@@ -1,6 +1,7 @@
-import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useMemo, useState, type ReactNode } from 'react';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, TextInput, View, type View as RNView } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Feather } from '@expo/vector-icons';
+import type { ScrollView } from 'react-native';
 
 import { AppScrollView } from './AppScrollView';
 import { CompareSidePicker } from './CompareSidePicker';
@@ -8,8 +9,16 @@ import { LiturgyLanguageToggle } from './LiturgyLanguageToggle';
 import { LiturgyLine } from './LiturgyLine';
 import { WorshipServiceToggle } from './WorshipServiceToggle';
 import { useAppTranslation } from '../i18n/useAppTranslation';
+import { useBasilLiturgy } from '../hooks/useBasilLiturgy';
 import { useChrysostomLiturgy } from '../hooks/useChrysostomLiturgy';
 import { useVespersLiturgy } from '../hooks/useVespersLiturgy';
+import {
+  BASIL_SECTION_IDS,
+  basilSectionParagraphs,
+  basilTitleKey,
+  type BasilSection,
+  type BasilSectionId,
+} from '../lib/liturgy/basilLiturgy';
 import {
   CHRYSOSTOM_SECTION_IDS,
   chrysostomSectionParagraphs,
@@ -28,7 +37,10 @@ import type { WorshipServiceId } from '../lib/liturgical/worshipNavigation';
 import type { LiturgyDisplayMode, LiturgyTextLang } from '../lib/liturgy/liturgyViewMode';
 import { liturgyCompareHasSelection } from '../lib/liturgy/liturgyViewMode';
 import { expandLiturgyDisplayLines } from '../lib/liturgy/liturgySanitize';
-import { countMatchesInLines } from '../lib/text/highlightMatches';
+import {
+  buildWorshipSearchPlan,
+  type WorshipLineEntry,
+} from '../lib/text/worshipSearch';
 import { surfaceCard } from '../theme/cards';
 import { colors, radii } from '../theme/tokens';
 
@@ -47,91 +59,207 @@ type Props = {
 };
 
 type LiturgyLoadState =
-  | { status: 'loading'; sections: readonly ChrysostomSection[] | readonly VespersSection[] }
-  | { status: 'ready'; sections: readonly ChrysostomSection[] | readonly VespersSection[] }
-  | { status: 'offline'; sections: readonly ChrysostomSection[] | readonly VespersSection[]; error: string };
+  | { status: 'loading'; sections: readonly ChrysostomSection[] | readonly BasilSection[] | readonly VespersSection[] }
+  | { status: 'ready'; sections: readonly ChrysostomSection[] | readonly BasilSection[] | readonly VespersSection[] }
+  | { status: 'offline'; sections: readonly ChrysostomSection[] | readonly BasilSection[] | readonly VespersSection[]; error: string };
 
 function normalizeSearch(value: string): string {
   return value.trim();
 }
 
-function collectWorshipDisplayLines(
-  sections: readonly ChrysostomSection[] | readonly VespersSection[],
+function collectWorshipLineEntries(
+  sections: readonly ChrysostomSection[] | readonly BasilSection[] | readonly VespersSection[],
   service: WorshipServiceId,
   mode: LiturgyDisplayMode,
-): string[] {
+): WorshipLineEntry[] {
+  const entries: WorshipLineEntry[] = [];
+
   if (service === 'vespers') {
     const vSections = sections as readonly VespersSection[];
-    const lines: string[] = [];
-
     for (const id of VESPERS_SECTION_IDS) {
       if (!sectionHasVespersContent(vSections, id)) continue;
       if (mode.kind === 'compare') {
-        if (mode.left) {
-          lines.push(
-            ...vespersSectionParagraphs(vSections, id, mode.left)
-              .flatMap((line) => expandLiturgyDisplayLines(line))
-              .filter((line) => line.trim()),
-          );
-        }
-        if (mode.right) {
-          lines.push(
-            ...vespersSectionParagraphs(vSections, id, mode.right)
-              .flatMap((line) => expandLiturgyDisplayLines(line))
-              .filter((line) => line.trim()),
-          );
+        if (!liturgyCompareHasSelection(mode)) continue;
+        const left = mode.left;
+        const right = mode.right;
+        const leftLines = left ? vespersSectionParagraphs(vSections, id, left) : [];
+        const rightLines = right ? vespersSectionParagraphs(vSections, id, right) : [];
+        const rowCount = Math.max(leftLines.length, rightLines.length);
+        for (let row = 0; row < rowCount; row += 1) {
+          if (left) {
+            expandLiturgyDisplayLines(leftLines[row] ?? '')
+              .filter((line) => line.trim())
+              .forEach((line, index) => {
+                entries.push({ key: `${id}-compare-${row}-left-${index}`, line, lang: left });
+              });
+          }
+          if (right) {
+            expandLiturgyDisplayLines(rightLines[row] ?? '')
+              .filter((line) => line.trim())
+              .forEach((line, index) => {
+                entries.push({ key: `${id}-compare-${row}-right-${index}`, line, lang: right });
+              });
+          }
         }
       } else {
-        lines.push(
-          ...vespersSectionParagraphs(vSections, id, mode.lang)
-            .flatMap((line) => expandLiturgyDisplayLines(line))
-            .filter((line) => line.trim()),
-        );
+        vespersSectionParagraphs(vSections, id, mode.lang)
+          .flatMap((line) => expandLiturgyDisplayLines(line))
+          .filter((line) => line.trim())
+          .forEach((line, index) => {
+            entries.push({ key: `${id}-${index}`, line, lang: mode.lang });
+          });
       }
     }
+    return entries;
+  }
 
-    return lines;
+  if (service === 'basil') {
+    const bSections = sections as readonly BasilSection[];
+    for (const id of BASIL_SECTION_IDS) {
+      if (!sectionHasDivineLiturgyContent(bSections, id, 'basil')) continue;
+      if (mode.kind === 'compare') {
+        if (!liturgyCompareHasSelection(mode)) continue;
+        const left = mode.left;
+        const right = mode.right;
+        const leftLines = left ? basilSectionParagraphs(bSections, id, left) : [];
+        const rightLines = right ? basilSectionParagraphs(bSections, id, right) : [];
+        const rowCount = Math.max(leftLines.length, rightLines.length);
+        for (let row = 0; row < rowCount; row += 1) {
+          if (left) {
+            expandLiturgyDisplayLines(leftLines[row] ?? '')
+              .filter((line) => line.trim())
+              .forEach((line, index) => {
+                entries.push({ key: `${id}-compare-${row}-left-${index}`, line, lang: left });
+              });
+          }
+          if (right) {
+            expandLiturgyDisplayLines(rightLines[row] ?? '')
+              .filter((line) => line.trim())
+              .forEach((line, index) => {
+                entries.push({ key: `${id}-compare-${row}-right-${index}`, line, lang: right });
+              });
+          }
+        }
+      } else {
+        basilSectionParagraphs(bSections, id, mode.lang)
+          .flatMap((line) => expandLiturgyDisplayLines(line))
+          .filter((line) => line.trim())
+          .forEach((line, index) => {
+            entries.push({ key: `${id}-${index}`, line, lang: mode.lang });
+          });
+      }
+    }
+    return entries;
   }
 
   const cSections = sections as readonly ChrysostomSection[];
-  const lines: string[] = [];
-
   for (const id of CHRYSOSTOM_SECTION_IDS) {
     if (!sectionHasChrysostomContent(cSections, id)) continue;
     if (mode.kind === 'compare') {
-      if (mode.left) {
-        lines.push(
-          ...chrysostomSectionParagraphs(cSections, id, mode.left)
-            .flatMap((line) => expandLiturgyDisplayLines(line))
-            .filter((line) => line.trim()),
-        );
-      }
-      if (mode.right) {
-        lines.push(
-          ...chrysostomSectionParagraphs(cSections, id, mode.right)
-            .flatMap((line) => expandLiturgyDisplayLines(line))
-            .filter((line) => line.trim()),
-        );
+      if (!liturgyCompareHasSelection(mode)) continue;
+      const left = mode.left;
+      const right = mode.right;
+      const leftLines = left ? chrysostomSectionParagraphs(cSections, id, left) : [];
+      const rightLines = right ? chrysostomSectionParagraphs(cSections, id, right) : [];
+      const rowCount = Math.max(leftLines.length, rightLines.length);
+      for (let row = 0; row < rowCount; row += 1) {
+        if (left) {
+          expandLiturgyDisplayLines(leftLines[row] ?? '')
+            .filter((line) => line.trim())
+            .forEach((line, index) => {
+              entries.push({ key: `${id}-compare-${row}-left-${index}`, line, lang: left });
+            });
+        }
+        if (right) {
+          expandLiturgyDisplayLines(rightLines[row] ?? '')
+            .filter((line) => line.trim())
+            .forEach((line, index) => {
+              entries.push({ key: `${id}-compare-${row}-right-${index}`, line, lang: right });
+            });
+        }
       }
     } else {
-      lines.push(
-        ...chrysostomSectionParagraphs(cSections, id, mode.lang)
-          .flatMap((line) => expandLiturgyDisplayLines(line))
-          .filter((line) => line.trim()),
-      );
+      chrysostomSectionParagraphs(cSections, id, mode.lang)
+        .flatMap((line) => expandLiturgyDisplayLines(line))
+        .filter((line) => line.trim())
+        .forEach((line, index) => {
+          entries.push({ key: `${id}-${index}`, line, lang: mode.lang });
+        });
     }
   }
 
-  return lines;
+  return entries;
+}
+
+function WorshipLiturgyLineItem({
+  lineKey,
+  line,
+  lang,
+  textColor,
+  mutedColor,
+  isDark,
+  compact = false,
+  searchQuery,
+  activeMatchIndex,
+  matchIndexOffset,
+  registerLineRef,
+}: {
+  lineKey: string;
+  line: string;
+  lang: LiturgyTextLang;
+  textColor: string;
+  mutedColor: string;
+  isDark: boolean;
+  compact?: boolean;
+  searchQuery: string;
+  activeMatchIndex: number | null;
+  matchIndexOffset: number;
+  registerLineRef: (key: string, node: RNView | null) => void;
+}) {
+  return (
+    <View
+      ref={(node) => registerLineRef(lineKey, node)}
+      nativeID={`worship-search-line-${lineKey}`}
+      style={compact ? styles.compareLineItem : styles.lineItem}
+    >
+      <LiturgyLine
+        line={line}
+        lang={lang}
+        textColor={textColor}
+        mutedColor={mutedColor}
+        isDark={isDark}
+        compact={compact}
+        searchQuery={searchQuery}
+        activeMatchIndex={activeMatchIndex}
+        matchIndexOffset={matchIndexOffset}
+      />
+    </View>
+  );
+}
+
+function sectionHasDivineLiturgyContent(
+  sections: readonly ChrysostomSection[] | readonly BasilSection[],
+  id: ChrysostomSectionId | BasilSectionId,
+  variant: 'chrysostom' | 'basil',
+): boolean {
+  return (['en', 'el', 'ru'] as const).some((lang) => {
+    const lines =
+      variant === 'basil'
+        ? basilSectionParagraphs(sections as readonly BasilSection[], id as BasilSectionId, lang)
+        : chrysostomSectionParagraphs(
+            sections as readonly ChrysostomSection[],
+            id as ChrysostomSectionId,
+            lang,
+          );
+    return lines.some((line) => line.trim());
+  });
 }
 
 function sectionHasChrysostomContent(
   sections: readonly ChrysostomSection[],
   id: ChrysostomSectionId,
 ): boolean {
-  return (['en', 'el', 'ru'] as const).some((lang) =>
-    chrysostomSectionParagraphs(sections, id, lang).some((line) => line.trim()),
-  );
+  return sectionHasDivineLiturgyContent(sections, id, 'chrysostom');
 }
 
 function sectionHasVespersContent(
@@ -144,19 +272,27 @@ function sectionHasVespersContent(
 }
 
 function CompareCell({
+  lineKeyPrefix,
   lines,
   lang,
   textColor,
   mutedColor,
   isDark,
   searchQuery,
+  activeMatchIndex,
+  searchOffsets,
+  registerLineRef,
 }: {
+  lineKeyPrefix: string;
   lines: string[];
   lang: 'en' | 'el' | 'ru';
   textColor: string;
   mutedColor: string;
   isDark: boolean;
   searchQuery: string;
+  activeMatchIndex: number | null;
+  searchOffsets: Record<string, number>;
+  registerLineRef: (key: string, node: RNView | null) => void;
 }) {
   const expanded = lines.flatMap((line) => expandLiturgyDisplayLines(line)).filter((line) => line.trim());
   if (!expanded.length) {
@@ -164,18 +300,25 @@ function CompareCell({
   }
   return (
     <>
-      {expanded.map((line, index) => (
-        <LiturgyLine
-          key={`${lang}-${index}-${line.slice(0, 12)}`}
-          line={line}
-          lang={lang}
-          textColor={textColor}
-          mutedColor={mutedColor}
-          isDark={isDark}
-          compact
-          searchQuery={searchQuery}
-        />
-      ))}
+      {expanded.map((line, index) => {
+        const lineKey = `${lineKeyPrefix}-${index}`;
+        return (
+          <WorshipLiturgyLineItem
+            key={lineKey}
+            lineKey={lineKey}
+            line={line}
+            lang={lang}
+            textColor={textColor}
+            mutedColor={mutedColor}
+            isDark={isDark}
+            compact
+            searchQuery={searchQuery}
+            activeMatchIndex={activeMatchIndex}
+            matchIndexOffset={searchOffsets[lineKey] ?? 0}
+            registerLineRef={registerLineRef}
+          />
+        );
+      })}
     </>
   );
 }
@@ -219,6 +362,9 @@ function LiturgyToolbar({
   searchQuery,
   onSearchQueryChange,
   searchMatchCount,
+  activeMatchIndex,
+  onPreviousMatch,
+  onNextMatch,
 }: {
   service: WorshipServiceId;
   onServiceChange?: (service: WorshipServiceId) => void;
@@ -232,9 +378,15 @@ function LiturgyToolbar({
   searchQuery: string;
   onSearchQueryChange: (value: string) => void;
   searchMatchCount: number | null;
+  activeMatchIndex: number | null;
+  onPreviousMatch: () => void;
+  onNextMatch: () => void;
 }) {
   const { t } = useAppTranslation();
   const searchBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.05)';
+  const navDisabled = !searchMatchCount;
+  const showMatchPosition =
+    searchMatchCount !== null && searchMatchCount > 0 && activeMatchIndex !== null;
 
   return (
     <View style={styles.toolbarStack}>
@@ -246,37 +398,90 @@ function LiturgyToolbar({
           fullWidth
         />
       ) : null}
-      <View style={[styles.searchWrap, { backgroundColor: searchBg, borderColor: mutedColor }]}>
-        <Feather name="search" size={16} color={mutedColor} />
-        <TextInput
-          value={searchQuery}
-          onChangeText={onSearchQueryChange}
-          placeholder={t('liturgy.worship.searchPlaceholder')}
-          placeholderTextColor={mutedColor}
-          style={[styles.searchInput, hintType, { color: textColor }]}
-          autoCapitalize="none"
-          autoCorrect={false}
-          clearButtonMode="while-editing"
-          accessibilityLabel={t('liturgy.worship.searchPlaceholder')}
-        />
-        {searchQuery ? (
-          <Pressable
-            onPress={() => onSearchQueryChange('')}
-            accessibilityRole="button"
-            accessibilityLabel={t('liturgy.worship.searchClear')}
-            hitSlop={8}
-          >
-            <Feather name="x" size={16} color={mutedColor} />
-          </Pressable>
+      <View style={styles.searchRow}>
+        <View style={[styles.searchWrap, { backgroundColor: searchBg, borderColor: mutedColor }]}>
+          <Feather name="search" size={16} color={mutedColor} />
+          <TextInput
+            value={searchQuery}
+            onChangeText={onSearchQueryChange}
+            onSubmitEditing={onNextMatch}
+            placeholder={t('liturgy.worship.searchPlaceholder')}
+            placeholderTextColor={mutedColor}
+            style={[styles.searchInput, hintType, { color: textColor }]}
+            autoCapitalize="none"
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            accessibilityLabel={t('liturgy.worship.searchPlaceholder')}
+            returnKeyType="search"
+            onKeyPress={
+              Platform.OS === 'web'
+                ? (event) => {
+                    const key = event.nativeEvent.key;
+                    if (key === 'Enter' && event.nativeEvent.shiftKey) {
+                      event.preventDefault();
+                      onPreviousMatch();
+                    }
+                  }
+                : undefined
+            }
+          />
+          {searchQuery ? (
+            <Pressable
+              onPress={() => onSearchQueryChange('')}
+              accessibilityRole="button"
+              accessibilityLabel={t('liturgy.worship.searchClear')}
+              hitSlop={8}
+            >
+              <Feather name="x" size={16} color={mutedColor} />
+            </Pressable>
+          ) : null}
+        </View>
+        {searchMatchCount !== null ? (
+          <View style={styles.searchNav}>
+            {showMatchPosition ? (
+              <Text
+                style={[hintType, styles.searchPosition, { color: mutedColor }]}
+                accessibilityLiveRegion="polite"
+              >
+                {t('liturgy.worship.searchMatchPosition', {
+                  current: activeMatchIndex + 1,
+                  total: searchMatchCount,
+                })}
+              </Text>
+            ) : (
+              <Text style={[hintType, styles.searchPosition, { color: mutedColor }]}>
+                {t('liturgy.worship.searchNoResults')}
+              </Text>
+            )}
+            <Pressable
+              onPress={onPreviousMatch}
+              disabled={navDisabled}
+              accessibilityRole="button"
+              accessibilityLabel={t('liturgy.worship.searchPrevious')}
+              hitSlop={8}
+              style={({ pressed }) => [
+                styles.searchNavButton,
+                { opacity: navDisabled ? 0.35 : pressed ? 0.65 : 1 },
+              ]}
+            >
+              <Feather name="chevron-up" size={18} color={textColor} />
+            </Pressable>
+            <Pressable
+              onPress={onNextMatch}
+              disabled={navDisabled}
+              accessibilityRole="button"
+              accessibilityLabel={t('liturgy.worship.searchNext')}
+              hitSlop={8}
+              style={({ pressed }) => [
+                styles.searchNavButton,
+                { opacity: navDisabled ? 0.35 : pressed ? 0.65 : 1 },
+              ]}
+            >
+              <Feather name="chevron-down" size={18} color={textColor} />
+            </Pressable>
+          </View>
         ) : null}
       </View>
-      {searchMatchCount !== null ? (
-        <Text style={[hintType, styles.searchStatus, { color: mutedColor }]}>
-          {searchMatchCount > 0
-            ? t('liturgy.worship.searchMatchCount', { count: searchMatchCount })
-            : t('liturgy.worship.searchNoResults')}
-        </Text>
-      ) : null}
       <LiturgyLanguageToggle mode={mode} onChange={onChange} isDark={isDark} fullWidth />
       {mode.kind === 'compare' ? (
         <>
@@ -313,9 +518,13 @@ function ChrysostomSectionBody({
   isDark,
   bodyType,
   searchQuery,
+  activeMatchIndex,
+  searchOffsets,
+  registerLineRef,
+  variant = 'chrysostom',
 }: {
-  id: ChrysostomSectionId;
-  sections: readonly ChrysostomSection[];
+  id: ChrysostomSectionId | BasilSectionId;
+  sections: readonly ChrysostomSection[] | readonly BasilSection[];
   mode: LiturgyDisplayMode;
   textColor: string;
   mutedColor: string;
@@ -323,19 +532,32 @@ function ChrysostomSectionBody({
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   searchQuery: string;
+  activeMatchIndex: number | null;
+  searchOffsets: Record<string, number>;
+  registerLineRef: (key: string, node: RNView | null) => void;
+  variant?: 'chrysostom' | 'basil';
 }) {
   const { t } = useAppTranslation();
-  const title = t(chrysostomTitleKey(id));
+  const title = t(variant === 'basil' ? basilTitleKey(id as BasilSectionId) : chrysostomTitleKey(id as ChrysostomSectionId));
 
-  if (!sectionHasChrysostomContent(sections, id)) return null;
+  if (!sectionHasDivineLiturgyContent(sections, id, variant)) return null;
+
+  const sectionParagraphs = (sectionId: ChrysostomSectionId | BasilSectionId, lang: LiturgyTextLang) =>
+    variant === 'basil'
+      ? basilSectionParagraphs(sections as readonly BasilSection[], sectionId as BasilSectionId, lang)
+      : chrysostomSectionParagraphs(
+          sections as readonly ChrysostomSection[],
+          sectionId as ChrysostomSectionId,
+          lang,
+        );
 
   const body = (() => {
     if (mode.kind === 'compare') {
       const left = mode.left;
       const right = mode.right;
       const hasSelection = liturgyCompareHasSelection(mode);
-      const leftLines = left ? chrysostomSectionParagraphs(sections, id, left) : [];
-      const rightLines = right ? chrysostomSectionParagraphs(sections, id, right) : [];
+      const leftLines = left ? sectionParagraphs(id, left) : [];
+      const rightLines = right ? sectionParagraphs(id, right) : [];
       const rowCount = Math.max(leftLines.length, rightLines.length);
 
       if (!hasSelection) return null;
@@ -343,22 +565,30 @@ function ChrysostomSectionBody({
       const rows = Array.from({ length: rowCount }, (_, row) => {
         const leftCell = left ? (
           <CompareCell
+            lineKeyPrefix={`${id}-compare-${row}-left`}
             lines={[leftLines[row] ?? '']}
             lang={left}
             textColor={textColor}
             mutedColor={mutedColor}
             isDark={isDark}
             searchQuery={searchQuery}
+            activeMatchIndex={activeMatchIndex}
+            searchOffsets={searchOffsets}
+            registerLineRef={registerLineRef}
           />
         ) : null;
         const rightCell = right ? (
           <CompareCell
+            lineKeyPrefix={`${id}-compare-${row}-right`}
             lines={[rightLines[row] ?? '']}
             lang={right}
             textColor={textColor}
             mutedColor={mutedColor}
             isDark={isDark}
             searchQuery={searchQuery}
+            activeMatchIndex={activeMatchIndex}
+            searchOffsets={searchOffsets}
+            registerLineRef={registerLineRef}
           />
         ) : null;
         if (!leftCell && !rightCell) return null;
@@ -376,7 +606,7 @@ function ChrysostomSectionBody({
     }
 
     const lang = mode.lang;
-    const lines = chrysostomSectionParagraphs(sections, id, lang)
+    const lines = sectionParagraphs(id, lang)
       .flatMap((line) => expandLiturgyDisplayLines(line))
       .filter((line) => line.trim());
 
@@ -384,18 +614,24 @@ function ChrysostomSectionBody({
 
     return (
       <View style={styles.lines}>
-        {lines.map((line, index) => (
-          <View key={`${id}-${index}`} style={styles.lineItem}>
-            <LiturgyLine
+        {lines.map((line, index) => {
+          const lineKey = `${id}-${index}`;
+          return (
+            <WorshipLiturgyLineItem
+              key={lineKey}
+              lineKey={lineKey}
               line={line}
               lang={lang}
               textColor={textColor}
               mutedColor={mutedColor}
               isDark={isDark}
               searchQuery={searchQuery}
+              activeMatchIndex={activeMatchIndex}
+              matchIndexOffset={searchOffsets[lineKey] ?? 0}
+              registerLineRef={registerLineRef}
             />
-          </View>
-        ))}
+          );
+        })}
       </View>
     );
   })();
@@ -421,6 +657,9 @@ function VespersSectionBody({
   isDark,
   bodyType,
   searchQuery,
+  activeMatchIndex,
+  searchOffsets,
+  registerLineRef,
 }: {
   id: VespersSectionId;
   sections: readonly VespersSection[];
@@ -431,6 +670,9 @@ function VespersSectionBody({
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   searchQuery: string;
+  activeMatchIndex: number | null;
+  searchOffsets: Record<string, number>;
+  registerLineRef: (key: string, node: RNView | null) => void;
 }) {
   const { t } = useAppTranslation();
   const title = t(vespersTitleKey(id));
@@ -451,22 +693,30 @@ function VespersSectionBody({
       const rows = Array.from({ length: rowCount }, (_, row) => {
         const leftCell = left ? (
           <CompareCell
+            lineKeyPrefix={`${id}-compare-${row}-left`}
             lines={[leftLines[row] ?? '']}
             lang={left}
             textColor={textColor}
             mutedColor={mutedColor}
             isDark={isDark}
             searchQuery={searchQuery}
+            activeMatchIndex={activeMatchIndex}
+            searchOffsets={searchOffsets}
+            registerLineRef={registerLineRef}
           />
         ) : null;
         const rightCell = right ? (
           <CompareCell
+            lineKeyPrefix={`${id}-compare-${row}-right`}
             lines={[rightLines[row] ?? '']}
             lang={right}
             textColor={textColor}
             mutedColor={mutedColor}
             isDark={isDark}
             searchQuery={searchQuery}
+            activeMatchIndex={activeMatchIndex}
+            searchOffsets={searchOffsets}
+            registerLineRef={registerLineRef}
           />
         ) : null;
         if (!leftCell && !rightCell) return null;
@@ -492,18 +742,24 @@ function VespersSectionBody({
 
     return (
       <View style={styles.lines}>
-        {lines.map((line, index) => (
-          <View key={`${id}-${index}`} style={styles.lineItem}>
-            <LiturgyLine
+        {lines.map((line, index) => {
+          const lineKey = `${id}-${index}`;
+          return (
+            <WorshipLiturgyLineItem
+              key={lineKey}
+              lineKey={lineKey}
               line={line}
               lang={lang}
               textColor={textColor}
               mutedColor={mutedColor}
               isDark={isDark}
               searchQuery={searchQuery}
+              activeMatchIndex={activeMatchIndex}
+              matchIndexOffset={searchOffsets[lineKey] ?? 0}
+              registerLineRef={registerLineRef}
             />
-          </View>
-        ))}
+          );
+        })}
       </View>
     );
   })();
@@ -534,10 +790,33 @@ export function WorshipLiturgyBody({
 }: Props) {
   const { t } = useAppTranslation();
   const chrysostom = useChrysostomLiturgy();
+  const basil = useBasilLiturgy();
   const vespers = useVespersLiturgy();
   const [mode, setMode] = useState<LiturgyDisplayMode>({ kind: 'single', lang: 'en' });
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeMatchIndex, setActiveMatchIndex] = useState<number | null>(null);
   const searchNorm = normalizeSearch(searchQuery);
+  const scrollRef = useRef<ScrollView>(null);
+  const scrollContentRef = useRef<RNView>(null);
+  const toolbarRef = useRef<RNView>(null);
+  const toolbarHeightRef = useRef(120);
+  const lineRefs = useRef<Record<string, RNView | null>>({});
+  const shouldScrollToMatch = useRef(false);
+
+  const onToolbarLayout = useCallback(() => {
+    if (variant !== 'tab') return;
+    toolbarRef.current?.measure((_x, _y, _width, height) => {
+      if (height > 0) toolbarHeightRef.current = height + 16;
+    });
+  }, [variant]);
+
+  const registerLineRef = useCallback((key: string, node: RNView | null) => {
+    if (node) {
+      lineRefs.current[key] = node;
+      return;
+    }
+    delete lineRefs.current[key];
+  }, []);
 
   const liturgyState: LiturgyLoadState =
     service === 'vespers'
@@ -546,30 +825,116 @@ export function WorshipLiturgyBody({
         : vespers.status === 'offline'
           ? { status: 'offline', sections: [], error: vespers.error }
           : { status: 'ready', sections: vespers.sections }
-      : chrysostom.status === 'loading'
-        ? { status: 'loading', sections: chrysostom.sections }
-        : chrysostom.status === 'offline'
-          ? { status: 'offline', sections: [], error: chrysostom.error }
-          : { status: 'ready', sections: chrysostom.sections };
+      : service === 'basil'
+        ? basil.status === 'loading'
+          ? { status: 'loading', sections: basil.sections }
+          : basil.status === 'offline'
+            ? { status: 'offline', sections: [], error: basil.error }
+            : { status: 'ready', sections: basil.sections }
+        : chrysostom.status === 'loading'
+          ? { status: 'loading', sections: chrysostom.sections }
+          : chrysostom.status === 'offline'
+            ? { status: 'offline', sections: [], error: chrysostom.error }
+            : { status: 'ready', sections: chrysostom.sections };
 
   const introKey =
-    service === 'vespers' ? 'liturgy.vespers.intro' : 'liturgy.chrysostom.intro';
+    service === 'vespers'
+      ? 'liturgy.vespers.intro'
+      : service === 'basil'
+        ? 'liturgy.basil.intro'
+        : 'liturgy.chrysostom.intro';
   const disclaimerKey =
-    service === 'vespers' ? 'liturgy.vespers.disclaimer' : 'liturgy.chrysostom.disclaimer';
+    service === 'vespers'
+      ? 'liturgy.vespers.disclaimer'
+      : service === 'basil'
+        ? 'liturgy.basil.disclaimer'
+        : 'liturgy.chrysostom.disclaimer';
   const loadingKey =
-    service === 'vespers' ? 'liturgy.vespers.loading' : 'liturgy.chrysostom.loading';
+    service === 'vespers'
+      ? 'liturgy.vespers.loading'
+      : service === 'basil'
+        ? 'liturgy.basil.loading'
+        : 'liturgy.chrysostom.loading';
   const offlineKey =
-    service === 'vespers' ? 'liturgy.vespers.offline' : 'liturgy.chrysostom.offline';
+    service === 'vespers'
+      ? 'liturgy.vespers.offline'
+      : service === 'basil'
+        ? 'liturgy.basil.offline'
+        : 'liturgy.chrysostom.offline';
 
   const showSections =
     liturgyState.status === 'ready' &&
     (mode.kind !== 'compare' || liturgyCompareHasSelection(mode));
 
-  const searchMatchCount = useMemo(() => {
+  const searchPlan = useMemo(() => {
     if (!searchNorm || !showSections) return null;
-    const lines = collectWorshipDisplayLines(liturgyState.sections, service, mode);
-    return countMatchesInLines(lines, searchNorm);
+    const entries = collectWorshipLineEntries(liturgyState.sections, service, mode);
+    return buildWorshipSearchPlan(entries, searchNorm);
   }, [liturgyState.sections, mode, searchNorm, service, showSections]);
+
+  const searchMatchCount = searchPlan?.total ?? (searchNorm ? 0 : null);
+
+  useEffect(() => {
+    if (!searchNorm) {
+      setActiveMatchIndex(null);
+      return;
+    }
+    shouldScrollToMatch.current = false;
+    setActiveMatchIndex(0);
+  }, [searchNorm, service, mode]);
+
+  const goToMatch = useCallback(
+    (index: number) => {
+      if (!searchPlan?.total) return;
+      const wrapped = ((index % searchPlan.total) + searchPlan.total) % searchPlan.total;
+      shouldScrollToMatch.current = true;
+      setActiveMatchIndex(wrapped);
+    },
+    [searchPlan],
+  );
+
+  const goToNextMatch = useCallback(() => {
+    goToMatch((activeMatchIndex ?? -1) + 1);
+  }, [activeMatchIndex, goToMatch]);
+
+  const goToPreviousMatch = useCallback(() => {
+    goToMatch((activeMatchIndex ?? 0) - 1);
+  }, [activeMatchIndex, goToMatch]);
+
+  useEffect(() => {
+    if (!shouldScrollToMatch.current) return;
+    shouldScrollToMatch.current = false;
+    if (!searchNorm || activeMatchIndex === null || !searchPlan?.total) return;
+    const lineKey = searchPlan.lineKeys[activeMatchIndex];
+    if (!lineKey) return;
+
+    if (Platform.OS === 'web') {
+      requestAnimationFrame(() => {
+        document
+          .getElementById(`worship-search-match-${activeMatchIndex}`)
+          ?.scrollIntoView({ block: 'center', behavior: 'auto' });
+      });
+      return;
+    }
+
+    if (variant !== 'tab') return;
+
+    const lineView = lineRefs.current[lineKey];
+    const scrollContent = scrollContentRef.current;
+    const scroll = scrollRef.current;
+    if (!lineView || !scrollContent || !scroll) return;
+
+    lineView.measureLayout(
+      scrollContent,
+      (_x, y) => {
+        scroll.scrollTo({
+          y: Math.max(0, y - toolbarHeightRef.current),
+          animated: false,
+        });
+      },
+      () => {},
+    );
+  }, [activeMatchIndex, searchNorm, searchPlan, variant]);
 
   const sectionBlocks = useMemo(() => {
     if (!showSections) return null;
@@ -588,16 +953,21 @@ export function WorshipLiturgyBody({
           isDark={isDark}
           bodyType={bodyType}
           searchQuery={searchNorm}
+          activeMatchIndex={activeMatchIndex}
+          searchOffsets={searchPlan?.offsets ?? {}}
+          registerLineRef={registerLineRef}
         />
       ));
     }
 
-    const sections = liturgyState.sections as readonly ChrysostomSection[];
-    return CHRYSOSTOM_SECTION_IDS.map((id) => (
+    const sections = liturgyState.sections as readonly ChrysostomSection[] | readonly BasilSection[];
+    const sectionIds = service === 'basil' ? BASIL_SECTION_IDS : CHRYSOSTOM_SECTION_IDS;
+    return sectionIds.map((id) => (
       <ChrysostomSectionBody
         key={id}
         id={id}
         sections={sections}
+        variant={service === 'basil' ? 'basil' : 'chrysostom'}
         mode={mode}
         textColor={textColor}
         mutedColor={mutedColor}
@@ -605,46 +975,61 @@ export function WorshipLiturgyBody({
         isDark={isDark}
         bodyType={bodyType}
         searchQuery={searchNorm}
+        activeMatchIndex={activeMatchIndex}
+        searchOffsets={searchPlan?.offsets ?? {}}
+        registerLineRef={registerLineRef}
       />
     ));
   }, [
+    activeMatchIndex,
     bodyType,
     borderColor,
     isDark,
     liturgyState.sections,
     mode,
     mutedColor,
+    registerLineRef,
     searchNorm,
+    searchPlan?.offsets,
     service,
     showSections,
     textColor,
   ]);
 
-  const reload = service === 'vespers' ? vespers.reload : chrysostom.reload;
+  const reload =
+    service === 'vespers' ? vespers.reload : service === 'basil' ? basil.reload : chrysostom.reload;
+
+  const toolbar =
+    liturgyState.status === 'ready' ? (
+      <LiturgyToolbar
+        service={service}
+        onServiceChange={onServiceChange}
+        showServiceToggle={showServiceToggle}
+        mode={mode}
+        onChange={setMode}
+        isDark={isDark}
+        hintType={hintType}
+        mutedColor={mutedColor}
+        textColor={textColor}
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
+        searchMatchCount={searchNorm ? searchMatchCount : null}
+        activeMatchIndex={activeMatchIndex}
+        onPreviousMatch={goToPreviousMatch}
+        onNextMatch={goToNextMatch}
+      />
+    ) : null;
 
   const content = (
     <>
-      {liturgyState.status === 'ready' ? (
+      {liturgyState.status === 'ready' && variant !== 'tab' ? (
         <View style={[styles.topCard, surfaceCard(isDark, { radius: radii.lg })]}>
           <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
-          <LiturgyToolbar
-            service={service}
-            onServiceChange={onServiceChange}
-            showServiceToggle={showServiceToggle}
-            mode={mode}
-            onChange={setMode}
-            isDark={isDark}
-            hintType={hintType}
-            mutedColor={mutedColor}
-            textColor={textColor}
-            searchQuery={searchQuery}
-            onSearchQueryChange={setSearchQuery}
-            searchMatchCount={searchMatchCount}
-          />
+          {toolbar}
         </View>
-      ) : (
+      ) : liturgyState.status !== 'ready' ? (
         <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
-      )}
+      ) : null}
 
       {liturgyState.status === 'loading' ? (
         <View style={styles.centered}>
@@ -669,11 +1054,28 @@ export function WorshipLiturgyBody({
   if (variant === 'tab') {
     return (
       <View style={styles.root}>
+        {liturgyState.status === 'ready' ? (
+          <View
+            ref={toolbarRef}
+            onLayout={onToolbarLayout}
+            style={[styles.pinnedToolbar, surfaceCard(isDark, { radius: radii.lg })]}
+          >
+            {toolbar}
+          </View>
+        ) : null}
         <AppScrollView
+          ref={scrollRef}
           style={styles.scroll}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollBottomPadding }]}
+          contentContainerStyle={[
+            styles.scrollContent,
+            liturgyState.status === 'ready' ? styles.scrollContentWithToolbar : null,
+            { paddingBottom: scrollBottomPadding },
+          ]}
         >
-          {content}
+          <View ref={scrollContentRef}>
+            <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
+            {content}
+          </View>
         </AppScrollView>
       </View>
     );
@@ -696,13 +1098,30 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingTop: 4,
   },
+  scrollContentWithToolbar: {
+    paddingTop: 0,
+  },
   embeddedRoot: {
     gap: 16,
+  },
+  pinnedToolbar: {
+    zIndex: 2,
+    gap: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 16,
   },
   topCard: {
     gap: 14,
     paddingHorizontal: 16,
     paddingVertical: 14,
+    ...(Platform.OS === 'web'
+      ? ({
+          position: 'sticky',
+          top: 0,
+          zIndex: 2,
+        } as const)
+      : null),
   },
   intro: {
     lineHeight: 20,
@@ -710,7 +1129,14 @@ const styles = StyleSheet.create({
   toolbarStack: {
     gap: 12,
   },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
   searchWrap: {
+    flex: 1,
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
@@ -725,9 +1151,21 @@ const styles = StyleSheet.create({
     padding: 0,
     ...(Platform.OS === 'web' ? { outlineStyle: 'none' as 'solid' } : null),
   },
-  searchStatus: {
+  searchNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    flexShrink: 0,
+  },
+  searchPosition: {
+    minWidth: 52,
+    textAlign: 'right',
     lineHeight: 18,
     opacity: 0.9,
+  },
+  searchNavButton: {
+    padding: 4,
+    borderRadius: radii.sm,
   },
   compareHint: {
     lineHeight: 18,
@@ -750,6 +1188,7 @@ const styles = StyleSheet.create({
   },
   sections: {
     gap: 12,
+    marginTop: 8,
   },
   sectionCard: {
     paddingHorizontal: 16,
@@ -768,6 +1207,9 @@ const styles = StyleSheet.create({
   },
   lineItem: {
     paddingVertical: 5,
+  },
+  compareLineItem: {
+    paddingVertical: 2,
   },
   compareBody: {
     gap: 8,

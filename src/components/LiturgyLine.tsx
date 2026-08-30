@@ -27,6 +27,8 @@ type Props = {
   isDark: boolean;
   compact?: boolean;
   searchQuery?: string;
+  activeMatchIndex?: number | null;
+  matchIndexOffset?: number;
 };
 
 function roleColor(role: LiturgyRole, isDark: boolean) {
@@ -36,7 +38,6 @@ function roleColor(role: LiturgyRole, isDark: boolean) {
     choir: isDark ? '#9eb8d9' : colors.accentTheotokos,
     people: isDark ? '#b8b0a6' : colors.muted,
     reader: isDark ? '#b8b0a6' : '#5a5248',
-    clergy: isDark ? '#c9a87c' : '#7d5c3a',
     celebrant: isDark ? '#e8c97a' : colors.accentWine,
   };
   return map[role];
@@ -57,6 +58,8 @@ export function LiturgyLine({
   isDark,
   compact = false,
   searchQuery = '',
+  activeMatchIndex = null,
+  matchIndexOffset = 0,
 }: Props) {
   const { t } = useAppTranslation();
   const { text } = useFontScale();
@@ -66,7 +69,18 @@ export function LiturgyLine({
   const headingType = text(compact ? 12 : 13, compact ? 16 : 18);
   const roleType = text(compact ? 10 : 11, compact ? 14 : 16);
   const highlightColor = isDark ? 'rgba(232, 201, 122, 0.38)' : 'rgba(255, 214, 102, 0.65)';
-  const mark = (value: string) => highlightMatches(value, searchQuery, highlightColor);
+  const activeHighlightColor = isDark ? 'rgba(255, 180, 50, 0.82)' : 'rgba(255, 140, 0, 0.78)';
+  let matchCursor = matchIndexOffset;
+  const mark = (value: string) => {
+    const result = highlightMatches(value, searchQuery, {
+      highlightColor,
+      activeHighlightColor,
+      activeMatchIndex,
+      matchIndexStart: matchCursor,
+    });
+    matchCursor = result.nextMatchIndex;
+    return result.nodes;
+  };
 
   if (!line.trim()) {
     return null;

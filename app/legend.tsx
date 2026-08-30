@@ -7,10 +7,12 @@ import { LiturgicalLegendGuide } from '../src/components/LiturgicalLegendGuide';
 import { StackScreenHeader } from '../src/components/StackScreenHeader';
 import { SwipeBackShell } from '../src/components/SwipeBackShell';
 import { useLayoutSafeAreaInsets } from '../src/hooks/useLayoutSafeAreaInsets';
+import { usePhoneLayout } from '../src/hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../src/hooks/useScreenSafePadding';
 import { useStackBack } from '../src/hooks/useStackBack';
 import { useAppTranslation } from '../src/i18n/useAppTranslation';
 import { useVestmentAccent } from '../src/state/VestmentAccentContext';
+import { stackContentColumnStyle } from '../src/theme/stackContentColumn';
 import { useResolvedColorScheme } from '../src/theme/useResolvedColorScheme';
 import { colors } from '../src/theme/tokens';
 
@@ -20,6 +22,7 @@ export default function ColoursLegendScreen() {
   const isDark = useResolvedColorScheme() === 'dark';
   const screenSafe = useScreenSafePadding();
   const insets = useLayoutSafeAreaInsets();
+  const phone = usePhoneLayout();
   const muted = isDark ? '#a39e98' : colors.muted;
   const vestmentAccent = useVestmentAccent();
   const goBack = useStackBack('/settings');
@@ -44,11 +47,12 @@ export default function ColoursLegendScreen() {
         <ScrollView
           contentContainerStyle={[
             styles.content,
-            {
+            stackContentColumnStyle({
               paddingLeft: screenSafe.paddingLeft,
               paddingRight: screenSafe.paddingRight,
-              paddingBottom: insets.bottom + 28,
-            },
+              phone,
+            }),
+            { paddingBottom: insets.bottom + 28 },
           ]}
         >
           <LiturgicalLegendGuide
@@ -69,8 +73,5 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingTop: 8,
-    maxWidth: 800,
-    width: '100%',
-    alignSelf: 'center',
   },
 });

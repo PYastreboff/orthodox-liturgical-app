@@ -5,8 +5,8 @@ export const CREED_TITLE_MARKER = '__CREED_TITLE__';
 export const LORDS_PRAYER_TITLE_MARKER = '__LORDS_PRAYER_TITLE__';
 
 const ROLE_JUNK =
-  /^(CLERGY|DEACON|PRIEST|CHOIR|PEOPLE|READER|CELEBRANT)(\s*\([^)]*\))?\s*:\s*(or:?|or)\s*$/i;
-const ROLE_ONLY = /^(CLERGY|DEACON|PRIEST|CHOIR|PEOPLE|READER|CELEBRANT)(\s*\([^)]*\))?\s*$/i;
+  /^(DEACON|PRIEST|CHOIR|PEOPLE|READER|CELEBRANT)(\s*\([^)]*\))?\s*:\s*(or:?|or)\s*$/i;
+const ROLE_ONLY = /^(DEACON|PRIEST|CHOIR|PEOPLE|READER|CELEBRANT)(\s*\([^)]*\))?\s*$/i;
 
 function isInlineSectionBanner(text: string): boolean {
   const t = text.trim();
@@ -149,8 +149,13 @@ export function sanitizeLiturgyLine(
   if (/^READER(\s*\([^)]*\))?\s*:\s*$/i.test(text)) return null;
   if (/^DEACON(\s*\([^)]*\))?\s*:\s*$/i.test(text)) return null;
 
-  const speechOnly = text.replace(/^(CLERGY|DEACON|PRIEST|CHOIR|PEOPLE|READER)(\s*\([^)]*\))?\s*:\s*/i, '');
+  const speechOnly = text.replace(/^(DEACON|PRIEST|CHOIR|PEOPLE|READER)(\s*\([^)]*\))?\s*:\s*/i, '');
   if (text !== speechOnly && !speechOnly.trim()) return null;
+
+  // Repair false "CLERGY:" splits from older builds (e.g. "clergy and the people").
+  if (/^CLERGY:\s*/i.test(text)) {
+    text = text.replace(/^CLERGY:\s*/i, '');
+  }
 
   if (!text) return null;
   if (/^_{3,}$/.test(text)) return null;
@@ -245,17 +250,22 @@ export function sanitizeLiturgyLines(
   lines: string[],
   lang: UiLanguage,
   sectionId: ChrysostomSectionId,
+  options?: { preserveLength?: boolean },
 ): string[] {
-  const cleaned = lines
-    .map((line) => sanitizeLiturgyLine(line, lang, sectionId))
-    .filter((line): line is string => line != null);
+  const cleaned = lines.map((line) => sanitizeLiturgyLine(line, lang, sectionId));
+
+  if (options?.preserveLength) {
+    return lines.map((line) => sanitizeLiturgyLine(line, lang, sectionId) ?? '');
+  }
+
+  const filtered = cleaned.filter((line): line is string => line != null);
 
   const sectioned =
     sectionId === 'creed'
-      ? insertCreedTitle(cleaned)
+      ? insertCreedTitle(filtered)
       : sectionId === 'anaphora'
-        ? insertLordsPrayerTitle(cleaned)
-        : cleaned;
+        ? insertLordsPrayerTitle(filtered)
+        : filtered;
 
   return expandMarkerLines(sectioned);
 }

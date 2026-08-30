@@ -27,7 +27,7 @@ function shouldMergeWithPrevious(prev: string, current: string, lang: UiLanguage
   if (lineRole(current, lang)) return false;
   const currentKind = lineKind(current, lang);
   if (currentKind === 'heading' || currentKind === 'banner') return false;
-  if (/^(DEACON|PRIEST|CHOIR|PEOPLE|READER|CLERGY|ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|Священник|Диакон|Хор|Народ)\b/i.test(current)) {
+  if (/^(DEACON|PRIEST|CHOIR|PEOPLE|READER|ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|Священник|Диакон|Хор|Народ)\b/i.test(current)) {
     return false;
   }
 

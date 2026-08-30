@@ -1,5 +1,6 @@
 import type { UiLanguage } from '../../i18n/types';
 import type { ChrysostomSectionId } from './chrysostomLiturgy';
+import { isOpeningDeaconBlessing } from './liturgyUnit';
 import {
   CREED_TITLE_MARKER,
   isDevotionalTitleMarker,
@@ -8,7 +9,7 @@ import {
   stripRolePrefix,
 } from './liturgySanitize';
 
-export type LiturgyRole = 'priest' | 'deacon' | 'choir' | 'people' | 'reader' | 'celebrant' | 'clergy';
+export type LiturgyRole = 'priest' | 'deacon' | 'choir' | 'people' | 'reader' | 'celebrant';
 
 export type ParsedLiturgyLine =
   | { kind: 'banner'; text: string }
@@ -20,9 +21,9 @@ export type ParsedLiturgyLine =
   | { kind: 'speech'; text: string };
 
 const EN_ROLE_SPEECH =
-  /^(Priest|Deacon|Choir|People|Reader|Celebrant|Clergy)(\s*\(([^)]+)\))?\s*:\s*(.+)$/i;
+  /^(Priest|Deacon|Choir|People|Reader|Celebrant)(\s*\(([^)]+)\))?\s*:\s*(.+)$/i;
 const EN_ROLE_ONLY =
-  /^(Priest|Deacon|Choir|People|Reader|Celebrant|Clergy)(\s*\(([^)]+)\))?\s*$/i;
+  /^(Priest|Deacon|Choir|People|Reader|Celebrant)(\s*\(([^)]+)\))?\s*$/i;
 
 const RU_ROLE_SPEECH =
   /^(Священник|Диакон|Чтец|Народ|Хор|Сослужащие)\s*:\s*(.+)$/i;
@@ -39,7 +40,6 @@ function normalizeRole(word: string): LiturgyRole {
   if (key.includes('choir') || key.includes('хор') || key === 'χορος') return 'choir';
   if (key.includes('people') || key.includes('народ') || key === 'λαος') return 'people';
   if (key.includes('reader') || key.includes('чтец') || key === 'αναγνωστης') return 'reader';
-  if (key.includes('clergy') || key.includes('сослуж')) return 'clergy';
   return 'celebrant';
 }
 
@@ -194,6 +194,12 @@ function isLordsPrayerText(text: string): boolean {
   );
 }
 
+function deaconLabel(lang: UiLanguage): string {
+  if (lang === 'ru') return 'Диакон';
+  if (lang === 'el') return 'ΔΙΑΚΟΝΟΣ';
+  return 'DEACON';
+}
+
 function isCongregationalRole(role: LiturgyRole): boolean {
   return role === 'people' || role === 'choir';
 }
@@ -210,7 +216,7 @@ function isHeadingLine(trimmed: string): boolean {
 
 function isRubricLine(trimmed: string): boolean {
   if (trimmed.startsWith('(') && trimmed.endsWith(')')) return true;
-  if (/^(People|Deacon|Priest|Reader|Choir|Clergy)(\s*\([^)]*\))?\s*:/i.test(trimmed)) return false;
+  if (/^(People|Deacon|Priest|Reader|Choir)(\s*\([^)]*\))?\s*:/i.test(trimmed)) return false;
   if (trimmed.endsWith(':') && !RU_ROLE_ONLY.test(trimmed)) return true;
   return false;
 }
@@ -251,6 +257,10 @@ export function parseLiturgyLine(line: string, lang: UiLanguage): ParsedLiturgyL
     return roleLine;
   }
 
+  if (isOpeningDeaconBlessing(trimmed, lang)) {
+    return { kind: 'role-speech', role: 'deacon', label: deaconLabel(lang), speech: trimmed };
+  }
+
   if (isLitanyDeaconLine(trimmed, lang)) {
     return { kind: 'role-speech', role: 'deacon', label: 'DEACON', speech: trimmed };
   }
@@ -278,8 +288,6 @@ export function liturgyRoleLabelKey(role: LiturgyRole): string {
       return 'liturgy.chrysostom.rolePeople';
     case 'reader':
       return 'liturgy.chrysostom.roleReader';
-    case 'clergy':
-      return 'liturgy.chrysostom.roleClergy';
     default:
       return 'liturgy.chrysostom.roleCelebrant';
   }
