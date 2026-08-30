@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Feather } from '@expo/vector-icons';
 
@@ -673,6 +673,7 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
     padding: 0,
+    ...(Platform.OS === 'web' ? { outlineStyle: 'none' as 'solid' } : null),
   },
   compareHint: {
     lineHeight: 18,

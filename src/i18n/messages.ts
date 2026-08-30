@@ -1526,7 +1526,7 @@ const en = {
     },
     vespers: {
       intro:
-        'Great Vespers — the evening service before a Sunday or feast. Fixed parts are below; stichera and aposticha change with the day.',
+        'Great Vespers — the evening service before a liturgy. Fixed parts are below; stichera and aposticha change with the day.',
       disclaimer:
         'Variable hymns and readings depend on the day. Rubrics and local practice differ — follow your parish and bishop.',
       loading: 'Loading Vespers text…',
@@ -3269,7 +3269,7 @@ const ru = {
     },
     vespers: {
       intro:
-        'Великая вечерня — вечерняя служба накануне воскресенья или праздника. Ниже неизменяемые части; стихиры и апостихи зависят от дня.',
+        'Великая вечерня — вечерняя служба перед литургией. Ниже неизменяемые части; стихиры и апостихи зависят от дня.',
       disclaimer:
         'Песнопения и чтения меняются по дню. Чин и местная практика различаются — следуйте указаниям своего прихода.',
       loading: 'Загрузка текста вечерни…',
