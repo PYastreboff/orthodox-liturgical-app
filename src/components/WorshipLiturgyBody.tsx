@@ -312,7 +312,7 @@ function CompareCell({
             compact
             searchQuery={searchQuery}
             activeMatchIndex={activeMatchIndex}
-            matchIndexOffset={searchOffsets[lineKey] ?? 0}
+            matchIndexOffset={searchOffsets?.[lineKey] ?? 0}
             registerLineRef={registerLineRef}
           />
         );
@@ -404,23 +404,30 @@ function ChrysostomSectionBody({
       const rows = Array.from({ length: rowCount }, (_, row) => {
         const leftCell = left ? (
           <CompareCell
+            lineKeyPrefix={`${id}-compare-${row}-left`}
             lines={[leftLines[row] ?? '']}
             lang={left}
             textColor={textColor}
             mutedColor={mutedColor}
             isDark={isDark}
             searchQuery={searchQuery}
+            activeMatchIndex={activeMatchIndex}
+            searchOffsets={searchOffsets}
+            registerLineRef={registerLineRef}
           />
         ) : null;
         const rightCell = right ? (
           <CompareCell
+            lineKeyPrefix={`${id}-compare-${row}-right`}
             lines={[rightLines[row] ?? '']}
             lang={right}
             textColor={textColor}
             mutedColor={mutedColor}
             isDark={isDark}
             searchQuery={searchQuery}
-            highlightColor={highlightColor}
+            activeMatchIndex={activeMatchIndex}
+            searchOffsets={searchOffsets}
+            registerLineRef={registerLineRef}
           />
         ) : null;
         if (!leftCell && !rightCell) return null;
@@ -459,7 +466,7 @@ function ChrysostomSectionBody({
               isDark={isDark}
               searchQuery={searchQuery}
               activeMatchIndex={activeMatchIndex}
-              matchIndexOffset={searchOffsets[lineKey] ?? 0}
+              matchIndexOffset={searchOffsets?.[lineKey] ?? 0}
               registerLineRef={registerLineRef}
             />
           );
@@ -525,24 +532,30 @@ function VespersSectionBody({
       const rows = Array.from({ length: rowCount }, (_, row) => {
         const leftCell = left ? (
           <CompareCell
+            lineKeyPrefix={`${id}-compare-${row}-left`}
             lines={[leftLines[row] ?? '']}
             lang={left}
             textColor={textColor}
             mutedColor={mutedColor}
             isDark={isDark}
             searchQuery={searchQuery}
-            highlightColor={highlightColor}
+            activeMatchIndex={activeMatchIndex}
+            searchOffsets={searchOffsets}
+            registerLineRef={registerLineRef}
           />
         ) : null;
         const rightCell = right ? (
           <CompareCell
+            lineKeyPrefix={`${id}-compare-${row}-right`}
             lines={[rightLines[row] ?? '']}
             lang={right}
             textColor={textColor}
             mutedColor={mutedColor}
             isDark={isDark}
             searchQuery={searchQuery}
-            highlightColor={highlightColor}
+            activeMatchIndex={activeMatchIndex}
+            searchOffsets={searchOffsets}
+            registerLineRef={registerLineRef}
           />
         ) : null;
         if (!leftCell && !rightCell) return null;
@@ -562,26 +575,30 @@ function VespersSectionBody({
     const lang = mode.lang;
     const lines = vespersSectionParagraphs(sections, id, lang)
       .flatMap((line) => expandLiturgyDisplayLines(line))
-      .filter((line) => line.trim())
-      .filter((line) => lineMatches(line, searchQuery));
+      .filter((line) => line.trim());
 
     if (!lines.length) return null;
 
     return (
       <View style={styles.lines}>
-        {lines.map((line, index) => (
-          <View key={`${id}-${index}`} style={styles.lineItem}>
-            <LiturgyLine
+        {lines.map((line, index) => {
+          const lineKey = `${id}-${index}`;
+          return (
+            <WorshipLiturgyLineItem
+              key={lineKey}
+              lineKey={lineKey}
               line={line}
               lang={lang}
               textColor={textColor}
               mutedColor={mutedColor}
               isDark={isDark}
               searchQuery={searchQuery}
-              highlightColor={highlightColor}
+              activeMatchIndex={activeMatchIndex}
+              matchIndexOffset={searchOffsets?.[lineKey] ?? 0}
+              registerLineRef={registerLineRef}
             />
-          </View>
-        ))}
+          );
+        })}
       </View>
     );
   })();

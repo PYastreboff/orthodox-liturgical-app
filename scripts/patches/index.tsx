@@ -1,10 +1,9 @@
-import { StyleSheet, Text, View, type LayoutChangeEvent, type ScrollView } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import { useCallback, useRef, useState } from 'react';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 
-import { AppScrollView } from '../../src/components/AppScrollView';
 import { DayHero } from '../../src/components/DayHero';
-import { TodayDailyFocus } from '../../src/components/TodayDailyFocus';
+import { TodayPersonalDays } from '../../src/components/TodayPersonalDays';
 import { TodaySkeleton } from '../../src/components/TodaySkeleton';
 import { TodaySectionTiles } from '../../src/components/TodaySectionTiles';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
@@ -14,7 +13,6 @@ import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useTodayDayModel } from '../../src/hooks/useTodayDayModel';
 import { startOfLocalDay } from '../../src/lib/calendar/localDate';
-import { firstGospelExcerpt } from '../../src/lib/liturgical/hymnExcerpt';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { colors } from '../../src/theme/tokens';
 
@@ -54,7 +52,7 @@ export default function TodayScreen() {
       appearance={model.appearance}
       gradientEnabled={model.showVestmentGradient}
     >
-      <AppScrollView
+      <ScrollView
         ref={scrollRef}
         style={styles.scroll}
         onLayout={onScrollLayout}
@@ -88,20 +86,16 @@ export default function TodayScreen() {
             onToday={() => model.setSelectedDate(model.today)}
             onShare={model.handleShareDay}
           />
+          <TodayPersonalDays
+            occurrences={model.personalOnDay}
+            isDark={model.isDark}
+            textColor={theme.colors.text}
+          />
           {model.waitingForDay ? <TodaySkeleton isDark={model.isDark} /> : null}
           {model.error ? (
             <Text style={[styles.statusLine, model.type.status, styles.statusError]}>
               {model.t('today.offline', { error: model.error })}
             </Text>
-          ) : null}
-
-          {!model.waitingForDay ? (
-            <TodayDailyFocus
-              gospel={firstGospelExcerpt(model.gospelPreviewSections)}
-              textColor={theme.colors.text}
-              isDark={model.isDark}
-              loading={model.refreshing}
-            />
           ) : null}
 
           <TodaySectionTiles
@@ -112,7 +106,7 @@ export default function TodayScreen() {
           />
         </View>
 
-        <View style={[styles.homeCalendar, phone ? styles.homeCalendarPhone : styles.homeCalendarWeb]}>
+        <View style={[styles.homeCalendar, phone ? null : styles.homeCalendarWeb]}>
           <LiturgicalMonthGrid
             visibleMonth={model.calendarMonth}
             onChangeMonth={model.onCalendarChangeMonth}
@@ -127,7 +121,7 @@ export default function TodayScreen() {
             liturgicalCalendar={model.primaryCalendar}
           />
         </View>
-      </AppScrollView>
+      </ScrollView>
     </VestmentPageBackground>
   );
 }
@@ -141,13 +135,11 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   homeCalendar: {
+    marginTop: 20,
     marginBottom: 8,
   },
-  homeCalendarPhone: {
-    marginTop: 12,
-  },
   homeCalendarWeb: {
-    marginTop: 32,
+    marginTop: 28,
   },
   statusLine: {
     textAlign: 'center',

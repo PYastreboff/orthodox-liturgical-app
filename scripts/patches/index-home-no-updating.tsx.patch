@@ -1,0 +1,17 @@
+--- a/app/(tabs)/index.tsx
++++ b/app/(tabs)/index.tsx
+@@ -95,12 +95,7 @@
+             isDark={model.isDark}
+             textColor={theme.colors.text}
+           />
+-          {model.waitingForDay ? (
+-            <TodaySkeleton isDark={model.isDark} />
+-          ) : model.refreshing ? (
+-            <Text style={[styles.statusLine, model.type.status, { color: colors.muted }]}>
+-              {model.t('today.refreshing')}
+-            </Text>
+-          ) : null}
++          {model.waitingForDay ? <TodaySkeleton isDark={model.isDark} /> : null}
+           {model.error ? (
+             <Text style={[styles.statusLine, model.type.status, styles.statusError]}>
+               {model.t('today.offline', { error: model.error })}
