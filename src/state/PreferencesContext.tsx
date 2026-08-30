@@ -10,6 +10,7 @@ import {
 } from 'react';
 
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
+import type { CalendarColourMode } from '../lib/calendar/calendarCellStyle';
 import {
   isLiturgicalTextCategoryFilter,
   type LiturgicalTextCategoryFilter,
@@ -53,6 +54,7 @@ type StoredPreferences = {
   showGregorianAlongside?: boolean;
   showAlternateCalendar?: boolean;
   primaryCalendar?: PrimaryCalendar;
+  calendarColourMode?: CalendarColourMode;
   defaultTextLang?: TextLanguage;
   readingsCategoryFilter?: LiturgicalTextCategoryFilter;
   colorSchemePreference?: ColorSchemePreference;
@@ -76,6 +78,8 @@ type Preferences = {
   /** Show the non-primary calendar next to the primary one. */
   showAlternateCalendar: boolean;
   primaryCalendar: PrimaryCalendar;
+  /** Month grid: fasting grey cells or liturgical vestment tints. */
+  calendarColourMode: CalendarColourMode;
   defaultTextLang: TextLanguage;
   readingsCategoryFilter: LiturgicalTextCategoryFilter;
   colorSchemePreference: ColorSchemePreference;
@@ -108,6 +112,7 @@ type Preferences = {
 type PreferencesContextValue = Preferences & {
   setShowAlternateCalendar: (value: boolean) => void;
   setPrimaryCalendar: (value: PrimaryCalendar) => void;
+  setCalendarColourMode: (value: CalendarColourMode) => void;
   setDefaultTextLang: (value: TextLanguage) => void;
   setReadingsCategoryFilter: (value: LiturgicalTextCategoryFilter) => void;
   setColorSchemePreference: (value: ColorSchemePreference) => void;
@@ -152,6 +157,7 @@ export async function writeStoredPreferences(patch: StoredPreferences): Promise<
 export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [showAlternateCalendar, setShowAlternateCalendarState] = useState(false);
   const [primaryCalendar, setPrimaryCalendarState] = useState<PrimaryCalendar>('julian');
+  const [calendarColourMode, setCalendarColourModeState] = useState<CalendarColourMode>('fasting');
   const [defaultTextLang, setDefaultTextLangState] = useState<TextLanguage>('en');
   const [readingsCategoryFilter, setReadingsCategoryFilterState] =
     useState<LiturgicalTextCategoryFilter>('all');
@@ -188,6 +194,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         }
         if (parsed.primaryCalendar === 'julian' || parsed.primaryCalendar === 'gregorian') {
           setPrimaryCalendarState(parsed.primaryCalendar);
+        }
+        if (parsed.calendarColourMode === 'fasting' || parsed.calendarColourMode === 'liturgical') {
+          setCalendarColourModeState(parsed.calendarColourMode);
         }
         if (isTextLanguage(parsed.defaultTextLang)) {
           setDefaultTextLangState(normalizeTextLanguage(parsed.defaultTextLang));
@@ -272,6 +281,14 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     (value: PrimaryCalendar) => {
       setPrimaryCalendarState(value);
       void persist({ primaryCalendar: value });
+    },
+    [persist],
+  );
+
+  const setCalendarColourMode = useCallback(
+    (value: CalendarColourMode) => {
+      setCalendarColourModeState(value);
+      void persist({ calendarColourMode: value });
     },
     [persist],
   );
@@ -423,6 +440,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     () => ({
       showAlternateCalendar,
       primaryCalendar,
+      calendarColourMode,
       defaultTextLang,
       readingsCategoryFilter,
       colorSchemePreference,
@@ -442,6 +460,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       preferencesReady,
       setShowAlternateCalendar,
       setPrimaryCalendar,
+      setCalendarColourMode,
       setDefaultTextLang,
       setReadingsCategoryFilter,
       setColorSchemePreference,
@@ -475,6 +494,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       onboardingCompleted,
       preferencesReady,
       primaryCalendar,
+      calendarColourMode,
       servingRole,
       setColorSchemePreference,
       setDefaultTextLang,
@@ -489,6 +509,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setOnboardingCompleted,
       setPersonalDays,
       setPrimaryCalendar,
+      setCalendarColourMode,
       setServingRole,
       setShowAlternateCalendar,
       setShowVestmentGradient,

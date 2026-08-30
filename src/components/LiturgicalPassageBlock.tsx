@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 import { useFontScale } from '../hooks/useFontScale';
 import type { LiturgicalTextCategory, LiturgicalTextItem } from '../lib/liturgical/liturgicalTexts';
-import { noneForDayLabel } from '../lib/liturgical/liturgicalTexts';
+import { liturgicalItemHasText, noneForDayLabel } from '../lib/liturgical/liturgicalTexts';
 import type { ReadingsSingleLanguage } from '../lib/readings/textLanguage';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { LiturgicalReadingIcon } from './LiturgicalReadingIcon';
@@ -109,11 +110,29 @@ function CompareColumn({
   hintType,
   loadingLabel,
 }: CompareColumnProps) {
+  const { t } = useAppTranslation();
+  const hasText = item != null && liturgicalItemHasText(item);
+  const showLoading = Boolean(lang && loading && !hasText);
+  const showUnavailable = Boolean(lang && !loading && !hasText);
+
   return (
     <View style={[styles.column, styles.columnFlex]}>
-      {lang && loading && !item ? (
+      {showLoading ? (
         <Text style={[styles.loadingHint, hintType, { color: mutedColor }]}>{loadingLabel}</Text>
-      ) : lang && item ? (
+      ) : showUnavailable ? (
+        <View style={styles.unavailableWrap}>
+          <View
+            style={styles.unavailableBlock}
+            accessibilityRole="text"
+            accessibilityLabel={t('readings.compareTextUnavailable')}
+          >
+            <Feather name="file-text" size={20} color={mutedColor} />
+            <Text style={[styles.unavailableText, hintType, { color: mutedColor }]}>
+              {t('readings.compareTextUnavailable')}
+            </Text>
+          </View>
+        </View>
+      ) : hasText && item ? (
         <PassageBody item={item} textColor={textColor} verseNumberColor={verseNumberColor} />
       ) : null}
     </View>
@@ -311,7 +330,7 @@ const styles = StyleSheet.create({
   },
   columnsRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
     gap: 8,
     marginTop: 4,
   },
@@ -320,10 +339,27 @@ const styles = StyleSheet.create({
   },
   columnFlex: {
     flex: 1,
+    alignSelf: 'stretch',
   },
   loadingHint: {
     fontStyle: 'italic',
     marginTop: 4,
+  },
+  unavailableWrap: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  unavailableBlock: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 6,
+  },
+  unavailableText: {
+    textAlign: 'center',
+    fontStyle: 'italic',
+    opacity: 0.9,
   },
   columnDivider: {
     width: StyleSheet.hairlineWidth,

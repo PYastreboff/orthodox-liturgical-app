@@ -6,7 +6,11 @@ import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import { useVestmentAccent } from '../../state/VestmentAccentContext';
 import { cardElevation, iconBadgeSurface } from '../../theme/cards';
 import { colors, radii } from '../../theme/tokens';
-import { SETTINGS_CARD_HORIZONTAL_INSET } from './settingsLayout';
+
+const ROW_PADDING_H = 16;
+const ICON_BADGE_SIZE = 40;
+const ROW_GAP = 14;
+const DIVIDER_INSET = ROW_PADDING_H + ICON_BADGE_SIZE + ROW_GAP;
 
 type Props = {
   isDark: boolean;
@@ -84,7 +88,12 @@ export function SettingsLinkRow({
   return (
     <View style={styles.block}>
       {showDivider ? (
-        <View style={[styles.divider, { backgroundColor: isDark ? colors.darkBorder : colors.border }]} />
+        <View
+          style={[
+            styles.divider,
+            { backgroundColor: isDark ? colors.darkBorder : colors.border },
+          ]}
+        />
       ) : null}
       {interactive ? (
         <Pressable
@@ -101,18 +110,13 @@ export function SettingsLinkRow({
   );
 }
 
-export const settingsLinkListInset = {
-  marginHorizontal: SETTINGS_CARD_HORIZONTAL_INSET,
-  marginVertical: 4,
-  alignSelf: 'stretch' as const,
-};
-
 export const settingsListCard = (isDark: boolean) => ({
   borderRadius: radii.xl,
   borderWidth: StyleSheet.hairlineWidth,
   overflow: 'hidden' as const,
   backgroundColor: isDark ? colors.darkSurface : colors.card,
   borderColor: isDark ? colors.darkBorderSubtle : colors.borderSubtle,
+  paddingVertical: 4,
   ...cardElevation(isDark),
 });
 
@@ -123,13 +127,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
-    paddingVertical: 15,
-    paddingHorizontal: 16,
+    gap: ROW_GAP,
+    paddingVertical: 14,
+    paddingHorizontal: ROW_PADDING_H,
     minHeight: 56,
   },
   rowPressed: {
-    opacity: 0.72,
+    opacity: 0.88,
   },
   textCol: {
     flex: 1,
@@ -160,7 +164,8 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: StyleSheet.hairlineWidth,
-    width: '100%',
+    marginLeft: DIVIDER_INSET,
+    marginRight: ROW_PADDING_H,
     opacity: 0.9,
   },
 });

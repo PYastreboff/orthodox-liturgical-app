@@ -20,3 +20,11 @@ export function useTabBarBottomPadding(): number {
     SCROLL_EXTRA_BOTTOM_PADDING
   );
 }
+
+/** Space from the screen bottom to just above the floating tab bar, plus optional margin. */
+export function useTabBarClearance(extraMargin = 12): number {
+  const insets = useLayoutSafeAreaInsets();
+  const isNativePhone = Platform.OS !== 'web';
+  const floatGap = tabBarFloatScrollExtra(isNativePhone);
+  return TAB_BAR_CONTENT_HEIGHT + insets.bottom + floatGap + extraMargin;
+}

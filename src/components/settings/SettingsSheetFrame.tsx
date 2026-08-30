@@ -1,9 +1,43 @@
-import { type ReactNode } from 'react';
-import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { createContext, useContext, useEffect, type ReactNode } from 'react';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+  type ScrollViewProps,
+} from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { useSwipeToDismissSheet } from '../../hooks/useSwipeToDismissSheet';
 import { radii } from '../../theme/tokens';
+
+type SettingsSheetContextValue = {
+  onSheetScroll: (offsetY: number) => void;
+  resetSheetScroll: () => void;
+};
+
+const SettingsSheetContext = createContext<SettingsSheetContextValue | null>(null);
+
+/** ScrollView wired for swipe-to-dismiss when scrolled to the top. */
+export function SettingsSheetScrollView({ onScroll, ...props }: ScrollViewProps) {
+  const ctx = useContext(SettingsSheetContext);
+
+  useEffect(() => {
+    ctx?.resetSheetScroll();
+  }, [ctx]);
+
+  return (
+    <ScrollView
+      {...props}
+      scrollEventThrottle={16}
+      onScroll={(event) => {
+        ctx?.onSheetScroll(event.nativeEvent.contentOffset.y);
+        onScroll?.(event);
+      }}
+    />
+  );
+}
 
 type Props = {
   visible: boolean;
@@ -25,7 +59,8 @@ export function SettingsSheetFrame({
   handleColor,
   children,
 }: Props) {
-  const { panHandlers, sheetStyle, backdropStyle } = useSwipeToDismissSheet(onClose, visible);
+  const { panHandlers, sheetStyle, backdropStyle, onSheetScroll, resetSheetScroll } =
+    useSwipeToDismissSheet(onClose, visible);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -41,11 +76,14 @@ export function SettingsSheetFrame({
             sheetStyle,
             { backgroundColor: surfaceBg, borderColor, height: sheetHeight },
           ]}
+          {...panHandlers}
         >
-          <View style={styles.handleRow} {...panHandlers}>
+          <View style={styles.handleRow}>
             <View style={[styles.handle, { backgroundColor: handleColor }]} />
           </View>
-          {children}
+          <SettingsSheetContext.Provider value={{ onSheetScroll, resetSheetScroll }}>
+            {children}
+          </SettingsSheetContext.Provider>
         </Animated.View>
       </View>
     </Modal>

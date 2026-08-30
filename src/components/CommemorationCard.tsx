@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -39,7 +39,6 @@ export function CommemorationCard({
   mutedColor,
   borderColor,
   isDark,
-  bodyType,
   hintType,
   isPrimaryGreatFeast = false,
 }: Props) {
@@ -61,13 +60,18 @@ export function CommemorationCard({
       ? colors.feastHoverBorderDark
       : colors.feastBorder
     : borderColor;
+  const titleType = text(17, 24);
   const storyType = text(13, 18);
   const lifeType = text(14, 21);
+  const entryIconColor = isPrimaryGreatFeast ? colors.feastBorder : mutedColor;
+  const entryIconName =
+    entry.kind === 'feast' ? 'star-four-points-outline' : 'account-outline';
 
   const header = (
     <>
+      <MaterialCommunityIcons name={entryIconName} size={22} color={entryIconColor} />
       <View style={styles.headerText}>
-        <Text style={[styles.title, bodyType, { color: nameColor }]}>{entry.name}</Text>
+        <Text style={[styles.title, titleType, { color: nameColor }]}>{entry.name}</Text>
         {!expanded && summary ? (
           <Text style={[styles.summary, hintType, { color: mutedColor }]} numberOfLines={2}>
             {summary}

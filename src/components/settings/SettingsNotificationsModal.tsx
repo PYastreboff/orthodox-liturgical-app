@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 const SELECTED_FG = '#fff';
 
@@ -9,11 +9,12 @@ function tintLeading(node: ReactNode, selected: boolean): ReactNode {
   return cloneElement(node as ReactElement<{ color?: string }>, { color: SELECTED_FG });
 }
 
+import { HoverPressable } from '../HoverPressable';
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import type { NotificationReminderKind } from '../../lib/notifications/liturgicalReminders';
 import { useVestmentAccent } from '../../state/VestmentAccentContext';
 import { colors } from '../../theme/tokens';
-import { SettingsSheetFrame } from './SettingsSheetFrame';
+import { SettingsSheetFrame, SettingsSheetScrollView } from './SettingsSheetFrame';
 
 export type NotificationToggleOption = {
   id: NotificationReminderKind;
@@ -75,7 +76,7 @@ export function SettingsNotificationsModal({
       {subtitle ? (
         <Text style={[styles.subtitle, { color: mutedColor }]}>{subtitle}</Text>
       ) : null}
-      <ScrollView
+      <SettingsSheetScrollView
         style={styles.optionsScroll}
         contentContainerStyle={styles.optionsContent}
         keyboardShouldPersistTaps="handled"
@@ -83,18 +84,11 @@ export function SettingsNotificationsModal({
         {options.map((option) => {
           const selected = option.enabled;
           return (
-            <Pressable
+            <HoverPressable
               key={option.id}
-              style={({ pressed }) => [
-                styles.option,
-                {
-                  backgroundColor: selected
-                    ? colors.accentWine
-                    : pressed
-                      ? 'rgba(139,46,60,0.14)'
-                      : 'transparent',
-                },
-              ]}
+              isDark={isDark}
+              selected={selected}
+              style={styles.option}
               onPress={() => onToggle(option.id, !selected)}
               accessibilityRole="switch"
               accessibilityState={{ checked: selected }}
@@ -120,20 +114,21 @@ export function SettingsNotificationsModal({
               ) : (
                 <View style={styles.checkPlaceholder} />
               )}
-            </Pressable>
+            </HoverPressable>
           );
         })}
-      </ScrollView>
+      </SettingsSheetScrollView>
       {testLabel && onTestPress ? (
-        <Pressable
+        <HoverPressable
           onPress={onTestPress}
           disabled={testDisabled}
+          isDark={isDark}
+          baseBackground={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.05)'}
           style={({ pressed }) => [
             styles.testBtn,
             {
               borderColor,
-              backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.05)',
-              opacity: testDisabled ? 0.45 : pressed ? 0.88 : 1,
+              opacity: testDisabled ? 0.45 : pressed ? 0.92 : 1,
             },
           ]}
           accessibilityRole="button"
@@ -150,7 +145,7 @@ export function SettingsNotificationsModal({
               </Text>
             ) : null}
           </View>
-        </Pressable>
+        </HoverPressable>
       ) : null}
       {footerNote ? (
         <Text style={[styles.footerNote, { color: mutedColor }]}>{footerNote}</Text>

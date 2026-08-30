@@ -1,13 +1,13 @@
 import { Feather } from '@expo/vector-icons';
 import { useMemo } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
+import { HoverPressable } from './HoverPressable';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { BIBLE_BOOKS, type BibleBook } from '../lib/bible/bibleCanon';
 import { localizedBibleBookName } from '../lib/bible/bibleBookNames';
 import type { BibleTextLang } from '../lib/bible/bibleTranslation';
-import { colors } from '../theme/tokens';
 import { SettingsSheetFrame } from './settings/SettingsSheetFrame';
 
 const SELECTED_FG = '#fff';
@@ -74,6 +74,7 @@ export function BibleBookPickerModal({
                 label={localizedBibleBookName(book.bookNum, translation)}
                 selected={book.bookNum === bookNum}
                 textColor={textColor}
+                isDark={isDark}
                 onSelect={onSelect}
                 onClose={onClose}
               />
@@ -90,6 +91,7 @@ function BookRow({
   label,
   selected,
   textColor,
+  isDark,
   onSelect,
   onClose,
 }: {
@@ -97,21 +99,15 @@ function BookRow({
   label: string;
   selected: boolean;
   textColor: string;
+  isDark: boolean;
   onSelect: (bookNum: number) => void;
   onClose: () => void;
 }) {
   return (
-    <Pressable
-      style={({ pressed }) => [
-        styles.option,
-        {
-          backgroundColor: selected
-            ? colors.accentWine
-            : pressed
-              ? 'rgba(139,46,60,0.14)'
-              : 'transparent',
-        },
-      ]}
+    <HoverPressable
+      isDark={isDark}
+      selected={selected}
+      style={styles.option}
       onPress={() => {
         onSelect(book.bookNum);
         onClose();
@@ -131,7 +127,7 @@ function BookRow({
       ) : (
         <View style={styles.checkPlaceholder} />
       )}
-    </Pressable>
+    </HoverPressable>
   );
 }
 

@@ -3,6 +3,9 @@ export const TAB_BAR_CONTENT_HEIGHT = 56;
 
 export const SCROLL_EXTRA_BOTTOM_PADDING = 12;
 
+/** Consistent margin above the bottom of the screen (safe area + breathing room). */
+export const SCREEN_BOTTOM_CONTENT_MARGIN = 8;
+
 /**
  * Extra pixels under the tab icons so sub-pixel / home-indicator seams stay covered.
  * Also added to scroll bottom padding so content clears the taller bar.

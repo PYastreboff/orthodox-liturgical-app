@@ -15,8 +15,7 @@ export function tabBarBackground(isDark: boolean): string {
   return isDark ? colors.darkSurface : colors.card;
 }
 
-const SELECTION_INSET_X = 3;
-const SELECTION_INSET_Y = 5;
+const SELECTION_INSET = 5;
 
 /** Bottom-positioned floating pill tab bar (phone + web). */
 export function MainTabBar(props: MaterialTopTabBarProps) {
@@ -34,7 +33,7 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
   const inputRange = state.routes.map((_, index) => index);
   const outputRange =
     slotWidth > 0
-      ? state.routes.map((_, index) => index * slotWidth + SELECTION_INSET_X)
+      ? state.routes.map((_, index) => index * slotWidth + SELECTION_INSET)
       : state.routes.map(() => 0);
   const selectionTranslateX =
     slotWidth > 0
@@ -74,7 +73,7 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
                 style={[
                   styles.selectionFill,
                   {
-                    width: slotWidth - SELECTION_INSET_X * 2,
+                    width: slotWidth - SELECTION_INSET * 2,
                     backgroundColor: vestmentAccent.accentSoft,
                     transform: [{ translateX: selectionTranslateX }],
                   },
@@ -115,8 +114,8 @@ const styles = StyleSheet.create({
   },
   selectionFill: {
     position: 'absolute',
-    top: SELECTION_INSET_Y,
-    bottom: SELECTION_INSET_Y,
+    top: SELECTION_INSET,
+    bottom: SELECTION_INSET,
     borderRadius: radii.pill,
   },
 });

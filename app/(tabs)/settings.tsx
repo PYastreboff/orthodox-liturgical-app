@@ -23,7 +23,6 @@ import { AppScrollView } from '../../src/components/AppScrollView';
 import { DevotionalPageHeader } from '../../src/components/DevotionalPageHeader';
 import {
   SettingsLinkRow,
-  settingsLinkListInset,
   settingsListCard,
 } from '../../src/components/settings/SettingsLinkRow';
 import { SettingsOptionModal, type SettingsOption } from '../../src/components/settings/SettingsOptionModal';
@@ -54,6 +53,7 @@ import { usePreferences } from '../../src/state/PreferencesContext';
 import type { ColorSchemePreference } from '../../src/state/PreferencesContext';
 import type { UiLanguage } from '../../src/i18n/types';
 import type { PrimaryCalendar } from '../../src/lib/calendar/dateDisplay';
+import type { CalendarColourMode } from '../../src/lib/calendar/calendarCellStyle';
 import type { FontScalePreference } from '../../src/theme/fontScale';
 import type { PersonalDayKind } from '../../src/lib/personalDays';
 import type { ClergyRole } from '../../src/types/liturgical';
@@ -76,6 +76,7 @@ type SettingsPicker =
   | 'appearance'
   | 'fontScale'
   | 'calendar'
+  | 'calendarColour'
   | 'language'
   | 'personalDays'
   | null;
@@ -132,6 +133,8 @@ export default function SettingsScreen() {
   const {
     primaryCalendar,
     setPrimaryCalendar,
+    calendarColourMode,
+    setCalendarColourMode,
     colorSchemePreference,
     setColorSchemePreference,
     showVestmentGradient,
@@ -182,6 +185,10 @@ export default function SettingsScreen() {
         : t('settings.fontScaleDefault');
   const calendarLabel =
     primaryCalendar === 'julian' ? t('settings.calendarJulian') : t('settings.calendarGregorian');
+  const calendarColourLabel =
+    calendarColourMode === 'liturgical'
+      ? t('settings.calendarColourLiturgical')
+      : t('settings.calendarColourFasting');
   const languageLabel =
     uiLanguage === 'en'
       ? t('settings.languageEnglish')
@@ -313,6 +320,14 @@ export default function SettingsScreen() {
     [t],
   );
 
+  const calendarColourOptions = useMemo(
+    (): SettingsOption<CalendarColourMode>[] => [
+      { id: 'fasting', label: t('settings.calendarColourFasting') },
+      { id: 'liturgical', label: t('settings.calendarColourLiturgical') },
+    ],
+    [t],
+  );
+
   const languageOptions = useMemo(
     (): SettingsOption<UiLanguage>[] => [
       {
@@ -375,6 +390,8 @@ export default function SettingsScreen() {
         return t('settings.textSize');
       case 'calendar':
         return t('settings.liturgicalCalendar');
+      case 'calendarColour':
+        return t('settings.calendarColourMode');
       case 'language':
         return t('settings.appLanguage');
       case 'personalDays':
@@ -496,137 +513,142 @@ export default function SettingsScreen() {
           </View>
 
           <View style={settingsListCard(isDark)}>
-            <View style={settingsLinkListInset}>
-              <SettingsLinkRow
-                isDark={isDark}
-                leading={
-                  <MaterialCommunityIcons
-                    name={SERVING_ROLE_ICON_NAMES[servingRole]}
-                    size={18}
-                    color={roleIconColor}
-                  />
-                }
-                label={t('settings.servingRole')}
-                hint={t('settings.servingRoleRowHint')}
-                valueLabel={servingRoleLabel}
-                onPress={() => setActivePicker('servingRole')}
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="sun"
-                label={t('settings.appearance')}
-                hint={t('settings.appearanceRowHint')}
-                valueLabel={themeLabel}
-                onPress={() => setActivePicker('appearance')}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="droplet"
-                label={t('settings.backgroundColour')}
-                hint={t('settings.backgroundColourHint')}
-                trailing={
-                  <SettingsSwitch
-                    value={showVestmentGradient}
-                    onValueChange={setShowVestmentGradient}
-                    isDark={isDark}
-                    accessibilityLabel={t('settings.backgroundColour')}
-                  />
-                }
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="type"
-                label={t('settings.textSize')}
-                hint={t('settings.textSizeRowHint')}
-                valueLabel={fontScaleLabel}
-                onPress={() => setActivePicker('fontScale')}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="calendar"
-                label={t('settings.liturgicalCalendar')}
-                hint={t('settings.liturgicalCalendarRowHint')}
-                valueLabel={calendarLabel}
-                onPress={() => setActivePicker('calendar')}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="globe"
-                label={t('settings.appLanguage')}
-                hint={t('settings.appLanguageRowHint')}
-                valueLabel={languageLabel}
-                onPress={() => setActivePicker('language')}
-                showDivider
-              />
-
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="bell"
-                label={t('settings.notifications')}
-                hint={t('settings.notificationsRowHint')}
-                valueLabel={notificationsValueLabel}
-                onPress={() => setNotificationsOpen(true)}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="smartphone"
-                label={t('settings.homeScreenWidget')}
-                hint={
-                  nativeReminders
-                    ? t('settings.homeScreenWidgetHint')
-                    : t('settings.notificationsWebOnly')
-                }
-                trailing={
-                  <SettingsSwitch
-                    value={homeScreenWidget}
-                    onValueChange={setHomeScreenWidget}
-                    isDark={isDark}
-                    accessibilityLabel={t('settings.homeScreenWidget')}
-                  />
-                }
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="bookmark"
-                label={t('settings.personalDays')}
-                hint={t('settings.personalDaysRowHint')}
-                valueLabel={personalDaysValueLabel}
-                onPress={() => setActivePicker('personalDays')}
-                showDivider
-              />
-
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="info"
-                label={t('settings.colorsLegendLink')}
-                hint={t('settings.colorsLegendLinkHint')}
-                onPress={() => router.push('/legend')}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="shield"
-                label={t('settings.privacyPolicyLink')}
-                hint={t('settings.privacyPolicyHint')}
-                onPress={() => router.push('/privacy')}
-                showDivider
-              />
-              <SettingsLinkRow
-                isDark={isDark}
-                icon="life-buoy"
-                label={t('settings.supportLink')}
-                hint={t('settings.supportHint')}
-                onPress={() => Linking.openURL(SUPPORT_URL)}
-                trailingIcon="external-link"
-                showDivider
-              />
-            </View>
+            <SettingsLinkRow
+              isDark={isDark}
+              leading={
+                <MaterialCommunityIcons
+                  name={SERVING_ROLE_ICON_NAMES[servingRole]}
+                  size={18}
+                  color={roleIconColor}
+                />
+              }
+              label={t('settings.servingRole')}
+              hint={t('settings.servingRoleRowHint')}
+              valueLabel={servingRoleLabel}
+              onPress={() => setActivePicker('servingRole')}
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="sun"
+              label={t('settings.appearance')}
+              hint={t('settings.appearanceRowHint')}
+              valueLabel={themeLabel}
+              onPress={() => setActivePicker('appearance')}
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="droplet"
+              label={t('settings.backgroundColour')}
+              hint={t('settings.backgroundColourHint')}
+              trailing={
+                <SettingsSwitch
+                  value={showVestmentGradient}
+                  onValueChange={setShowVestmentGradient}
+                  isDark={isDark}
+                  accessibilityLabel={t('settings.backgroundColour')}
+                />
+              }
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="type"
+              label={t('settings.textSize')}
+              hint={t('settings.textSizeRowHint')}
+              valueLabel={fontScaleLabel}
+              onPress={() => setActivePicker('fontScale')}
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="calendar"
+              label={t('settings.liturgicalCalendar')}
+              hint={t('settings.liturgicalCalendarRowHint')}
+              valueLabel={calendarLabel}
+              onPress={() => setActivePicker('calendar')}
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="layout"
+              label={t('settings.calendarColourMode')}
+              hint={t('settings.calendarColourModeRowHint')}
+              valueLabel={calendarColourLabel}
+              onPress={() => setActivePicker('calendarColour')}
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="globe"
+              label={t('settings.appLanguage')}
+              hint={t('settings.appLanguageRowHint')}
+              valueLabel={languageLabel}
+              onPress={() => setActivePicker('language')}
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="bell"
+              label={t('settings.notifications')}
+              hint={t('settings.notificationsRowHint')}
+              valueLabel={notificationsValueLabel}
+              onPress={() => setNotificationsOpen(true)}
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="smartphone"
+              label={t('settings.homeScreenWidget')}
+              hint={
+                nativeReminders
+                  ? t('settings.homeScreenWidgetHint')
+                  : t('settings.notificationsWebOnly')
+              }
+              trailing={
+                <SettingsSwitch
+                  value={homeScreenWidget}
+                  onValueChange={setHomeScreenWidget}
+                  isDark={isDark}
+                  accessibilityLabel={t('settings.homeScreenWidget')}
+                />
+              }
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="bookmark"
+              label={t('settings.personalDays')}
+              hint={t('settings.personalDaysRowHint')}
+              valueLabel={personalDaysValueLabel}
+              onPress={() => setActivePicker('personalDays')}
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="info"
+              label={t('settings.colorsLegendLink')}
+              hint={t('settings.colorsLegendLinkHint')}
+              onPress={() => router.push('/legend')}
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="shield"
+              label={t('settings.privacyPolicyLink')}
+              hint={t('settings.privacyPolicyHint')}
+              onPress={() => router.push('/privacy')}
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="life-buoy"
+              label={t('settings.supportLink')}
+              hint={t('settings.supportHint')}
+              onPress={() => Linking.openURL(SUPPORT_URL)}
+              trailingIcon="external-link"
+              showDivider
+            />
           </View>
 
           <View
@@ -750,6 +772,17 @@ export default function SettingsScreen() {
           options={calendarOptions}
           value={primaryCalendar}
           onSelect={setPrimaryCalendar}
+          onClose={() => setActivePicker(null)}
+          isDark={isDark}
+        />
+      ) : null}
+      {activePicker === 'calendarColour' ? (
+        <SettingsOptionModal
+          visible
+          title={pickerTitle}
+          options={calendarColourOptions}
+          value={calendarColourMode}
+          onSelect={setCalendarColourMode}
           onClose={() => setActivePicker(null)}
           isDark={isDark}
         />

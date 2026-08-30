@@ -482,27 +482,6 @@ function LiturgyToolbar({
         ) : null}
       </View>
       <LiturgyLanguageToggle mode={mode} onChange={onChange} isDark={isDark} fullWidth />
-      {mode.kind === 'compare' ? (
-        <>
-          <CompareSidePicker<LiturgyTextLang>
-            left={mode.left}
-            right={mode.right}
-            onChangeLeft={(left) => onChange({ kind: 'compare', left, right: mode.right })}
-            onChangeRight={(right) => onChange({ kind: 'compare', left: mode.left, right })}
-            options={[
-              { value: 'en', label: 'EN' },
-              { value: 'el', label: 'ΕΛ' },
-              { value: 'ru', label: 'ЧС' },
-            ]}
-            leftLabel={t('readings.compareColumnLeft')}
-            rightLabel={t('readings.compareColumnRight')}
-            isDark={isDark}
-          />
-          <Text style={[hintType, styles.compareHint, { color: mutedColor }]}>
-            {t('liturgy.chrysostom.compareHint')}
-          </Text>
-        </>
-      ) : null}
     </View>
   );
 }
@@ -998,6 +977,22 @@ export function WorshipLiturgyBody({
   const reload =
     service === 'vespers' ? vespers.reload : service === 'basil' ? basil.reload : chrysostom.reload;
 
+  const compareSlots =
+    liturgyState.status === 'ready' && mode.kind === 'compare' ? (
+      <CompareSidePicker<LiturgyTextLang>
+        left={mode.left}
+        right={mode.right}
+        onChangeLeft={(left) => setMode({ kind: 'compare', left, right: mode.right })}
+        onChangeRight={(right) => setMode({ kind: 'compare', left: mode.left, right })}
+        options={[
+          { value: 'en', label: 'EN' },
+          { value: 'el', label: 'ΕΛ' },
+          { value: 'ru', label: 'ЧС' },
+        ]}
+        isDark={isDark}
+      />
+    ) : null;
+
   const toolbar =
     liturgyState.status === 'ready' ? (
       <LiturgyToolbar
@@ -1029,6 +1024,8 @@ export function WorshipLiturgyBody({
       ) : liturgyState.status !== 'ready' ? (
         <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
       ) : null}
+
+      {compareSlots}
 
       {liturgyState.status === 'loading' ? (
         <View style={styles.centered}>

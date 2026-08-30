@@ -1,5 +1,10 @@
 import { colors } from '../../theme/tokens';
+import type { LiturgicalDayAppearance } from './dayAppearance';
+import { liturgicalSwatchKey, type LiturgicalSwatchKey } from '../liturgical/liturgicalSwatchKey';
+import { liturgicalVestmentColor } from '../liturgical/vestments';
 import { WEEKLY_FAST_APPEARANCE_KEYS } from './weeklyFast';
+
+export type CalendarColourMode = 'fasting' | 'liturgical';
 
 export type CalendarCellStyle = {
   backgroundColor: string;
@@ -45,18 +50,20 @@ export const CALENDAR_CELL_DARK_PALM_SUNDAY = '#243028';
 export const CALENDAR_CELL_DARK_PASCHA = '#5a4824';
 
 export type CalendarCellLegendItem = {
-  key:
-    | 'calendar.legendNonFasting'
-    | 'calendar.legendFasting'
-    | 'calendar.legendFeast'
-    | 'calendar.legendToday';
+  key: string;
   swatch: string;
   border?: true;
   feastOutline?: true;
   todayRing?: true;
 };
 
-export function calendarCellLegend(isDark: boolean): readonly CalendarCellLegendItem[] {
+export function calendarCellLegend(
+  isDark: boolean,
+  colourMode: CalendarColourMode = 'fasting',
+): readonly CalendarCellLegendItem[] {
+  if (colourMode === 'liturgical') {
+    return calendarLiturgicalCellLegend(isDark);
+  }
   if (isDark) {
     return [
       { key: 'calendar.legendNonFasting', swatch: CALENDAR_CELL_DARK_NORMAL, border: true },
@@ -73,6 +80,36 @@ export function calendarCellLegend(isDark: boolean): readonly CalendarCellLegend
   ];
 }
 
+const LITURGICAL_LEGEND_SWATCHES: ReadonlyArray<{
+  key: string;
+  pillBg: string;
+  swatchKey: LiturgicalSwatchKey;
+}> = [
+  { key: 'vestments.colorGold', pillBg: '#b08d57', swatchKey: 'gold' },
+  { key: 'vestments.colorWhite', pillBg: '#f0ebe3', swatchKey: 'white' },
+  { key: 'vestments.colorBlue', pillBg: '#2f4a6f', swatchKey: 'blue' },
+  { key: 'vestments.colorRed', pillBg: '#8b2e3c', swatchKey: 'red' },
+  { key: 'vestments.colorGreen', pillBg: '#2d5a3e', swatchKey: 'green' },
+  { key: 'vestments.colorBlack', pillBg: '#121010', swatchKey: 'black' },
+  { key: 'vestments.colorPurple', pillBg: '#5c3d6e', swatchKey: 'purple' },
+];
+
+export function calendarLiturgicalCellLegend(isDark: boolean): readonly CalendarCellLegendItem[] {
+  return LITURGICAL_LEGEND_SWATCHES.map((item) => ({
+    key: item.key,
+    swatch: liturgicalCellBackground(item.pillBg, isDark, item.swatchKey),
+    border: item.swatchKey === 'white' ? true : undefined,
+  }));
+}
+
+export type CalendarCellStyleOptions = {
+  feastCell?: boolean;
+  fastingCell?: boolean;
+  meatFastCell?: boolean;
+  colourMode?: CalendarColourMode;
+  appearance?: LiturgicalDayAppearance;
+};
+
 export function isFeastCellAppearance(appearanceKey: string): boolean {
   return FEAST_CELL_APPEARANCE_KEYS.has(appearanceKey);
 }
@@ -82,17 +119,17 @@ export function isCalendarFastingAppearance(appearanceKey: string): boolean {
 }
 
 /**
- * Calendar month cells: normal · fasting grey · feast pink (light) or muted dark tints (dark mode).
+ * Calendar month cells: fasting grey (default) or liturgical vestment tints.
  */
 export function getCalendarCellStyle(
   appearanceKey: string,
-  options?: {
-    feastCell?: boolean;
-    fastingCell?: boolean;
-    meatFastCell?: boolean;
-  },
+  options?: CalendarCellStyleOptions,
   isDark = false,
 ): CalendarCellStyle {
+  if (options?.colourMode === 'liturgical' && options.appearance) {
+    return getLiturgicalColourCellStyle(options.appearance, isDark);
+  }
+
   const foreground = isDark ? colors.darkInk : colors.ink;
 
   if (isDark) {
@@ -138,6 +175,67 @@ export function getCalendarCellStyle(
   return { backgroundColor: CALENDAR_CELL_WHITE, foreground: colors.ink };
 }
 
+export function getLiturgicalColourCellStyle(
+  appearance: LiturgicalDayAppearance,
+  isDark: boolean,
+): CalendarCellStyle {
+  const swatchKey = liturgicalSwatchKey(appearance);
+  const swatch = liturgicalVestmentColor(appearance);
+  const backgroundColor = liturgicalCellBackground(swatch.pillBg, isDark, swatchKey);
+  const foreground = readableTextOn(backgroundColor, swatch.pillText, colors.ink, colors.darkInk);
+  return { backgroundColor, foreground };
+}
+
+function liturgicalCellBackground(
+  pillBg: string,
+  isDark: boolean,
+  swatchKey?: LiturgicalSwatchKey,
+): string {
+  if (isDark) {
+    if (swatchKey === 'gold') {
+      return mixHex('#d9bc6e', '#f0e4c0', 0.45);
+    }
+    if (swatchKey === 'white') {
+      return mixHex(pillBg, '#ffffff', 0.32);
+    }
+    return mixHex(pillBg, CALENDAR_CELL_DARK_NORMAL, 0.55);
+  }
+  return mixHex(pillBg, '#ffffff', 0.58);
+}
+
+function readableTextOn(
+  background: string,
+  onPill: string,
+  lightInk: string,
+  darkInk: string,
+): string {
+  const lum = relativeLuminance(background);
+  if (lum < 0.42) return onPill === lightInk ? darkInk : onPill;
+  return lightInk;
+}
+
+function relativeLuminance(hex: string): number {
+  const rgb = parseHex(hex);
+  if (!rgb) return 0.5;
+  const channel = (value: number) => {
+    const s = value / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(rgb.r) + 0.7152 * channel(rgb.g) + 0.0722 * channel(rgb.b);
+}
+
+function mixHex(a: string, b: string, amount: number): string {
+  const from = parseHex(a);
+  const to = parseHex(b);
+  if (!from || !to) return a;
+  const t = Math.max(0, Math.min(1, amount));
+  return toHex(
+    from.r + (to.r - from.r) * t,
+    from.g + (to.g - from.g) * t,
+    from.b + (to.b - from.b) * t,
+  );
+}
+
 function parseHex(hex: string): { r: number; g: number; b: number } | null {
   const raw = hex.replace('#', '').trim();
   const full =
@@ -174,7 +272,6 @@ export function calendarCellHoverBackground(
   const rgb = parseHex(backgroundColor);
   if (!rgb) return backgroundColor;
   if (isDark) {
-    // Multiply-by-1.07 was imperceptible on dark cells — mix toward white instead.
     const mix = 0.14;
     return toHex(
       rgb.r + (255 - rgb.r) * mix,

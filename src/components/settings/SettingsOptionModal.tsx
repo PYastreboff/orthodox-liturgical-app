@@ -1,13 +1,13 @@
 import { Feather } from '@expo/vector-icons';
 import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
+import { HoverPressable } from '../HoverPressable';
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
-import { colors, radii } from '../../theme/tokens';
-import { SettingsSheetFrame } from './SettingsSheetFrame';
+import { colors } from '../../theme/tokens';
+import { SettingsSheetFrame, SettingsSheetScrollView } from './SettingsSheetFrame';
 
 const SELECTED_FG = '#fff';
-const PRESSED_TINT = 'rgba(139,46,60,0.14)';
 
 function tintLeading(node: ReactNode, selected: boolean): ReactNode {
   if (!selected || !isValidElement(node)) return node;
@@ -57,7 +57,7 @@ export function SettingsOptionModal<T extends string>({
       handleColor={handleColor}
     >
       <Text style={[styles.title, { color: textColor }]}>{title}</Text>
-      <ScrollView
+      <SettingsSheetScrollView
         style={styles.optionsScroll}
         contentContainerStyle={styles.optionsContent}
         keyboardShouldPersistTaps="handled"
@@ -65,18 +65,11 @@ export function SettingsOptionModal<T extends string>({
         {options.map((option) => {
           const selected = option.id === value;
           return (
-            <Pressable
+            <HoverPressable
               key={option.id}
-              style={({ pressed }) => [
-                styles.option,
-                {
-                  backgroundColor: selected
-                    ? colors.accentWine
-                    : pressed
-                      ? PRESSED_TINT
-                      : 'transparent',
-                },
-              ]}
+              isDark={isDark}
+              selected={selected}
+              style={styles.option}
               onPress={() => {
                 onSelect(option.id);
                 onClose();
@@ -99,10 +92,10 @@ export function SettingsOptionModal<T extends string>({
               ) : (
                 <View style={styles.checkPlaceholder} />
               )}
-            </Pressable>
+            </HoverPressable>
           );
         })}
-      </ScrollView>
+      </SettingsSheetScrollView>
     </SettingsSheetFrame>
   );
 }

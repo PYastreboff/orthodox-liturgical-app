@@ -3,8 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -12,6 +10,7 @@ import {
   View,
 } from 'react-native';
 
+import { HoverPressable } from '../HoverPressable';
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../../i18n/useAppTranslation';
 import { intlLocaleForLanguage } from '../../i18n/locale';
@@ -30,7 +29,7 @@ import {
   type PersonalDayKind,
 } from '../../lib/personalDays';
 import { colors } from '../../theme/tokens';
-import { SettingsSheetFrame } from './SettingsSheetFrame';
+import { SettingsSheetFrame, SettingsSheetScrollView } from './SettingsSheetFrame';
 import { SettingsSwitch } from './SettingsSwitch';
 
 type Props = {
@@ -244,9 +243,11 @@ export function SettingsPersonalDaysModal({
         </Text>
       ) : (
         items.map((item) => (
-          <Pressable
+          <HoverPressable
             key={item.id}
-            style={[styles.itemRow, { backgroundColor: fieldBg }]}
+            isDark={isDark}
+            baseBackground={fieldBg}
+            style={styles.itemRow}
             onPress={() => setDraft(draftFromDay(item))}
             accessibilityRole="button"
             {...hoverAccessibilityProps(item.title, { role: 'button' })}
@@ -264,10 +265,11 @@ export function SettingsPersonalDaysModal({
               </Text>
             </View>
             <Feather name="chevron-right" size={18} color={mutedColor} />
-          </Pressable>
+          </HoverPressable>
         ))
       )}
-      <Pressable
+      <HoverPressable
+        isDark={isDark}
         style={styles.addBtn}
         onPress={() => setDraft(emptyDraft(kind, 'gregorian'))}
         disabled={days.length >= MAX_PERSONAL_DAYS}
@@ -276,7 +278,7 @@ export function SettingsPersonalDaysModal({
       >
         <Feather name="plus" size={16} color={isDark ? '#fff' : textColor} />
         <Text style={[styles.addLabel, { color: isDark ? '#fff' : textColor }]}>{addLabel}</Text>
-      </Pressable>
+      </HoverPressable>
     </View>
   );
 
@@ -328,7 +330,7 @@ export function SettingsPersonalDaysModal({
             </Text>
 
             {draft ? (
-              <ScrollView
+              <SettingsSheetScrollView
                 style={styles.scroll}
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
@@ -355,12 +357,11 @@ export function SettingsPersonalDaysModal({
                         ? t('settings.calendarJulian')
                         : t('settings.calendarGregorian');
                     return (
-                      <Pressable
+                      <HoverPressable
                         key={cal}
-                        style={[
-                          styles.calendarOption,
-                          selected ? { backgroundColor: colors.accentWine } : null,
-                        ]}
+                        isDark={isDark}
+                        selected={selected}
+                        style={styles.calendarOption}
                         onPress={() => setDraftCalendar(cal)}
                         accessibilityRole="button"
                         accessibilityState={{ selected }}
@@ -375,13 +376,14 @@ export function SettingsPersonalDaysModal({
                         >
                           {label}
                         </Text>
-                      </Pressable>
+                      </HoverPressable>
                     );
                   })}
                 </View>
                 <View style={styles.dateRow}>
                   <View style={[styles.stepper, { backgroundColor: fieldBg, borderColor, flex: 1.4 }]}>
-                    <Pressable
+                    <HoverPressable
+                      isDark={isDark}
                       onPress={() => shiftMonth(-1)}
                       style={styles.stepperBtn}
                       accessibilityRole="button"
@@ -391,11 +393,12 @@ export function SettingsPersonalDaysModal({
                       })}
                     >
                       <Feather name="chevron-left" size={18} color={textColor} />
-                    </Pressable>
+                    </HoverPressable>
                     <Text style={[styles.stepperValue, { color: textColor }]} numberOfLines={1}>
                       {monthLabel}
                     </Text>
-                    <Pressable
+                    <HoverPressable
+                      isDark={isDark}
                       onPress={() => shiftMonth(1)}
                       style={styles.stepperBtn}
                       accessibilityRole="button"
@@ -405,11 +408,12 @@ export function SettingsPersonalDaysModal({
                       })}
                     >
                       <Feather name="chevron-right" size={18} color={textColor} />
-                    </Pressable>
+                    </HoverPressable>
                   </View>
 
                   <View style={[styles.stepper, { backgroundColor: fieldBg, borderColor, flex: 0.85 }]}>
-                    <Pressable
+                    <HoverPressable
+                      isDark={isDark}
                       onPress={() => shiftDay(-1)}
                       style={styles.stepperBtn}
                       accessibilityRole="button"
@@ -419,9 +423,10 @@ export function SettingsPersonalDaysModal({
                       })}
                     >
                       <Feather name="chevron-left" size={18} color={textColor} />
-                    </Pressable>
+                    </HoverPressable>
                     <Text style={[styles.stepperValue, { color: textColor }]}>{draft.day}</Text>
-                    <Pressable
+                    <HoverPressable
+                      isDark={isDark}
                       onPress={() => shiftDay(1)}
                       style={styles.stepperBtn}
                       accessibilityRole="button"
@@ -431,14 +436,15 @@ export function SettingsPersonalDaysModal({
                       })}
                     >
                       <Feather name="chevron-right" size={18} color={textColor} />
-                    </Pressable>
+                    </HoverPressable>
                   </View>
                 </View>
 
                 {draft.kind === 'repose' ? (
                   <View style={[styles.dateRow, { marginTop: 8 }]}>
                     <View style={[styles.stepper, { backgroundColor: fieldBg, borderColor, flex: 1 }]}>
-                      <Pressable
+                      <HoverPressable
+                        isDark={isDark}
                         onPress={() => shiftYear(-1)}
                         style={styles.stepperBtn}
                         accessibilityRole="button"
@@ -448,9 +454,10 @@ export function SettingsPersonalDaysModal({
                         })}
                       >
                         <Feather name="chevron-left" size={18} color={textColor} />
-                      </Pressable>
+                      </HoverPressable>
                       <Text style={[styles.stepperValue, { color: textColor }]}>{draft.year}</Text>
-                      <Pressable
+                      <HoverPressable
+                        isDark={isDark}
                         onPress={() => shiftYear(1)}
                         style={styles.stepperBtn}
                         accessibilityRole="button"
@@ -460,7 +467,7 @@ export function SettingsPersonalDaysModal({
                         })}
                       >
                         <Feather name="chevron-right" size={18} color={textColor} />
-                      </Pressable>
+                      </HoverPressable>
                     </View>
                   </View>
                 ) : null}
@@ -511,33 +518,34 @@ export function SettingsPersonalDaysModal({
                     ) : null}
                   </>
                 ) : null}
-              </ScrollView>
+              </SettingsSheetScrollView>
             ) : (
-              <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+              <SettingsSheetScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
                 {renderList()}
                 {days.length >= MAX_PERSONAL_DAYS ? (
                   <Text style={[styles.empty, { color: mutedColor }]}>
                     {t('settings.personalDaysMax')}
                   </Text>
                 ) : null}
-              </ScrollView>
+              </SettingsSheetScrollView>
             )}
 
             <View style={styles.actions}>
               {draft ? (
                 <>
                   {draft.id ? (
-                    <Pressable onPress={removeDraft} style={styles.actionBtn}>
+                    <HoverPressable isDark={isDark} onPress={removeDraft} style={styles.actionBtn}>
                       <Text style={styles.deleteLabel}>{t('settings.deletePersonalDay')}</Text>
-                    </Pressable>
+                    </HoverPressable>
                   ) : (
-                    <Pressable onPress={() => setDraft(null)} style={styles.actionBtn}>
+                    <HoverPressable isDark={isDark} onPress={() => setDraft(null)} style={styles.actionBtn}>
                       <Text style={[styles.backLabel, { color: mutedColor }]}>
                         {t('settings.personalDayBack')}
                       </Text>
-                    </Pressable>
+                    </HoverPressable>
                   )}
-                  <Pressable
+                  <HoverPressable
+                    isDark={isDark}
                     onPress={() => void saveDraft()}
                     style={styles.actionBtn}
                     disabled={!draft.title.trim()}
@@ -553,14 +561,14 @@ export function SettingsPersonalDaysModal({
                     >
                       {t('settings.savePersonalDay')}
                     </Text>
-                  </Pressable>
+                  </HoverPressable>
                 </>
               ) : (
-                <Pressable onPress={closeAll} style={styles.actionBtn}>
+                <HoverPressable isDark={isDark} onPress={closeAll} style={styles.actionBtn}>
                   <Text style={[styles.backLabel, { color: mutedColor }]}>
                     {t('settings.personalDayBack')}
                   </Text>
-                </Pressable>
+                </HoverPressable>
               )}
             </View>
         </View>

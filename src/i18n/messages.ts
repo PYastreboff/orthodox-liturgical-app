@@ -75,6 +75,12 @@ const en = {
     liturgicalCalendarRowHint: 'Julian or Gregorian feasts and fasts.',
     calendarJulian: 'Julian',
     calendarGregorian: 'Gregorian',
+    calendarColourMode: 'Calendar colours',
+    calendarColourModeHint:
+      'On the month grid, show fasting-day grey cells or liturgical vestment colours for each day.',
+    calendarColourModeRowHint: 'Fasting grey or liturgical vestment tints.',
+    calendarColourFasting: 'Fasting days',
+    calendarColourLiturgical: 'Liturgical colour',
     appLanguage: 'Language',
     appLanguageHint: 'Interface labels and descriptions. Scripture can still use English or Church Slavonic.',
     appLanguageRowHint: 'Interface labels (EN / RU / EL).',
@@ -83,8 +89,8 @@ const en = {
     languageGreek: 'Ελληνικά',
     servingRole: 'Serving Role',
     servingRoleHint:
-      'Controls vestments and church clothing on Today — layperson, chorister, altar server, reader, deacon, priest, or bishop.',
-    servingRoleRowHint: 'Vestments and guides on Today.',
+      'Tailored church dress and serving guidance on Today — layperson, chorister, altar server, reader, deacon, priest, or bishop.',
+    servingRoleRowHint: 'Church dress and serving guides on Today.',
     notifications: 'Notifications',
     notificationsHint:
       'Choose which local alerts you want. Times are approximate — confirm with your parish. Available on iOS and Android.',
@@ -1256,6 +1262,7 @@ const en = {
     compareColumnRight: 'Right',
     compareSelectLanguage: 'Select…',
     compareSelectLanguages: 'Choose a language for each column to compare.',
+    compareTextUnavailable: 'Unable to find this text for today.',
     toggleReadings: 'Toggle scripture language',
     filterAll: 'All',
     toggleCategory: 'Filter liturgical text type',
@@ -1545,6 +1552,9 @@ const en = {
       serviceChrysostom: 'St John',
       serviceBasil: 'St Basil',
       serviceVespers: 'Vespers',
+      pageTitleChrysostom: 'Divine Liturgy of St John Chrysostom',
+      pageTitleBasil: 'Divine Liturgy of St Basil the Great',
+      pageTitleVespers: 'Great Vespers',
       searchPlaceholder: 'Find in this service…',
       searchClear: 'Clear search',
       searchMatchCount: '{count} matches',
@@ -1556,6 +1566,8 @@ const en = {
     vespers: {
       intro:
         'Great Vespers — the evening service before a liturgy. Fixed parts are below; stichera and aposticha change with the day.',
+      pageSubtitle:
+        'The evening service before the Divine Liturgy; stichera and aposticha change with the day.',
       disclaimer:
         'Variable hymns and readings depend on the day. Rubrics and local practice differ — follow your parish and bishop.',
       loading: 'Loading Vespers text…',
@@ -1572,6 +1584,7 @@ const en = {
     chrysostom: {
       intro:
         'The Divine Liturgy of St John Chrysostom — the usual Sunday and feast-day Eucharist in most Orthodox churches. The full text is below for personal follow-along; variable hymns and readings depend on the day.',
+      pageSubtitle: 'The usual Sunday and feast-day Eucharist.',
       disclaimer:
         'Full fixed parts (variable antiphons, troparia, and readings depend on the day). Rubrics and local commemorations differ — follow your parish and bishop.',
       loading: 'Loading liturgy text…',
@@ -1605,6 +1618,7 @@ const en = {
     basil: {
       intro:
         'The Divine Liturgy of St Basil the Great — celebrated on the five Sundays of Great Lent, Holy Thursday, Holy Saturday, January 1, and the eves of Nativity and Theophany (with typikon exceptions). The full fixed text is below; variable hymns and readings depend on the day.',
+      pageSubtitle: 'Served on Great Lent Sundays, Holy Week, and certain feast eves.',
       disclaimer:
         'GOARCH Hieratikon fixed parts. Russian follows the Chrysostom congregational text where the services are parallel; the anaphora differs in length and wording. Follow your parish and bishop.',
       loading: 'Loading liturgy text…',
@@ -1849,6 +1863,12 @@ const ru = {
     liturgicalCalendarRowHint: 'Юлианский или григорианский календарь.',
     calendarJulian: 'Юлианский',
     calendarGregorian: 'Григорианский',
+    calendarColourMode: 'Цвета календаря',
+    calendarColourModeHint:
+      'На сетке месяца — серые постные дни или литургические цвета облачений.',
+    calendarColourModeRowHint: 'Постные дни или литургические цвета.',
+    calendarColourFasting: 'Постные дни',
+    calendarColourLiturgical: 'Литургический цвет',
     appLanguage: 'Язык',
     appLanguageHint:
       'Подписи интерфейса. Писание по-прежнему можно читать на английском или церковнославянском.',
@@ -1858,8 +1878,8 @@ const ru = {
     languageGreek: 'Ελληνικά',
     servingRole: 'Служение',
     servingRoleHint:
-      'Определяет облачения и церковную одежду на экране «Сегодня» — мирянин, певчий, алтарник, чтец, диакон, священник или епископ.',
-    servingRoleRowHint: 'Облачения и руководства на «Сегодня».',
+      'Подсказки по церковной одежде и служению на «Сегодня» — мирянин, певчий, алтарник, чтец, диакон, священник или епископ.',
+    servingRoleRowHint: 'Одежда в храме и руководства на «Сегодня».',
     notifications: 'Уведомления',
     notificationsHint:
       'Выберите типы локальных уведомлений. Время ориентировочное — уточняйте в приходе. Доступно на iOS и Android.',
@@ -3045,6 +3065,7 @@ const ru = {
     compareColumnRight: 'Справа',
     compareSelectLanguage: 'Выбрать…',
     compareSelectLanguages: 'Выберите язык для каждого столбца.',
+    compareTextUnavailable: 'Не удалось найти этот текст на сегодня.',
     toggleReadings: 'Язык писания',
     filterAll: 'Все',
     toggleCategory: 'Тип богослужебного текста',
@@ -3334,6 +3355,9 @@ const ru = {
       serviceChrysostom: 'Златоуст',
       serviceBasil: 'Василий',
       serviceVespers: 'Вечерня',
+      pageTitleChrysostom: 'Божественная литургия святителя Иоанна Златоуста',
+      pageTitleBasil: 'Божественная литургия святителя Василия Великого',
+      pageTitleVespers: 'Великая вечерня',
       searchPlaceholder: 'Найти в службе…',
       searchClear: 'Очистить поиск',
       searchMatchCount: '{count} совпадений',
@@ -3345,6 +3369,8 @@ const ru = {
     vespers: {
       intro:
         'Великая вечерня — вечерняя служба перед литургией. Ниже неизменяемые части; стихиры и апостихи зависят от дня.',
+      pageSubtitle:
+        'Вечерняя служба перед Божественной литургией; стихиры и апостихи зависят от дня.',
       disclaimer:
         'Песнопения и чтения меняются по дню. Чин и местная практика различаются — следуйте указаниям своего прихода.',
       loading: 'Загрузка текста вечерни…',
@@ -3361,6 +3387,7 @@ const ru = {
     chrysostom: {
       intro:
         'Божественная литургия святого Иоанна Златоуста — обычная воскресная и праздничная литургия в большинстве православных храмов. Ниже полный текст для личного следования; изменяемые песнопения и чтения зависят от дня.',
+      pageSubtitle: 'Обычная воскресная и праздничная литургия.',
       disclaimer:
         'Полный текст неизменяемых частей (тропари, антифоны и чтения зависят от дня). Чин и поминовения различаются — следуйте указаниям своего прихода.',
       loading: 'Загрузка текста литургии…',
@@ -3394,6 +3421,7 @@ const ru = {
     basil: {
       intro:
         'Божественная литургия святителя Василия Великого — в пять воскресений Великого поста, в Великий четверг и субботу, 1 января и в кануны Рождества и Богоявления (с оговорками по Типикону). Ниже полный текст неизменяемых частей; тропари и чтения зависят от дня.',
+      pageSubtitle: 'В Великий пост, на Страстной седмице и в кануны праздников.',
       disclaimer:
         'Неизменяемые части по иератикону GOARCH. Русский текст взят из литургии Златоуста там, где службы совпадают; анафора длиннее и иначе сформулирована. Следуйте указаниям своего прихода.',
       loading: 'Загрузка текста литургии…',

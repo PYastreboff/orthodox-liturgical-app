@@ -1,7 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useMemo } from 'react';
 import {
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,10 +8,10 @@ import {
   View,
 } from 'react-native';
 
+import { HoverPressable } from './HoverPressable';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { bibleBookByNum } from '../lib/bible/bibleCanon';
-import { colors } from '../theme/tokens';
 import { SettingsSheetFrame } from './settings/SettingsSheetFrame';
 
 const SELECTED_FG = '#fff';
@@ -73,18 +72,11 @@ export function BibleChapterPickerModal({
           const selected = num === chapter;
           const label = t('bible.chapterLabel', { n: num });
           return (
-            <Pressable
+            <HoverPressable
               key={num}
-              style={({ pressed }) => [
-                styles.option,
-                {
-                  backgroundColor: selected
-                    ? colors.accentWine
-                    : pressed
-                      ? 'rgba(139,46,60,0.14)'
-                      : 'transparent',
-                },
-              ]}
+              isDark={isDark}
+              selected={selected}
+              style={styles.option}
               onPress={() => {
                 onSelect(num);
                 onClose();
@@ -104,7 +96,7 @@ export function BibleChapterPickerModal({
               ) : (
                 <View style={styles.checkPlaceholder} />
               )}
-            </Pressable>
+            </HoverPressable>
           );
         })}
       </ScrollView>

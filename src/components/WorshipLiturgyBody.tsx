@@ -3,9 +3,12 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import type { ScrollView } from 'react-native';
 
 import { AppScrollView } from './AppScrollView';
+import { CompareSidePicker } from './CompareSidePicker';
 import { LiturgyDisplayControls } from './LiturgyDisplayControls';
 import { LiturgyLine } from './LiturgyLine';
 import { LiturgySearchBar } from './LiturgySearchBar';
+import { useTabBarClearance } from '../hooks/useTabBarBottomPadding';
+import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useBasilLiturgy } from '../hooks/useBasilLiturgy';
 import { useChrysostomLiturgy } from '../hooks/useChrysostomLiturgy';
@@ -33,12 +36,13 @@ import {
 } from '../lib/liturgy/vespersLiturgy';
 import type { WorshipServiceId } from '../lib/liturgical/worshipNavigation';
 import type { LiturgyDisplayMode, LiturgyTextLang } from '../lib/liturgy/liturgyViewMode';
-import { liturgyCompareHasSelection } from '../lib/liturgy/liturgyViewMode';
+import { liturgyCompareHasSelection, liturgyCompareReady } from '../lib/liturgy/liturgyViewMode';
 import { expandLiturgyDisplayLines } from '../lib/liturgy/liturgySanitize';
 import {
   buildWorshipSearchPlan,
   type WorshipLineEntry,
 } from '../lib/text/worshipSearch';
+import { scrollAppScrollViewToElement } from '../lib/ui/scrollAppScrollViewToElement';
 import { surfaceCard } from '../theme/cards';
 import { colors, radii } from '../theme/tokens';
 
@@ -628,6 +632,10 @@ export function WorshipLiturgyBody({
   showServiceToggle = false,
 }: Props) {
   const { t } = useAppTranslation();
+  const tabBarClearance = useTabBarClearance(8);
+  const layoutInsets = useLayoutSafeAreaInsets();
+  const comparePickerBottomInset =
+    variant === 'tab' ? tabBarClearance : layoutInsets.bottom + 8;
   const chrysostom = useChrysostomLiturgy();
   const basil = useBasilLiturgy();
   const vespers = useVespersLiturgy();
@@ -701,9 +709,13 @@ export function WorshipLiturgyBody({
         ? 'liturgy.basil.offline'
         : 'liturgy.chrysostom.offline';
 
+  const inCompareMode = liturgyState.status === 'ready' && mode.kind === 'compare';
+  const compareReady = inCompareMode && liturgyCompareReady(mode);
+  const showCompareSetup = inCompareMode && !compareReady;
+
   const showSections =
     liturgyState.status === 'ready' &&
-    (mode.kind !== 'compare' || liturgyCompareHasSelection(mode));
+    (mode.kind !== 'compare' || compareReady);
 
   const searchPlan = useMemo(() => {
     if (!searchNorm || !showSections) return null;
@@ -747,29 +759,32 @@ export function WorshipLiturgyBody({
     const lineKey = searchPlan.lineKeys[activeMatchIndex];
     if (!lineKey) return;
 
-    if (Platform.OS === 'web') {
-      requestAnimationFrame(() => {
-        document
-          .getElementById(`worship-search-match-${activeMatchIndex}`)
-          ?.scrollIntoView({ block: 'center', behavior: 'auto' });
-      });
-      return;
-    }
+    const matchId = `worship-search-match-${activeMatchIndex}`;
+    const scrollOffset = variant === 'tab' ? stickySearchHeightRef.current : 0;
 
-    if (variant !== 'tab') return;
+    const scrollToActiveMatch = () => {
+      if (variant === 'tab') {
+        const lineView = lineRefs.current[lineKey];
+        const scrollContent = scrollContentRef.current;
+        const scroll = scrollRef.current;
+        if (lineView && scrollContent && scroll) {
+          lineView.measureLayout(
+            scrollContent,
+            (_x, y) => {
+              scroll.scrollTo({ y: Math.max(0, y - scrollOffset), animated: false });
+            },
+            () => {
+              scrollAppScrollViewToElement(matchId, scrollOffset);
+            },
+          );
+          return;
+        }
+      }
+      scrollAppScrollViewToElement(matchId, scrollOffset);
+    };
 
-    const lineView = lineRefs.current[lineKey];
-    const scrollContent = scrollContentRef.current;
-    const scroll = scrollRef.current;
-    if (!lineView || !scrollContent || !scroll) return;
-
-    lineView.measureLayout(
-      scrollContent,
-      (_x, y) => {
-        scroll.scrollTo({ y: Math.max(0, y - stickySearchHeightRef.current), animated: false });
-      },
-      () => {},
-    );
+    if (Platform.OS === 'web') requestAnimationFrame(scrollToActiveMatch);
+    else scrollToActiveMatch();
   }, [activeMatchIndex, searchNorm, searchPlan, variant]);
 
   const sectionBlocks = useMemo(() => {
@@ -843,10 +858,26 @@ export function WorshipLiturgyBody({
       mode={mode}
       onChange={setMode}
       isDark={isDark}
-      hintType={hintType}
-      mutedColor={mutedColor}
     />
   );
+
+  const compareSlots = inCompareMode ? (
+    <CompareSidePicker<LiturgyTextLang>
+      left={mode.left}
+      right={mode.right}
+      onChangeLeft={(left) => setMode({ kind: 'compare', left, right: mode.right })}
+      onChangeRight={(right) => setMode({ kind: 'compare', left: mode.left, right })}
+      options={[
+        { value: 'en', label: t('liturgy.chrysostom.langEnglish') },
+        { value: 'el', label: t('liturgy.chrysostom.langGreek') },
+        { value: 'ru', label: t('liturgy.chrysostom.langSlavonic') },
+      ]}
+      isDark={isDark}
+      fill={showCompareSetup}
+      fillLayout={showCompareSetup ? 'flex' : 'measure'}
+      bottomInset={showCompareSetup ? undefined : comparePickerBottomInset}
+    />
+  ) : null;
 
   const searchBar = (
     <LiturgySearchBar
@@ -890,12 +921,12 @@ export function WorshipLiturgyBody({
     </View>
   );
 
-  const introControlsCard =
-    liturgyState.status === 'ready' ? (
-      <View style={[styles.topCard, surfaceCard(isDark, { radius: radii.lg })]}>
-        <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
-        {displayControls}
-      </View>
+  const introControls =
+    liturgyState.status === 'ready' ? displayControls : null;
+
+  const introHint =
+    liturgyState.status === 'ready' && variant !== 'tab' ? (
+      <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
     ) : null;
 
   const scrollableHeader =
@@ -903,18 +934,22 @@ export function WorshipLiturgyBody({
       variant === 'tab' ? null : (
         <View style={styles.scrollBody}>
           {searchCard}
-          {introControlsCard}
+          {introControls}
+          {compareSlots}
+          {introHint}
         </View>
       )
-    ) : (
+    ) : variant === 'tab' ? null : (
       <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
     );
 
   const scrollBody = (
     <>
-      {variant === 'tab' ? introControlsCard : null}
-      {variant === 'tab' && liturgyState.status !== 'ready' ? (
-        <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
+      {variant === 'tab' ? (
+        <>
+          {introControls}
+          {compareSlots}
+        </>
       ) : null}
 
       {liturgyState.status === 'loading' ? (
@@ -933,28 +968,54 @@ export function WorshipLiturgyBody({
         <View style={styles.sections}>{sectionBlocks}</View>
       ) : null}
 
-      <Text style={[styles.disclaimer, hintType, { color: mutedColor }]}>{t(disclaimerKey)}</Text>
+      {!showCompareSetup ? (
+        <Text style={[styles.disclaimer, hintType, { color: mutedColor }]}>{t(disclaimerKey)}</Text>
+      ) : null}
     </>
   );
 
   const tabScrollChildren = (
     <>
       {liturgyState.status === 'ready' ? stickySearchHeader : null}
-      <View ref={scrollContentRef} style={[styles.scrollBody, styles.tabBelowSearch]}>
+      <View
+        ref={scrollContentRef}
+        style={[
+          styles.scrollBody,
+          styles.tabBelowSearch,
+          showCompareSetup ? styles.scrollBodyFill : null,
+        ]}
+      >
         {scrollBody}
       </View>
     </>
   );
 
   if (variant === 'tab') {
+    if (showCompareSetup && liturgyState.status === 'ready') {
+      return (
+        <View style={styles.root}>
+          {stickySearchHeader}
+          <View style={[styles.compareSetupRoot, { paddingBottom: comparePickerBottomInset }]}>
+            {introControls}
+            <View style={styles.comparePickerFill}>{compareSlots}</View>
+          </View>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.root}>
         <AppScrollView
           ref={scrollRef}
           {...(Platform.OS === 'web' ? { colorScheme: isDark ? 'dark' : 'light' } : {})}
           style={styles.scroll}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollBottomPadding }]}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: scrollBottomPadding },
+            showCompareSetup ? styles.scrollContentFill : null,
+          ]}
           stickyHeaderIndices={liturgyState.status === 'ready' ? [0] : undefined}
+          showsVerticalScrollIndicator
         >
           {tabScrollChildren}
         </AppScrollView>
@@ -985,8 +1046,25 @@ const styles = StyleSheet.create({
   scrollContent: {
     gap: 0,
   },
+  scrollContentFill: {
+    flexGrow: 1,
+  },
   scrollBody: {
     gap: 16,
+  },
+  scrollBodyFill: {
+    flexGrow: 1,
+    flex: 1,
+  },
+  compareSetupRoot: {
+    flex: 1,
+    minHeight: 0,
+    paddingTop: 16,
+    gap: 12,
+  },
+  comparePickerFill: {
+    flex: 1,
+    minHeight: 0,
   },
   embeddedRoot: {
     gap: 16,

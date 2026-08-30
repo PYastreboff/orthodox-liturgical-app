@@ -15,6 +15,7 @@ import { localizeOrthocalText } from '../i18n/orthocalContent';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useCalendarSearch } from '../hooks/useCalendarSearch';
+import { useFontScale } from '../hooks/useFontScale';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useVestmentAccent } from '../state/VestmentAccentContext';
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
@@ -152,6 +153,10 @@ export function CalendarSearch({
     clear,
   } = useCalendarSearch(calendar, year, lang);
 
+  const { text } = useFontScale();
+  const chipType = text(14, 18);
+  const showFilters = query.trim().length >= 2;
+
   const phoneLayout = usePhoneLayout();
   const vestmentAccent = useVestmentAccent();
   const wrapPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
@@ -161,7 +166,6 @@ export function CalendarSearch({
 
   return (
     <View style={[styles.wrap, padded ? { paddingHorizontal: wrapPaddingX } : null]}>
-      <Text style={[styles.label, { color: textColor }]}>{t('calendar.searchTitle')}</Text>
       <View style={[styles.inputRow, { backgroundColor: inputBg, borderColor: isDark ? colors.darkBorderSubtle : colors.borderSubtle }]}>
         <Feather name="search" size={18} color={mutedColor} style={styles.searchIcon} />
         <TextInput
@@ -187,38 +191,41 @@ export function CalendarSearch({
         ) : null}
       </View>
 
-      <View style={styles.filterRow}>
-        {FILTERS.map((item) => {
-          const active = filter === item;
-          return (
-            <Pressable
-              key={item}
-              onPress={() => setFilter(item)}
-              style={[
-                styles.filterChip,
-                chipSurface(vestmentAccent.accentMuted, isDark),
-                active
-                  ? {
-                      borderColor: vestmentAccent.accent,
-                      backgroundColor: vestmentAccent.accent,
-                    }
-                  : null,
-              ]}
-              accessibilityRole="button"
-              accessibilityState={{ selected: active }}
-            >
-              <Text
+      {showFilters ? (
+        <View style={styles.filterRow}>
+          {FILTERS.map((item) => {
+            const active = filter === item;
+            return (
+              <Pressable
+                key={item}
+                onPress={() => setFilter(item)}
                 style={[
-                  styles.filterChipText,
-                  { color: active ? vestmentAccent.onAccent : textColor },
+                  styles.filterChip,
+                  chipSurface(vestmentAccent.accentMuted, isDark),
+                  active
+                    ? {
+                        borderColor: vestmentAccent.accent,
+                        backgroundColor: vestmentAccent.accent,
+                      }
+                    : null,
                 ]}
+                accessibilityRole="button"
+                accessibilityState={{ selected: active }}
               >
-                {filterLabel(t, item)}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+                <Text
+                  style={[
+                    styles.filterChipText,
+                    chipType,
+                    { color: active ? vestmentAccent.onAccent : textColor },
+                  ]}
+                >
+                  {filterLabel(t, item)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : null}
 
       {showMinCharsHint ? (
         <Text style={[styles.hint, { color: mutedColor }]}>{t('calendar.searchMinChars')}</Text>
@@ -259,13 +266,6 @@ const styles = StyleSheet.create({
   wrap: {
     gap: 12,
   },
-  label: {
-    fontSize: 11,
-    fontWeight: '800',
-    lineHeight: 14,
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
-  },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -290,16 +290,18 @@ const styles = StyleSheet.create({
   filterRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    alignItems: 'center',
+    gap: 10,
   },
   filterChip: {
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    minHeight: 40,
+    justifyContent: 'center',
   },
   filterChipText: {
-    fontSize: 13,
     fontWeight: '600',
   },
   hint: {

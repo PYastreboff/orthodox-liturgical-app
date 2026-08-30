@@ -24,10 +24,14 @@ import {
   buildCommemorationEntries,
   partitionCommemorations,
 } from '../lib/liturgical/commemorations';
-import { LITURGICAL_TEXT_SECTION_ORDER } from '../lib/liturgical/liturgicalTexts';
+import {
+  LITURGICAL_TEXT_SECTION_ORDER,
+  type LiturgicalTextCategory,
+  type LiturgicalTextSection,
+} from '../lib/liturgical/liturgicalTexts';
 import type { ReadingsCompareSides } from '../lib/readings/textLanguage';
 import type { TextLanguage } from '../lib/readings/textLanguage';
-import { readingsLanguageForUi } from '../lib/readings/textLanguage';
+import { readingsCompareReady, readingsLanguageForUi } from '../lib/readings/textLanguage';
 import { buildDayDashboard } from '../lib/liturgical/dayDashboard';
 import { buildLiturgicalDayAbout } from '../lib/liturgical/liturgicalDayAbout';
 import { vestmentGuidanceForRole } from '../lib/liturgical/vestments';
@@ -160,6 +164,8 @@ export function useTodayDayModel() {
     julianMonthDay,
     appearanceKey: appearance.key,
   }, readingsCompareSides);
+  const readingsCompareSetup =
+    sideBySide && !readingsCompareReady(defaultTextLang, readingsCompareSides);
   const gospelPreviewSections = useMemo(
     () =>
       sectionsForReadingsLanguage(
@@ -171,9 +177,31 @@ export function useTodayDayModel() {
     [englishSections, greekSections, slavonicSections, uiLanguage],
   );
   const [readingsCategoryMenuOpen, setReadingsCategoryMenuOpen] = useState(false);
-  const readingsSourceSections = sideBySide
-    ? (leftSections ?? rightSections ?? [])
-    : displaySections;
+  const readingsSourceSections = useMemo(() => {
+    if (!sideBySide) return displaySections;
+    if (readingsCompareSetup) return englishSections;
+    const left = leftSections ?? [];
+    const right = rightSections ?? [];
+    const merged = new Map<LiturgicalTextCategory, LiturgicalTextSection>();
+    for (const section of left) {
+      if (section.items.length > 0) merged.set(section.id, section);
+    }
+    for (const section of right) {
+      if (section.items.length > 0 && !merged.has(section.id)) {
+        merged.set(section.id, section);
+      }
+    }
+    return LITURGICAL_TEXT_SECTION_ORDER.filter((id) => merged.has(id)).map(
+      (id) => merged.get(id)!,
+    );
+  }, [
+    sideBySide,
+    readingsCompareSetup,
+    displaySections,
+    englishSections,
+    leftSections,
+    rightSections,
+  ]);
   const readingsAvailableCategories = useMemo(
     () =>
       LITURGICAL_TEXT_SECTION_ORDER.filter((id) =>
@@ -374,6 +402,7 @@ export function useTodayDayModel() {
     leftSections,
     rightSections,
     sideBySide,
+    readingsCompareSetup,
     leftLoading,
     rightLoading,
     loadingSlavonic,

@@ -38,3 +38,27 @@ export function parseWorshipServiceId(value: string | string[] | undefined): Wor
   if (raw === 'basil') return 'basil';
   return 'chrysostom';
 }
+
+export type WorshipServicePageTitleKey =
+  | 'liturgy.worship.pageTitleChrysostom'
+  | 'liturgy.worship.pageTitleBasil'
+  | 'liturgy.worship.pageTitleVespers';
+
+export function worshipServicePageTitleKey(service: WorshipServiceId): WorshipServicePageTitleKey {
+  if (service === 'basil') return 'liturgy.worship.pageTitleBasil';
+  if (service === 'vespers') return 'liturgy.worship.pageTitleVespers';
+  return 'liturgy.worship.pageTitleChrysostom';
+}
+
+export type WorshipServicePageSubtitleKey =
+  | 'liturgy.chrysostom.pageSubtitle'
+  | 'liturgy.basil.pageSubtitle'
+  | 'liturgy.vespers.pageSubtitle';
+
+export function worshipServicePageSubtitleKey(
+  service: WorshipServiceId,
+): WorshipServicePageSubtitleKey {
+  if (service === 'basil') return 'liturgy.basil.pageSubtitle';
+  if (service === 'vespers') return 'liturgy.vespers.pageSubtitle';
+  return 'liturgy.chrysostom.pageSubtitle';
+}

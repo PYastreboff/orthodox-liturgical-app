@@ -27,7 +27,9 @@ import {
 import {
   calendarCellHoverBackground,
   getCalendarCellStyle,
+  type CalendarColourMode,
 } from '../lib/calendar/calendarCellStyle';
+import { getLiturgicalAppearanceForLocalDate } from '../lib/calendar/dayAppearance';
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
 import { feastRankAccessibilityLabel } from '../i18n/feastRank';
 import { intlLocaleForLanguage } from '../i18n/locale';
@@ -179,11 +181,7 @@ function CalendarFastingIconsRow({
     <View style={styles.agendaFastingRow}>
       <Text style={[styles.agendaFastLabel, { color: mutedColor }]}>{t('fasting.summaryFast')}</Text>
       {showIcons ? (
-        <>
-          <Text style={[styles.agendaFastDash, { color: mutedColor }]} accessibilityElementsHidden>
-            —
-          </Text>
-          <View style={styles.agendaFastingIcons}>
+        <View style={styles.agendaFastingIcons}>
             {icons.noEating ? (
               <CalendarFastingFoodIcon kind="noEating" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('noEating')} />
             ) : null}
@@ -200,7 +198,6 @@ function CalendarFastingIconsRow({
               <CalendarFastingFoodIcon kind="oil" size={CALENDAR_FASTING_ICON_SIZE} color={iconColor('oil')} />
             ) : null}
           </View>
-        </>
       ) : null}
     </View>
   );
@@ -359,7 +356,7 @@ export function LiturgicalMonthGrid({
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
   const { t, lang } = useAppTranslation();
-  const { personalDays } = usePreferences();
+  const { personalDays, calendarColourMode } = usePreferences();
   const intlLocale = intlLocaleForLanguage(lang);
   const { width: windowWidth } = useWindowDimensions();
   const [layoutWidth, setLayoutWidth] = useState(0);
@@ -411,7 +408,14 @@ export function LiturgicalMonthGrid({
   );
   const monthNavButtonShadow = useMemo(() => monthNavButtonElevation(isDark), [isDark]);
   const monthNavButtonSize = isCompact ? 48 : 44;
-  const loadingCellBg = getCalendarCellStyle('weekday', undefined, isDark).backgroundColor;
+  const loadingCellBg = getCalendarCellStyle(
+    'weekday',
+    {
+      colourMode: calendarColourMode,
+      appearance: getLiturgicalAppearanceForLocalDate(today, liturgicalCalendar),
+    },
+    isDark,
+  ).backgroundColor;
 
   return (
     <View
@@ -572,6 +576,8 @@ export function LiturgicalMonthGrid({
                       orthocalPending={loading && !dayInfoForDate(date).orthocalLoaded}
                       loadingBorderColor={loadingBorderColor}
                       isDark={isDark}
+                      liturgicalCalendar={liturgicalCalendar}
+                      calendarColourMode={calendarColourMode}
                     />
                       );
                     })()
@@ -719,6 +725,8 @@ function DayCell({
   orthocalPending = false,
   loadingBorderColor,
   isDark,
+  liturgicalCalendar,
+  calendarColourMode,
 }: {
   date: Date;
   today: Date;
@@ -738,6 +746,8 @@ function DayCell({
   orthocalPending?: boolean;
   loadingBorderColor: string;
   isDark: boolean;
+  liturgicalCalendar: PrimaryCalendar;
+  calendarColourMode: CalendarColourMode;
 }) {
   const { t, lang } = useAppTranslation();
   const isWeb = Platform.OS === 'web';
@@ -746,11 +756,17 @@ function DayCell({
     () => localizeCalendarDayInfo(dayInfo, lang),
     [dayInfo, lang],
   );
+  const appearance = useMemo(
+    () => getLiturgicalAppearanceForLocalDate(date, liturgicalCalendar),
+    [date, liturgicalCalendar],
+  );
   const isSunday = date.getDay() === 0;
   const cellStyle = getCalendarCellStyle(dayInfo.appearanceKey, {
     feastCell: dayInfo.isFeastCell,
     fastingCell: dayInfo.isFastDay,
     meatFastCell: dayInfo.fastingFoodIcons.noMeat,
+    colourMode: calendarColourMode,
+    appearance,
   }, isDark);
   const feastRank = dayInfo.feastRank;
   const showTypikon = showTypikonForDate(date);
@@ -780,7 +796,8 @@ function DayCell({
   const titleColor = dayInfo.isFeastTitleRed ? feastAccent : cellStyle.foreground;
   const subColor = dayInfo.isFeastTitleRed ? feastAccent : cellStyle.foreground;
   const dayNumColor = isSunday || dayInfo.isFeastCell ? feastAccent : cellStyle.foreground;
-  const typikonOnMutedCell = dayInfo.isFastDay && !dayInfo.fastingFoodIcons.noMeat;
+  const typikonOnMutedCell =
+    calendarColourMode === 'fasting' && dayInfo.isFastDay && !dayInfo.fastingFoodIcons.noMeat;
   const typikonColor = feastRank
     ? calendarTypikonColor(feastRank, isDark, typikonOnMutedCell)
     : cellStyle.foreground;
@@ -1616,11 +1633,6 @@ const styles = StyleSheet.create({
   agendaFastLabel: {
     fontSize: 12,
     fontWeight: '700',
-    lineHeight: 16,
-  },
-  agendaFastDash: {
-    fontSize: 12,
-    fontWeight: '500',
     lineHeight: 16,
   },
   agendaFastingIcons: {

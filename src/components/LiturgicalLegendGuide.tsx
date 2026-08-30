@@ -6,6 +6,7 @@ import { FastSummaryPill } from './FastSummaryPill';
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
+import { usePreferences } from '../state/PreferencesContext';
 import {
   FAST_PILL_LEGEND_KINDS,
   FAST_PILL_LEGEND_LABEL_KEY,
@@ -38,6 +39,7 @@ const PILL_DESC_KEYS = {
 
 export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = false }: Props) {
   const { t } = useAppTranslation();
+  const { calendarColourMode } = usePreferences();
   const isDark = useResolvedColorScheme() === 'dark';
   const phoneLayout = usePhoneLayout();
   const wrapPaddingX = pageLayout
@@ -48,7 +50,7 @@ export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = fals
   const hintColor = mutedColor ?? textColor;
   const legendBorder = isDark ? colors.darkBorder : colors.border;
   const rowBg = isDark ? colors.darkSurface : colors.card;
-  const cellLegend = calendarCellLegend(isDark);
+  const cellLegend = calendarCellLegend(isDark, calendarColourMode);
 
   return (
     <View

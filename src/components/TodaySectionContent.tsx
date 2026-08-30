@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { readingsCompareHasSelection } from '../lib/readings/textLanguage';
+import { readingsCompareReady } from '../lib/readings/textLanguage';
 
 import { DayPagePanel } from './day/DayPagePanel';
 import { AltarServerRoleTable } from './AltarServerRoleTable';
@@ -25,6 +25,9 @@ import { TodayPersonalDays } from './TodayPersonalDays';
 import { TypikonSymbol } from './TypikonSymbol';
 import { VestmentIcon } from './VestmentIcon';
 import { CommemorationCard } from './CommemorationCard';
+import { SectionIcon } from './SectionIcon';
+import { useFontScale } from '../hooks/useFontScale';
+import { useVestmentAccent } from '../state/VestmentAccentContext';
 import { ServiceLivestreamsSection } from './ServiceLivestreamsSection';
 import type { TodayDayModel } from '../hooks/useTodayDayModel';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
@@ -38,6 +41,27 @@ import { worshipHrefForServiceKind } from '../lib/liturgical/worshipNavigation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { isGreatLentSeason } from '../lib/liturgical/lentSeason';
 import { colors } from '../theme/tokens';
+
+function CommemorationBlockHeading({
+  icon,
+  label,
+  color,
+  iconColor,
+}: {
+  icon: 'feasts' | 'saints';
+  label: string;
+  color: string;
+  iconColor: string;
+}) {
+  const { text } = useFontScale();
+  const titleType = text(18, 24);
+  return (
+    <View style={styles.commemorationHeadingRow}>
+      <SectionIcon name={icon} color={iconColor} size={24} />
+      <Text style={[styles.commemorationHeading, titleType, { color }]}>{label}</Text>
+    </View>
+  );
+}
 
 function isPrimaryGreatFeastEntry(
   entry: CommemorationEntry,
@@ -135,6 +159,7 @@ export function TodaySectionContent({ section, model }: Props) {
     readingsVisibleSections,
     rightSections,
     sideBySide,
+    readingsCompareSetup,
     leftLoading,
     rightLoading,
     feasts,
@@ -145,6 +170,7 @@ export function TodaySectionContent({ section, model }: Props) {
   } = model;
 
   const muted = isDark ? '#a39e98' : colors.muted;
+  const vestmentAccent = useVestmentAccent();
   const panel = {
     textColor: theme.colors.text,
     borderColor: theme.colors.border,
@@ -542,9 +568,25 @@ export function TodaySectionContent({ section, model }: Props) {
       return wrap(
         <View style={styles.cardBody}>
           {dayServices.items.length === 0 ? (
-            <Text style={[styles.cardHint, type.hint, { color: muted }]}>
-              {t('services.noneForDay')}
-            </Text>
+            <View
+              style={styles.servicesEmptyState}
+              accessibilityRole="text"
+              accessibilityLabel={t('services.noneForDay')}
+            >
+              <View
+                style={[
+                  styles.servicesEmptyIconWrap,
+                  {
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)',
+                  },
+                ]}
+              >
+                <MaterialCommunityIcons name="church-outline" size={28} color={muted} />
+              </View>
+              <Text style={[styles.servicesEmptyText, type.hint, { color: muted }]}>
+                {t('services.noneForDay')}
+              </Text>
+            </View>
           ) : (
             dayServices.items.map((entry, index) => {
               const prevSlot = dayServices.items[index - 1]?.slot;
@@ -662,47 +704,54 @@ export function TodaySectionContent({ section, model }: Props) {
         />,
       );
 
-    case 'readings':
-      return wrap(
-        <View style={styles.cardBody}>
-          <View
-            style={[
-              styles.readingsToolbar,
-              phone ? styles.readingsToolbarPhone : null,
-            ]}
-          >
-            {readingsAvailableCategories.length > 1 ? (
-              <LiturgicalTextsCategoryToggle
-                value={readingsCategoryFilter}
-                onChange={setReadingsCategoryFilter}
-                availableCategories={readingsAvailableCategories}
-                isDark={isDark}
-                onOpenChange={setReadingsCategoryMenuOpen}
-              />
-            ) : null}
-            <ReadingsLanguageToggle
-              value={defaultTextLang}
-              onChange={setDefaultTextLang}
+    case 'readings': {
+      const compareReady = readingsCompareReady(defaultTextLang, readingsCompareSides);
+      const readingsControls = (
+        <View
+          style={[
+            styles.readingsControls,
+            readingsCompareSetup ? styles.readingsControlsSetup : null,
+            sideBySide ? styles.readingsControlsCompare : null,
+            phone ? styles.readingsControlsPhone : null,
+          ]}
+        >
+          {readingsAvailableCategories.length > 1 ? (
+            <LiturgicalTextsCategoryToggle
+              value={readingsCategoryFilter}
+              onChange={setReadingsCategoryFilter}
+              availableCategories={readingsAvailableCategories}
               isDark={isDark}
-            />
-          </View>
-          {sideBySide ? (
-            <CompareSidePicker
-              left={readingsCompareSides.left}
-              right={readingsCompareSides.right}
-              onChangeLeft={(left) => setReadingsCompareSides((sides) => ({ ...sides, left }))}
-              onChangeRight={(right) => setReadingsCompareSides((sides) => ({ ...sides, right }))}
-              options={[
-                { value: 'en', label: 'EN' },
-                { value: 'chu', label: 'ЧС' },
-                { value: 'el', label: 'ΕΛ' },
-              ]}
-              leftLabel={t('readings.compareColumnLeft')}
-              rightLabel={t('readings.compareColumnRight')}
-              isDark={isDark}
+              onOpenChange={setReadingsCategoryMenuOpen}
+              fullWidth={phone}
             />
           ) : null}
-          {readingsVisibleSections.length > 0 ? (
+          <ReadingsLanguageToggle
+            value={defaultTextLang}
+            onChange={setDefaultTextLang}
+            isDark={isDark}
+            fullWidth={phone || readingsAvailableCategories.length <= 1}
+          />
+        </View>
+      );
+      const comparePicker = sideBySide ? (
+        <CompareSidePicker
+          left={readingsCompareSides.left}
+          right={readingsCompareSides.right}
+          onChangeLeft={(left) => setReadingsCompareSides((sides) => ({ ...sides, left }))}
+          onChangeRight={(right) => setReadingsCompareSides((sides) => ({ ...sides, right }))}
+          options={[
+            { value: 'en', label: t('readings.langEnglish') },
+            { value: 'chu', label: t('readings.langSlavonic') },
+            { value: 'el', label: t('readings.langGreek') },
+          ]}
+          isDark={isDark}
+          fill={readingsCompareSetup}
+          fillLayout={readingsCompareSetup ? 'flex' : 'measure'}
+        />
+      ) : null;
+      const readingsBody =
+        !sideBySide || compareReady ? (
+          readingsVisibleSections.length > 0 ? (
             readingsVisibleSections.map((sectionBlock, index) => (
               <LiturgicalTextSectionBlock
                 key={sectionBlock.id}
@@ -727,13 +776,30 @@ export function TodaySectionContent({ section, model }: Props) {
                 mutedColor={muted}
               />
             ))
-          ) : sideBySide && !readingsCompareHasSelection(defaultTextLang, readingsCompareSides) ? null : (
+          ) : (
             <Text style={[styles.cardHint, type.hint, { color: muted }]}>
               {t('readings.noneForDay')}
             </Text>
-          )}
-        </View>,
+          )
+        ) : null;
+
+      if (readingsCompareSetup) {
+        return (
+          <View style={styles.readingsCompareSetupRoot}>
+            {readingsControls}
+            <View style={styles.readingsComparePickerFill}>{comparePicker}</View>
+          </View>
+        );
+      }
+
+      return wrap(
+        <>
+          {readingsControls}
+          {comparePicker}
+          {readingsBody}
+        </>,
       );
+    }
 
     case 'feasts':
       return wrap(
@@ -766,9 +832,12 @@ export function TodaySectionContent({ section, model }: Props) {
         ) : (
           <View style={styles.commemorationsStack}>
             <View style={styles.commemorationBlock}>
-              <Text style={[styles.commemorationHeading, type.body, { color: theme.colors.text }]}>
-                {t('today.sectionFeasts')}
-              </Text>
+              <CommemorationBlockHeading
+                icon="feasts"
+                label={t('today.sectionFeasts')}
+                color={theme.colors.text}
+                iconColor={vestmentAccent.icon}
+              />
               <CommemorationEntryList
                 entries={feasts}
                 emptyMessage={t('today.noFeasts')}
@@ -783,9 +852,12 @@ export function TodaySectionContent({ section, model }: Props) {
               />
             </View>
             <View style={styles.commemorationBlock}>
-              <Text style={[styles.commemorationHeading, type.body, { color: theme.colors.text }]}>
-                {t('today.sectionSaints')}
-              </Text>
+              <CommemorationBlockHeading
+                icon="saints"
+                label={t('today.sectionSaints')}
+                color={theme.colors.text}
+                iconColor={vestmentAccent.icon}
+              />
               <CommemorationEntryList
                 entries={saints}
                 emptyMessage={t('today.noSaints')}
@@ -867,14 +939,21 @@ const styles = StyleSheet.create({
     gap: 22,
   },
   commemorationBlock: {
+    gap: 12,
+  },
+  commemorationHeadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   commemorationHeading: {
     fontWeight: '800',
     letterSpacing: 0.12,
+    flex: 1,
+    minWidth: 0,
   },
   body: {},
-  readingsToolbar: {
+  readingsControls: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -882,9 +961,25 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     zIndex: 2,
   },
-  readingsToolbarPhone: {
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
+  readingsControlsPhone: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: 10,
+  },
+  readingsControlsSetup: {
+    marginBottom: 0,
+  },
+  readingsControlsCompare: {
+    zIndex: 3000,
+  },
+  readingsCompareSetupRoot: {
+    flex: 1,
+    minHeight: 0,
+    gap: 12,
+  },
+  readingsComparePickerFill: {
+    flex: 1,
+    minHeight: 0,
   },
   serviceRankRow: {
     flexDirection: 'row',
@@ -989,6 +1084,25 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     color: colors.muted,
     opacity: 0.9,
+  },
+  servicesEmptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+    gap: 12,
+  },
+  servicesEmptyIconWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  servicesEmptyText: {
+    textAlign: 'center',
+    opacity: 0.9,
+    maxWidth: 300,
   },
   serviceRowLast: {
     marginBottom: 0,

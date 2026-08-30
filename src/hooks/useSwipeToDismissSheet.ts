@@ -18,11 +18,17 @@ type SwipeToDismissSheet = {
   panHandlers: GestureResponderHandlers;
   sheetStyle: AnimatedStyle<ViewStyle>;
   backdropStyle: AnimatedStyle<ViewStyle>;
+  onSheetScroll: (offsetY: number) => void;
+  resetSheetScroll: () => void;
 };
+
+function isDownwardDismissGesture(dy: number, dx: number): boolean {
+  return dy > 10 && Math.abs(dy) > Math.abs(dx) * 1.15;
+}
 
 /**
  * Swipe a bottom sheet downward to dismiss (settings pickers).
- * Attach panHandlers to the drag handle — not the scrollable body.
+ * Attach panHandlers to the whole sheet; pair scrollable content with SettingsSheetScrollView.
  */
 export function useSwipeToDismissSheet(onDismiss: () => void, visible: boolean): SwipeToDismissSheet {
   const { height: windowHeight } = useWindowDimensions();
@@ -37,10 +43,20 @@ export function useSwipeToDismissSheet(onDismiss: () => void, visible: boolean):
   const translateY = useSharedValue(0);
   const dragging = useRef(false);
   const finishing = useRef(false);
+  const scrollOffsetY = useRef(0);
+
+  const onSheetScroll = useCallback((offsetY: number) => {
+    scrollOffsetY.current = offsetY;
+  }, []);
+
+  const resetSheetScroll = useCallback(() => {
+    scrollOffsetY.current = 0;
+  }, []);
 
   useEffect(() => {
     if (visible) {
       finishing.current = false;
+      scrollOffsetY.current = 0;
       translateY.value = 0;
     }
   }, [translateY, visible]);
@@ -53,9 +69,14 @@ export function useSwipeToDismissSheet(onDismiss: () => void, visible: boolean):
 
   const panHandlers = useRef(
     PanResponder.create({
+      onMoveShouldSetPanResponderCapture: (_evt, gesture) => {
+        if (finishing.current) return false;
+        if (scrollOffsetY.current > 1) return false;
+        return isDownwardDismissGesture(gesture.dy, gesture.dx);
+      },
       onMoveShouldSetPanResponder: (_evt, gesture) => {
         if (finishing.current) return false;
-        return gesture.dy > 10 && Math.abs(gesture.dy) > Math.abs(gesture.dx) * 1.15;
+        return isDownwardDismissGesture(gesture.dy, gesture.dx);
       },
       onPanResponderGrant: () => {
         dragging.current = true;
@@ -99,5 +120,5 @@ export function useSwipeToDismissSheet(onDismiss: () => void, visible: boolean):
     };
   });
 
-  return { panHandlers, sheetStyle, backdropStyle };
+  return { panHandlers, sheetStyle, backdropStyle, onSheetScroll, resetSheetScroll };
 }

@@ -11,7 +11,7 @@ import { useFontScale } from '../../src/hooks/useFontScale';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
-import { parseWorshipServiceId, type WorshipServiceId } from '../../src/lib/liturgical/worshipNavigation';
+import { parseWorshipServiceId, worshipServicePageSubtitleKey, worshipServicePageTitleKey, type WorshipServiceId } from '../../src/lib/liturgical/worshipNavigation';
 import { useVestmentAccent } from '../../src/state/VestmentAccentContext';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { colors } from '../../src/theme/tokens';
@@ -32,6 +32,9 @@ export default function WorshipScreen() {
   const hintType = text(13, 20);
   const pageBg = theme.dark ? colors.darkBg : colors.parchment;
 
+  const pageTitle = t(worshipServicePageTitleKey(service));
+  const pageSubtitle = t(worshipServicePageSubtitleKey(service));
+
   useEffect(() => {
     setService(parseWorshipServiceId(params.service));
   }, [params.service]);
@@ -47,7 +50,9 @@ export default function WorshipScreen() {
   return (
     <>
       <Head>
-        <title>{t('tabs.browserTitleWorship')}</title>
+        <title>
+          {t('app.name')} - {pageTitle}
+        </title>
       </Head>
       <View style={[styles.page, { backgroundColor: pageBg }]}>
         <View
@@ -63,8 +68,8 @@ export default function WorshipScreen() {
           <DevotionalPageHeader
             icon={<MaterialCommunityIcons name="church" size={22} color={vestmentAccent.accent} />}
             accentSoft={vestmentAccent.accentSoft}
-            title={t('tabs.worshipTitle')}
-            subtitle={t('tabs.worshipSubtitle')}
+            title={pageTitle}
+            subtitle={pageSubtitle}
             textColor={theme.colors.text}
             mutedColor={muted}
           />

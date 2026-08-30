@@ -20,7 +20,7 @@ import {
   type TodaySectionId,
 } from '../../lib/today/todaySections';
 import { SERVING_ROLE_PHRASE_LABEL_KEYS } from '../../lib/liturgical/servingRoles';
-import { STACK_CONTENT_MAX_WIDTH } from '../../theme/layout';
+import { STACK_CONTENT_MAX_WIDTH, SCREEN_BOTTOM_CONTENT_MARGIN } from '../../theme/layout';
 import { stackContentColumnStyle } from '../../theme/stackContentColumn';
 import { colors } from '../../theme/tokens';
 import { useVestmentAccent } from '../../state/VestmentAccentContext';
@@ -65,6 +65,16 @@ export function DaySectionPage({ section }: Props) {
     return <Redirect href="/(tabs)" />;
   }
 
+  const readingsCompareSetup =
+    section === 'readings' && !model.waitingForDay && !model.error && model.readingsCompareSetup;
+  const contentBottomPad = insets.bottom + SCREEN_BOTTOM_CONTENT_MARGIN;
+  const contentColumnStyle = stackContentColumnStyle({
+    paddingLeft: screenSafe.paddingLeft,
+    paddingRight: screenSafe.paddingRight,
+    phone,
+    maxWidth: CONTENT_MAX,
+  });
+
   return (
     <>
       <Head>
@@ -85,15 +95,21 @@ export function DaySectionPage({ section }: Props) {
               accentSoft={vestmentAccent.accentSoft}
               mutedColor={muted}
             />
+            {readingsCompareSetup ? (
+              <View
+                style={[
+                  styles.compareSetupBody,
+                  contentColumnStyle,
+                  { paddingBottom: contentBottomPad },
+                ]}
+              >
+                <TodaySectionContent section={section} model={model} />
+              </View>
+            ) : (
             <AppScrollView
               contentContainerStyle={[
                 styles.content,
-                stackContentColumnStyle({
-                  paddingLeft: screenSafe.paddingLeft,
-                  paddingRight: screenSafe.paddingRight,
-                  phone,
-                  maxWidth: CONTENT_MAX,
-                }),
+                contentColumnStyle,
                 { paddingBottom: insets.bottom + 32 },
               ]}
             >
@@ -107,6 +123,7 @@ export function DaySectionPage({ section }: Props) {
                 <TodaySectionContent section={section} model={model} />
               )}
             </AppScrollView>
+            )}
           </View>
         </VestmentPageBackground>
       </SwipeBackShell>
@@ -121,6 +138,10 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     gap: 0,
+  },
+  compareSetupBody: {
+    flex: 1,
+    minHeight: 0,
   },
   statusError: {
     color: colors.accentWine,
