@@ -1520,9 +1520,10 @@ const en = {
     worship: {
       serviceLiturgy: 'Divine Liturgy',
       serviceVespers: 'Vespers',
-      searchPlaceholder: 'Search this service…',
+      searchPlaceholder: 'Find in this service…',
       searchClear: 'Clear search',
-      searchNoResults: 'No matching lines in this service.',
+      searchMatchCount: '{count} matches',
+      searchNoResults: 'No matches in this service.',
     },
     vespers: {
       intro:
@@ -3263,8 +3264,9 @@ const ru = {
     worship: {
       serviceLiturgy: 'Божественная литургия',
       serviceVespers: 'Вечерня',
-      searchPlaceholder: 'Поиск по службе…',
+      searchPlaceholder: 'Найти в службе…',
       searchClear: 'Очистить поиск',
+      searchMatchCount: '{count} совпадений',
       searchNoResults: 'В этой службе нет совпадений.',
     },
     vespers: {

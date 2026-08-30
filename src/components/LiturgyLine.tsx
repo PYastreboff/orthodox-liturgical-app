@@ -3,6 +3,7 @@ import { Platform, StyleSheet, Text } from 'react-native';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { translate } from '../i18n/translate';
 import { useFontScale } from '../hooks/useFontScale';
+import { highlightMatches } from '../lib/text/highlightMatches';
 import {
   liturgyRoleLabelKey,
   parseLiturgyLine,
@@ -25,6 +26,7 @@ type Props = {
   mutedColor: string;
   isDark: boolean;
   compact?: boolean;
+  searchQuery?: string;
 };
 
 function roleColor(role: LiturgyRole, isDark: boolean) {
@@ -54,6 +56,7 @@ export function LiturgyLine({
   mutedColor,
   isDark,
   compact = false,
+  searchQuery = '',
 }: Props) {
   const { t } = useAppTranslation();
   const { text } = useFontScale();
@@ -62,6 +65,8 @@ export function LiturgyLine({
   const rubricType = text(compact ? 11.5 : 12.5, compact ? 17 : 18);
   const headingType = text(compact ? 12 : 13, compact ? 16 : 18);
   const roleType = text(compact ? 10 : 11, compact ? 14 : 16);
+  const highlightColor = isDark ? 'rgba(232, 201, 122, 0.38)' : 'rgba(255, 214, 102, 0.65)';
+  const mark = (value: string) => highlightMatches(value, searchQuery, highlightColor);
 
   if (!line.trim()) {
     return null;
@@ -77,13 +82,13 @@ export function LiturgyLine({
             { color: mutedColor, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(43,38,35,0.05)' },
           ]}
         >
-          {parsed.text}
+          {mark(parsed.text)}
         </Text>
       ) : null;
     case 'heading':
       return (
         <Text style={[styles.heading, headingType, { color: mutedColor, borderColor: mutedColor }]}>
-          {parsed.text}
+          {mark(parsed.text)}
         </Text>
       );
     case 'role-only': {
@@ -91,9 +96,12 @@ export function LiturgyLine({
       const fg = roleColor(parsed.role, isDark);
       return (
         <Text style={[styles.paragraph, speechType, { color: textColor, fontFamily: LITURGY_SERIF }]}>
-          <Text style={[styles.roleInline, roleType, { color: fg }]}>{label}</Text>
+          <Text style={[styles.roleInline, roleType, { color: fg }]}>{mark(label)}</Text>
           {parsed.direction ? (
-            <Text style={[styles.directionInline, roleType, { color: fg }]}> ({parsed.direction})</Text>
+            <Text style={[styles.directionInline, roleType, { color: fg }]}>
+              {' '}
+              ({mark(parsed.direction)})
+            </Text>
           ) : null}
         </Text>
       );
@@ -104,17 +112,17 @@ export function LiturgyLine({
       return (
         <Text style={[styles.paragraph, speechType, { color: textColor, fontFamily: LITURGY_SERIF }]}>
           <Text style={[styles.roleInline, roleType, { color: fg }]}>
-            {label}
+            {mark(label)}
             {parsed.direction ? ` (${parsed.direction})` : ''}:{' '}
           </Text>
-          {parsed.speech}
+          {mark(parsed.speech)}
         </Text>
       );
     }
     case 'rubric':
       return (
         <Text style={[styles.rubric, rubricType, { color: mutedColor, borderColor: mutedColor }]}>
-          {parsed.text}
+          {mark(parsed.text)}
         </Text>
       );
     case 'devotional':
@@ -128,7 +136,7 @@ export function LiturgyLine({
               { color: isDark ? '#e8c97a' : colors.accentWine },
             ]}
           >
-            {title}
+            {mark(title)}
           </Text>
         ) : null;
       }
@@ -140,7 +148,7 @@ export function LiturgyLine({
             { color: textColor, fontFamily: LITURGY_SERIF },
           ]}
         >
-          {parsed.text}
+          {mark(parsed.text)}
         </Text>
       );
     case 'speech':
@@ -153,7 +161,7 @@ export function LiturgyLine({
             { color: textColor, fontFamily: LITURGY_SERIF },
           ]}
         >
-          {parsed.text}
+          {mark(parsed.text)}
         </Text>
       ) : null;
     default:

@@ -1504,8 +1504,9 @@ export const el = {
     worship: {
       serviceLiturgy: 'Θεία Λειτουργία',
       serviceVespers: 'Εσπερινός',
-      searchPlaceholder: 'Αναζήτηση στη λατρεία…',
+      searchPlaceholder: 'Εύρεση στη λατρεία…',
       searchClear: 'Καθαρισμός αναζήτησης',
+      searchMatchCount: '{count} αντιστοιχίες',
       searchNoResults: 'Δεν βρέθηκαν αντιστοιχίες σε αυτή τη λατρεία.',
     },
     vespers: {

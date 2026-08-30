@@ -10,7 +10,6 @@ import { WorshipServiceToggle } from './WorshipServiceToggle';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useChrysostomLiturgy } from '../hooks/useChrysostomLiturgy';
 import { useVespersLiturgy } from '../hooks/useVespersLiturgy';
-import type { UiLanguage } from '../i18n/types';
 import {
   CHRYSOSTOM_SECTION_IDS,
   chrysostomSectionParagraphs,
@@ -29,6 +28,7 @@ import type { WorshipServiceId } from '../lib/liturgical/worshipNavigation';
 import type { LiturgyDisplayMode, LiturgyTextLang } from '../lib/liturgy/liturgyViewMode';
 import { liturgyCompareHasSelection } from '../lib/liturgy/liturgyViewMode';
 import { expandLiturgyDisplayLines } from '../lib/liturgy/liturgySanitize';
+import { countMatchesInLines } from '../lib/text/highlightMatches';
 import { surfaceCard } from '../theme/cards';
 import { colors, radii } from '../theme/tokens';
 
@@ -52,12 +52,77 @@ type LiturgyLoadState =
   | { status: 'offline'; sections: readonly ChrysostomSection[] | readonly VespersSection[]; error: string };
 
 function normalizeSearch(value: string): string {
-  return value.trim().toLowerCase();
+  return value.trim();
 }
 
-function lineMatches(line: string, query: string): boolean {
-  if (!query) return true;
-  return line.toLowerCase().includes(query);
+function collectWorshipDisplayLines(
+  sections: readonly ChrysostomSection[] | readonly VespersSection[],
+  service: WorshipServiceId,
+  mode: LiturgyDisplayMode,
+): string[] {
+  if (service === 'vespers') {
+    const vSections = sections as readonly VespersSection[];
+    const lines: string[] = [];
+
+    for (const id of VESPERS_SECTION_IDS) {
+      if (!sectionHasVespersContent(vSections, id)) continue;
+      if (mode.kind === 'compare') {
+        if (mode.left) {
+          lines.push(
+            ...vespersSectionParagraphs(vSections, id, mode.left)
+              .flatMap((line) => expandLiturgyDisplayLines(line))
+              .filter((line) => line.trim()),
+          );
+        }
+        if (mode.right) {
+          lines.push(
+            ...vespersSectionParagraphs(vSections, id, mode.right)
+              .flatMap((line) => expandLiturgyDisplayLines(line))
+              .filter((line) => line.trim()),
+          );
+        }
+      } else {
+        lines.push(
+          ...vespersSectionParagraphs(vSections, id, mode.lang)
+            .flatMap((line) => expandLiturgyDisplayLines(line))
+            .filter((line) => line.trim()),
+        );
+      }
+    }
+
+    return lines;
+  }
+
+  const cSections = sections as readonly ChrysostomSection[];
+  const lines: string[] = [];
+
+  for (const id of CHRYSOSTOM_SECTION_IDS) {
+    if (!sectionHasChrysostomContent(cSections, id)) continue;
+    if (mode.kind === 'compare') {
+      if (mode.left) {
+        lines.push(
+          ...chrysostomSectionParagraphs(cSections, id, mode.left)
+            .flatMap((line) => expandLiturgyDisplayLines(line))
+            .filter((line) => line.trim()),
+        );
+      }
+      if (mode.right) {
+        lines.push(
+          ...chrysostomSectionParagraphs(cSections, id, mode.right)
+            .flatMap((line) => expandLiturgyDisplayLines(line))
+            .filter((line) => line.trim()),
+        );
+      }
+    } else {
+      lines.push(
+        ...chrysostomSectionParagraphs(cSections, id, mode.lang)
+          .flatMap((line) => expandLiturgyDisplayLines(line))
+          .filter((line) => line.trim()),
+      );
+    }
+  }
+
+  return lines;
 }
 
 function sectionHasChrysostomContent(
@@ -94,15 +159,12 @@ function CompareCell({
   searchQuery: string;
 }) {
   const expanded = lines.flatMap((line) => expandLiturgyDisplayLines(line)).filter((line) => line.trim());
-  const filtered = searchQuery
-    ? expanded.filter((line) => lineMatches(line, searchQuery))
-    : expanded;
-  if (!filtered.length) {
+  if (!expanded.length) {
     return null;
   }
   return (
     <>
-      {filtered.map((line, index) => (
+      {expanded.map((line, index) => (
         <LiturgyLine
           key={`${lang}-${index}-${line.slice(0, 12)}`}
           line={line}
@@ -111,6 +173,7 @@ function CompareCell({
           mutedColor={mutedColor}
           isDark={isDark}
           compact
+          searchQuery={searchQuery}
         />
       ))}
     </>
@@ -155,6 +218,7 @@ function LiturgyToolbar({
   textColor,
   searchQuery,
   onSearchQueryChange,
+  searchMatchCount,
 }: {
   service: WorshipServiceId;
   onServiceChange?: (service: WorshipServiceId) => void;
@@ -167,6 +231,7 @@ function LiturgyToolbar({
   textColor: string;
   searchQuery: string;
   onSearchQueryChange: (value: string) => void;
+  searchMatchCount: number | null;
 }) {
   const { t } = useAppTranslation();
   const searchBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.05)';
@@ -205,6 +270,13 @@ function LiturgyToolbar({
           </Pressable>
         ) : null}
       </View>
+      {searchMatchCount !== null ? (
+        <Text style={[hintType, styles.searchStatus, { color: mutedColor }]}>
+          {searchMatchCount > 0
+            ? t('liturgy.worship.searchMatchCount', { count: searchMatchCount })
+            : t('liturgy.worship.searchNoResults')}
+        </Text>
+      ) : null}
       <LiturgyLanguageToggle mode={mode} onChange={onChange} isDark={isDark} fullWidth />
       {mode.kind === 'compare' ? (
         <>
@@ -306,8 +378,7 @@ function ChrysostomSectionBody({
     const lang = mode.lang;
     const lines = chrysostomSectionParagraphs(sections, id, lang)
       .flatMap((line) => expandLiturgyDisplayLines(line))
-      .filter((line) => line.trim())
-      .filter((line) => lineMatches(line, searchQuery));
+      .filter((line) => line.trim());
 
     if (!lines.length) return null;
 
@@ -321,6 +392,7 @@ function ChrysostomSectionBody({
               textColor={textColor}
               mutedColor={mutedColor}
               isDark={isDark}
+              searchQuery={searchQuery}
             />
           </View>
         ))}
@@ -414,8 +486,7 @@ function VespersSectionBody({
     const lang = mode.lang;
     const lines = vespersSectionParagraphs(sections, id, lang)
       .flatMap((line) => expandLiturgyDisplayLines(line))
-      .filter((line) => line.trim())
-      .filter((line) => lineMatches(line, searchQuery));
+      .filter((line) => line.trim());
 
     if (!lines.length) return null;
 
@@ -429,6 +500,7 @@ function VespersSectionBody({
               textColor={textColor}
               mutedColor={mutedColor}
               isDark={isDark}
+              searchQuery={searchQuery}
             />
           </View>
         ))}
@@ -493,6 +565,12 @@ export function WorshipLiturgyBody({
     liturgyState.status === 'ready' &&
     (mode.kind !== 'compare' || liturgyCompareHasSelection(mode));
 
+  const searchMatchCount = useMemo(() => {
+    if (!searchNorm || !showSections) return null;
+    const lines = collectWorshipDisplayLines(liturgyState.sections, service, mode);
+    return countMatchesInLines(lines, searchNorm);
+  }, [liturgyState.sections, mode, searchNorm, service, showSections]);
+
   const sectionBlocks = useMemo(() => {
     if (!showSections) return null;
 
@@ -542,28 +620,6 @@ export function WorshipLiturgyBody({
     textColor,
   ]);
 
-  const visibleSectionCount = useMemo(() => {
-    if (!showSections) return 0;
-    if (service === 'vespers') {
-      const sections = liturgyState.sections as readonly VespersSection[];
-      return VESPERS_SECTION_IDS.filter((id) => {
-        if (!sectionHasVespersContent(sections, id)) return false;
-        const lang = mode.kind === 'compare' ? 'en' : mode.lang;
-        return vespersSectionParagraphs(sections, id, lang as UiLanguage)
-          .flatMap((line) => expandLiturgyDisplayLines(line))
-          .some((line) => lineMatches(line, searchNorm));
-      }).length;
-    }
-    const sections = liturgyState.sections as readonly ChrysostomSection[];
-    return CHRYSOSTOM_SECTION_IDS.filter((id) => {
-      if (!sectionHasChrysostomContent(sections, id)) return false;
-      const lang = mode.kind === 'compare' ? 'en' : mode.lang;
-      return chrysostomSectionParagraphs(sections, id, lang as UiLanguage)
-        .flatMap((line) => expandLiturgyDisplayLines(line))
-        .some((line) => lineMatches(line, searchNorm));
-    }).length;
-  }, [liturgyState.sections, mode, searchNorm, service, showSections]);
-
   const reload = service === 'vespers' ? vespers.reload : chrysostom.reload;
 
   const content = (
@@ -583,6 +639,7 @@ export function WorshipLiturgyBody({
             textColor={textColor}
             searchQuery={searchQuery}
             onSearchQueryChange={setSearchQuery}
+            searchMatchCount={searchMatchCount}
           />
         </View>
       ) : (
@@ -602,14 +659,7 @@ export function WorshipLiturgyBody({
           </Pressable>
         </View>
       ) : showSections ? (
-        <>
-          {searchNorm && visibleSectionCount === 0 ? (
-            <Text style={[hintType, styles.noResults, { color: mutedColor }]}>
-              {t('liturgy.worship.searchNoResults')}
-            </Text>
-          ) : null}
-          <View style={styles.sections}>{sectionBlocks}</View>
-        </>
+        <View style={styles.sections}>{sectionBlocks}</View>
       ) : null}
 
       <Text style={[styles.disclaimer, hintType, { color: mutedColor }]}>{t(disclaimerKey)}</Text>
@@ -675,6 +725,10 @@ const styles = StyleSheet.create({
     padding: 0,
     ...(Platform.OS === 'web' ? { outlineStyle: 'none' as 'solid' } : null),
   },
+  searchStatus: {
+    lineHeight: 18,
+    opacity: 0.9,
+  },
   compareHint: {
     lineHeight: 18,
     opacity: 0.9,
@@ -688,10 +742,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 8,
     textDecorationLine: 'underline',
-  },
-  noResults: {
-    textAlign: 'center',
-    paddingVertical: 12,
   },
   disclaimer: {
     opacity: 0.8,
