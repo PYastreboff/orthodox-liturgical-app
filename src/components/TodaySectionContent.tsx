@@ -17,7 +17,7 @@ import { LiturgicalTextsCategoryToggle } from './LiturgicalTextsCategoryToggle';
 import { PriestGuideTable } from './PriestGuideTable';
 import { PrayersSectionBody } from './PrayersSectionBody';
 import { JesusPrayerRopeBody } from './JesusPrayerRopeBody';
-import { ChrysostomLiturgyBody } from './ChrysostomLiturgyBody';
+import { WorshipLiturgyBody } from './WorshipLiturgyBody';
 import { BibleSectionBody } from './BibleSectionBody';
 import { ReaderGuideTable } from './ReaderGuideTable';
 import { ReadingsLanguageToggle } from './ReadingsLanguageToggle';
@@ -438,7 +438,7 @@ export function TodaySectionContent({ section, model }: Props) {
 
     case 'liturgy':
       return wrap(
-        <ChrysostomLiturgyBody
+        <WorshipLiturgyBody
           textColor={theme.colors.text}
           mutedColor={muted}
           borderColor={theme.colors.border}

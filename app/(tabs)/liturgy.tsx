@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Head from 'expo-router/head';
 import { useLocalSearchParams } from 'expo-router';
 
-import { WorshipLiturgyBody } from '../../src/components/ChrysostomLiturgyBody';
+import { WorshipLiturgyBody } from '../../src/components/WorshipLiturgyBody';
 import { DevotionalPageHeader } from '../../src/components/DevotionalPageHeader';
 import { useFontScale } from '../../src/hooks/useFontScale';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
