@@ -94,6 +94,7 @@ export function DaySectionPage({ section }: Props) {
               icon={<SectionIcon name={icon} color={iconColor} size={22} />}
               accentSoft={vestmentAccent.accentSoft}
               mutedColor={muted}
+              iconPlacement="back"
             />
             {readingsCompareSetup ? (
               <View

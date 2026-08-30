@@ -21,6 +21,8 @@ type Props = {
   accentSoft: string;
   mutedColor: string;
   contentMaxWidth?: number;
+  /** When `back`, chevron back button sits in the hero row instead of the section icon. */
+  iconPlacement?: 'hero' | 'back';
 };
 
 /** Back control plus devotional title block — shared by day sections, recipes, privacy, etc. */
@@ -33,6 +35,7 @@ export function StackScreenHeader({
   accentSoft,
   mutedColor,
   contentMaxWidth = STACK_CONTENT_MAX_WIDTH,
+  iconPlacement = 'hero',
 }: Props) {
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
@@ -40,6 +43,25 @@ export function StackScreenHeader({
   const screenSafe = useScreenSafePadding();
   const backBorder = isDark ? colors.darkBorderSubtle : colors.borderSubtle;
   const backBg = isDark ? colors.darkSurfaceElevated : colors.card;
+  const iconInBack = iconPlacement === 'back';
+
+  const backButton = (
+    <Pressable
+      onPress={onBack}
+      style={[
+        styles.backBtn,
+        iconInBack ? styles.backBtnInline : null,
+        cardElevation(isDark),
+        { backgroundColor: backBg, borderColor: backBorder },
+      ]}
+      accessibilityRole="button"
+      accessibilityLabel={backLabel}
+    >
+      <View style={styles.backIconSlot} pointerEvents="none">
+        <Feather name="chevron-left" size={22} color={theme.colors.text} style={styles.backIcon} />
+      </View>
+    </Pressable>
+  );
 
   return (
     <View style={[styles.wrap, styles.wrapStretch, { paddingTop: screenSafe.paddingTop + 16 }]}>
@@ -51,33 +73,28 @@ export function StackScreenHeader({
           maxWidth: contentMaxWidth,
         })}
       >
-        <Pressable
-          onPress={onBack}
-          style={[
-            styles.backBtn,
-            cardElevation(isDark),
-            { backgroundColor: backBg, borderColor: backBorder },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={backLabel}
-        >
-          <View style={styles.backIconSlot} pointerEvents="none">
-            <Feather
-              name="chevron-left"
-              size={22}
-              color={theme.colors.text}
-              style={styles.backIcon}
+        {iconInBack ? (
+          <DevotionalPageHeader
+            leading={backButton}
+            accentSoft={accentSoft}
+            title={title}
+            subtitle={subtitle}
+            textColor={theme.colors.text}
+            mutedColor={mutedColor}
+          />
+        ) : (
+          <>
+            {backButton}
+            <DevotionalPageHeader
+              icon={icon}
+              accentSoft={accentSoft}
+              title={title}
+              subtitle={subtitle}
+              textColor={theme.colors.text}
+              mutedColor={mutedColor}
             />
-          </View>
-        </Pressable>
-        <DevotionalPageHeader
-          icon={icon}
-          accentSoft={accentSoft}
-          title={title}
-          subtitle={subtitle}
-          textColor={theme.colors.text}
-          mutedColor={mutedColor}
-        />
+          </>
+        )}
       </View>
     </View>
   );
@@ -100,6 +117,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'flex-start',
     marginBottom: 12,
+  },
+  backBtnInline: {
+    marginBottom: 0,
   },
   backIconSlot: {
     width: 22,
