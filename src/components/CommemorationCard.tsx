@@ -69,7 +69,6 @@ export function CommemorationCard({
 
   const header = (
     <>
-      <MaterialCommunityIcons name={entryIconName} size={22} color={entryIconColor} />
       <View style={styles.headerText}>
         <Text style={[styles.title, titleType, { color: nameColor }]}>{entry.name}</Text>
         {!expanded && summary ? (
