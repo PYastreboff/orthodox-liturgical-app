@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { AppScrollView } from './AppScrollView';
 import { JesusPrayerRopeLink } from './JesusPrayerRopeLink';
@@ -8,6 +8,7 @@ import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useFontScale } from '../hooks/useFontScale';
 import {
+  PRAYER_ICONS,
   PRAYER_IDS,
   prayerParagraphs,
   prayerTitleKey,
@@ -81,6 +82,12 @@ function PrayerRow({
         accessibilityState={{ expanded }}
         {...hoverAccessibilityProps(title, { role: 'button' })}
       >
+        <MaterialCommunityIcons
+          name={PRAYER_ICONS[id]}
+          size={22}
+          color={mutedColor}
+          style={styles.leftIcon}
+        />
         <View style={styles.rowCopy}>
           <Text style={[styles.rowTitle, bodyType, { color: textColor }]}>{title}</Text>
           {!expanded ? (
@@ -210,10 +217,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     minHeight: 56,
+  },
+  leftIcon: {
+    marginRight: 2,
   },
   rowCopy: {
     flex: 1,

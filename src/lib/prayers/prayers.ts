@@ -1,3 +1,5 @@
+import type { ComponentProps } from 'react';
+import type { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { UiLanguage } from '../../i18n/types';
 
 export const PRAYER_IDS = [
@@ -11,6 +13,18 @@ export const PRAYER_IDS = [
 ] as const;
 
 export type PrayerId = (typeof PRAYER_IDS)[number];
+
+export type MaterialIconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
+
+export const PRAYER_ICONS: Record<PrayerId, MaterialIconName> = {
+  morning: 'weather-sunny',
+  evening: 'weather-night',
+  communion: 'glass-tulip',
+  trisagion: 'numeric-3-circle-outline',
+  before_meals: 'silverware-fork-knife',
+  jesus: 'cross',
+  ephraim: 'bookmark',
+};
 
 export type PrayerContent = {
   title: string;
@@ -27,13 +41,17 @@ export function prayerSummaryKey(id: PrayerId): string {
   return `prayers.${id}.summary`;
 }
 
+export function prayerIconName(id: PrayerId): MaterialIconName {
+  return PRAYER_ICONS[id];
+}
+
 /** Resolve ordered paragraphs for a prayer in the UI language. */
 export function prayerParagraphs(id: PrayerId, lang: UiLanguage): string[] {
   const pack = PRAYER_BODIES[id];
-  return pack[lang] ?? pack.en;
+  return pack[lang] ?? pack.en ?? [];
 }
 
-const PRAYER_BODIES: Record<PrayerId, Record<UiLanguage, string[]>> = {
+const PRAYER_BODIES: Record<PrayerId, Partial<Record<UiLanguage, string[]>> & { en: string[] }> = {
   morning: {
     en: [
       'In the name of the Father, and of the Son, and of the Holy Spirit. Amen.',

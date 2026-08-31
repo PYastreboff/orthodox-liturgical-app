@@ -1,6 +1,7 @@
 import { useRouter, type Href } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import { PrayerRopeIcon } from './svg/PrayerRopeIcon';
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -41,7 +42,7 @@ export function JesusPrayerRopeLink({
       accessibilityLabel={title}
       {...hoverAccessibilityProps(title, { role: 'button' })}
     >
-      <MaterialCommunityIcons name="meditation" size={20} color={mutedColor} />
+      <PrayerRopeIcon size={28} color={mutedColor} />
       <Text style={[text(14, 18), styles.title, { color: textColor }]}>{title}</Text>
       <Feather name="chevron-right" size={16} color={mutedColor} />
     </Pressable>
