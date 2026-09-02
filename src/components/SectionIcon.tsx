@@ -3,6 +3,8 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { HoverAccessible } from './HoverAccessible';
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';
+import { FontAwesome5 } from '@expo/vector-icons';
+
 
 export type SectionIconName =
   | 'serving-role'

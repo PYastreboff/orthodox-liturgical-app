@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather, FontAwesome5 } from '@expo/vector-icons';
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -64,14 +64,13 @@ export function CommemorationCard({
   const storyType = text(13, 18);
   const lifeType = text(14, 21);
   const entryIconColor = isPrimaryGreatFeast ? colors.feastBorder : mutedColor;
-  const entryIconName =
-    entry.kind === 'feast' ? 'star-four-points-outline' : 'account-outline';
+  const entryIconName = entry.kind === 'feast' ? 'star' : 'user-alt';
 
   const header = (
     <>
-      <MaterialCommunityIcons
+      <FontAwesome5
         name={entryIconName}
-        size={20}
+        size={12}
         color={entryIconColor}
         style={styles.icon}
       />
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
   },
   icon: {
-    marginTop: 2,
+    marginTop: 6,
   },
   headerText: {
     flex: 1,

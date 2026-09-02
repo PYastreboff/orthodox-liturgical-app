@@ -41,7 +41,7 @@ import { worshipHrefForServiceKind } from '../lib/liturgical/worshipNavigation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { isGreatLentSeason } from '../lib/liturgical/lentSeason';
 import { colors } from '../theme/tokens';
-import { FontAwesome5 } from '@expo/vector-icons'; // Ensure FontAwesome5 is imported
+import { FontAwesome5 } from '@expo/vector-icons';
 
 function CommemorationBlockHeading({
   icon,
@@ -55,11 +55,15 @@ function CommemorationBlockHeading({
   iconColor: string;
 }) {
   const { text } = useFontScale();
-  const titleType = text(18, 24);
+  const titleType = text(20, 26);
+  const iconName = icon === 'feasts' ? 'star' : 'user-alt';
+
   return (
     <View style={styles.commemorationHeadingRow}>
-      <SectionIcon name={icon} color={iconColor} size={24} />
-      <Text style={[styles.commemorationHeading, titleType, { color }]}>{label}</Text>
+      <FontAwesome5 name={iconName} size={20} color={iconColor} />
+      <Text style={[styles.commemorationHeading, titleType, { color }]}>
+        {label}
+      </Text>
     </View>
   );
 }

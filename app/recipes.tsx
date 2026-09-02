@@ -45,6 +45,7 @@ export default function RecipesScreen() {
             icon={<Feather name="book-open" size={22} color={vestmentAccent.accent} />}
             accentSoft={vestmentAccent.accentSoft}
             mutedColor={muted}
+            iconPlacement="back"
           />
         <AppScrollView
           keyboardShouldPersistTaps="handled"
