@@ -41,6 +41,7 @@ import { worshipHrefForServiceKind } from '../lib/liturgical/worshipNavigation';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { isGreatLentSeason } from '../lib/liturgical/lentSeason';
 import { colors } from '../theme/tokens';
+import { FontAwesome5 } from '@expo/vector-icons'; // Ensure FontAwesome5 is imported
 
 function CommemorationBlockHeading({
   icon,
@@ -97,7 +98,14 @@ function CommemorationEntryList({
   isDark?: boolean;
 }) {
   if (!entries.length) {
-    return <Text style={[styles.body, bodyType, { color: textColor }]}>{emptyMessage}</Text>;
+    return (
+      <View style={styles.emptyContainer}>
+        <FontAwesome5 name="calendar-times" size={28} color={mutedColor} />
+        <Text style={[styles.emptyText, bodyType, { color: mutedColor }]}>
+          {emptyMessage}
+        </Text>
+      </View>
+    );
   }
   return (
     <View style={styles.commemorationList}>
@@ -1171,5 +1179,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 999,
     overflow: 'hidden',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    gap: 8,
+  },
+  emptyText: {
+    textAlign: 'center',
+    opacity: 0.8,
   },
 });

@@ -69,6 +69,12 @@ export function CommemorationCard({
 
   const header = (
     <>
+      <MaterialCommunityIcons
+        name={entryIconName}
+        size={20}
+        color={entryIconColor}
+        style={styles.icon}
+      />
       <View style={styles.headerText}>
         <Text style={[styles.title, titleType, { color: nameColor }]}>{entry.name}</Text>
         {!expanded && summary ? (
@@ -141,10 +147,13 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 10,
     paddingHorizontal: 14,
     paddingVertical: 13,
+  },
+  icon: {
+    marginTop: 2,
   },
   headerText: {
     flex: 1,
