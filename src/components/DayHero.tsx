@@ -116,7 +116,7 @@ export function DayHero({
       ? 'rgba(255,255,255,0.92)'
       : vestmentAccent.accent;
   const todayBtnFg = isDark ? fg : darkHeroSurface ? colors.ink : vestmentAccent.onAccent;
-  const dayTitleType = text(28, 34);
+  const dayTitleType = text(26, 38);
   const primaryDateType = text(17, 22);
   const julianDateType = text(12, 16);
   const chipType = text(12, 16);
@@ -239,7 +239,7 @@ export function DayHero({
             isMajorFeastDay ? styles.dayTitleFeast : null,
             phoneLayout ? styles.dayTitleWithCornersPhone : styles.dayTitleWithCorners,
           ]}
-          numberOfLines={3}
+          numberOfLines={2}
         >
           {dayTitle}
         </Text>
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 32,
+    height: 68, // Fixed height for 2 lines of title text
   },
   dayTitle: {
     fontWeight: '800',

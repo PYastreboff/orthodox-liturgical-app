@@ -42,7 +42,41 @@ function SkeletonBlock({
   );
 }
 
-/** Placeholder for the gospel card and tile grid while Orthocal day data loads. */
+function SectionGroupSkeleton({
+  isDark,
+  rowCount,
+}: {
+  isDark: boolean;
+  rowCount: number;
+}) {
+  return (
+    <View style={styles.sectionGroup}>
+      <SkeletonBlock height={12} width="28%" isDark={isDark} style={styles.sectionHeader} />
+      <View style={[styles.listCard, surfaceCard(isDark, { radius: radii.lg })]}>
+        {Array.from({ length: rowCount }).map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.rowItem,
+              index > 0 && {
+                borderTopWidth: StyleSheet.hairlineWidth,
+                borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(43,38,35,0.08)',
+              },
+            ]}
+          >
+            <View style={styles.rowLeft}>
+              <SkeletonBlock height={20} width={20} isDark={isDark} />
+              <SkeletonBlock height={16} width="45%" isDark={isDark} />
+            </View>
+            <SkeletonBlock height={14} width={14} isDark={isDark} />
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+/** Placeholder matching Gospel Card & Navigation List Sections. */
 export function TodaySkeleton({ isDark }: Props) {
   const { t } = useAppTranslation();
   const opacity = useSharedValue(0.55);
@@ -59,77 +93,99 @@ export function TodaySkeleton({ isDark }: Props) {
 
   return (
     <Animated.View style={[styles.root, pulse]} accessibilityLabel={t('a11y.loading')}>
-      <View
-        style={[
-          styles.gospelCard,
-          surfaceCard(isDark, { radius: radii.xxl }),
-        ]}
-      >
+      {/* Gospel Card */}
+      <View style={[styles.gospelCard, surfaceCard(isDark, { radius: radii.xxl })]}>
+        {/* Card Header Row */}
+        <View style={styles.gospelHeader}>
+          <View style={styles.gospelHeaderLeft}>
+            <SkeletonBlock height={40} width={40} isDark={isDark} style={{ borderRadius: 10 }} />
+            <View style={styles.gospelHeaderText}>
+              <SkeletonBlock height={11} width="60%" isDark={isDark} />
+              <SkeletonBlock height={16} width="85%" isDark={isDark} style={{ marginTop: 4 }} />
+            </View>
+          </View>
+          <SkeletonBlock height={28} width={28} isDark={isDark} style={{ borderRadius: 14 }} />
+        </View>
+
+        {/* Card Body */}
         <View style={styles.gospelBody}>
-          <SkeletonBlock height={12} width="38%" isDark={isDark} />
-          <SkeletonBlock height={16} width="52%" isDark={isDark} style={styles.gapSm} />
-          <SkeletonBlock height={14} width="100%" isDark={isDark} style={styles.gap} />
-          <SkeletonBlock height={14} width="94%" isDark={isDark} style={styles.gapSm} />
-          <SkeletonBlock height={14} width="78%" isDark={isDark} style={styles.gapSm} />
+          <SkeletonBlock height={14} width="100%" isDark={isDark} />
+          <SkeletonBlock height={14} width="96%" isDark={isDark} style={styles.gapSm} />
+          <SkeletonBlock height={14} width="92%" isDark={isDark} style={styles.gapSm} />
+          <SkeletonBlock height={14} width="88%" isDark={isDark} style={styles.gapSm} />
+          <SkeletonBlock height={14} width="65%" isDark={isDark} style={styles.gapSm} />
+
+          <SkeletonBlock height={12} width="20%" isDark={isDark} style={{ marginTop: 14 }} />
+          <SkeletonBlock height={16} width="40%" isDark={isDark} style={{ marginTop: 14 }} />
         </View>
       </View>
 
-      <View style={styles.tileGrid}>
-        {[0, 1, 2, 3].map((i) => (
-          <View
-            key={i}
-            style={[
-              styles.tile,
-              surfaceCard(isDark, { radius: radii.lg }),
-            ]}
-          >
-            <SkeletonBlock height={40} width={40} isDark={isDark} />
-            <SkeletonBlock height={14} width="72%" isDark={isDark} style={styles.gap} />
-          </View>
-        ))}
-      </View>
+      {/* List Sections */}
+      <SectionGroupSkeleton isDark={isDark} rowCount={4} />
+      <SectionGroupSkeleton isDark={isDark} rowCount={2} />
+      <SectionGroupSkeleton isDark={isDark} rowCount={2} />
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
-    gap: 18,
-    marginTop: 16,
-    marginBottom: 8,
+    gap: 16,
+    marginTop: 12,
+    marginBottom: 12,
   },
   gospelCard: {
-    borderRadius: 28,
+    borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+    padding: 16,
+  },
+  gospelHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  gospelHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  gospelHeaderText: {
+    flex: 1,
+  },
+  gospelBody: {
+    gap: 2,
+  },
+  sectionGroup: {
+    gap: 8,
+  },
+  sectionHeader: {
+    marginLeft: 4,
+  },
+  listCard: {
+    borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
   },
-  gospelBody: {
-    paddingHorizontal: 18,
-    paddingVertical: 18,
-  },
-  tileGrid: {
+  rowItem: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  tile: {
-    width: '47.8%',
-    borderRadius: 20,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 14,
-    paddingVertical: 16,
-    minHeight: 96,
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  rowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
   },
   block: {
-    borderRadius: 8,
-  },
-  gap: {
-    marginTop: 12,
+    borderRadius: 6,
   },
   gapSm: {
-    marginTop: 8,
+    marginTop: 6,
   },
 });
