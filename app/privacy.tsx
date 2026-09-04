@@ -51,6 +51,7 @@ export default function PrivacyPolicyScreen() {
             accentSoft={vestmentAccent.accentSoft}
             mutedColor={muted}
             contentMaxWidth={STACK_CONTENT_NARROW_MAX_WIDTH}
+            iconPlacement="back"
           />
         <ScrollView
           contentContainerStyle={[

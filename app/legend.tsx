@@ -43,6 +43,7 @@ export default function ColoursLegendScreen() {
             icon={<Feather name="info" size={22} color={vestmentAccent.accent} />}
             accentSoft={vestmentAccent.accentSoft}
             mutedColor={muted}
+            iconPlacement="back"
           />
         <ScrollView
           contentContainerStyle={[

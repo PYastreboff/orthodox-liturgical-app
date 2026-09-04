@@ -67,24 +67,24 @@ export function calendarCellLegend(
   if (isDark) {
     return [
       { key: 'calendar.legendNonFasting', swatch: CALENDAR_CELL_DARK_NORMAL, border: true },
-      { key: 'calendar.legendFasting', swatch: CALENDAR_CELL_DARK_FASTING },
+      { key: 'calendar.legendFasting', swatch: CALENDAR_CELL_DARK_FASTING, border: true },
       { key: 'calendar.legendFeast', swatch: CALENDAR_CELL_DARK_FEAST, feastOutline: true },
       { key: 'calendar.legendToday', swatch: CALENDAR_CELL_DARK_NORMAL, todayRing: true },
     ];
   }
   return [
     { key: 'calendar.legendNonFasting', swatch: CALENDAR_CELL_WHITE, border: true },
-    { key: 'calendar.legendFasting', swatch: CALENDAR_CELL_FASTING },
+    { key: 'calendar.legendFasting', swatch: CALENDAR_CELL_FASTING, border: true },
     { key: 'calendar.legendFeast', swatch: CALENDAR_CELL_FEAST, feastOutline: true },
     { key: 'calendar.legendToday', swatch: CALENDAR_CELL_WHITE, todayRing: true },
   ];
 }
 
-const LITURGICAL_LEGEND_SWATCHES: ReadonlyArray<{
+const LITURGICAL_LEGEND_SWATCHES: readonly {
   key: string;
   pillBg: string;
   swatchKey: LiturgicalSwatchKey;
-}> = [
+}[] = [
   { key: 'vestments.colorGold', pillBg: '#b08d57', swatchKey: 'gold' },
   { key: 'vestments.colorWhite', pillBg: '#f0ebe3', swatchKey: 'white' },
   { key: 'vestments.colorBlue', pillBg: '#2f4a6f', swatchKey: 'blue' },

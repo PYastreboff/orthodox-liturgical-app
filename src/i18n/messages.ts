@@ -224,6 +224,8 @@ const en = {
     colorsLegendLinkHint: 'Fast pills, calendar cells, icons, and Typikon marks.',
     legendPillsTitle: 'Fasting Information',
     legendPillsHint: 'On the Today screen (date row, hero, and Fasting section).',
+    legendServicesTitle: 'Service Colours',
+    legendServicesHint: 'Colour-coded pills on the Services and Liturgy screens.',
     legendPillDesc: {
       strict: 'Plants only — no meat, dairy, eggs, fish, wine, or oil.',
       wineOil: 'Wine and oil allowed with plant foods.',
@@ -2023,6 +2025,8 @@ const ru = {
     colorsLegendLinkHint: 'Метки поста, ячейки календаря, значки и знаки типикона.',
     legendPillsTitle: 'Информация о посте',
     legendPillsHint: 'На экране «Сегодня» (дата, шапка дня и раздел о посте).',
+    legendServicesTitle: 'Цвета служб',
+    legendServicesHint: 'Цветные метки на экранах «Службы» и «Церковные службы».',
     legendPillDesc: {
       strict: 'Только постная пища — без мяса, молочного, яиц, рыбы, вина и масла.',
       wineOil: 'Разрешены вино и масло вместе с постной пищей.',

@@ -17,6 +17,7 @@ import {
   TYPIKON_LEGEND_ENTRIES,
 } from '../lib/liturgical/liturgicalLegend';
 import { FEAST_RANK_BY_LEVEL, typikonIconColor } from '../lib/liturgical/typikonSymbols';
+import { serviceKindTint } from '../lib/liturgical/serviceColor';
 import { SECTION_CARD_PADDING, SECTION_CARD_PADDING_PHONE } from '../theme/layout';
 import { colors } from '../theme/tokens';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
@@ -96,6 +97,32 @@ export function LiturgicalLegendGuide({ textColor, mutedColor, pageLayout = fals
               </Text>
             </View>
           ))}
+        </View>
+      </View>
+
+      <View style={styles.legendSection}>
+        <Text style={[styles.legendSubsectionTitle, { color: textColor }]}>
+          {t('settings.legendServicesTitle')}
+        </Text>
+        <View
+          style={[
+            styles.symbolCard,
+            pageLayout
+              ? { backgroundColor: rowBg, borderColor: legendBorder }
+              : styles.symbolCardPlain,
+          ]}
+        >
+          {([['vespers', 'services.kind.vespers'], ['liturgy_chrysostom', 'services.kind.liturgyChrysostom'], ['liturgy_basil', 'services.kind.liturgyBasil']] as const).map(
+            ([kind, labelKey]) => {
+              const tint = serviceKindTint(kind);
+              return (
+                <View key={kind} style={styles.symbolItem}>
+                  <View style={[styles.swatch, { backgroundColor: tint.bg }]} />
+                  <Text style={[styles.label, { color: textColor }]}>{t(labelKey)}</Text>
+                </View>
+              );
+            },
+          )}
         </View>
       </View>
 
@@ -212,6 +239,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
     textAlign: 'left',
     width: '100%',
+  },
+  legendHint: {
+    fontSize: 12,
+    lineHeight: 17,
+    textAlign: 'left',
+    width: '100%',
+    opacity: 0.85,
   },
   pillTable: {
     width: '100%',
