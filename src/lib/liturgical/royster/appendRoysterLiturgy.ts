@@ -1,9 +1,9 @@
 import type { OrthocalDay } from '../../api/orthocal';
-import {
-  liturgicalItemHasText,
-  type BuildLiturgicalTextsOptions,
-  type LiturgicalTextCategory,
-  type LiturgicalTextItem,
+import { liturgicalItemHasText } from '../liturgicalItemHasText';
+import type {
+  BuildLiturgicalTextsOptions,
+  LiturgicalTextCategory,
+  LiturgicalTextItem,
 } from '../liturgicalTexts';
 import { isOrthocalGreatFeastLevel } from '../liturgicalDayTitle';
 import { resolveRoysterLiturgySequence } from './resolveRoysterLiturgy';

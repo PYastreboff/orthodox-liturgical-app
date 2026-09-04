@@ -30,6 +30,10 @@ export const colors = {
   /** Calendar cell hover ring on dark mode — muted gold, darker than accentGold. */
   calendarHoverBorderDark: '#6e5c38',
   accentTheotokos: '#2f4a6f',
+  /** Service-type colour code — St Basil Liturgy (darker green). */
+  serviceGreen: '#2f5a34',
+  serviceGreenSoft: 'rgba(47, 90, 52, 0.14)',
+  serviceGreenDark: '#4e8a5a',
   /** Custom calendar events (namedays/feasts use accentWine). */
   personalEvent: '#2d2b5e',
   /** Soft periwinkle — readable on dark calendar cells (#181614–#2c2822). */

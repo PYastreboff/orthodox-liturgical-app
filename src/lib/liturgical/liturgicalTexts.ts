@@ -39,9 +39,7 @@ export type LiturgicalTextSection = {
 };
 
 /** True when at least one verse line has non-whitespace text (citation-only stubs count as empty). */
-export function liturgicalItemHasText(item: LiturgicalTextItem): boolean {
-  return item.paragraphs.some((p) => p.some((line) => line.text.trim().length > 0));
-}
+export { liturgicalItemHasText } from './liturgicalItemHasText';
 
 export const LITURGICAL_TEXT_SECTION_ORDER: LiturgicalTextCategory[] = [
   'troparion',

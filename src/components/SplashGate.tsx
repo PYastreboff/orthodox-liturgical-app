@@ -39,7 +39,7 @@ export function SplashGate({ children }: Props) {
       {children}
       {!overlayVisible ? <FirstLaunchTips /> : null}
       {overlayVisible ? (
-        <View style={styles.overlay} pointerEvents="auto">
+        <View style={[styles.overlay, { pointerEvents: 'auto' }]}>
           <AppSplashScreen />
         </View>
       ) : null}

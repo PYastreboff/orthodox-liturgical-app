@@ -919,8 +919,8 @@ export function WorshipLiturgyBody({
                 backgroundImage: `linear-gradient(to bottom, ${pageBg} 0%, ${pageBg} 50%, transparent 50%)`,
               } as unknown as ViewStyle)
             : null,
+          { pointerEvents: 'none' },
         ]}
-        pointerEvents="none"
       />
       {searchCard}
     </View>

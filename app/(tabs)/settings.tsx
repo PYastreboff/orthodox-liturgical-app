@@ -894,11 +894,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 8,
     minWidth: 200,
-    shadowColor: '#003087',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: '0px 2px 4px rgba(0,48,135,0.18)',
   },
   tipJarButtonMarkChip: {
     backgroundColor: '#FFFFFF',

@@ -270,7 +270,7 @@ export function DayHero({
         animationType="fade"
         onRequestClose={() => setRoleMenuOpen(false)}
       >
-        <View style={styles.roleMenuRoot} pointerEvents="box-none">
+        <View style={[styles.roleMenuRoot, { pointerEvents: 'box-none' }]}>
           <Pressable
             style={styles.roleMenuBackdrop}
             onPress={() => setRoleMenuOpen(false)}
@@ -344,7 +344,7 @@ export function DayHero({
           onPress={onPrevious}
           accessibilityLabel={t('today.prevDay')}
         >
-          <View style={styles.navChevronSlot} pointerEvents="none">
+          <View style={[styles.navChevronSlot, { pointerEvents: 'none' }]}>
             <Feather
               name="chevron-left"
               size={24}
@@ -372,7 +372,7 @@ export function DayHero({
           onPress={onNext}
           accessibilityLabel={t('today.nextDay')}
         >
-          <View style={styles.navChevronSlot} pointerEvents="none">
+          <View style={[styles.navChevronSlot, { pointerEvents: 'none' }]}>
             <Feather
               name="chevron-right"
               size={24}
@@ -544,11 +544,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    elevation: 8,
+    boxShadow: '0px 8px 16px rgba(0,0,0,0.18)',
   },
   roleMenuItem: {
     flexDirection: 'row',

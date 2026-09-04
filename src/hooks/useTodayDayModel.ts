@@ -277,10 +277,11 @@ export function useTodayDayModel() {
       appearance: tomorrowAppearance,
       feastLevel: tomorrowCached?.feast_level,
       weekday: tomorrowCached?.weekday ?? tomorrowDate.getDay(),
-    });
+    }, civilPlain);
     return localizeDayServices(raw, uiLanguage);
   }, [
     appearance,
+    civilPlain,
     liturgicalDay,
     liturgicalPlain,
     primaryCalendar,

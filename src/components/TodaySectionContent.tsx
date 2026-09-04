@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from "expo-router/react-navigation";
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { readingsCompareReady } from '../lib/readings/textLanguage';
 
@@ -25,7 +25,6 @@ import { TodayPersonalDays } from './TodayPersonalDays';
 import { TypikonSymbol } from './TypikonSymbol';
 import { VestmentIcon } from './VestmentIcon';
 import { CommemorationCard } from './CommemorationCard';
-import { SectionIcon } from './SectionIcon';
 import { useFontScale } from '../hooks/useFontScale';
 import { useVestmentAccent } from '../state/VestmentAccentContext';
 import { ServiceLivestreamsSection } from './ServiceLivestreamsSection';
@@ -38,10 +37,10 @@ import {
 import type { CommemorationEntry } from '../lib/liturgical/commemorations';
 import type { TodaySectionId } from '../lib/today/todaySections';
 import { worshipHrefForServiceKind } from '../lib/liturgical/worshipNavigation';
+import { serviceKindTint } from '../lib/liturgical/serviceColor';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { isGreatLentSeason } from '../lib/liturgical/lentSeason';
 import { colors } from '../theme/tokens';
-import { FontAwesome5 } from '@expo/vector-icons';
 
 function CommemorationBlockHeading({
   icon,
@@ -605,6 +604,7 @@ export function TodaySectionContent({ section, model }: Props) {
               const showSlotHeader = entry.slot !== prevSlot;
               const isLast = index === dayServices.items.length - 1;
               const worshipHref = worshipHrefForServiceKind(entry.kind);
+              const pillTint = serviceKindTint(entry.kind);
               return (
                 <View key={`${entry.kind}-${index}`}>
                   {showSlotHeader ? (
@@ -645,8 +645,14 @@ export function TodaySectionContent({ section, model }: Props) {
                         type.pill,
                         styles.serviceTypePill,
                         {
-                          backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.08)',
-                          color: theme.colors.text,
+                          backgroundColor:
+                            pillTint.kind === 'neutral'
+                              ? isDark
+                                ? 'rgba(255,255,255,0.1)'
+                                : 'rgba(43,38,35,0.08)'
+                              : pillTint.bg,
+                          borderColor: pillTint.kind === 'neutral' ? undefined : pillTint.border,
+                          color: pillTint.kind === 'neutral' ? theme.colors.text : pillTint.fg,
                         },
                       ]}
                     >

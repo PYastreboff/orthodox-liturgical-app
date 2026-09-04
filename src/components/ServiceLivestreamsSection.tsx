@@ -27,6 +27,7 @@ export function ServiceLivestreamsSection({
   const livestreams = useOrthodoxLivestreams();
   const pillBg = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(43,38,35,0.08)';
   const liveDot = isDark ? '#f87171' : colors.accentWine;
+  const upcomingDot = isDark ? '#fbbf24' : '#b8860b';
 
   const openStream = (url: string) => {
     void Linking.openURL(url);
@@ -60,6 +61,13 @@ export function ServiceLivestreamsSection({
       ) : livestreams.streams.length > 0 ? (
         livestreams.streams.map((stream, index) => {
           const label = t(`services.livestreams.channels.${stream.channelId}`);
+          const upcoming = stream.status !== 'live';
+          const dot = upcoming ? upcomingDot : liveDot;
+          const badge = upcoming ? 'services.livestreams.upcomingBadge' : 'services.livestreams.liveBadge';
+          const a11yLabel = t(
+            upcoming ? 'services.livestreams.upcomingA11y' : 'services.livestreams.watchA11y',
+            { name: label },
+          );
           const isLast = index === livestreams.streams.length - 1;
           return (
             <Pressable
@@ -71,16 +79,11 @@ export function ServiceLivestreamsSection({
                 pressed ? styles.rowPressed : null,
               ]}
               accessibilityRole="button"
-              {...hoverAccessibilityProps(
-                t('services.livestreams.watchA11y', { name: label }),
-                { role: 'button' },
-              )}
+              {...hoverAccessibilityProps(a11yLabel, { role: 'button' })}
             >
               <View style={styles.labelCol}>
                 <Text style={[bodyType, styles.channelName, { color: textColor }]}>{label}</Text>
-                <Text style={[hintType, styles.liveLabel, { color: liveDot }]}>
-                  {t('services.livestreams.liveBadge')}
-                </Text>
+                <Text style={[hintType, styles.liveLabel, { color: dot }]}>{t(badge)}</Text>
               </View>
               <View style={[styles.watchPill, { backgroundColor: pillBg }]}>
                 <Feather name="external-link" size={13} color={textColor} />

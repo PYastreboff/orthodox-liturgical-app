@@ -2,8 +2,8 @@
  * Remote Basil liturgy text (JSON on GitHub). Bundled copy used as fallback.
  */
 import bundledLiturgy from '../../../data/liturgy/basil-liturgy.json';
-import type { BasilSection, BasilSectionId } from './basilLiturgy';
-import { BASIL_SECTION_IDS } from './basilLiturgy';
+import type { BasilSection, BasilSectionId } from './basilLiturgyTypes';
+import { BASIL_SECTION_IDS } from './basilLiturgyTypes';
 import { sectionUnits } from './liturgyUnit';
 
 const DEFAULT_URLS = [

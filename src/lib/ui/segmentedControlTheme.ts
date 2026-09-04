@@ -73,9 +73,10 @@ export function chipStyle(
   theme: SegmentedControlTheme,
   size: SegmentedControlSize,
   selected: boolean,
-  options?: { fullWidth?: boolean },
+  options?: { fullWidth?: boolean; accent?: { fg: string; bg: string; border: string } },
 ): ViewStyle {
   const { padH, padV } = SIZE_STYLES[size];
+  const accent = options?.accent;
   return {
     borderRadius: 999,
     borderWidth: StyleSheet.hairlineWidth,
@@ -83,8 +84,8 @@ export function chipStyle(
     paddingVertical: padV,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: selected ? theme.chipSelectedBg : theme.chipIdleBg,
-    borderColor: selected ? theme.chipSelectedBg : theme.chipIdleBorder,
+    backgroundColor: selected ? accent?.bg ?? theme.chipSelectedBg : theme.chipIdleBg,
+    borderColor: selected ? accent?.border ?? theme.chipSelectedBg : theme.chipIdleBorder,
     ...(options?.fullWidth ? { flex: 1, minWidth: 0 } : null),
   };
 }

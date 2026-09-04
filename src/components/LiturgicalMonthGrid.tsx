@@ -324,7 +324,7 @@ function CalendarMonthNavButton({
       accessibilityLabel={label}
       {...hoverAccessibilityProps(label, { role: 'button' })}
     >
-      <View style={styles.navIconSlot} pointerEvents="none">
+      <View style={[styles.navIconSlot, { pointerEvents: 'none' }]}>
         <Feather
           name={direction === 'prev' ? 'chevron-left' : 'chevron-right'}
           size={22}
@@ -901,8 +901,7 @@ function DayCell({
     >
       {orthocalPending ? (
         <View
-          pointerEvents="none"
-          style={styles.cellLoadingCorner}
+          style={[styles.cellLoadingCorner, { pointerEvents: 'none' }]}
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
         >

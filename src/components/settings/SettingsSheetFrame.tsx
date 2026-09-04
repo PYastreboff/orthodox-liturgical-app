@@ -66,8 +66,7 @@ export function SettingsSheetFrame({
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.root}>
         <Animated.View
-          style={[styles.backdrop, backdropStyle]}
-          pointerEvents="none"
+          style={[styles.backdrop, backdropStyle, { pointerEvents: 'none' }]}
         />
         <Pressable style={styles.backdropTap} onPress={onClose} accessibilityElementsHidden />
         <Animated.View
@@ -111,11 +110,7 @@ const styles = StyleSheet.create({
     maxWidth: 420,
     width: '100%',
     alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.28,
-    shadowRadius: 28,
-    elevation: 12,
+    boxShadow: '0px 12px 28px rgba(0,0,0,0.28)',
   },
   handleRow: {
     alignItems: 'center',

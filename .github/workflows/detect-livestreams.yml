@@ -1,0 +1,45 @@
+name: Detect livestreams
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: livestreams
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Skip if a refresh happened within the last 15 minutes (allow manual
+      # "run now", but don't let repeated dispatches hammer the detection too hard).
+      - name: Check last update age
+        id: age
+        run: |
+          UPDATED=$(node -e "const d=require('./data/livestreams/live-now.json'); process.stdout.write(typeof d.updated==='string'?d.updated:'')")
+          if [ -z "$UPDATED" ]; then echo "fresh-enough=false"; echo "updated=never"; else
+            AGE=$(( ( $(date +%s) - $(date -d "$UPDATED" +%s) ) / 1 ))
+            echo "age=$AGE"
+            if [ "$AGE" -lt 900 ]; then echo "fresh-enough=true"; else echo "fresh-enough=false"; fi
+          fi
+
+      - run: node scripts/detect-livestreams.mjs
+        if: steps.age.outputs.fresh-enough == 'false'
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: steps.age.outputs.fresh-enough == 'false'
+        with:
+          commit_message: 'chore(livestreams): refresh live-now.json'
+          file_pattern: data/livestreams/live-now.json
+          skip_fetch: true

@@ -125,6 +125,11 @@ export function isBasilTheophanyFeast(liturgical: PlainDate): boolean {
   return weekday === 0 || weekday === 1;
 }
 
+/** True when the day is the ordinary civil New Year's Day (January 1), regardless of calendar mode. */
+export function isCivilNewYearDay(plainDate: PlainDate): boolean {
+  return plainDate.month === 1 && plainDate.day === 1;
+}
+
 export function isBasilLiturgyDay(appearanceKey: string, liturgical: PlainDate): boolean {
   if (appearanceKey === 'lent_sunday') return true;
   if (appearanceKey === 'holy_saturday') return true;
@@ -243,6 +248,7 @@ export function buildDayServices(
   liturgical: PlainDate,
   day: OrthocalDay | null,
   tomorrow?: DayServicesNeighbor | null,
+  civil?: PlainDate | null,
 ): DayServicesData {
   const appearanceKey = appearance.key;
   const feastLevel = day?.feast_level;
@@ -286,6 +292,23 @@ export function buildDayServices(
   if (isTheophanyEve(liturgical)) {
     const kind = isBasilTheophanyEve(liturgical) ? 'liturgy_basil' : 'liturgy_chrysostom';
     items.push(item('vigil', 'afternoon'), item(kind, 'afternoon'));
+    return { items, footnoteKey: 'services.footnote' };
+  }
+
+  // --- Civil New Year's Day: morning Liturgy of St Basil (Vespers is the evening before) ---
+  if (civil && isCivilNewYearDay(civil)) {
+    items.push(item('liturgy_basil', 'morning'));
+    return { items, footnoteKey: 'services.footnote' };
+  }
+
+  // --- New Year's Eve: Vespers this evening, before tomorrow's St Basil's Liturgy ---
+  if (civil && civil.month === 12 && civil.day === 31) {
+    if (hasMorningLiturgy(appearanceKey, weekday, feastLevel)) {
+      items.push(
+        item(morningLiturgyKind({ appearanceKey, liturgical, paschaDistance }), 'morning'),
+      );
+    }
+    items.push(item('vespers', 'evening'));
     return { items, footnoteKey: 'services.footnote' };
   }
 

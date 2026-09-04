@@ -1,26 +1,17 @@
 import type { UiLanguage } from '../../i18n/types';
 import { getCachedChrysostomLiturgy } from './chrysostomLiturgyRemote';
 import { sectionUnits, unitLine, type LiturgyUnit } from './liturgyUnit';
+import {
+  CHRYSOSTOM_SECTION_IDS,
+  type ChrysostomSection,
+  type ChrysostomSectionId,
+} from './chrysostomLiturgyTypes';
 
-export const CHRYSOSTOM_SECTION_IDS = [
-  'opening',
-  'great_litany',
-  'antiphons',
-  'readings',
-  'cherubic',
-  'creed',
-  'anaphora',
-  'communion',
-  'dismissal',
-] as const;
-
-export type ChrysostomSectionId = (typeof CHRYSOSTOM_SECTION_IDS)[number];
-
-export type ChrysostomSection = {
-  id: ChrysostomSectionId;
-  units?: LiturgyUnit[];
-  paragraphs?: Partial<Record<UiLanguage, string[]>>;
-};
+export {
+  CHRYSOSTOM_SECTION_IDS,
+  type ChrysostomSection,
+  type ChrysostomSectionId,
+} from './chrysostomLiturgyTypes';
 
 export function chrysostomSectionUnits(
   sections: readonly ChrysostomSection[],

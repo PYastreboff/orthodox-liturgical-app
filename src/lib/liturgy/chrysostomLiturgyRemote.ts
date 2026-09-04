@@ -2,8 +2,8 @@
  * Remote Chrysostom liturgy text (JSON on GitHub). Bundled copy used as fallback.
  */
 import bundledLiturgy from '../../../data/liturgy/chrysostom-liturgy.json';
-import type { ChrysostomSection, ChrysostomSectionId } from './chrysostomLiturgy';
-import { CHRYSOSTOM_SECTION_IDS } from './chrysostomLiturgy';
+import type { ChrysostomSection, ChrysostomSectionId } from './chrysostomLiturgyTypes';
+import { CHRYSOSTOM_SECTION_IDS } from './chrysostomLiturgyTypes';
 import { sectionUnits } from './liturgyUnit';
 
 const DEFAULT_URLS = [

@@ -1,5 +1,5 @@
 import { useTheme } from "expo-router/react-navigation";
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { MainTabBar } from '../../src/components/MainTabBar';
 import { tabBarIconOptions } from '../../src/components/TabBarIcon';
@@ -39,9 +39,7 @@ function TabsLayoutContent() {
             width: '100%',
             height: TAB_BAR_CONTENT_HEIGHT,
             minHeight: TAB_BAR_CONTENT_HEIGHT,
-            elevation: 0,
-            shadowOpacity: 0,
-            ...(Platform.OS === 'web' ? ({ boxShadow: 'none' } as const) : null),
+            boxShadow: 'none',
           },
           tabBarContentContainerStyle: {
             flex: 1,

@@ -1,15 +1,9 @@
 import type { UiLanguage } from '../../i18n/types';
 import { getCachedBasilLiturgy } from './basilLiturgyRemote';
-import {
-  CHRYSOSTOM_SECTION_IDS,
-  type ChrysostomSection,
-  type ChrysostomSectionId,
-} from './chrysostomLiturgy';
 import { sectionUnits, unitLine, type LiturgyUnit } from './liturgyUnit';
+import { BASIL_SECTION_IDS, type BasilSection, type BasilSectionId } from './basilLiturgyTypes';
 
-export const BASIL_SECTION_IDS = CHRYSOSTOM_SECTION_IDS;
-export type BasilSectionId = ChrysostomSectionId;
-export type BasilSection = ChrysostomSection;
+export { BASIL_SECTION_IDS, type BasilSection, type BasilSectionId } from './basilLiturgyTypes';
 
 export function basilSectionUnits(
   sections: readonly BasilSection[],

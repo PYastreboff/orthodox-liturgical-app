@@ -1,6 +1,5 @@
 import type { UiLanguage } from '../../i18n/types';
 import type { ChrysostomSectionId } from './chrysostomLiturgy';
-import { isOpeningDeaconBlessing } from './liturgyUnit';
 import {
   CREED_TITLE_MARKER,
   isDevotionalTitleMarker,
@@ -198,6 +197,15 @@ function deaconLabel(lang: UiLanguage): string {
   if (lang === 'ru') return 'Диакон';
   if (lang === 'el') return 'ΔΙΑΚΟΝΟΣ';
   return 'DEACON';
+}
+
+/** Heuristic: deacon blessing at the start without an explicit role label. */
+function isOpeningDeaconBlessing(line: string, lang: UiLanguage): boolean {
+  const trimmed = line.trim();
+  if (lang === 'en') return /^master,?\s+give the blessing/i.test(trimmed);
+  if (lang === 'el') return /^εὐλ[όό]γησον,?\s+δ[έέ]σποτα/i.test(trimmed);
+  if (lang === 'ru') return /^благослови,?\s+владыко/i.test(trimmed);
+  return false;
 }
 
 function isCongregationalRole(role: LiturgyRole): boolean {

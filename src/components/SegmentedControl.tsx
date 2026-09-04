@@ -10,11 +10,15 @@ import {
   type SegmentedControlSize,
 } from '../lib/ui/segmentedControlTheme';
 
+export type ChipAccent = { fg: string; bg: string; border: string };
+
 export type SegmentedControlItem<T extends string> = {
   value: T;
   label?: string;
   icon?: ReactNode | ((active: boolean) => ReactNode);
   accessibilityLabel: string;
+  /** Optional liturgical colour-code applied to the chip when idle. */
+  chipColor?: ChipAccent;
 };
 
 type Props<T extends string> = {
@@ -48,7 +52,7 @@ function ChipRow<T extends string>({
         return (
           <Pressable
             key={segment.value}
-            style={chipStyle(theme, size, selected, { fullWidth })}
+            style={chipStyle(theme, size, selected, { fullWidth, accent: segment.chipColor })}
             onPress={() => onChange(segment.value)}
             accessibilityRole="button"
             accessibilityState={{ selected }}
@@ -105,7 +109,7 @@ export function SegmentedControl<T extends string>({
           return (
             <Pressable
               key={segment.value}
-              style={chipStyle(theme, size, selected)}
+              style={chipStyle(theme, size, selected, { accent: segment.chipColor })}
               onPress={() => props.onChange(segment.value)}
               accessibilityRole="button"
               accessibilityState={{ selected }}

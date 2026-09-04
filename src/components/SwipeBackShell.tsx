@@ -23,7 +23,7 @@ export function SwipeBackShell({ onBack, children, blurReveal = false, style }: 
   return (
     <View style={[styles.shell, style]}>
       {blurReveal ? (
-        <Animated.View pointerEvents="none" style={[styles.blurWrap, dimStyle]}>
+        <Animated.View style={[styles.blurWrap, dimStyle, { pointerEvents: 'none' }]}>
           <BlurView
             intensity={Platform.OS === 'ios' ? 48 : 70}
             tint={isDark ? 'dark' : 'light'}
@@ -52,10 +52,6 @@ const styles = StyleSheet.create({
   },
   page: {
     flex: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: -2, height: 0 },
-    shadowOpacity: 0.18,
-    shadowRadius: 10,
-    elevation: 8,
+    boxShadow: '-2px 0px 10px rgba(0,0,0,0.18)',
   },
 });

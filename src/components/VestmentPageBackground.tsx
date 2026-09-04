@@ -45,8 +45,7 @@ export function VestmentPageBackground({
           locations={[...gradient.locations]}
           start={gradient.start}
           end={gradient.end}
-          style={styles.gradientLayer}
-          pointerEvents="none"
+          style={[styles.gradientLayer, { pointerEvents: 'none' }]}
         />
       ) : null}
       <View style={styles.content}>{children}</View>

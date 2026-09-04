@@ -57,7 +57,7 @@ export function StackScreenHeader({
       accessibilityRole="button"
       accessibilityLabel={backLabel}
     >
-      <View style={styles.backIconSlot} pointerEvents="none">
+      <View style={[styles.backIconSlot, { pointerEvents: 'none' }]}>
         <Feather name="chevron-left" size={22} color={theme.colors.text} style={styles.backIcon} />
       </View>
     </Pressable>

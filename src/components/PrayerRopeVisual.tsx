@@ -52,8 +52,7 @@ export function PrayerRopeVisual({
 
   return (
     <View
-      style={styles.wrap}
-      pointerEvents="none"
+      style={[styles.wrap, { pointerEvents: 'none' }]}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
     >

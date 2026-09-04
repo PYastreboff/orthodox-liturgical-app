@@ -57,7 +57,7 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
     Animated.timing(shrinkProgress, {
       toValue: activeScrolled ? 1 : 0,
       duration: 160,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
   }, [activeScrolled, shrinkProgress]);
   const barScale = shrinkProgress.interpolate({
@@ -82,16 +82,15 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
   }, [props.descriptors, accent, inactiveTint]);
 
   return (
-    <View
-      style={[
-        styles.floatingHost,
-        {
-          paddingHorizontal: float.horizontal,
-          paddingBottom: float.hostBottomPad,
-        },
-      ]}
-      pointerEvents="box-none"
-    >
+      <View
+        style={[
+          styles.floatingHost,
+          {
+            paddingHorizontal: float.horizontal,
+            paddingBottom: float.hostBottomPad,
+          },
+        ]}
+      >
       <Animated.View
         style={[
           styles.floatingBar,
@@ -105,7 +104,7 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
           style={styles.tabBarRow}
           onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}
         >
-          <View pointerEvents="none" style={styles.selectionLayer}>
+          <View style={styles.selectionLayer}>
             {selectionTranslateX ? (
               <Animated.View
                 style={[
@@ -149,6 +148,7 @@ const styles = StyleSheet.create({
   },
   selectionLayer: {
     ...StyleSheet.absoluteFillObject,
+    pointerEvents: 'none',
   },
   selectionFill: {
     position: 'absolute',

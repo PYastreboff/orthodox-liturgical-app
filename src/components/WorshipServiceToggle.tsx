@@ -1,4 +1,5 @@
 import { useAppTranslation } from '../i18n/useAppTranslation';
+import { worshipServiceTint } from '../lib/liturgical/serviceColor';
 import type { WorshipServiceId } from '../lib/liturgical/worshipNavigation';
 import { SegmentedControl } from './SegmentedControl';
 
@@ -25,16 +26,19 @@ export function WorshipServiceToggle({ value, onChange, isDark, fullWidth = fals
           value: 'chrysostom',
           label: t('liturgy.worship.serviceChrysostom'),
           accessibilityLabel: t('liturgy.worship.serviceChrysostom'),
+          chipColor: worshipServiceTint('chrysostom'),
         },
         {
           value: 'basil',
           label: t('liturgy.worship.serviceBasil'),
           accessibilityLabel: t('liturgy.worship.serviceBasil'),
+          chipColor: worshipServiceTint('basil'),
         },
         {
           value: 'vespers',
           label: t('liturgy.worship.serviceVespers'),
           accessibilityLabel: t('liturgy.worship.serviceVespers'),
+          chipColor: worshipServiceTint('vespers'),
         },
       ]}
     />

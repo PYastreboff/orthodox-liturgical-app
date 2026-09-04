@@ -42,12 +42,3 @@ export function lineRole(line: string, lang: UiLanguage): LiturgyRole | null {
 export function lineKind(line: string, lang: UiLanguage): ReturnType<typeof parseLiturgyLine>['kind'] {
   return parseLiturgyLine(line, lang).kind;
 }
-
-/** Heuristic: deacon blessing at the start without an explicit role label. */
-export function isOpeningDeaconBlessing(line: string, lang: UiLanguage): boolean {
-  const trimmed = line.trim();
-  if (lang === 'en') return /^master,?\s+give the blessing/i.test(trimmed);
-  if (lang === 'el') return /^εὐλ[όό]γησον,?\s+δ[έέ]σποτα/i.test(trimmed);
-  if (lang === 'ru') return /^благослови,?\s+владыко/i.test(trimmed);
-  return false;
-}

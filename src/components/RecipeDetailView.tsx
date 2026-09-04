@@ -176,7 +176,7 @@ export function RecipeDetailView({
           accessibilityLabel={t('recipes.back')}
           hitSlop={8}
         >
-          <View style={styles.backFabIconSlot} pointerEvents="none">
+          <View style={[styles.backFabIconSlot, { pointerEvents: 'none' }]}>
             <Feather name="chevron-left" size={22} color="#fff" style={styles.backFabIcon} />
           </View>
         </Pressable>
@@ -486,9 +486,7 @@ const styles = StyleSheet.create({
     lineHeight: 34,
     fontWeight: '700',
     letterSpacing: 0.2,
-    textShadowColor: 'rgba(0,0,0,0.35)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 8,
+    textShadow: '0px 1px 8px rgba(0,0,0,0.35)',
   },
   heroTitlePhone: {
     fontSize: 24,

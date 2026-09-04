@@ -155,7 +155,7 @@ export function LiturgicalTextsCategoryToggle({
           !fullWidth && measuredTriggerWidth ? { width: measuredTriggerWidth } : null,
         ]}
       >
-        <View style={styles.measureSizer} pointerEvents="none" accessibilityElementsHidden>
+        <View style={[styles.measureSizer, { pointerEvents: 'none' }]} accessibilityElementsHidden>
           {categoryIds.map((id) => (
             <Text
               key={id}
@@ -325,11 +325,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.14,
-    shadowRadius: 16,
-    elevation: 10,
+    boxShadow: '0px 8px 16px rgba(0,0,0,0.14)',
   },
   menuScroll: {
     maxHeight: MENU_MAX_HEIGHT,
