@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import type { VespersSection } from '../lib/liturgy/vespersLiturgy';
 import {
   fetchVespersLiturgy,
   getCachedVespersLiturgy,

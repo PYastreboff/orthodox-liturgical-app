@@ -363,7 +363,7 @@ export function LiturgicalMonthGrid({
   const width = layoutWidth > 0 ? layoutWidth : windowWidth;
   const today = useMemo(() => new Date(), []);
   const rows = useMemo(() => buildMonthCells(visibleMonth), [visibleMonth]);
-  const { dayByIso, dayInfoForDate, feastRankForDate, showTypikonForDate, loading } = useOrthocalMonth(
+  const { dayByIso, dayInfoForDate, showTypikonForDate, loading } = useOrthocalMonth(
     visibleMonth,
     liturgicalCalendar,
   );

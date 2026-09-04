@@ -62,6 +62,7 @@ export function buildCommemorationEntries(
     const trimmed = feast.trim();
     if (!trimmed) continue;
     const story = findStoryForName(trimmed, stories);
+    if (story?.title) usedStoryTitles.add(story.title);
     entries.push({
       id: `feast:${trimmed}`,
       name: trimmed,

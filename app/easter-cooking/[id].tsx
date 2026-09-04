@@ -8,8 +8,6 @@ import { SwipeBackMissingPage } from '../../src/components/SwipeBackMissingPage'
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { easterFoodAsRecipe, easterFoodById } from '../../src/lib/easter/easterCooking';
 import { easterFoodImageSource, easterFoodImageUriFallback } from '../../src/lib/easter/easterCookingImages';
-import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
-import { colors } from '../../src/theme/tokens';
 
 export default function EasterCookingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -17,9 +15,6 @@ export default function EasterCookingDetailScreen() {
   const food = easterFoodById(foodId);
   const theme = useTheme();
   const { t } = useAppTranslation();
-  const isDark = useResolvedColorScheme() === 'dark';
-  const muted = isDark ? '#a39e98' : colors.muted;
-
   if (!food) {
     return (
       <>

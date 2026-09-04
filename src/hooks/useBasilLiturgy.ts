@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import type { BasilSection } from '../lib/liturgy/basilLiturgy';
 import {
   fetchBasilLiturgy,
   getCachedBasilLiturgy,

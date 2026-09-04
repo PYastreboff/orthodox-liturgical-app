@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useOrthocalDay } from './useOrthocalDay';
 import { useFontScale } from './useFontScale';
-import { useLiturgicalTexts } from './useLiturgicalTexts';
+import { sectionsForReadingsLanguage, useLiturgicalTexts } from './useLiturgicalTexts';
 import { usePrintDay } from './usePrintDay';
 import { useShareDay } from './useShareDay';
 import {
@@ -19,7 +19,6 @@ import {
 import { startOfLocalDay, toDayIso } from '../lib/calendar/localDate';
 import { getCachedOrthocalDay } from '../lib/api/orthocal';
 import { gospelsFromLiturgicalSections } from '../lib/print/printDay';
-import { sectionsForReadingsLanguage } from './useLiturgicalTexts';
 import {
   buildCommemorationEntries,
   partitionCommemorations,
@@ -29,8 +28,7 @@ import {
   type LiturgicalTextCategory,
   type LiturgicalTextSection,
 } from '../lib/liturgical/liturgicalTexts';
-import type { ReadingsCompareSides } from '../lib/readings/textLanguage';
-import type { TextLanguage } from '../lib/readings/textLanguage';
+import type { ReadingsCompareSides, TextLanguage } from '../lib/readings/textLanguage';
 import { readingsCompareReady, readingsLanguageForUi } from '../lib/readings/textLanguage';
 import { buildDayDashboard } from '../lib/liturgical/dayDashboard';
 import { buildLiturgicalDayAbout } from '../lib/liturgical/liturgicalDayAbout';

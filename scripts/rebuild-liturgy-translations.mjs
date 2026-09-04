@@ -6,27 +6,13 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 
-const require = createRequire(import.meta.url);
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sourcesDir = join(root, 'scripts/liturgy-sources');
 
 // Dynamic import for TS modules
 const { buildGoarchDivineLiturgy, CHRYSOSTOM_GOARCH_CONFIG, buildBasilGoarchDivineLiturgy, BASIL_GOARCH_CONFIG } =
   await import('../scripts/lib/buildGoarchDivineLiturgy.ts');
-const { buildBasilGreekParagraphs } = await import('../scripts/lib/buildBasilGreek.ts');
-const { buildLanguageSections } = await import('../scripts/lib/buildGoarchDivineLiturgy.ts');
-
-// buildLanguageSections is not exported - inline minimal en collect
-function collectEnLines(file) {
-  const data = JSON.parse(readFileSync(join(root, 'data/liturgy', file), 'utf8'));
-  const lines = [];
-  for (const s of data.sections) {
-    for (const u of s.units) lines.push(u.en);
-  }
-  return lines;
-}
 
 const pendingPath = join(sourcesDir, 'liturgy-translations-pending.json');
 const pending = JSON.parse(readFileSync(pendingPath, 'utf8'));

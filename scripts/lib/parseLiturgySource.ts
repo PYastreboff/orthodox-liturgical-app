@@ -281,7 +281,7 @@ function postProcessEnglish(paragraphs: string[]): string[] {
 
     // Trailing creed clause with choir amen
     if (/I look for the resurrection.*CHOIR:\s*Amen/i.test(paragraph)) {
-      const [clause, choir] = paragraph.split(/\s*CHOIR:\s*/i);
+      const [clause] = paragraph.split(/\s*CHOIR:\s*/i);
       if (clause?.trim()) result.push(clause.trim());
       result.push('CHOIR: Amen.');
       continue;

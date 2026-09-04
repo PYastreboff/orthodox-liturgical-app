@@ -3,6 +3,7 @@
  * Run: node scripts/generate-brand-assets.mjs
  */
 import { writeFileSync } from 'node:fs';
+import { Buffer } from 'node:buffer';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';

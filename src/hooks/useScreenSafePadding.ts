@@ -1,5 +1,3 @@
-import { Platform } from 'react-native';
-
 import { SCREEN_GUTTER_X, SCREEN_GUTTER_X_PHONE } from '../theme/layout';
 import { useLayoutSafeAreaInsets } from './useLayoutSafeAreaInsets';
 import { usePhoneLayout } from './usePhoneLayout';

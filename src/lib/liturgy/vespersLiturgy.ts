@@ -1,5 +1,4 @@
 import type { UiLanguage } from '../../i18n/types';
-import { getCachedVespersLiturgy } from './vespersLiturgyRemote';
 import { sectionUnits, unitLine, type LiturgyUnit } from './liturgyUnit';
 
 export const VESPERS_SECTION_IDS = [

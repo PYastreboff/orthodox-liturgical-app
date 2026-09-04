@@ -1,6 +1,5 @@
-import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View, type View as RNView, type ViewStyle } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View, type ScrollView, type View as RNView, type ViewStyle } from 'react-native';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import type { ScrollView } from 'react-native';
 
 import { AppScrollView } from './AppScrollView';
 import { CompareSidePicker } from './CompareSidePicker';

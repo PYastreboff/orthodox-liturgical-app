@@ -41,7 +41,7 @@ function mockDay(partial: Partial<OrthocalDay>): OrthocalDay {
 }
 
 const civil = { year: 2026, month: 3, day: 1 };
-const cases: Array<{
+const cases: {
   name: string;
   day: OrthocalDay | null;
   appearanceKey?: string;
@@ -54,7 +54,7 @@ const cases: Array<{
     exceptionNote?: string;
   };
   icons?: { fish: boolean; wine: boolean; oil: boolean };
-}> = [
+}[] = [
   {
     name: 'no exception — strict only',
     day: mockDay({ fast_level: 5, fast_exception_desc: '' }),

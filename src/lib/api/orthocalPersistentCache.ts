@@ -110,7 +110,7 @@ export async function writePersistedOrthocalDay(
 
 export async function writePersistedOrthocalDays(
   cal: OrthocalCalendar,
-  entries: Array<{ queryDate: PlainDate; day: OrthocalDay }>,
+  entries: { queryDate: PlainDate; day: OrthocalDay }[],
 ): Promise<void> {
   if (entries.length === 0) return;
   const loaded = await ensureLoaded();

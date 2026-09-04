@@ -1,5 +1,5 @@
 import { isMeatFastRule } from './meatFast';
-import { hasOrthocalFastAbstentions, isOrthocalFastFreeDay } from '../api/orthocal';
+import { hasOrthocalFastAbstentions } from '../api/orthocal';
 import { translate } from '../../i18n/translate';
 import type { UiLanguage } from '../../i18n/types';
 import type { OrthocalDay } from '../api/orthocal';

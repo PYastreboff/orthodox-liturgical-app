@@ -1,5 +1,4 @@
 import type { UiLanguage } from '../../i18n/types';
-import type { ChrysostomSectionId } from './chrysostomLiturgy';
 import {
   CREED_TITLE_MARKER,
   isDevotionalTitleMarker,

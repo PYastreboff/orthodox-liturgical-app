@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, type LayoutChangeEvent, type ScrollView } from 'react-native';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useFocusEffect, useTheme } from "expo-router/react-navigation";
 
 import { AppScrollView } from '../../src/components/AppScrollView';

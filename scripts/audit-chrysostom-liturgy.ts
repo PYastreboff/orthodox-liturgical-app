@@ -5,7 +5,6 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { parseLiturgyLine } from '../src/lib/liturgy/parseLiturgyLine.ts';
 import { lineRole } from '../src/lib/liturgy/liturgyUnit.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -34,14 +33,6 @@ function dominantScript(text: string): 'en' | 'el' | 'ru' | 'mixed' | 'empty' {
   if (l > g && l > c && l > 2) return 'en';
   if (g + c + l < 3) return 'empty';
   return 'mixed';
-}
-
-function stripRoles(text: string): string {
-  return text
-    .replace(/^(DEACON|PRIEST|CHOIR|PEOPLE|READER|CLERGY)(\s*\([^)]*\))?\s*:\s*/i, '')
-    .replace(/^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)\s*:\s*/i, '')
-    .replace(/^(Священник|Диакон|Чтец|Народ|Хор)\s*:\s*/i, '')
-    .trim();
 }
 
 let issues = 0;

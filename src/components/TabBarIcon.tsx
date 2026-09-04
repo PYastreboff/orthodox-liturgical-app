@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   iconCenter: {
     alignItems: 'center',
     justifyContent: 'center',
-    transform: [{ translateY: 0 }],
+    transform: [{ translateY: -2 }],
     zIndex: 1,
   },
 });

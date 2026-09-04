@@ -2,19 +2,19 @@ import { Feather } from '@expo/vector-icons';
 import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
-const SELECTED_FG = '#fff';
-
-function tintLeading(node: ReactNode, selected: boolean): ReactNode {
-  if (!selected || !isValidElement(node)) return node;
-  return cloneElement(node as ReactElement<{ color?: string }>, { color: SELECTED_FG });
-}
-
 import { HoverPressable } from '../HoverPressable';
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import type { NotificationReminderKind } from '../../lib/notifications/liturgicalReminders';
 import { useVestmentAccent } from '../../state/VestmentAccentContext';
 import { colors } from '../../theme/tokens';
 import { SettingsSheetFrame, SettingsSheetScrollView } from './SettingsSheetFrame';
+
+const SELECTED_FG = '#fff';
+
+function tintLeading(node: ReactNode, selected: boolean): ReactNode {
+  if (!selected || !isValidElement(node)) return node;
+  return cloneElement(node as ReactElement<{ color?: string }>, { color: SELECTED_FG });
+}
 
 export type NotificationToggleOption = {
   id: NotificationReminderKind;

@@ -533,7 +533,7 @@ const HONORIFIC_RULES: Record<Exclude<UiLanguage, 'en'>, HonorificRule[]> = {
 };
 
 /** Given-name display replacements after honorific rewrite (word-boundary). */
-const GIVEN_NAME_DISPLAY: Record<Exclude<UiLanguage, 'en'>, Array<[RegExp, string]>> = {
+const GIVEN_NAME_DISPLAY: Record<Exclude<UiLanguage, 'en'>, [RegExp, string][]> = {
   ru: [
     [/\bNicholas\b/gi, 'Николай'],
     [/\bNicolas\b/gi, 'Николай'],
@@ -733,7 +733,7 @@ const GIVEN_NAME_DISPLAY: Record<Exclude<UiLanguage, 'en'>, Array<[RegExp, strin
 };
 
 /** Leftover English liturgical phrases after honorifics / given names. */
-const RESIDUAL_PHRASES: Record<Exclude<UiLanguage, 'en'>, Array<[RegExp, string]>> = {
+const RESIDUAL_PHRASES: Record<Exclude<UiLanguage, 'en'>, [RegExp, string][]> = {
   ru: [
     [/\bof the Kiev Caves\b/gi, 'Киево-Печерский'],
     [/\bthe Kiev Caves\b/gi, 'Киево-Печерский'],

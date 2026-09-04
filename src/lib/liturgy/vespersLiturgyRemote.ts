@@ -2,8 +2,7 @@
  * Bundled Vespers liturgy text.
  */
 import bundledLiturgy from '../../../data/liturgy/vespers-liturgy.json';
-import type { VespersSection } from './vespersLiturgy';
-import { VESPERS_SECTION_IDS, type VespersSectionId } from './vespersLiturgy';
+import { VESPERS_SECTION_IDS, type VespersSection, type VespersSectionId } from './vespersLiturgy';
 import { sectionUnits } from './liturgyUnit';
 
 export type VespersLiturgyState =

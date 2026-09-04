@@ -78,13 +78,6 @@ const ROLE_EL = {
   PEOPLE: 'ΛΑΟΣ',
   READER: 'ΑΝΑΓΝΩΣΤΗΣ',
 };
-const ROLE_RU = {
-  DEACON: 'Диакон',
-  PRIEST: 'Священник',
-  CHOIR: 'Хор',
-  PEOPLE: 'Народ',
-  READER: 'Чтец',
-};
 
 function parseRole(en) {
   const m = en.match(/^(DEACON|PRIEST|CHOIR|PEOPLE|READER)(\s*\((in a low voice|aloud)\))?:\s*(.*)$/s);
@@ -101,21 +94,11 @@ function elQual(q) {
   if (q === 'aloud') return ' (ἐκφώνως)';
   return '';
 }
-function ruQual(q) {
-  if (q === 'low') return ' (тихо)';
-  if (q === 'aloud') return ' (громко)';
-  return '';
-}
 
 function withRoleEl(en, body) {
   const r = parseRole(en);
   if (!r) return body;
   return `${ROLE_EL[r.role]}${elQual(r.qual)}: ${body}`;
-}
-function withRoleRu(en, body) {
-  const r = parseRole(en);
-  if (!r) return body;
-  return `${ROLE_RU[r.role]}${ruQual(r.qual)}: ${body}`;
 }
 
 function lookupEl(en) {

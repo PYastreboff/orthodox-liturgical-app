@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
 import { getLiturgicalAppearanceForLocalDate } from '../lib/calendar/dayAppearance';

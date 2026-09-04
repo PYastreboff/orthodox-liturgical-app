@@ -1,5 +1,5 @@
 import { useRouter, type Href } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { PrayerRopeIcon } from './svg/PrayerRopeIcon';
 

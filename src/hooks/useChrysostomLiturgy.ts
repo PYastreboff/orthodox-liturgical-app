@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import type { ChrysostomSection } from '../lib/liturgy/chrysostomLiturgy';
 import {
   fetchChrysostomLiturgy,
   getCachedChrysostomLiturgy,

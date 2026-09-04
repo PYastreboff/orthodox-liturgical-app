@@ -1,11 +1,11 @@
 import type {
+  FastingRecipe,
   RecipeAbilityFilter,
   RecipeCategory,
   RecipeDifficulty,
   RecipeFastLevel,
   RecipeMealSlot,
 } from './fastingRecipes';
-import type { FastingRecipe } from './fastingRecipes';
 import { getRecipeFromCache } from './recipeLibraryRemote';
 
 export function getRecipeById(id: string): FastingRecipe | undefined {

@@ -2,7 +2,6 @@ import type { UiLanguage } from '../../i18n/types';
 import { getCachedChrysostomLiturgy } from './chrysostomLiturgyRemote';
 import { sectionUnits, unitLine, type LiturgyUnit } from './liturgyUnit';
 import {
-  CHRYSOSTOM_SECTION_IDS,
   type ChrysostomSection,
   type ChrysostomSectionId,
 } from './chrysostomLiturgyTypes';

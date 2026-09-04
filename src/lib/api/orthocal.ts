@@ -112,7 +112,7 @@ export async function fetchOrthocalGregorianMonth(
 
   const data = (await res.json()) as OrthocalDay[];
   gregorianMonthCache.set(key, data);
-  const persistBatch: Array<{ queryDate: PlainDate; day: OrthocalDay }> = [];
+  const persistBatch: { queryDate: PlainDate; day: OrthocalDay }[] = [];
   for (const day of data) {
     const queryDate: PlainDate = { year: day.year, month: day.month, day: day.day };
     dayCache.set(cacheKey('gregorian', queryDate), day);

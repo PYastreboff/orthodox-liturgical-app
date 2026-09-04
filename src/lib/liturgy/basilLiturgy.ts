@@ -1,7 +1,7 @@
 import type { UiLanguage } from '../../i18n/types';
 import { getCachedBasilLiturgy } from './basilLiturgyRemote';
 import { sectionUnits, unitLine, type LiturgyUnit } from './liturgyUnit';
-import { BASIL_SECTION_IDS, type BasilSection, type BasilSectionId } from './basilLiturgyTypes';
+import { type BasilSection, type BasilSectionId } from './basilLiturgyTypes';
 
 export { BASIL_SECTION_IDS, type BasilSection, type BasilSectionId } from './basilLiturgyTypes';
 
