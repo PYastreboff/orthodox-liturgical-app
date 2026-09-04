@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, type LayoutChangeEvent, type ScrollView } from 'react-native';
-import { useCallback, useRef, useState } from 'react';
-import { useFocusEffect, useTheme } from '@react-navigation/native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useFocusEffect, useTheme } from "expo-router/react-navigation";
 
 import { AppScrollView } from '../../src/components/AppScrollView';
 import { DayHero } from '../../src/components/DayHero';
@@ -13,6 +13,7 @@ import { usePhoneLayout } from '../../src/hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useTodayDayModel } from '../../src/hooks/useTodayDayModel';
+import { useTabBarScroll } from '../../src/hooks/useTabBarScroll';
 import { startOfLocalDay } from '../../src/lib/calendar/localDate';
 import { firstGospelExcerpt } from '../../src/lib/liturgical/hymnExcerpt';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
@@ -27,6 +28,7 @@ export default function TodayScreen() {
   const phone = usePhoneLayout();
   const scrollRef = useRef<ScrollView>(null);
   const [viewportHeight, setViewportHeight] = useState(0);
+  const onTabScroll = useTabBarScroll('index', scrollRef);
 
   const paddingTop = screenSafe.paddingTop + (phone ? 20 : 28);
 
@@ -57,6 +59,8 @@ export default function TodayScreen() {
       <AppScrollView
         ref={scrollRef}
         style={styles.scroll}
+        onScroll={onTabScroll}
+        scrollEventThrottle={16}
         onLayout={onScrollLayout}
         contentContainerStyle={[
           styles.container,

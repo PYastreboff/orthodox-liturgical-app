@@ -1,12 +1,14 @@
-import { MaterialTopTabBar, type MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
-import { useState } from 'react';
+import { MaterialTopTabBar, type MaterialTopTabBarProps } from "expo-router/js-top-tabs";
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { Animated, Platform, StyleSheet, View } from 'react-native';
 
 import { TabBarBleedBackground } from './TabBarBleedBackground';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
-import { useVestmentAccent } from '../state/VestmentAccentContext';
+import { useLiturgicalVestmentAccent } from '../state/VestmentAccentContext';
+import { tabBarScrollStore } from '../state/tabBarScrollStore';
+import { staticAppAccent } from '../lib/liturgical/vestmentAccent';
 import { tabBarChrome } from '../theme/cards';
-import { TAB_BAR_CONTENT_HEIGHT, TAB_BAR_EDGE_PAD_PX } from '../theme/layout';
+import { TAB_BAR_EDGE_PAD_PX } from '../theme/layout';
 import { colors, radii } from '../theme/tokens';
 import { tabBarFloatInsets } from '../theme/tabBarFloat';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
@@ -22,7 +24,8 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
   const { position, state } = props;
   const isDark = useResolvedColorScheme() === 'dark';
   const insets = useLayoutSafeAreaInsets();
-  const vestmentAccent = useVestmentAccent();
+  const liturgicalAccent = useLiturgicalVestmentAccent();
+  const accent = state.index === 0 ? liturgicalAccent : staticAppAccent(isDark);
   const isNativePhone = Platform.OS !== 'web';
   const float = tabBarFloatInsets(isNativePhone, insets.bottom);
   const tabBarBg = tabBarBackground(isDark);
@@ -44,6 +47,40 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
         })
       : null;
 
+  const activeRoute = state.routes[Math.max(0, state.index)]?.name ?? 'index';
+  const activeScrolled = useSyncExternalStore(
+    tabBarScrollStore.subscribe,
+    () => tabBarScrollStore.isScrolledDown(activeRoute),
+  );
+  const [shrinkProgress] = useState(() => new Animated.Value(0));
+  useEffect(() => {
+    Animated.timing(shrinkProgress, {
+      toValue: activeScrolled ? 1 : 0,
+      duration: 160,
+      useNativeDriver: true,
+    }).start();
+  }, [activeScrolled, shrinkProgress]);
+  const barScale = shrinkProgress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0.92],
+  });
+
+  const inactiveTint = isDark ? '#7a746e' : colors.muted;
+  const descriptors = useMemo(() => {
+    const next = { ...props.descriptors };
+    for (const key of Object.keys(next)) {
+      next[key] = {
+        ...next[key],
+        options: {
+          ...next[key].options,
+          tabBarActiveTintColor: accent.icon,
+          tabBarInactiveTintColor: inactiveTint,
+        },
+      };
+    }
+    return next;
+  }, [props.descriptors, accent, inactiveTint]);
+
   return (
     <View
       style={[
@@ -55,12 +92,13 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
       ]}
       pointerEvents="box-none"
     >
-      <View
+      <Animated.View
         style={[
           styles.floatingBar,
           chrome,
-          { height: TAB_BAR_CONTENT_HEIGHT },
+          { transform: [{ scale: barScale }] },
         ]}
+        onTouchStart={() => tabBarScrollStore.touchReset()}
       >
         <TabBarBleedBackground color={tabBarBg} bleedPx={TAB_BAR_EDGE_PAD_PX} />
         <View
@@ -74,16 +112,16 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
                   styles.selectionFill,
                   {
                     width: slotWidth - SELECTION_INSET * 2,
-                    backgroundColor: vestmentAccent.accentSoft,
+                    backgroundColor: accent.accentSoft,
                     transform: [{ translateX: selectionTranslateX }],
                   },
                 ]}
               />
             ) : null}
           </View>
-          <MaterialTopTabBar {...props} />
+          <MaterialTopTabBar {...props} descriptors={descriptors} />
         </View>
-      </View>
+      </Animated.View>
     </View>
   );
 }

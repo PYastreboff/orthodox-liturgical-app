@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { Platform, Pressable, StyleSheet, Text, View, type ScrollView } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { AppScrollView } from './AppScrollView';
 import { JesusPrayerRopeLink } from './JesusPrayerRopeLink';
+import { useTabBarScroll } from '../hooks/useTabBarScroll';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useFontScale } from '../hooks/useFontScale';
@@ -26,6 +27,8 @@ type Props = {
   hintType: { fontSize: number; lineHeight: number };
   variant?: 'tab' | 'embedded';
   scrollBottomPadding?: number;
+  /** Tab route name — enables tab-bar scroll reporting / tap-to-top when in tab mode. */
+  scrollRoute?: string;
 };
 
 const PRAYER_SERIF = Platform.select({
@@ -147,8 +150,11 @@ export function PrayersSectionBody({
   hintType,
   variant = 'embedded',
   scrollBottomPadding = 24,
+  scrollRoute,
 }: Props) {
   const [expandedId, setExpandedId] = useState<PrayerId | null>(null);
+  const scrollRef = useRef<ScrollView>(null);
+  const onTabScroll = useTabBarScroll(scrollRoute ?? '__none__', scrollRef);
 
   const togglePrayer = useCallback((id: PrayerId) => {
     setExpandedId((current) => (current === id ? null : id));
@@ -185,7 +191,10 @@ export function PrayersSectionBody({
     return (
       <View style={styles.root}>
         <AppScrollView
+          ref={scrollRef}
           style={styles.scroll}
+          onScroll={onTabScroll}
+          scrollEventThrottle={16}
           contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollBottomPadding }]}
         >
           {content}

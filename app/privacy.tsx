@@ -1,7 +1,7 @@
 import Head from 'expo-router/head';
 import { Feather } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from "expo-router/react-navigation";
 
 import { StackScreenHeader } from '../src/components/StackScreenHeader';
 import { SwipeBackShell } from '../src/components/SwipeBackShell';

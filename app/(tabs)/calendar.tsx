@@ -2,8 +2,9 @@ import {
   Platform,
   StyleSheet,
   View,
+  type ScrollView,
 } from 'react-native';
-import { useFocusEffect, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useTheme } from "expo-router/react-navigation";
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import Head from 'expo-router/head';
@@ -14,6 +15,7 @@ import { DevotionalPageHeader } from '../../src/components/DevotionalPageHeader'
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
+import { useTabBarScroll } from '../../src/hooks/useTabBarScroll';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
 import { usePreferences } from '../../src/state/PreferencesContext';
@@ -21,7 +23,7 @@ import { useVestmentAccent } from '../../src/state/VestmentAccentContext';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { colors } from '../../src/theme/tokens';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 export default function CalendarScreen() {
   const theme = useTheme();
@@ -38,6 +40,8 @@ export default function CalendarScreen() {
   const scrollBottomPadding = useTabBarBottomPadding();
   const vestmentAccent = useVestmentAccent();
   const muted = isDark ? '#a39e98' : colors.muted;
+  const scrollRef = useRef<ScrollView>(null);
+  const onTabScroll = useTabBarScroll('calendar', scrollRef);
   const [cursor, setCursor] = useState(thisMonth);
 
   const setCursorMonth = useCallback((date: Date) => {
@@ -91,7 +95,10 @@ export default function CalendarScreen() {
       </Head>
       <View style={[styles.page, { backgroundColor: calendarBg }]}>
       <AppScrollView
+      ref={scrollRef}
       style={styles.scroll}
+      onScroll={onTabScroll}
+      scrollEventThrottle={16}
       contentContainerStyle={[
         styles.scrollContent,
         {

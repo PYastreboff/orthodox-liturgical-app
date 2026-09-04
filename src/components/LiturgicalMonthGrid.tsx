@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from "expo-router/react-navigation";
 import { Feather } from '@expo/vector-icons';
 
 import { TypikonGlyphIcon } from './TypikonGlyphIcon';

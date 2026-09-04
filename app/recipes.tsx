@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from "expo-router/react-navigation";
 import Head from 'expo-router/head';
 import { StyleSheet, View } from 'react-native';
 

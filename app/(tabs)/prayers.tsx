@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import { useFocusEffect, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useTheme } from "expo-router/react-navigation";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Head from 'expo-router/head';
 
@@ -72,6 +72,7 @@ export default function PrayersScreen() {
         >
           <PrayersSectionBody
             variant="tab"
+            scrollRoute="prayers"
             textColor={theme.colors.text}
             mutedColor={muted}
             borderColor={theme.colors.border}

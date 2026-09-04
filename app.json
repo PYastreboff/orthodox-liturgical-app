@@ -8,14 +8,8 @@
     "scheme": "orthodox-liturgical",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "githubUrl": "https://github.com/PYastreboff/orthodox-liturgical-app",
     "primaryColor": "#6b2d3c",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#1a1410"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "church.orthodox.liturgical.dev",
@@ -33,7 +27,9 @@
         "NSPrivacyAccessedAPITypes": [
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
           }
         ]
       }
@@ -43,10 +39,11 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#1a1410"
       },
-      "edgeToEdgeEnabled": true,
       "package": "church.orthodox.liturgical.dev",
       "versionCode": 1,
-      "permissions": ["POST_NOTIFICATIONS"]
+      "permissions": [
+        "POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -72,7 +69,9 @@
           "color": "#6b2d3c",
           "defaultChannel": "liturgical-reminders"
         }
-      ]
+      ],
+      "expo-status-bar",
+      "expo-font"
     ],
     "experiments": {
       "baseUrl": "/orthodox-liturgical-app"

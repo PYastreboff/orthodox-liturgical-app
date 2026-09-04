@@ -8,6 +8,7 @@ import { LiturgyDisplayControls } from './LiturgyDisplayControls';
 import { LiturgyLine } from './LiturgyLine';
 import { LiturgySearchBar } from './LiturgySearchBar';
 import { useTabBarClearance } from '../hooks/useTabBarBottomPadding';
+import { useTabBarScroll } from '../hooks/useTabBarScroll';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useBasilLiturgy } from '../hooks/useBasilLiturgy';
@@ -55,6 +56,8 @@ type Props = {
   hintType: { fontSize: number; lineHeight: number };
   variant?: 'tab' | 'embedded';
   scrollBottomPadding?: number;
+  /** Tab route name — enables tab-bar scroll reporting / tap-to-top when in tab mode. */
+  scrollRoute?: string;
   service?: WorshipServiceId;
   onServiceChange?: (service: WorshipServiceId) => void;
   showServiceToggle?: boolean;
@@ -627,6 +630,7 @@ export function WorshipLiturgyBody({
   hintType,
   variant = 'embedded',
   scrollBottomPadding = 24,
+  scrollRoute,
   service = 'chrysostom',
   onServiceChange,
   showServiceToggle = false,
@@ -645,6 +649,7 @@ export function WorshipLiturgyBody({
   const searchNorm = normalizeSearch(searchQuery);
   const pageBg = isDark ? colors.darkBg : colors.parchment;
   const scrollRef = useRef<ScrollView>(null);
+  const onTabScroll = useTabBarScroll(scrollRoute ?? '__none__', scrollRef);
   const scrollContentRef = useRef<RNView>(null);
   const searchCardRef = useRef<RNView>(null);
   const stickySearchHeightRef = useRef(48);
@@ -1007,6 +1012,8 @@ export function WorshipLiturgyBody({
       <View style={styles.root}>
         <AppScrollView
           ref={scrollRef}
+          onScroll={onTabScroll}
+          scrollEventThrottle={16}
           {...(Platform.OS === 'web' ? { colorScheme: isDark ? 'dark' : 'light' } : {})}
           style={styles.scroll}
           contentContainerStyle={[

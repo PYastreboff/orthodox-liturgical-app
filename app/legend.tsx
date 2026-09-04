@@ -1,7 +1,7 @@
 import Head from 'expo-router/head';
 import { Feather } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from "expo-router/react-navigation";
 
 import { LiturgicalLegendGuide } from '../src/components/LiturgicalLegendGuide';
 import { StackScreenHeader } from '../src/components/StackScreenHeader';

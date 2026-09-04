@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   Linking,
@@ -7,8 +7,9 @@ import {
   StyleSheet,
   Text,
   View,
+  type ScrollView,
 } from 'react-native';
-import { useFocusEffect, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useTheme } from "expo-router/react-navigation";
 import Head from 'expo-router/head';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -36,6 +37,7 @@ import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
 import { LanguageGlyphIcon } from '../../src/components/settings/LanguageGlyphIcon';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
+import { useTabBarScroll } from '../../src/hooks/useTabBarScroll';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { SUPPORT_URL, DONATION_URL } from '../../src/lib/legal/urls';
 import {
@@ -474,6 +476,8 @@ export default function SettingsScreen() {
   const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();
   const pageBg = theme.colors.background;
+  const settingsScrollRef = useRef<ScrollView>(null);
+  const onSettingsScroll = useTabBarScroll('settings', settingsScrollRef);
 
   useFocusEffect(
     useCallback(() => {
@@ -490,7 +494,10 @@ export default function SettingsScreen() {
       </Head>
       <View style={[styles.page, { backgroundColor: pageBg }]}>
         <AppScrollView
+          ref={settingsScrollRef}
           style={styles.scroll}
+          onScroll={onSettingsScroll}
+          scrollEventThrottle={16}
           contentContainerStyle={[
             styles.container,
             {

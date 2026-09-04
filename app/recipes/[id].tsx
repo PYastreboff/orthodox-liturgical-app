@@ -1,4 +1,4 @@
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from "expo-router/react-navigation";
 import { useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';

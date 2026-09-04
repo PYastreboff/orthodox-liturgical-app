@@ -13,7 +13,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from "expo-router/react-navigation";
 
 import { useFontScale } from '../hooks/useFontScale';
 import { useShareRecipe } from '../hooks/useShareRecipe';

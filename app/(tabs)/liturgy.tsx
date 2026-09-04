@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import { useFocusEffect, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useTheme } from "expo-router/react-navigation";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Head from 'expo-router/head';
 import { useLocalSearchParams } from 'expo-router';
@@ -85,6 +85,7 @@ export default function WorshipScreen() {
         >
           <WorshipLiturgyBody
             variant="tab"
+            scrollRoute="liturgy"
             service={service}
             onServiceChange={setService}
             showServiceToggle

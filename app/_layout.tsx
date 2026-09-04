@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 
 import { Stack } from 'expo-router';
 import Head from 'expo-router/head';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from "expo-router/react-navigation";
 import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, type Metrics } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';

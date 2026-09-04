@@ -57,13 +57,15 @@ const styles = StyleSheet.create({
   hitArea: {
     flex: 1,
     width: '100%',
-    height: TAB_BAR_CONTENT_HEIGHT,
+    height: '100%',
+    minHeight: TAB_BAR_CONTENT_HEIGHT,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconCenter: {
     alignItems: 'center',
     justifyContent: 'center',
+    transform: [{ translateY: 0 }],
     zIndex: 1,
   },
 });
