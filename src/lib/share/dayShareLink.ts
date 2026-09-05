@@ -9,8 +9,16 @@ export function parseDayIsoFromQueryParam(value: string | string[] | null | unde
   return day ? toDayIso(day) : null;
 }
 
+function hasWebBrowserApis(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.location !== 'undefined' &&
+    typeof window.history !== 'undefined'
+  );
+}
+
 export function readDayIsoFromWebLocation(): string | null {
-  if (typeof window === 'undefined') return null;
+  if (!hasWebBrowserApis()) return null;
   return parseDayIsoFromQueryParam(new URLSearchParams(window.location.search).get('date'));
 }
 
@@ -25,7 +33,7 @@ export function buildDayShareUrl(dayIso: string): string {
 }
 
 export function syncDayQueryParamOnWeb(dayIso: string): void {
-  if (typeof window === 'undefined') return;
+  if (!hasWebBrowserApis()) return;
   const url = new URL(window.location.href);
   if (url.searchParams.get('date') === dayIso) return;
   url.searchParams.set('date', dayIso);

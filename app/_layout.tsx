@@ -1,5 +1,7 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import '../src/lib/notifications/expoGoQuiet';
+
 import { Stack } from 'expo-router';
 import Head from 'expo-router/head';
 import { useTheme } from "expo-router/react-navigation";

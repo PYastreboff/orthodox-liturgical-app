@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from 'react';
 import {
   Modal,
   PanResponder,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -76,6 +77,7 @@ export function DayHero({
 }: Props) {
   const { t, lang } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
+  const isNativePhone = Platform.OS !== 'web';
   const vestmentAccent = useLiturgicalVestmentAccent();
   const phoneLayout = usePhoneLayout();
   const heroPaddingX = phoneLayout ? SECTION_CARD_PADDING_PHONE : SECTION_CARD_PADDING;
@@ -211,7 +213,7 @@ export function DayHero({
         end={{ x: 0.92, y: 1 }}
         style={[styles.heroGradient, { paddingHorizontal: heroPaddingX }]}
       >
-      <View style={styles.titleRow}>
+      <View style={[styles.titleRow, isNativePhone ? styles.titleRowPhone : null]}>
         <Pressable
           ref={roleBtnRef}
           style={({ pressed }) => [
@@ -482,6 +484,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 68, // Fixed height for 2 lines of title text
+  },
+  // iOS: let the row grow so a second line (and Dynamic Type scaling) always fits.
+  titleRowPhone: {
+    height: 'auto',
+    minHeight: 68,
   },
   dayTitle: {
     fontWeight: '800',

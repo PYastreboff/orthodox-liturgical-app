@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
 import { useVestmentAccent } from '../../state/VestmentAccentContext';
@@ -47,6 +47,7 @@ export function SettingsLinkRow({
   const vestmentAccent = useVestmentAccent();
   const iconColor = vestmentAccent.accent;
   const interactive = onPress != null && trailing == null;
+  const compact = Platform.OS !== 'web';
 
   const leadingNode =
     leading ??
@@ -60,7 +61,14 @@ export function SettingsLinkRow({
     (valueLabel || interactive ? (
       <View style={styles.trailingWrap}>
         {valueLabel ? (
-          <Text style={[styles.valueLabel, { color: mutedColor }]} numberOfLines={1}>
+          <Text
+            style={[
+              styles.valueLabel,
+              compact ? styles.valueLabelCompact : null,
+              { color: mutedColor },
+            ]}
+            numberOfLines={1}
+          >
             {valueLabel}
           </Text>
         ) : null}
@@ -78,8 +86,26 @@ export function SettingsLinkRow({
     <>
       {leadingWrapped}
       <View style={styles.textCol}>
-        <Text style={[styles.label, { color: isDark ? colors.darkInk : colors.ink }]}>{label}</Text>
-        {hint ? <Text style={[styles.hint, { color: mutedColor }]}>{hint}</Text> : null}
+        <Text
+          style={[
+            styles.label,
+            compact ? styles.labelCompact : null,
+            { color: isDark ? colors.darkInk : colors.ink },
+          ]}
+        >
+          {label}
+        </Text>
+        {hint ? (
+          <Text
+            style={[
+              styles.hint,
+              compact ? styles.hintCompact : null,
+              { color: mutedColor },
+            ]}
+          >
+            {hint}
+          </Text>
+        ) : null}
       </View>
       {trailingNode}
     </>
@@ -145,9 +171,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 20,
   },
+  labelCompact: {
+    fontSize: 14,
+    lineHeight: 19,
+  },
   hint: {
     fontSize: 12,
     lineHeight: 16,
+  },
+  hintCompact: {
+    fontSize: 11,
+    lineHeight: 15,
   },
   trailingWrap: {
     flexDirection: 'row',
@@ -161,6 +195,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 18,
     flexShrink: 1,
+  },
+  valueLabelCompact: {
+    fontSize: 13,
+    lineHeight: 17,
   },
   divider: {
     height: StyleSheet.hairlineWidth,

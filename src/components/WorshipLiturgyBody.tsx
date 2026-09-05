@@ -764,7 +764,8 @@ export function WorshipLiturgyBody({
     if (!lineKey) return;
 
     const matchId = `worship-search-match-${activeMatchIndex}`;
-    const scrollOffset = variant === 'tab' ? stickySearchHeightRef.current : 0;
+    const scrollOffset =
+      variant === 'tab' && Platform.OS === 'web' ? stickySearchHeightRef.current : 0;
 
     const scrollToActiveMatch = () => {
       if (variant === 'tab') {
@@ -978,19 +979,25 @@ export function WorshipLiturgyBody({
     </>
   );
 
+  const stickyHeaderVisible = liturgyState.status === 'ready';
+
+  const tabScrollBody = (
+    <View
+      ref={scrollContentRef}
+      style={[
+        styles.scrollBody,
+        styles.tabBelowSearch,
+        showCompareSetup ? styles.scrollBodyFill : null,
+      ]}
+    >
+      {scrollBody}
+    </View>
+  );
+
   const tabScrollChildren = (
     <>
-      {liturgyState.status === 'ready' ? stickySearchHeader : null}
-      <View
-        ref={scrollContentRef}
-        style={[
-          styles.scrollBody,
-          styles.tabBelowSearch,
-          showCompareSetup ? styles.scrollBodyFill : null,
-        ]}
-      >
-        {scrollBody}
-      </View>
+      {stickyHeaderVisible ? stickySearchHeader : null}
+      {tabScrollBody}
     </>
   );
 
@@ -1009,6 +1016,7 @@ export function WorshipLiturgyBody({
 
     return (
       <View style={styles.root}>
+        {Platform.OS === 'web' ? null : stickyHeaderVisible ? stickySearchHeader : null}
         <AppScrollView
           ref={scrollRef}
           onScroll={onTabScroll}
@@ -1020,10 +1028,12 @@ export function WorshipLiturgyBody({
             { paddingBottom: scrollBottomPadding },
             showCompareSetup ? styles.scrollContentFill : null,
           ]}
-          stickyHeaderIndices={liturgyState.status === 'ready' ? [0] : undefined}
+          stickyHeaderIndices={
+            Platform.OS === 'web' && stickyHeaderVisible ? [0] : undefined
+          }
           showsVerticalScrollIndicator
         >
-          {tabScrollChildren}
+          {Platform.OS === 'web' ? tabScrollChildren : tabScrollBody}
         </AppScrollView>
       </View>
     );
