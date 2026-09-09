@@ -1,6 +1,6 @@
-import { MaterialTopTabBar, type MaterialTopTabBarProps } from "expo-router/js-top-tabs";
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
-import { Animated, Platform, StyleSheet, View } from 'react-native';
+import type { MaterialTopTabBarProps } from "expo-router/js-top-tabs";
+import { useEffect, useState, useSyncExternalStore } from 'react';
+import { Animated, Dimensions, Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { TabBarBleedBackground } from './TabBarBleedBackground';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
@@ -30,22 +30,22 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
   const float = tabBarFloatInsets(isNativePhone, insets.bottom);
   const tabBarBg = tabBarBackground(isDark);
   const chrome = tabBarChrome(isDark);
-  const [barWidth, setBarWidth] = useState(0);
+
+  // Start from a sensible estimate so the sliding pill never renders with a
+  // zero/negative width before onLayout reports the real bar width.
+  const [barWidth, setBarWidth] = useState(() =>
+    Math.max(1, Dimensions.get('window').width - float.horizontal * 2),
+  );
   const tabCount = state.routes.length;
-  const slotWidth = tabCount > 0 ? barWidth / tabCount : 0;
-  const inputRange = state.routes.map((_, index) => index);
+  const slotWidth = Math.max(1, tabCount > 0 ? barWidth / tabCount : 0);
+  const inputRange = state.routes.map((_route: unknown, index: number) => index);
   const outputRange =
-    slotWidth > 0
-      ? state.routes.map((_, index) => index * slotWidth + SELECTION_INSET)
-      : state.routes.map(() => 0);
-  const selectionTranslateX =
-    slotWidth > 0
-      ? position.interpolate({
-          inputRange,
-          outputRange,
-          extrapolate: 'clamp',
-        })
-      : null;
+    state.routes.map((_route: unknown, index: number) => index * slotWidth + SELECTION_INSET);
+  const selectionTranslateX = position.interpolate({
+    inputRange,
+    outputRange,
+    extrapolate: 'clamp',
+  });
 
   const activeRoute = state.routes[Math.max(0, state.index)]?.name ?? 'index';
   const activeScrolled = useSyncExternalStore(
@@ -66,31 +66,17 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
   });
 
   const inactiveTint = isDark ? '#7a746e' : colors.muted;
-  const descriptors = useMemo(() => {
-    const next = { ...props.descriptors };
-    for (const key of Object.keys(next)) {
-      next[key] = {
-        ...next[key],
-        options: {
-          ...next[key].options,
-          tabBarActiveTintColor: accent.icon,
-          tabBarInactiveTintColor: inactiveTint,
-        },
-      };
-    }
-    return next;
-  }, [props.descriptors, accent, inactiveTint]);
 
   return (
-      <View
-        style={[
-          styles.floatingHost,
-          {
-            paddingHorizontal: float.horizontal,
-            paddingBottom: float.hostBottomPad,
-          },
-        ]}
-      >
+    <View
+      style={[
+        styles.floatingHost,
+        {
+          paddingHorizontal: float.horizontal,
+          paddingBottom: float.hostBottomPad,
+        },
+      ]}
+    >
       <Animated.View
         style={[
           styles.floatingBar,
@@ -105,20 +91,43 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
           onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}
         >
           <View style={styles.selectionLayer}>
-            {selectionTranslateX ? (
-              <Animated.View
-                style={[
-                  styles.selectionFill,
-                  {
-                    width: slotWidth - SELECTION_INSET * 2,
-                    backgroundColor: accent.accentSoft,
-                    transform: [{ translateX: selectionTranslateX }],
-                  },
-                ]}
-              />
-            ) : null}
+            <Animated.View
+              style={[
+                styles.selectionFill,
+                {
+                  width: slotWidth - SELECTION_INSET * 2,
+                  backgroundColor: accent.accentSoft,
+                  transform: [{ translateX: selectionTranslateX }],
+                },
+              ]}
+            />
           </View>
-          <MaterialTopTabBar {...props} descriptors={descriptors} />
+          <View style={styles.itemRow}>
+            {state.routes.map((route: { key: string; name: string }, index: number) => {
+              const focused = index === state.index;
+              const descriptor = props.descriptors[route.key];
+              const icon = descriptor?.options.tabBarIcon?.({
+                color: focused ? accent.icon : inactiveTint,
+                focused,
+              });
+              return (
+                <Pressable
+                  key={route.key}
+                  style={styles.tabItem}
+                  onPress={() => {
+                    tabBarScrollStore.touchReset();
+                    props.navigation.navigate(route.name);
+                  }}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: focused }}
+                  accessibilityLabel={descriptor?.options.tabBarAccessibilityLabel}
+                  hitSlop={4}
+                >
+                  <View style={styles.itemContent}>{icon}</View>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
       </Animated.View>
     </View>
@@ -144,10 +153,9 @@ const styles = StyleSheet.create({
   tabBarRow: {
     flex: 1,
     width: '100%',
-    alignItems: 'stretch',
   },
   selectionLayer: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     pointerEvents: 'none',
   },
   selectionFill: {
@@ -155,5 +163,21 @@ const styles = StyleSheet.create({
     top: SELECTION_INSET,
     bottom: SELECTION_INSET,
     borderRadius: radii.pill,
+  },
+  itemRow: {
+    flex: 1,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
   },
 });

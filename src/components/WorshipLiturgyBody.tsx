@@ -1,5 +1,5 @@
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View, type ScrollView, type View as RNView, type ViewStyle } from 'react-native';
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 
 import { AppScrollView } from './AppScrollView';
 import { CompareSidePicker } from './CompareSidePicker';
@@ -57,6 +57,15 @@ type Props = {
   scrollBottomPadding?: number;
   /** Tab route name — enables tab-bar scroll reporting / tap-to-top when in tab mode. */
   scrollRoute?: string;
+  /** External scroll view that owns the page. Used by embedded single-scroll screens
+   *  so search results can scroll the screen-level scroll to the matched line. */
+  scrollRef?: RefObject<ScrollView | null>;
+  /** Optional page header rendered above the liturgy controls inside this component.
+   *  Lets the embedded variant own the whole scroll content for accurate search jumps. */
+  header?: ReactNode;
+  /** Horizontal content padding applied by the owning screen scroll (native
+   *  embedded keeps this in sync with the search bar). */
+  scrollContentHorizontalPadding?: number;
   service?: WorshipServiceId;
   onServiceChange?: (service: WorshipServiceId) => void;
   showServiceToggle?: boolean;
@@ -630,6 +639,9 @@ export function WorshipLiturgyBody({
   variant = 'embedded',
   scrollBottomPadding = 24,
   scrollRoute,
+  scrollRef: externalScrollRef,
+  header,
+  scrollContentHorizontalPadding,
   service = 'chrysostom',
   onServiceChange,
   showServiceToggle = false,
@@ -649,11 +661,14 @@ export function WorshipLiturgyBody({
   const pageBg = isDark ? colors.darkBg : colors.parchment;
   const scrollRef = useRef<ScrollView>(null);
   const onTabScroll = useTabBarScroll(scrollRoute ?? '__none__', scrollRef);
+  const onEmbeddedTabScroll = useTabBarScroll(scrollRoute ?? '__none__', externalScrollRef ?? scrollRef);
   const scrollContentRef = useRef<RNView>(null);
+  const contentRootRef = useRef<RNView>(null);
+  const innerContentRef = useRef<RNView>(null) as React.RefObject<RNView>;
   const searchCardRef = useRef<RNView>(null);
   const stickySearchHeightRef = useRef(48);
   const lineRefs = useRef<Record<string, RNView | null>>({});
-  const shouldScrollToMatch = useRef(false);
+  const previousMatchIndexRef = useRef<number | null>(null);
 
   const onSearchCardLayout = useCallback(() => {
     searchCardRef.current?.measure((_x, _y, _width, height) => {
@@ -734,7 +749,6 @@ export function WorshipLiturgyBody({
       setActiveMatchIndex(null);
       return;
     }
-    shouldScrollToMatch.current = false;
     setActiveMatchIndex(0);
   }, [searchNorm, service, mode]);
 
@@ -742,7 +756,6 @@ export function WorshipLiturgyBody({
     (index: number) => {
       if (!searchPlan?.total) return;
       const wrapped = ((index % searchPlan.total) + searchPlan.total) % searchPlan.total;
-      shouldScrollToMatch.current = true;
       setActiveMatchIndex(wrapped);
     },
     [searchPlan],
@@ -757,40 +770,72 @@ export function WorshipLiturgyBody({
   }, [activeMatchIndex, goToMatch]);
 
   useEffect(() => {
-    if (!shouldScrollToMatch.current) return;
-    shouldScrollToMatch.current = false;
+    const previousMatch = previousMatchIndexRef.current;
+    previousMatchIndexRef.current = activeMatchIndex;
     if (!searchNorm || activeMatchIndex === null || !searchPlan?.total) return;
+    if (previousMatch === activeMatchIndex) return;
     const lineKey = searchPlan.lineKeys[activeMatchIndex];
     if (!lineKey) return;
 
     const matchId = `worship-search-match-${activeMatchIndex}`;
-    const scrollOffset =
-      variant === 'tab' && Platform.OS === 'web' ? stickySearchHeightRef.current : 0;
+
+    const searchJumpOffset =
+      variant === 'tab'
+        ? Platform.OS === 'web'
+          ? stickySearchHeightRef.current
+          : 0
+        : Platform.OS === 'web'
+          ? stickySearchHeightRef.current
+          : searchNorm
+            ? layoutInsets.top + 10 + stickySearchHeightRef.current
+            : 0;
 
     const scrollToActiveMatch = () => {
-      if (variant === 'tab') {
-        const lineView = lineRefs.current[lineKey];
-        const scrollContent = scrollContentRef.current;
-        const scroll = scrollRef.current;
-        if (lineView && scrollContent && scroll) {
-          lineView.measureLayout(
-            scrollContent,
-            (_x, y) => {
-              scroll.scrollTo({ y: Math.max(0, y - scrollOffset), animated: false });
-            },
-            () => {
-              scrollAppScrollViewToElement(matchId, scrollOffset);
-            },
-          );
-          return;
-        }
+      const lineView = lineRefs.current[lineKey];
+      const scrollContent = scrollContentRef.current;
+      const externalScroll = Platform.OS === 'web' ? null : externalScrollRef?.current;
+      const scroll =
+        externalScroll ??
+        (variant === 'tab' ? scrollRef.current : null);
+      if (lineView && scrollContent && scroll) {
+        lineView.measureLayout(
+          scrollContent,
+          (_x, y) => {
+            if (externalScroll) {
+              const root = contentRootRef.current;
+              const inner = innerContentRef.current;
+              if (root && inner) {
+                // Single-scroll screens: translate the match's offset inside the
+                // sections to the owning scroll via content-local measurements.
+                root.measureLayout(inner, (_rx, rootTop) => {
+                  scrollContent.measureLayout(root, (_sx, sectionsTop) => {
+                    scroll.scrollTo({
+                      y: Math.max(0, rootTop + sectionsTop + y - searchJumpOffset),
+                      animated: false,
+                    });
+                  }, () => {
+                    scrollAppScrollViewToElement(matchId, searchJumpOffset);
+                  });
+                }, () => {
+                  scrollAppScrollViewToElement(matchId, searchJumpOffset);
+                });
+                return;
+              }
+            }
+            scroll.scrollTo({ y: Math.max(0, y - searchJumpOffset), animated: false });
+          },
+          () => {
+            scrollAppScrollViewToElement(matchId, searchJumpOffset);
+          },
+        );
+        return;
       }
-      scrollAppScrollViewToElement(matchId, scrollOffset);
+      scrollAppScrollViewToElement(matchId, searchJumpOffset);
     };
 
     if (Platform.OS === 'web') requestAnimationFrame(scrollToActiveMatch);
     else scrollToActiveMatch();
-  }, [activeMatchIndex, searchNorm, searchPlan, variant]);
+  }, [activeMatchIndex, externalScrollRef, layoutInsets, searchNorm, searchPlan, variant]);
 
   const sectionBlocks = useMemo(() => {
     if (!showSections) return null;
@@ -903,25 +948,37 @@ export function WorshipLiturgyBody({
     />
   );
 
+  const searchBackdrop = (
+    <View
+      style={[
+        styles.stickySearchBackdrop,
+        { backgroundColor: pageBg },
+        Platform.OS === 'web'
+          ? ({
+              backgroundColor: 'transparent',
+              backgroundImage: `linear-gradient(to bottom, ${pageBg} 0%, ${pageBg} 50%, transparent 50%)`,
+            } as unknown as ViewStyle)
+          : null,
+        { pointerEvents: 'none' },
+      ]}
+    />
+  );
+
+  const searchActive = Boolean(searchNorm);
+
   const searchCard = (
-    <View style={[styles.searchCard, surfaceCard(isDark, { radius: radii.lg })]}>{searchBar}</View>
+    <View
+      ref={searchCardRef}
+      onLayout={onSearchCardLayout}
+      style={[styles.searchCard, surfaceCard(isDark, { radius: radii.lg })]}
+    >
+      {searchBar}
+    </View>
   );
 
   const stickySearchHeader = (
-    <View ref={searchCardRef} onLayout={onSearchCardLayout} style={styles.stickySearchShell}>
-      <View
-        style={[
-          styles.stickySearchBackdrop,
-          { backgroundColor: pageBg },
-          Platform.OS === 'web'
-            ? ({
-                backgroundColor: 'transparent',
-                backgroundImage: `linear-gradient(to bottom, ${pageBg} 0%, ${pageBg} 50%, transparent 50%)`,
-              } as unknown as ViewStyle)
-            : null,
-          { pointerEvents: 'none' },
-        ]}
-      />
+    <View style={styles.stickySearchShell}>
+      {searchBackdrop}
       {searchCard}
     </View>
   );
@@ -938,7 +995,6 @@ export function WorshipLiturgyBody({
     liturgyState.status === 'ready' ? (
       variant === 'tab' ? null : (
         <View style={styles.scrollBody}>
-          {searchCard}
           {introControls}
           {compareSlots}
           {introHint}
@@ -1039,8 +1095,67 @@ export function WorshipLiturgyBody({
     );
   }
 
+  if (Platform.OS !== 'web' && externalScrollRef) {
+    const stickySlotIndex = header ? 1 : 0;
+    return (
+      <View style={styles.embeddedScreen}>
+        <AppScrollView
+          ref={externalScrollRef}
+          innerViewRef={innerContentRef}
+          onScroll={onEmbeddedTabScroll}
+          scrollEventThrottle={16}
+          stickyHeaderIndices={
+            liturgyState.status === 'ready' ? [stickySlotIndex] : undefined
+          }
+          contentContainerStyle={[
+            {
+              paddingLeft: scrollContentHorizontalPadding ?? layoutInsets.left,
+              paddingRight: scrollContentHorizontalPadding ?? layoutInsets.right,
+              paddingBottom: scrollBottomPadding,
+            },
+          ]}
+        >
+          {header ? (
+            <View
+              style={[styles.embeddedPinHeader, { paddingTop: layoutInsets.top + 10 }]}
+            >
+              {header}
+            </View>
+          ) : null}
+          {liturgyState.status === 'ready' ? (
+            <View
+              style={[
+                styles.embeddedPinSlot,
+                { paddingTop: layoutInsets.top + 10 },
+                header ? { marginTop: 16 - (layoutInsets.top + 10) } : null,
+              ]}
+            >
+              {searchCard}
+            </View>
+          ) : null}
+          <View ref={contentRootRef} style={[styles.embeddedRoot, { marginTop: 16 }]}>
+            {scrollableHeader}
+            <View ref={scrollContentRef} style={styles.scrollBody}>
+              {scrollBody}
+            </View>
+          </View>
+        </AppScrollView>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.embeddedRoot}>
+    <View ref={contentRootRef} style={styles.embeddedRoot}>
+      {header ? <View style={styles.header}>{header}</View> : null}
+      {liturgyState.status === 'ready'
+        ? searchActive ? (
+          <View style={[styles.searchStickyShellWeb, { top: layoutInsets.top + 10 }]}>
+            {searchCard}
+          </View>
+        ) : (
+          searchCard
+        )
+        : null}
       {scrollableHeader}
       <View ref={scrollContentRef} style={styles.scrollBody}>
         {scrollBody}
@@ -1055,6 +1170,16 @@ export const ChrysostomLiturgyBody = WorshipLiturgyBody;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  embeddedScreen: {
+    flex: 1,
+  },
+  embeddedPinHeader: {
+    marginTop: 6,
+    paddingBottom: 12,
+  },
+  embeddedPinSlot: {
+    zIndex: 2,
   },
   scroll: {
     flex: 1,
@@ -1082,6 +1207,9 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 0,
   },
+  header: {
+    paddingBottom: 12,
+  },
   embeddedRoot: {
     gap: 16,
   },
@@ -1104,6 +1232,10 @@ const styles = StyleSheet.create({
           top: 0,
         } as unknown as ViewStyle)
       : null),
+  },
+  searchStickyShellWeb: {
+    ...({ position: 'sticky' } as unknown as ViewStyle),
+    zIndex: 3,
   },
   stickySearchBackdrop: {
     position: 'absolute',

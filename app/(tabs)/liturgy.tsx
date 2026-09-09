@@ -1,15 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState, type ComponentProps } from 'react';
+import { StyleSheet, View, type ScrollView } from 'react-native';
 import { useFocusEffect, useTheme } from "expo-router/react-navigation";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Head from 'expo-router/head';
 import { useLocalSearchParams } from 'expo-router';
+import { Platform } from 'react-native';
 
+import { AppScrollView } from '../../src/components/AppScrollView';
 import { WorshipLiturgyBody } from '../../src/components/WorshipLiturgyBody';
 import { DevotionalPageHeader } from '../../src/components/DevotionalPageHeader';
 import { useFontScale } from '../../src/hooks/useFontScale';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
+import { useTabBarScroll } from '../../src/hooks/useTabBarScroll';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { parseWorshipServiceId, worshipServicePageSubtitleKey, worshipServicePageTitleKey, type WorshipServiceId } from '../../src/lib/liturgical/worshipNavigation';
 import { useVestmentAccent } from '../../src/state/VestmentAccentContext';
@@ -31,6 +34,8 @@ export default function WorshipScreen() {
   const bodyType = text(14, 20);
   const hintType = text(13, 20);
   const pageBg = theme.dark ? colors.darkBg : colors.parchment;
+  const scrollRef = useRef<ScrollView>(null);
+  const onTabScroll = useTabBarScroll('liturgy', scrollRef);
 
   const pageTitle = t(worshipServicePageTitleKey(service));
   const pageSubtitle = t(worshipServicePageSubtitleKey(service));
@@ -47,6 +52,34 @@ export default function WorshipScreen() {
     }, [isDark, pageBg]),
   );
 
+  const devotionalHeader = (
+    <DevotionalPageHeader
+      icon={<MaterialCommunityIcons name="church" size={22} color={vestmentAccent.accent} />}
+      accentSoft={vestmentAccent.accentSoft}
+      title={pageTitle}
+      subtitle={pageSubtitle}
+      textColor={theme.colors.text}
+      mutedColor={muted}
+    />
+  );
+
+  const liturgyBodyProps: ComponentProps<typeof WorshipLiturgyBody> = {
+    variant: 'embedded',
+    scrollRef,
+    header: devotionalHeader,
+    scrollRoute: 'liturgy',
+    service,
+    onServiceChange: setService,
+    showServiceToggle: true,
+    textColor: theme.colors.text as string,
+    mutedColor: muted,
+    borderColor: theme.colors.border as string,
+    isDark,
+    bodyType,
+    hintType,
+    scrollBottomPadding,
+  };
+
   return (
     <>
       <Head>
@@ -55,49 +88,28 @@ export default function WorshipScreen() {
         </title>
       </Head>
       <View style={[styles.page, { backgroundColor: pageBg }]}>
-        <View
-          style={[
-            styles.header,
-            {
-              paddingTop: screenSafe.paddingTop + 16,
-              paddingLeft: screenSafe.paddingLeft,
-              paddingRight: screenSafe.paddingRight,
-            },
-          ]}
-        >
-          <DevotionalPageHeader
-            icon={<MaterialCommunityIcons name="church" size={22} color={vestmentAccent.accent} />}
-            accentSoft={vestmentAccent.accentSoft}
-            title={pageTitle}
-            subtitle={pageSubtitle}
-            textColor={theme.colors.text}
-            mutedColor={muted}
-          />
-        </View>
-        <View
-          style={[
-            styles.body,
-            {
-              paddingLeft: screenSafe.paddingLeft,
-              paddingRight: screenSafe.paddingRight,
-            },
-          ]}
-        >
+        {Platform.OS === 'web' ? (
+          <AppScrollView
+            ref={scrollRef}
+            onScroll={onTabScroll}
+            scrollEventThrottle={16}
+            contentContainerStyle={[
+              {
+                paddingTop: screenSafe.paddingTop + 16,
+                paddingLeft: screenSafe.paddingLeft,
+                paddingRight: screenSafe.paddingRight,
+                paddingBottom: scrollBottomPadding,
+              },
+            ]}
+          >
+            <WorshipLiturgyBody {...liturgyBodyProps} />
+          </AppScrollView>
+        ) : (
           <WorshipLiturgyBody
-            variant="tab"
-            scrollRoute="liturgy"
-            service={service}
-            onServiceChange={setService}
-            showServiceToggle
-            textColor={theme.colors.text}
-            mutedColor={muted}
-            borderColor={theme.colors.border}
-            isDark={isDark}
-            bodyType={bodyType}
-            hintType={hintType}
-            scrollBottomPadding={scrollBottomPadding}
+            {...liturgyBodyProps}
+            scrollContentHorizontalPadding={screenSafe.paddingLeft}
           />
-        </View>
+        )}
       </View>
     </>
   );
@@ -105,12 +117,6 @@ export default function WorshipScreen() {
 
 const styles = StyleSheet.create({
   page: {
-    flex: 1,
-  },
-  header: {
-    paddingBottom: 12,
-  },
-  body: {
     flex: 1,
   },
 });

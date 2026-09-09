@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import { iconBadgeSurface } from '../theme/cards';
 import { typography } from '../theme/tokens';
@@ -67,6 +67,15 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.headline,
+    // The stock headline is 28pt with a tight 34px line box, 800-weight glyphs and
+    // negative tracking. On iOS/Fabric that combination clips the ascenders over the
+    // top of the header and can measure the line so tightly it fails to draw.
+    ...(Platform.OS !== 'web'
+      ? {
+          lineHeight: 40,
+          letterSpacing: 0,
+        }
+      : null),
   },
   subtitle: {
     fontSize: 15,
