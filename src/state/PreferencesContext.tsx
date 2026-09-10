@@ -59,6 +59,7 @@ type StoredPreferences = {
   readingsCategoryFilter?: LiturgicalTextCategoryFilter;
   colorSchemePreference?: ColorSchemePreference;
   showVestmentGradient?: boolean;
+  showTabBarLabels?: boolean;
   uiLanguage?: UiLanguage;
   fontScale?: FontScalePreference;
   servingRole?: ClergyRole;
@@ -85,6 +86,8 @@ type Preferences = {
   colorSchemePreference: ColorSchemePreference;
   /** Subtle liturgical-colour gradient over the black Today background. */
   showVestmentGradient: boolean;
+  /** Show a one-word label under each navbar item. */
+  showTabBarLabels: boolean;
   uiLanguage: UiLanguage;
   /** Reading text size on Today (scripture, feasts, saints). */
   fontScale: FontScalePreference;
@@ -117,6 +120,7 @@ type PreferencesContextValue = Preferences & {
   setReadingsCategoryFilter: (value: LiturgicalTextCategoryFilter) => void;
   setColorSchemePreference: (value: ColorSchemePreference) => void;
   setShowVestmentGradient: (value: boolean) => void;
+  setShowTabBarLabels: (value: boolean) => void;
   setUiLanguage: (value: UiLanguage) => void;
   setFontScale: (value: FontScalePreference) => void;
   setServingRole: (value: ClergyRole) => void;
@@ -164,6 +168,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [colorSchemePreference, setColorSchemePreferenceState] =
     useState<ColorSchemePreference>('dark');
   const [showVestmentGradient, setShowVestmentGradientState] = useState(false);
+  const [showTabBarLabels, setShowTabBarLabelsState] = useState(false);
   const [uiLanguage, setUiLanguageState] = useState<UiLanguage>('en');
   const [fontScale, setFontScaleState] = useState<FontScalePreference>('default');
   const [servingRole, setServingRoleState] = useState<ClergyRole>('layperson');
@@ -215,6 +220,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         }
         if (typeof parsed.showVestmentGradient === 'boolean') {
           setShowVestmentGradientState(parsed.showVestmentGradient);
+        }
+        if (typeof parsed.showTabBarLabels === 'boolean') {
+          setShowTabBarLabelsState(parsed.showTabBarLabels);
         }
         if (parsed.uiLanguage === 'en' || parsed.uiLanguage === 'ru' || parsed.uiLanguage === 'el') {
           setUiLanguageState(parsed.uiLanguage);
@@ -321,6 +329,14 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     (value: boolean) => {
       setShowVestmentGradientState(value);
       void persist({ showVestmentGradient: value });
+    },
+    [persist],
+  );
+
+  const setShowTabBarLabels = useCallback(
+    (value: boolean) => {
+      setShowTabBarLabelsState(value);
+      void persist({ showTabBarLabels: value });
     },
     [persist],
   );
@@ -445,6 +461,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       readingsCategoryFilter,
       colorSchemePreference,
       showVestmentGradient,
+      showTabBarLabels,
       uiLanguage,
       fontScale,
       servingRole,
@@ -465,6 +482,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setReadingsCategoryFilter,
       setColorSchemePreference,
       setShowVestmentGradient,
+      setShowTabBarLabels,
       setUiLanguage,
       setFontScale,
       setServingRole,
@@ -513,10 +531,12 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       setServingRole,
       setShowAlternateCalendar,
       setShowVestmentGradient,
+      setShowTabBarLabels,
       setTodaySectionCollapsed,
       setUiLanguage,
       showAlternateCalendar,
       showVestmentGradient,
+      showTabBarLabels,
       todayCollapsed,
       toggleTodaySection,
       uiLanguage,

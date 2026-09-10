@@ -34,8 +34,6 @@ import { FastingFoodIcon } from './FastingFoodIcon';
 import { CalendarFastingFoodIcon } from './CalendarFastingFoodIcon';
 import { TypikonSymbol } from './TypikonSymbol';
 
-const ROLE_MENU_ITEM_PRESSED = 'rgba(139,46,60,0.22)';
-
 type Props = {
   appearance: LiturgicalDayAppearance;
   dayTitle: string;
@@ -302,7 +300,7 @@ export function DayHero({
                       backgroundColor: selected
                         ? vestmentAccent.accent
                         : pressed
-                          ? ROLE_MENU_ITEM_PRESSED
+                          ? vestmentAccent.accentSoft
                           : 'transparent',
                     },
                   ]}

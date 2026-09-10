@@ -1,9 +1,10 @@
 import type { MaterialTopTabBarProps } from "expo-router/js-top-tabs";
 import { useEffect, useState, useSyncExternalStore } from 'react';
-import { Animated, Dimensions, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Dimensions, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { TabBarBleedBackground } from './TabBarBleedBackground';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
+import { usePreferences } from '../state/PreferencesContext';
 import { useLiturgicalVestmentAccent } from '../state/VestmentAccentContext';
 import { tabBarScrollStore } from '../state/tabBarScrollStore';
 import { staticAppAccent } from '../lib/liturgical/vestmentAccent';
@@ -22,6 +23,7 @@ const SELECTION_INSET = 5;
 /** Bottom-positioned floating pill tab bar (phone + web). */
 export function MainTabBar(props: MaterialTopTabBarProps) {
   const { position, state } = props;
+  const { showTabBarLabels } = usePreferences();
   const isDark = useResolvedColorScheme() === 'dark';
   const insets = useLayoutSafeAreaInsets();
   const liturgicalAccent = useLiturgicalVestmentAccent();
@@ -123,7 +125,20 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
                   accessibilityLabel={descriptor?.options.tabBarAccessibilityLabel}
                   hitSlop={4}
                 >
-                  <View style={styles.itemContent}>{icon}</View>
+                  <View style={styles.itemContent}>
+                    {icon}
+                    {showTabBarLabels ? (
+                      <Text
+                        numberOfLines={1}
+                        style={[
+                          styles.itemLabel,
+                          { color: focused ? accent.icon : inactiveTint },
+                        ]}
+                      >
+                        {descriptor?.options.tabBarLabel as string}
+                      </Text>
+                    ) : null}
+                  </View>
                 </Pressable>
               );
             })}
@@ -179,5 +194,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
+  },
+  itemLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    lineHeight: 12,
+    marginTop: 2,
+    maxWidth: 76,
   },
 });

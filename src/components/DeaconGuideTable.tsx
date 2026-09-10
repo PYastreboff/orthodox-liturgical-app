@@ -12,15 +12,17 @@ import {
   type DeaconLiturgyForm,
 } from '../lib/liturgical/deaconGuide';
 import { colors } from '../theme/tokens';
+import { DayPagePanel } from './day/DayPagePanel';
 
 type Props = {
   textColor: string;
   mutedColor: string;
   isDark: boolean;
+  first?: boolean;
   dayContext: DeaconGuideDayContext;
 };
 
-export function DeaconGuideTable({ textColor, mutedColor, isDark, dayContext }: Props) {
+export function DeaconGuideTable({ textColor, mutedColor, isDark, first, dayContext }: Props) {
   const { t } = useAppTranslation();
   const { text } = useFontScale();
   const bodyType = text(14, 20);
@@ -40,11 +42,15 @@ export function DeaconGuideTable({ textColor, mutedColor, isDark, dayContext }: 
     dayContext.isPresanctified,
   ]);
 
-  const surfaceBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)';
+  const chipSelectedBg = isDark ? colors.darkInk : colors.ink;
+  const chipSelectedFg = isDark ? colors.darkBg : colors.parchment;
+  const chipIdleBg = isDark ? 'rgba(255,255,255,0.04)' : colors.card;
+  const chipIdleBorder = isDark ? colors.darkBorderSubtle : colors.borderSubtle;
+  const panelBorder = isDark ? colors.darkBorderSubtle : colors.borderSubtle;
   const rows = DEACON_GUIDE_ROWS[form];
 
   return (
-    <View>
+    <>
       {forms.length > 1 ? (
         <View style={styles.toggleRow}>
           {forms.map((id) => {
@@ -54,7 +60,10 @@ export function DeaconGuideTable({ textColor, mutedColor, isDark, dayContext }: 
                 key={id}
                 style={[
                   styles.toggleBtn,
-                  { backgroundColor: selected ? colors.accentWine : surfaceBg },
+                  {
+                    backgroundColor: selected ? chipSelectedBg : chipIdleBg,
+                    borderColor: selected ? chipSelectedBg : chipIdleBorder,
+                  },
                 ]}
                 onPress={() => setForm(id)}
                 accessibilityRole="button"
@@ -64,9 +73,11 @@ export function DeaconGuideTable({ textColor, mutedColor, isDark, dayContext }: 
                   style={[
                     styles.toggleLabel,
                     headerType,
-                    { color: selected ? '#fff' : textColor },
+                    { color: selected ? chipSelectedFg : textColor },
                   ]}
-                  numberOfLines={2}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.85}
                 >
                   {t(`deaconGuide.form.${id}`)}
                 </Text>
@@ -80,7 +91,13 @@ export function DeaconGuideTable({ textColor, mutedColor, isDark, dayContext }: 
         </Text>
       )}
 
-      {rows.map((row, index) => (
+      <DayPagePanel
+        textColor={textColor}
+        borderColor={panelBorder}
+        isDark={isDark}
+        first={first}
+      >
+        {rows.map((row, index) => (
         <View
           key={`${form}-${row.momentKey}`}
           style={[styles.momentBlock, index > 0 ? styles.momentBlockSpaced : null]}
@@ -112,7 +129,8 @@ export function DeaconGuideTable({ textColor, mutedColor, isDark, dayContext }: 
           {t(key)}
         </Text>
       ))}
-    </View>
+      </DayPagePanel>
+    </>
   );
 }
 
@@ -127,15 +145,15 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexBasis: '40%',
     minHeight: 40,
-    borderRadius: 8,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
   toggleLabel: {
-    fontWeight: '700',
-    textAlign: 'center',
+    fontWeight: '600',
   },
   singleFormLabel: {
     fontWeight: '700',

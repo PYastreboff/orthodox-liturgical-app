@@ -689,49 +689,54 @@ export function TodaySectionContent({ section, model }: Props) {
       );
 
     case 'choirGuide':
-      return wrap(
+      return (
         <ChoirGuideTable
           textColor={theme.colors.text}
           mutedColor={muted}
           isDark={isDark}
           dayContext={guideDayContext}
-        />,
+          first
+        />
       );
     case 'altarRoles':
-      return wrap(
+      return (
         <AltarServerRoleTable
           textColor={theme.colors.text}
           mutedColor={muted}
           isDark={isDark}
           dayContext={guideDayContext}
-        />,
+          first
+        />
       );
     case 'readerGuide':
-      return wrap(
+      return (
         <ReaderGuideTable
           textColor={theme.colors.text}
           mutedColor={muted}
           isDark={isDark}
           dayContext={guideDayContext}
-        />,
+          first
+        />
       );
     case 'deaconGuide':
-      return wrap(
+      return (
         <DeaconGuideTable
           textColor={theme.colors.text}
           mutedColor={muted}
           isDark={isDark}
           dayContext={guideDayContext}
-        />,
+          first
+        />
       );
     case 'priestGuide':
-      return wrap(
+      return (
         <PriestGuideTable
           textColor={theme.colors.text}
           mutedColor={muted}
           isDark={isDark}
           dayContext={guideDayContext}
-        />,
+          first
+        />
       );
 
     case 'readings': {

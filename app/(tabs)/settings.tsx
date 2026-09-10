@@ -141,6 +141,8 @@ export default function SettingsScreen() {
     setColorSchemePreference,
     showVestmentGradient,
     setShowVestmentGradient,
+    showTabBarLabels,
+    setShowTabBarLabels,
     uiLanguage,
     setUiLanguage,
     fontScale,
@@ -554,6 +556,21 @@ export default function SettingsScreen() {
                   onValueChange={setShowVestmentGradient}
                   isDark={isDark}
                   accessibilityLabel={t('settings.backgroundColour')}
+                />
+              }
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="bar-chart-2"
+              label={t('settings.navLabels')}
+              hint={t('settings.navLabelsHint')}
+              trailing={
+                <SettingsSwitch
+                  value={showTabBarLabels}
+                  onValueChange={setShowTabBarLabels}
+                  isDark={isDark}
+                  accessibilityLabel={t('settings.navLabels')}
                 />
               }
               showDivider
