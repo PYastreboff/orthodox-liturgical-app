@@ -495,10 +495,14 @@ const styles = StyleSheet.create({
     lineHeight: 34,
     fontWeight: '700',
     letterSpacing: 0.2,
-    textShadow: '0px 1px 8px rgba(0,0,0,0.35)',
-    textShadowColor: 'rgba(0,0,0,0.6)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 6,
+    ...Platform.select({
+      web: { textShadow: '0 1px 8px rgba(0,0,0,0.6)' },
+      default: {
+        textShadowColor: 'rgba(0,0,0,0.6)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 6,
+      },
+    }),
   },
   heroTitlePhone: {
     fontSize: 24,
