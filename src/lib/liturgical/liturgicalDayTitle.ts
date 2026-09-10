@@ -89,6 +89,8 @@ function isPrimaryAnnunciationFeastName(name: string): boolean {
   return ANNUNCIATION_FEAST.test(trimmed);
 }
 const ASCENSION_FEAST = /\bascension\b/i;
+const ASCENSION_SUBORDINATE =
+  /\b(?:forefeast|afterfeast|leavetaking)\s+of\s+(?:the\s+)?ascension\b/i;
 
 /** Fixed-calendar appearance → feast name in orthocal `feasts`. */
 const APPEARANCE_FEAST_PATTERN: Partial<Record<string, RegExp>> = {
@@ -314,6 +316,8 @@ function greatFeastNameFromOrthocal(
   appearanceKey: string,
   calendarTitle: string,
 ): string | null {
+  if (!isOrthocalGreatFeastLevel(day)) return null;
+
   const feasts = allFeastsFromOrthocalDay(day);
 
   const holyHeadline = holyWeekHeadline(day, appearanceKey);
