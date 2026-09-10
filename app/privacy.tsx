@@ -42,18 +42,8 @@ export default function PrivacyPolicyScreen() {
       </Head>
       <SwipeBackShell onBack={goBack}>
         <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
-          <StackScreenHeader
-            title={t('privacy.title')}
-            subtitle={t('privacy.intro')}
-            backLabel={t('privacy.back')}
-            onBack={goBack}
-            icon={<Feather name="shield" size={22} color={vestmentAccent.accent} />}
-            accentSoft={vestmentAccent.accentSoft}
-            mutedColor={muted}
-            contentMaxWidth={STACK_CONTENT_NARROW_MAX_WIDTH}
-            iconPlacement="back"
-          />
         <ScrollView
+          contentInsetAdjustmentBehavior="never"
           contentContainerStyle={[
             styles.content,
             stackContentColumnStyle({
@@ -62,9 +52,19 @@ export default function PrivacyPolicyScreen() {
               phone,
               maxWidth: STACK_CONTENT_NARROW_MAX_WIDTH,
             }),
-            { paddingBottom: insets.bottom + 40 },
+            { paddingTop: screenSafe.paddingTop + 16, paddingBottom: insets.bottom + 40 },
           ]}
         >
+          <StackScreenHeader
+            title={t('privacy.title')}
+            subtitle={t('privacy.intro')}
+            backLabel={t('privacy.back')}
+            onBack={goBack}
+            icon={<Feather name="shield" size={22} color={vestmentAccent.accent} />}
+            accentSoft={vestmentAccent.accentSoft}
+            mutedColor={muted}
+            iconPlacement="back"
+          />
           <Text style={[styles.updated, { color: muted }]}>
             {t('privacy.lastUpdated', { date: PRIVACY_POLICY_LAST_UPDATED })}
           </Text>
@@ -90,9 +90,7 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
-  content: {
-    paddingTop: 12,
-  },
+  content: {},
   updated: {
     fontSize: 13,
     marginBottom: 10,

@@ -32,6 +32,8 @@ export type DayServiceItem = {
   slot: ServiceSlot;
   titleKey: string;
   slotKey: string;
+  noteKey?: string;
+  noteVars?: Record<string, string>;
 };
 
 export type DayServicesData = {
@@ -43,6 +45,14 @@ export type DayServicesNeighbor = {
   appearance: LiturgicalDayAppearance;
   feastLevel?: number;
   weekday?: number;
+};
+
+/** Parish feast events from the personal days list (today / tomorrow). */
+export type ParishFeastFlags = {
+  /** Parish feast event titles on this civil date → morning Divine Liturgy. */
+  today: string[];
+  /** Parish feast event titles on the next civil date → Vespers this afternoon. */
+  tomorrow: string[];
 };
 
 const KIND_META: Record<ServiceKind, { category: ServiceCategory; titleKey: string }> = {
@@ -249,6 +259,7 @@ export function buildDayServices(
   day: OrthocalDay | null,
   tomorrow?: DayServicesNeighbor | null,
   civil?: PlainDate | null,
+  parishFeast?: ParishFeastFlags,
 ): DayServicesData {
   const appearanceKey = appearance.key;
   const feastLevel = day?.feast_level;
@@ -336,6 +347,25 @@ export function buildDayServices(
     items.push(item(eveServiceForTomorrow(tomorrow), 'afternoon'));
   }
 
+  // --- Parish feast day from the personal events:
+  //     morning Divine Liturgy today, Great Vespers this afternoon when the
+  //     feast falls tomorrow (the night before). Skip when a service of the
+  //     same category is already present. ---
+  if (parishFeast?.today.length && !items.some((entry) => entry.category === 'liturgy')) {
+    items.push({
+      ...item('liturgy_chrysostom', 'morning'),
+      noteKey: 'services.note.parishFeast',
+      noteVars: { feast: parishFeast.today.join(', ') },
+    });
+  }
+  if (parishFeast?.tomorrow.length && !items.some((entry) => entry.category === 'vespers')) {
+    items.push({
+      ...item('great_vespers', 'afternoon'),
+      noteKey: 'services.note.parishFeast',
+      noteVars: { feast: parishFeast.tomorrow.join(', ') },
+    });
+  }
+
   return { items, footnoteKey: 'services.footnote' };
 }
 
@@ -350,6 +380,7 @@ export function localizeDayServices(data: DayServicesData, lang: UiLanguage) {
       title: translate(lang, entry.titleKey),
       slotLabel: translate(lang, entry.slotKey),
       categoryLabel: translate(lang, categoryLabelKey(entry.category)),
+      note: entry.noteKey ? translate(lang, entry.noteKey, entry.noteVars) : undefined,
     })),
     footnote: translate(lang, data.footnoteKey),
   };

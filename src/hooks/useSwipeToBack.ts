@@ -83,9 +83,15 @@ export function useSwipeToBack(onBack: () => void): SwipeToBack {
     }),
   ).current.panHandlers;
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
+  const animatedStyle = useAnimatedStyle(() => {
+    const tx = translateX.value;
+    // At rest (tx = 0) return an EMPTY transform: on iOS/Fabric a transformed
+    // Animated.View inside an overflow:hidden parent gets a compositing container
+    // whose frame is miscalculated, clipping its children (the page header).
+    return {
+      transform: tx === 0 ? [] : [{ translateX: tx }],
+    };
+  });
 
   const dimStyle = useAnimatedStyle(() => {
     const w = Math.max(widthSv.value, 1);

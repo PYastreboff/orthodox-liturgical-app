@@ -19,6 +19,7 @@ import {
   todaySectionTitleKey,
   type TodaySectionId,
 } from '../../lib/today/todaySections';
+import type { LiturgicalTextCategory } from '../../lib/liturgical/liturgicalTexts';
 import { SERVING_ROLE_PHRASE_LABEL_KEYS } from '../../lib/liturgical/servingRoles';
 import { STACK_CONTENT_MAX_WIDTH, SCREEN_BOTTOM_CONTENT_MARGIN } from '../../theme/layout';
 import { stackContentColumnStyle } from '../../theme/stackContentColumn';
@@ -29,6 +30,17 @@ import { Redirect, useRootNavigationState } from 'expo-router';
 import Head from 'expo-router/head';
 
 const CONTENT_MAX = STACK_CONTENT_MAX_WIDTH;
+
+/** Header title for a filtered Liturgical Texts page (e.g. the Gospel page). */
+const READINGS_FILTER_TITLE_KEYS: Readonly<Record<LiturgicalTextCategory, string>> = {
+  troparion: 'readings.troparion',
+  kontakion: 'readings.kontakion',
+  prokeimenon: 'readings.prokeimenon',
+  alleluia: 'readings.alleluia',
+  epistle: 'readings.epistle',
+  gospel: 'readings.gospel',
+  communion: 'readings.communion',
+};
 
 type Props = {
   section: TodaySectionId;
@@ -46,7 +58,9 @@ export function DaySectionPage({ section }: Props) {
   const title =
     section === 'vestments'
       ? t(titleKey, { role: t(SERVING_ROLE_PHRASE_LABEL_KEYS[model.servingRole]) })
-      : t(titleKey);
+      : section === 'readings' && model.readingsCategoryFilter !== 'all'
+        ? t(READINGS_FILTER_TITLE_KEYS[model.readingsCategoryFilter])
+        : t(titleKey);
   const icon = todaySectionIcon(section, model.servingRole);
   const vestmentAccent = useVestmentAccent();
   const iconColor = vestmentAccent.accent;
@@ -86,34 +100,28 @@ export function DaySectionPage({ section }: Props) {
           gradientEnabled={model.showVestmentGradient}
         >
           <View style={styles.pageInner}>
-            <StackScreenHeader
-              title={title}
-              subtitle={pageSubtitle}
-              backLabel={t('today.back')}
-              onBack={goBack}
-              icon={<SectionIcon name={icon} color={iconColor} size={22} />}
-              accentSoft={vestmentAccent.accentSoft}
-              mutedColor={muted}
-              iconPlacement="back"
-            />
-            {readingsCompareSetup ? (
-              <View
-                style={[
-                  styles.compareSetupBody,
-                  contentColumnStyle,
-                  { paddingBottom: contentBottomPad },
-                ]}
-              >
-                <TodaySectionContent section={section} model={model} />
-              </View>
-            ) : (
             <AppScrollView
+              contentInsetAdjustmentBehavior="never"
               contentContainerStyle={[
                 styles.content,
                 contentColumnStyle,
-                { paddingBottom: insets.bottom + 32 },
+                {
+                  paddingTop: screenSafe.paddingTop + 16,
+                  paddingBottom: readingsCompareSetup ? contentBottomPad : insets.bottom + 32,
+                },
               ]}
+              {...(readingsCompareSetup ? { scrollEnabled: false } : null)}
             >
+              <StackScreenHeader
+                title={title}
+                subtitle={pageSubtitle}
+                backLabel={t('today.back')}
+                onBack={goBack}
+                icon={<SectionIcon name={icon} color={iconColor} size={22} />}
+                accentSoft={vestmentAccent.accentSoft}
+                mutedColor={muted}
+                iconPlacement="back"
+              />
               {model.waitingForDay ? (
                 <TodaySkeleton isDark={isDark} />
               ) : model.error ? (
@@ -124,7 +132,6 @@ export function DaySectionPage({ section }: Props) {
                 <TodaySectionContent section={section} model={model} />
               )}
             </AppScrollView>
-            )}
           </View>
         </VestmentPageBackground>
       </SwipeBackShell>
@@ -139,10 +146,6 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     gap: 0,
-  },
-  compareSetupBody: {
-    flex: 1,
-    minHeight: 0,
   },
   statusError: {
     color: colors.accentWine,

@@ -66,6 +66,8 @@ type Props = {
   /** Horizontal content padding applied by the owning screen scroll (native
    *  embedded keeps this in sync with the search bar). */
   scrollContentHorizontalPadding?: number;
+  /** Bottom clearance for the compare-setup picker (floating tab bar on tab screens). */
+  compareSetupBottomInset?: number;
   service?: WorshipServiceId;
   onServiceChange?: (service: WorshipServiceId) => void;
   showServiceToggle?: boolean;
@@ -642,6 +644,7 @@ export function WorshipLiturgyBody({
   scrollRef: externalScrollRef,
   header,
   scrollContentHorizontalPadding,
+  compareSetupBottomInset,
   service = 'chrysostom',
   onServiceChange,
   showServiceToggle = false,
@@ -924,8 +927,21 @@ export function WorshipLiturgyBody({
       ]}
       isDark={isDark}
       fill={showCompareSetup}
-      fillLayout={showCompareSetup ? 'flex' : 'measure'}
-      bottomInset={showCompareSetup ? undefined : comparePickerBottomInset}
+      fillLayout={
+        showCompareSetup
+          ? variant === 'tab'
+            ? 'flex'
+            : // Embedded/single-scroll pages: the picker sits in auto-height scroll
+              // content, so a flex-fill has no definite parent height and the slots
+              // collapse to their 108px minimum. Size from window coordinates instead.
+              'measure'
+          : 'measure'
+      }
+      bottomInset={
+        showCompareSetup
+          ? compareSetupBottomInset ?? layoutInsets.bottom + 8
+          : comparePickerBottomInset
+      }
     />
   ) : null;
 
@@ -987,7 +1003,7 @@ export function WorshipLiturgyBody({
     liturgyState.status === 'ready' ? displayControls : null;
 
   const introHint =
-    liturgyState.status === 'ready' && variant !== 'tab' ? (
+    liturgyState.status === 'ready' && variant !== 'tab' && !showCompareSetup ? (
       <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
     ) : null;
 
@@ -1072,7 +1088,6 @@ export function WorshipLiturgyBody({
 
     return (
       <View style={styles.root}>
-        {Platform.OS === 'web' ? null : stickyHeaderVisible ? stickySearchHeader : null}
         <AppScrollView
           ref={scrollRef}
           onScroll={onTabScroll}
@@ -1085,11 +1100,11 @@ export function WorshipLiturgyBody({
             showCompareSetup ? styles.scrollContentFill : null,
           ]}
           stickyHeaderIndices={
-            Platform.OS === 'web' && stickyHeaderVisible ? [0] : undefined
+            stickyHeaderVisible && (Platform.OS === 'web' || searchActive) ? [0] : undefined
           }
           showsVerticalScrollIndicator
         >
-          {Platform.OS === 'web' ? tabScrollChildren : tabScrollBody}
+          {tabScrollChildren}
         </AppScrollView>
       </View>
     );

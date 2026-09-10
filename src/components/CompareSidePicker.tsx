@@ -1,9 +1,19 @@
 import { Feather } from '@expo/vector-icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 
 import { HoverPressable } from './HoverPressable';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
+import { renderInBody } from '../lib/bodyPortal';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { segmentedControlTheme } from '../lib/ui/segmentedControlTheme';
@@ -16,6 +26,8 @@ export type CompareSideOption<T extends string> = {
 };
 
 type Side = 'left' | 'right';
+
+const MENU_ITEM_MIN_HEIGHT = 44;
 
 type Props<T extends string> = {
   left: T | null;
@@ -66,9 +78,67 @@ function CompareSlot<T extends string>({
     : isDark
       ? 'rgba(255,255,255,0.16)'
       : 'rgba(43,38,35,0.18)';
-  const slotBg = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(43,38,35,0.03)';
+  const slotSurface = isDark ? colors.darkBg : colors.parchment;
   const sideLabel =
     side === 'left' ? t('readings.compareColumnLeft') : t('readings.compareColumnRight');
+  const isWeb = Platform.OS === 'web';
+  const slotRef = useRef<View>(null);
+  const [menuPos, setMenuPos] = useState<{ left: number; top: number; width: number } | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (!isWeb || !open || !inline) return;
+    const raf = requestAnimationFrame(() => {
+      slotRef.current?.measureInWindow((x, y, _w, h) => {
+        setMenuPos({ left: x, top: y + h + 4, width: _w });
+      });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [inline, isWeb, open]);
+
+  const renderOptions = (menuStyle: StyleProp<ViewStyle>) => (
+    <View style={menuStyle}>
+      {options.map((option, index) => {
+        const selected = value === option.value;
+        const isFirst = index === 0;
+        const isLast = index === options.length - 1;
+        return (
+          <HoverPressable
+            key={option.value}
+            isDark={isDark}
+            selected={selected}
+            selectedColor={theme.chipSelectedBg}
+            baseBackground="transparent"
+            style={[
+              styles.menuItem,
+              isFirst ? styles.menuItemFirst : null,
+              isLast ? styles.menuItemLast : null,
+            ]}
+            onPress={() => {
+              onChange(option.value);
+              onClose();
+            }}
+            accessibilityRole="button"
+            accessibilityState={{ selected }}
+            {...hoverAccessibilityProps(option.label, { role: 'button' })}
+          >
+            <Text
+              style={[
+                styles.menuItemLabel,
+                {
+                  color: selected ? theme.chipSelectedFg : theme.chipIdleFg,
+                  fontWeight: selected ? '700' : '600',
+                },
+              ]}
+            >
+              {option.label}
+            </Text>
+          </HoverPressable>
+        );
+      })}
+    </View>
+  );
 
   return (
     <View
@@ -79,9 +149,8 @@ function CompareSlot<T extends string>({
         open ? styles.slotWrapOpen : null,
       ]}
     >
-      <HoverPressable
-        isDark={isDark}
-        baseBackground={slotBg}
+      <View
+        ref={slotRef}
         style={[
           styles.slot,
           fill ? styles.slotFill : null,
@@ -92,107 +161,94 @@ function CompareSlot<T extends string>({
           },
           open ? styles.slotOpen : null,
         ]}
-        onPress={onOpen}
-        accessibilityRole="button"
-        accessibilityState={{ expanded: open }}
-        accessibilityLabel={
-          value
-            ? `${sideLabel}: ${selectedLabel}`
-            : t('readings.compareSelectLanguage')
-        }
-        {...hoverAccessibilityProps(
-          value ? `${sideLabel}: ${selectedLabel}` : t('readings.compareSelectLanguage'),
-          { role: 'button' },
-        )}
       >
-        {value ? (
-          <>
-            <Text
-              style={[
-                styles.slotLabel,
-                fill ? styles.slotLabelFill : null,
-                inline ? styles.slotLabelInline : null,
-                { color: theme.chipIdleFg },
-              ]}
-              numberOfLines={inline ? 1 : 3}
-              adjustsFontSizeToFit={inline}
-              minimumFontScale={0.75}
-            >
-              {selectedLabel}
+        <Pressable
+          style={
+            open && fill ? styles.slotPressOpen : styles.slotPressClosed
+          }
+          onPress={onOpen}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: open }}
+          accessibilityLabel={
+            value
+              ? `${sideLabel}: ${selectedLabel}`
+              : t('readings.compareSelectLanguage')
+          }
+          {...hoverAccessibilityProps(
+            value ? `${sideLabel}: ${selectedLabel}` : t('readings.compareSelectLanguage'),
+            { role: 'button' },
+          )}
+        >
+          {open && fill ? (
+            <Text style={[styles.slotOptionHint, { color: theme.inactiveText }]}>
+              {sideLabel}
             </Text>
-            {inline ? (
-              <Feather name="chevron-down" size={14} color={theme.inactiveText} />
-            ) : null}
-          </>
-        ) : (
-          <Feather name="plus" size={fill ? 32 : 22} color={theme.inactiveText} />
-        )}
-      </HoverPressable>
+          ) : value ? (
+            <>
+              <Text
+                style={[
+                  styles.slotLabel,
+                  fill ? styles.slotLabelFill : null,
+                  inline ? styles.slotLabelInline : null,
+                  { color: theme.chipIdleFg },
+                ]}
+                numberOfLines={inline ? 1 : 3}
+                adjustsFontSizeToFit={inline}
+                minimumFontScale={0.75}
+              >
+                {selectedLabel}
+              </Text>
+              {inline ? (
+                <Feather name="chevron-down" size={14} color={theme.inactiveText} />
+              ) : null}
+            </>
+          ) : (
+            <Feather name="plus" size={fill ? 32 : 22} color={theme.inactiveText} />
+          )}
+        </Pressable>
 
-      {open ? (
-        <View style={inline ? styles.slotMenuLayerInline : styles.slotMenuLayer}>
-          {!inline ? (
-            <Pressable
-              style={[
-                styles.slotMenuBackdrop,
-                { backgroundColor: isDark ? 'rgba(0,0,0,0.35)' : 'rgba(43,38,35,0.12)' },
-              ]}
-              onPress={onClose}
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-            />
-          ) : null}
-          <View
-            style={[
-              styles.menu,
-              inline ? styles.menuInline : null,
+        {open && fill
+          ? renderOptions([
+              styles.slotOptionsCard,
               {
-                backgroundColor: isDark ? colors.darkSurface : colors.card,
+                backgroundColor: slotSurface,
                 borderColor: theme.chipIdleBorder,
               },
-            ]}
-          >
-            {options.map((option, index) => {
-              const selected = value === option.value;
-              const isFirst = index === 0;
-              const isLast = index === options.length - 1;
-              return (
-                <HoverPressable
-                  key={option.value}
-                  isDark={isDark}
-                  selected={selected}
-                  selectedColor={theme.chipSelectedBg}
-                  baseBackground="transparent"
-                  style={[
-                    styles.menuItem,
-                    isFirst ? styles.menuItemFirst : null,
-                    isLast ? styles.menuItemLast : null,
-                  ]}
-                  onPress={() => {
-                    onChange(option.value);
-                    onClose();
-                  }}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected }}
-                  {...hoverAccessibilityProps(option.label, { role: 'button' })}
-                >
-                  <Text
-                    style={[
-                      styles.menuItemLabel,
-                      {
-                        color: selected ? theme.chipSelectedFg : theme.chipIdleFg,
-                        fontWeight: selected ? '700' : '600',
-                      },
-                    ]}
-                  >
-                    {option.label}
-                  </Text>
-                </HoverPressable>
-              );
-            })}
-          </View>
-        </View>
-      ) : null}
+            ])
+          : null}
+      </View>
+
+      {open && inline
+          ? isWeb && menuPos
+            ? renderInBody(
+                renderOptions([
+                  styles.menu,
+                  styles.menuInline,
+                  {
+                    position: 'fixed' as unknown as ViewStyle['position'],
+                    left: menuPos.left,
+                    top: menuPos.top,
+                    width: menuPos.width,
+                    zIndex: 2147483000,
+                    elevation: 9999,
+                    backgroundColor: slotSurface,
+                    borderColor: theme.chipIdleBorder,
+                  },
+                ]),
+              )
+            : (
+                <View style={styles.slotMenuLayerInline}>
+                  {renderOptions([
+                    styles.menu,
+                    styles.menuInline,
+                    {
+                      backgroundColor: slotSurface,
+                      borderColor: theme.chipIdleBorder,
+                    },
+                  ])}
+                </View>
+              )
+          : null}
     </View>
   );
 }
@@ -293,8 +349,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     minHeight: 0,
   },
+  // No always-on zIndex here: static layering is by DOM order; an always-on
+  // zIndex inside the transformed swipe-back page mis-frames on iOS/Fabric.
   wrapInline: {
-    zIndex: 1,
+    marginVertical: 8,
   },
   wrapOpen: {
     zIndex: 2000,
@@ -327,7 +385,8 @@ const styles = StyleSheet.create({
     alignSelf: 'auto',
   },
   slotWrapOpen: {
-    zIndex: 3,
+    zIndex: 9999,
+    elevation: 9999,
   },
   slot: {
     flex: 1,
@@ -356,6 +415,24 @@ const styles = StyleSheet.create({
     borderColor: colors.accentWine,
     borderStyle: 'solid',
   },
+  slotPress: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  slotPressClosed: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  slotPressOpen: {
+    width: '100%',
+    flexShrink: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 14,
+  },
   slotLabel: {
     fontSize: 15,
     fontWeight: '700',
@@ -381,27 +458,32 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: 20,
   },
-  slotMenuLayer: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    zIndex: 2,
-  },
   slotMenuLayerInline: {
     position: 'absolute',
     top: '100%',
     left: 0,
     right: 0,
     marginTop: 4,
-    zIndex: 4,
+    zIndex: 9999,
+    elevation: 9999,
   },
-  slotMenuBackdrop: {
-    ...StyleSheet.absoluteFillObject,
+  slotOptionHint: {
+    fontSize: 12,
+    letterSpacing: 0.4,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+  },
+  slotOptionsCard: {
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+    alignSelf: 'stretch',
+    width: '100%',
+    marginTop: 12,
   },
   menu: {
+    position: 'absolute',
     minWidth: 140,
-    width: '100%',
     maxWidth: 260,
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
@@ -410,12 +492,17 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   menuInline: {
+    position: 'relative',
     maxWidth: '100%',
     boxShadow: '0px 4px 10px rgba(0,0,0,0.16)',
   },
   menuItem: {
     paddingHorizontal: 14,
     paddingVertical: 12,
+    minHeight: MENU_ITEM_MIN_HEIGHT,
+    justifyContent: 'center',
+    width: '100%',
+    alignSelf: 'stretch',
   },
   menuItemFirst: {
     borderTopLeftRadius: 12,

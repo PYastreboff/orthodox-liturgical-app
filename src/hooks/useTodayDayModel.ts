@@ -38,7 +38,10 @@ import {
   isPresanctifiedDay,
   localizeDayServices,
 } from '../lib/liturgical/dayServices';
-import { personalDayOccurrencesOnCivilDate } from '../lib/personalDays';
+import {
+  parishFeastTitlesOnCivilDate,
+  personalDayOccurrencesOnCivilDate,
+} from '../lib/personalDays';
 import { useDayNavigation } from '../state/DayNavigationContext';
 import { usePreferences } from '../state/PreferencesContext';
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -275,14 +278,19 @@ export function useTodayDayModel() {
       appearance: tomorrowAppearance,
       feastLevel: tomorrowCached?.feast_level,
       weekday: tomorrowCached?.weekday ?? tomorrowDate.getDay(),
-    }, civilPlain);
+    }, civilPlain, {
+      today: parishFeastTitlesOnCivilDate(personalDays, selectedDate),
+      tomorrow: parishFeastTitlesOnCivilDate(personalDays, tomorrowDate),
+    });
     return localizeDayServices(raw, uiLanguage);
   }, [
     appearance,
     civilPlain,
     liturgicalDay,
     liturgicalPlain,
+    personalDays,
     primaryCalendar,
+    selectedDate,
     tomorrowAppearance,
     tomorrowDate,
     uiLanguage,

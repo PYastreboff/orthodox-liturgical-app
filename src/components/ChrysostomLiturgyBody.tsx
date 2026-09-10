@@ -382,7 +382,7 @@ function LiturgyToolbar({
   onNextMatch: () => void;
 }) {
   const { t } = useAppTranslation();
-  const searchBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.05)';
+  const searchBg = isDark ? colors.darkSurface : colors.card;
   const navDisabled = !searchMatchCount;
   const showMatchPosition =
     searchMatchCount !== null && searchMatchCount > 0 && activeMatchIndex !== null;

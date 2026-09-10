@@ -5,10 +5,8 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 
 import { RecipeDetailView } from '../../src/components/RecipeDetailView';
 import { SwipeBackMissingPage } from '../../src/components/SwipeBackMissingPage';
-import { SwipeBackShell } from '../../src/components/SwipeBackShell';
 import { useRecipeById } from '../../src/hooks/useFastingRecipes';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
-import { useStackBack } from '../../src/hooks/useStackBack';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { colors } from '../../src/theme/tokens';
@@ -22,24 +20,21 @@ export default function RecipeDetailScreen() {
   const isDark = useResolvedColorScheme() === 'dark';
   const screenSafe = useScreenSafePadding();
   const muted = isDark ? '#a39e98' : colors.muted;
-  const goBack = useStackBack('/recipes');
 
   if (status === 'loading') {
     return (
-      <SwipeBackShell onBack={goBack}>
-        <View
-          style={[
-            styles.centered,
-            {
-              backgroundColor: theme.colors.background,
-              paddingTop: screenSafe.paddingTop + 40,
-            },
-          ]}
-        >
-          <ActivityIndicator size="small" color={colors.accentWine} />
-          <Text style={[styles.body, { color: muted }]}>{t('recipes.loadingLibrary')}</Text>
-        </View>
-      </SwipeBackShell>
+      <View
+        style={[
+          styles.centered,
+          {
+            backgroundColor: theme.colors.background,
+            paddingTop: screenSafe.paddingTop + 40,
+          },
+        ]}
+      >
+        <ActivityIndicator size="small" color={colors.accentWine} />
+        <Text style={[styles.body, { color: muted }]}>{t('recipes.loadingLibrary')}</Text>
+      </View>
     );
   }
 

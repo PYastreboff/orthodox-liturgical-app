@@ -189,6 +189,16 @@ export function personalDayOccurrencesOnCivilDate(
   return out;
 }
 
+/** Titles of parish feast events on this civil date. */
+export function parishFeastTitlesOnCivilDate(
+  days: readonly PersonalDay[],
+  civil: Date,
+): string[] {
+  return personalDaysOnCivilDate(days, civil)
+    .filter((day) => day.kind === 'parish_feast')
+    .map((day) => day.title);
+}
+
 export function displayKindForOccurrence(occurrence: PersonalDayOccurrence): PersonalDayDisplayKind {
   if (occurrence.variant === 'fortieth') return 'repose_fortieth';
   return occurrence.day.kind;

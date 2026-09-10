@@ -87,6 +87,10 @@ export function LiturgicalTextsCategoryToggle({
 }: Props) {
   const { t } = useAppTranslation();
   const [open, setOpen] = useState(false);
+  // Keep the native Modal UNMOUNTED until the user first opens the menu: iOS/Fabric
+  // text in a ScrollView that contains an always-mounted (even closed) Modal fails to
+  // draw. The readings page hero text was missing while its back button rendered.
+  const [menuEverOpened, setMenuEverOpened] = useState(false);
   const [labelWidths, setLabelWidths] = useState<Record<string, number>>({});
   const [anchor, setAnchor] = useState<MenuAnchor | null>(null);
   const triggerRef = useRef<View>(null);
@@ -133,6 +137,7 @@ export function LiturgicalTextsCategoryToggle({
         top: y + height + MENU_GAP,
         width: resolvedWidth,
       });
+      setMenuEverOpened(true);
       setOpen(true);
     });
   };
@@ -206,74 +211,76 @@ export function LiturgicalTextsCategoryToggle({
         </HoverPressable>
       </View>
 
-      <Modal visible={open} transparent animationType="fade" onRequestClose={closeMenu}>
-        <Pressable style={styles.modalBackdrop} onPress={closeMenu} accessibilityElementsHidden />
-        {anchor && menuPanelWidth ? (
-          <View
-            style={[
-              styles.menu,
-              {
-                top: anchor.top,
-                left: anchor.left,
-                width: menuPanelWidth,
-                backgroundColor: isDark ? colors.darkSurface : colors.card,
-                borderColor: theme.chipIdleBorder,
-              },
-            ]}
-          >
-            <ScrollView
-              style={styles.menuScroll}
-              contentContainerStyle={styles.menuScrollContent}
-              keyboardShouldPersistTaps="handled"
-              bounces={false}
-              nestedScrollEnabled
+      {menuEverOpened ? (
+        <Modal visible={open} transparent animationType="fade" onRequestClose={closeMenu}>
+          <Pressable style={styles.modalBackdrop} onPress={closeMenu} accessibilityElementsHidden />
+          {anchor && menuPanelWidth ? (
+            <View
+              style={[
+                styles.menu,
+                {
+                  top: anchor.top,
+                  left: anchor.left,
+                  width: menuPanelWidth,
+                  backgroundColor: isDark ? colors.darkSurface : colors.card,
+                  borderColor: theme.chipIdleBorder,
+                },
+              ]}
             >
-              {categoryIds.map((id, index) => {
-                const selected = value === id;
-                const optionLabel = categoryLabel(id, t);
-                const isFirst = index === 0;
-                const isLast = index === categoryIds.length - 1;
-                return (
-                  <HoverPressable
-                    key={id}
-                    isDark={isDark}
-                    selected={selected}
-                    selectedColor={theme.chipSelectedBg}
-                    baseBackground="transparent"
-                    style={[
-                      styles.menuItem,
-                      { paddingHorizontal: labelType.padH, paddingVertical: MENU_ITEM_PAD_V },
-                      isFirst ? styles.menuItemFirst : null,
-                      isLast ? styles.menuItemLast : null,
-                    ]}
-                    onPress={() => {
-                      onChange(id);
-                      closeMenu();
-                    }}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected }}
-                    {...hoverAccessibilityProps(optionLabel, { role: 'button' })}
-                  >
-                    <Text
+              <ScrollView
+                style={styles.menuScroll}
+                contentContainerStyle={styles.menuScrollContent}
+                keyboardShouldPersistTaps="handled"
+                bounces={false}
+                nestedScrollEnabled
+              >
+                {categoryIds.map((id, index) => {
+                  const selected = value === id;
+                  const optionLabel = categoryLabel(id, t);
+                  const isFirst = index === 0;
+                  const isLast = index === categoryIds.length - 1;
+                  return (
+                    <HoverPressable
+                      key={id}
+                      isDark={isDark}
+                      selected={selected}
+                      selectedColor={theme.chipSelectedBg}
+                      baseBackground="transparent"
                       style={[
-                        styles.menuItemLabel,
-                        {
-                          color: selected ? theme.chipSelectedFg : theme.chipIdleFg,
-                          fontSize: labelType.fontSize,
-                          letterSpacing: labelType.letterSpacing,
-                          fontWeight: selected ? '700' : '600',
-                        },
+                        styles.menuItem,
+                        { paddingHorizontal: labelType.padH, paddingVertical: MENU_ITEM_PAD_V },
+                        isFirst ? styles.menuItemFirst : null,
+                        isLast ? styles.menuItemLast : null,
                       ]}
+                      onPress={() => {
+                        onChange(id);
+                        closeMenu();
+                      }}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected }}
+                      {...hoverAccessibilityProps(optionLabel, { role: 'button' })}
                     >
-                      {optionLabel}
-                    </Text>
-                  </HoverPressable>
-                );
-              })}
-            </ScrollView>
-          </View>
-        ) : null}
-      </Modal>
+                      <Text
+                        style={[
+                          styles.menuItemLabel,
+                          {
+                            color: selected ? theme.chipSelectedFg : theme.chipIdleFg,
+                            fontSize: labelType.fontSize,
+                            letterSpacing: labelType.letterSpacing,
+                            fontWeight: selected ? '700' : '600',
+                          },
+                        ]}
+                      >
+                        {optionLabel}
+                      </Text>
+                    </HoverPressable>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          ) : null}
+        </Modal>
+      ) : null}
     </>
   );
 }

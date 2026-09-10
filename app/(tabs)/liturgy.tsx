@@ -11,7 +11,7 @@ import { WorshipLiturgyBody } from '../../src/components/WorshipLiturgyBody';
 import { DevotionalPageHeader } from '../../src/components/DevotionalPageHeader';
 import { useFontScale } from '../../src/hooks/useFontScale';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
-import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
+import { useTabBarBottomPadding, useTabBarClearance } from '../../src/hooks/useTabBarBottomPadding';
 import { useTabBarScroll } from '../../src/hooks/useTabBarScroll';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { parseWorshipServiceId, worshipServicePageSubtitleKey, worshipServicePageTitleKey, type WorshipServiceId } from '../../src/lib/liturgical/worshipNavigation';
@@ -78,6 +78,7 @@ export default function WorshipScreen() {
     bodyType,
     hintType,
     scrollBottomPadding,
+    compareSetupBottomInset: useTabBarClearance(8),
   };
 
   return (

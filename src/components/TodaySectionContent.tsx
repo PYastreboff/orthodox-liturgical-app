@@ -659,6 +659,18 @@ export function TodaySectionContent({ section, model }: Props) {
                       {entry.categoryLabel}
                     </Text>
                   </Pressable>
+                  {entry.note ? (
+                    <Text
+                      style={[
+                        styles.serviceNote,
+                        type.hint,
+                        isLast ? styles.serviceNoteLast : null,
+                        { color: muted },
+                      ]}
+                    >
+                      {entry.note}
+                    </Text>
+                  ) : null}
                 </View>
               );
             })
@@ -971,13 +983,14 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   body: {},
+  // No zIndex here: inside the swipe-back page (overflow:hidden + reanimated Animated.View)
+  // iOS/Fabric can mis-frame a composited layer and paint it over the header above.
   readingsControls: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 10,
     marginBottom: 12,
-    zIndex: 2,
   },
   readingsControlsPhone: {
     flexDirection: 'column',
@@ -987,9 +1000,8 @@ const styles = StyleSheet.create({
   readingsControlsSetup: {
     marginBottom: 0,
   },
-  readingsControlsCompare: {
-    zIndex: 3000,
-  },
+  // No-op now — previously zIndex: 3000, removed for iOS/Fabric layer mis-framing.
+  readingsControlsCompare: {},
   readingsCompareSetupRoot: {
     flex: 1,
     minHeight: 0,
@@ -1127,6 +1139,13 @@ const styles = StyleSheet.create({
   },
   serviceRowPressed: {
     opacity: 0.78,
+  },
+  serviceNote: {
+    marginTop: -2,
+    marginBottom: 8,
+  },
+  serviceNoteLast: {
+    marginBottom: 12,
   },
   commemorationList: {
     gap: 12,

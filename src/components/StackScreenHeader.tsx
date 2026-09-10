@@ -3,11 +3,7 @@ import { useTheme } from "expo-router/react-navigation";
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { usePhoneLayout } from '../hooks/usePhoneLayout';
-import { useScreenSafePadding } from '../hooks/useScreenSafePadding';
 import { cardElevation } from '../theme/cards';
-import { STACK_CONTENT_MAX_WIDTH } from '../theme/layout';
-import { stackContentColumnStyle } from '../theme/stackContentColumn';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { colors, radii } from '../theme/tokens';
 import { DevotionalPageHeader } from './DevotionalPageHeader';
@@ -20,12 +16,15 @@ type Props = {
   icon: ReactNode;
   accentSoft: string;
   mutedColor: string;
-  contentMaxWidth?: number;
   /** When `back`, chevron back button sits in the hero row instead of the section icon. */
   iconPlacement?: 'hero' | 'back';
 };
 
-/** Back control plus devotional title block — shared by day sections, recipes, privacy, etc. */
+/**
+ * Back control plus devotional title block — shared by day sections, recipes, privacy etc.
+ * Sits INSIDE a scroll view's content (like the Prayers tab header): gutters, max-width
+ * and top safe-area padding come from the surrounding scroll content container.
+ */
 export function StackScreenHeader({
   title,
   subtitle,
@@ -34,13 +33,10 @@ export function StackScreenHeader({
   icon,
   accentSoft,
   mutedColor,
-  contentMaxWidth = STACK_CONTENT_MAX_WIDTH,
   iconPlacement = 'hero',
 }: Props) {
   const theme = useTheme();
   const isDark = useResolvedColorScheme() === 'dark';
-  const phone = usePhoneLayout();
-  const screenSafe = useScreenSafePadding();
   const backBorder = isDark ? colors.darkBorderSubtle : colors.borderSubtle;
   const backBg = isDark ? colors.darkSurfaceElevated : colors.card;
   const iconInBack = iconPlacement === 'back';
@@ -64,38 +60,29 @@ export function StackScreenHeader({
   );
 
   return (
-    <View style={[styles.wrap, styles.wrapStretch, { paddingTop: screenSafe.paddingTop + 16 }]}>
-      <View
-        style={stackContentColumnStyle({
-          paddingLeft: screenSafe.paddingLeft,
-          paddingRight: screenSafe.paddingRight,
-          phone,
-          maxWidth: contentMaxWidth,
-        })}
-      >
-        {iconInBack ? (
+    <View style={styles.wrap}>
+      {iconInBack ? (
+        <DevotionalPageHeader
+          leading={backButton}
+          accentSoft={accentSoft}
+          title={title}
+          subtitle={subtitle}
+          textColor={theme.colors.text}
+          mutedColor={mutedColor}
+        />
+      ) : (
+        <>
+          {backButton}
           <DevotionalPageHeader
-            leading={backButton}
+            icon={icon}
             accentSoft={accentSoft}
             title={title}
             subtitle={subtitle}
             textColor={theme.colors.text}
             mutedColor={mutedColor}
           />
-        ) : (
-          <>
-            {backButton}
-            <DevotionalPageHeader
-              icon={icon}
-              accentSoft={accentSoft}
-              title={title}
-              subtitle={subtitle}
-              textColor={theme.colors.text}
-              mutedColor={mutedColor}
-            />
-          </>
-        )}
-      </View>
+        </>
+      )}
     </View>
   );
 }
@@ -104,9 +91,6 @@ const styles = StyleSheet.create({
   wrap: {
     paddingBottom: 16,
     width: '100%',
-  },
-  wrapStretch: {
-    alignSelf: 'stretch',
   },
   backBtn: {
     width: 42,

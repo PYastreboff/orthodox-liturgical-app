@@ -59,6 +59,7 @@
         "expo-splash-screen",
         {
           "image": "./assets/splash.png",
+          "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#1a1410"
         }
@@ -78,7 +79,11 @@
     },
     "extra": {
       "privacyPolicyUrl": "https://pyastreboff.github.io/orthodox-liturgical-app/privacy",
-      "supportUrl": "https://github.com/PYastreboff/orthodox-liturgical-app/issues/new"
+      "supportUrl": "https://github.com/PYastreboff/orthodox-liturgical-app/issues/new",
+      "router": {},
+      "eas": {
+        "projectId": "1c3f10c5-3aa5-4e03-9488-a716b9b3989a"
+      }
     }
   }
 }

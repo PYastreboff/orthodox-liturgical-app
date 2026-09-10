@@ -1,6 +1,6 @@
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState, type ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Modal } from 'react-native';
 
 import { usePreferences } from '../state/PreferencesContext';
 import { AppSplashScreen } from './AppSplashScreen';
@@ -39,18 +39,10 @@ export function SplashGate({ children }: Props) {
       {children}
       {!overlayVisible ? <FirstLaunchTips /> : null}
       {overlayVisible ? (
-        <View style={[styles.overlay, { pointerEvents: 'auto' }]}>
+        <Modal visible transparent={false} animationType="fade" onRequestClose={() => {}}>
           <AppSplashScreen />
-        </View>
+        </Modal>
       ) : null}
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 9999,
-    elevation: 9999,
-  },
-});

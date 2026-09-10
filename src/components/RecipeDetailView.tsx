@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import Head from 'expo-router/head';
 import { useState } from 'react';
@@ -17,6 +18,7 @@ import { useTheme } from "expo-router/react-navigation";
 
 import { useFontScale } from '../hooks/useFontScale';
 import { useShareRecipe } from '../hooks/useShareRecipe';
+import { useSwipeToDismissSheet } from '../hooks/useSwipeToDismissSheet';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../hooks/useScreenSafePadding';
@@ -40,7 +42,6 @@ import {
 import { recipeImageSource } from '../lib/recipes/recipeImages';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { colors } from '../theme/tokens';
-import { SwipeBackShell } from './SwipeBackShell';
 
 const TITLE_SERIF = Platform.select({
   ios: 'Georgia',
@@ -124,6 +125,7 @@ export function RecipeDetailView({
   const notes = recipeNotes(recipe, lang);
   const servingSize = recipeServingSize(recipe, lang);
   const totalMinutes = recipeTotalMinutes(recipe);
+  const isIos = Platform.OS === 'ios';
   const imageSource = useFallbackImage
     ? (() => {
         const uri = resolveImageUriFallback?.(recipe.id) ?? null;
@@ -137,6 +139,8 @@ export function RecipeDetailView({
   const contentPadRight = Math.max(screenSafe.paddingRight, CONTENT_PAD);
 
   const goBack = useStackBack(backFallbackRoute);
+
+  const swipeDismiss = useSwipeToDismissSheet(goBack, true);
 
   const handleShare = () => {
     void shareRecipe({
@@ -161,47 +165,53 @@ export function RecipeDetailView({
         <title>{`${title} - OrthoDaily`}</title>
         <meta name="description" content={summary} />
       </Head>
-      <SwipeBackShell onBack={goBack}>
-        <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
-        <Pressable
-          onPress={goBack}
-          style={[
-            styles.backFab,
-            {
-              top: screenSafe.paddingTop + 10,
-              left: Math.max(screenSafe.paddingLeft, 14),
-            },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t('recipes.back')}
-          hitSlop={8}
-        >
-          <View style={[styles.backFabIconSlot, { pointerEvents: 'none' }]}>
-            <Feather name="chevron-left" size={22} color="#fff" style={styles.backFabIcon} />
-          </View>
-        </Pressable>
-        <Pressable
-          onPress={handleShare}
-          style={[
-            styles.shareFab,
-            {
-              top: screenSafe.paddingTop + 10,
-              right: Math.max(screenSafe.paddingRight, 14),
-            },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t('recipes.shareRecipeA11y')}
-          hitSlop={8}
-        >
-          <Feather name="share-2" size={18} color="#fff" />
-        </Pressable>
+      <StatusBar hidden={isIos} />
+      <View
+        {...(isIos ? swipeDismiss.scrollPanHandlers : null)}
+        style={[
+          styles.page,
+          { backgroundColor: theme.colors.background },
+          swipeDismiss.translateY > 0 ? { transform: [{ translateY: swipeDismiss.translateY }] } : null,
+        ]}
+      >
         <ScrollView
           bounces={false}
           style={styles.scroll}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 36 }]}
+          onScroll={(event) => {
+            swipeDismiss.onSheetScroll(event.nativeEvent.contentOffset.y);
+          }}
+          scrollEventThrottle={16}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
           showsVerticalScrollIndicator={false}
+          contentInsetAdjustmentBehavior="never"
         >
           <View style={[styles.hero, { height: heroHeight }]}>
+            <Pressable
+              onPress={goBack}
+              style={[
+                styles.backFab,
+                { top: isIos ? 10 : screenSafe.paddingTop + 10, left: 12 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={t('recipes.back')}
+              hitSlop={8}
+            >
+              <View style={[styles.backFabIconSlot, { pointerEvents: 'none' }]}>
+                <Feather name="chevron-left" size={22} color="#fff" style={styles.backFabIcon} />
+              </View>
+            </Pressable>
+            <Pressable
+              onPress={handleShare}
+              style={[
+                styles.shareFab,
+                { top: isIos ? 10 : screenSafe.paddingTop + 10, right: 12 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={t('recipes.shareRecipeA11y')}
+              hitSlop={8}
+            >
+              <Feather name="share-2" size={18} color="#fff" />
+            </Pressable>
             {imageSource && !imageFailed ? (
               <Image
                 source={imageSource}
@@ -234,7 +244,7 @@ export function RecipeDetailView({
               colors={
                 isDark
                   ? ['rgba(18,16,14,0.55)', 'transparent', 'rgba(18,16,14,0.92)']
-                  : ['rgba(30,26,22,0.35)', 'transparent', 'rgba(245,240,232,0.98)']
+                  : ['rgba(30,26,22,0.35)', 'transparent', 'rgba(247,243,236,0.98)']
               }
               locations={[0, 0.4, 1]}
               style={styles.heroImage}
@@ -394,8 +404,7 @@ export function RecipeDetailView({
             ) : null}
           </View>
         </ScrollView>
-        </View>
-      </SwipeBackShell>
+      </View>
     </>
   );
 }
@@ -487,6 +496,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.2,
     textShadow: '0px 1px 8px rgba(0,0,0,0.35)',
+    textShadowColor: 'rgba(0,0,0,0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
   },
   heroTitlePhone: {
     fontSize: 24,

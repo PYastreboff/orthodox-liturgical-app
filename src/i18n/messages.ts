@@ -551,6 +551,9 @@ const en = {
   },
   services: {
     footnote: 'Typical parish calendar recommendation only — confirm with your local schedule.',
+    note: {
+      parishFeast: 'For the parish feast of {feast}',
+    },
     category: {
       vespers: 'Vespers',
       matins: 'Matins',
@@ -2350,6 +2353,9 @@ const ru = {
   },
   services: {
     footnote: 'Лишь типичная приходская рекомендация — уточняйте по местному расписанию.',
+    note: {
+      parishFeast: 'К приходскому празднику: {feast}',
+    },
     category: {
       vespers: 'Вечерня',
       matins: 'Утреня',

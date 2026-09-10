@@ -35,6 +35,18 @@ export default function ColoursLegendScreen() {
       </Head>
       <SwipeBackShell onBack={goBack}>
         <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
+        <ScrollView
+          contentInsetAdjustmentBehavior="never"
+          contentContainerStyle={[
+            styles.content,
+            stackContentColumnStyle({
+              paddingLeft: screenSafe.paddingLeft,
+              paddingRight: screenSafe.paddingRight,
+              phone,
+            }),
+            { paddingTop: screenSafe.paddingTop + 16, paddingBottom: insets.bottom + 28 },
+          ]}
+        >
           <StackScreenHeader
             title={t('legend.title')}
             subtitle={t('legend.intro')}
@@ -45,17 +57,6 @@ export default function ColoursLegendScreen() {
             mutedColor={muted}
             iconPlacement="back"
           />
-        <ScrollView
-          contentContainerStyle={[
-            styles.content,
-            stackContentColumnStyle({
-              paddingLeft: screenSafe.paddingLeft,
-              paddingRight: screenSafe.paddingRight,
-              phone,
-            }),
-            { paddingBottom: insets.bottom + 28 },
-          ]}
-        >
           <LiturgicalLegendGuide
             textColor={theme.colors.text}
             mutedColor={muted}
@@ -72,7 +73,5 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
-  content: {
-    paddingTop: 8,
-  },
+  content: {},
 });

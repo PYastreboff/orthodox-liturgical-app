@@ -36,6 +36,19 @@ export default function EasterCookingScreen() {
       </Head>
       <SwipeBackShell onBack={goBack}>
         <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
+        <AppScrollView
+          keyboardShouldPersistTaps="handled"
+          contentInsetAdjustmentBehavior="never"
+          contentContainerStyle={[
+            styles.content,
+            stackContentColumnStyle({
+              paddingLeft: screenSafe.paddingLeft,
+              paddingRight: screenSafe.paddingRight,
+              phone,
+            }),
+            { paddingTop: screenSafe.paddingTop + 16, paddingBottom: insets.bottom + 28 },
+          ]}
+        >
           <StackScreenHeader
             title={t('easterCooking.pageTitle')}
             subtitle={t('easterCooking.intro')}
@@ -44,19 +57,8 @@ export default function EasterCookingScreen() {
             icon={<Feather name="gift" size={22} color={vestmentAccent.accent} />}
             accentSoft={vestmentAccent.accentSoft}
             mutedColor={muted}
+            iconPlacement="back"
           />
-        <AppScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={[
-            styles.content,
-            stackContentColumnStyle({
-              paddingLeft: screenSafe.paddingLeft,
-              paddingRight: screenSafe.paddingRight,
-              phone,
-            }),
-            { paddingBottom: insets.bottom + 28 },
-          ]}
-        >
           <EasterCookingLibrary
             textColor={theme.colors.text}
             mutedColor={muted}
@@ -75,7 +77,5 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
-  content: {
-    paddingTop: 8,
-  },
+  content: {},
 });

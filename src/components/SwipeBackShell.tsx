@@ -10,13 +10,21 @@ type Props = {
   children: React.ReactNode;
   /** Blur the screen underneath (Today day sections). */
   blurReveal?: boolean;
+  /** Disable the left-edge swipe entirely (e.g. screens that dismiss downward). */
+  edgeSwipeBack?: boolean;
   style?: ViewProps['style'];
 };
 
 /**
  * Left-edge interactive swipe-back — page follows the finger toward the back button side.
  */
-export function SwipeBackShell({ onBack, children, blurReveal = false, style }: Props) {
+export function SwipeBackShell({
+  onBack,
+  children,
+  blurReveal = false,
+  edgeSwipeBack = true,
+  style,
+}: Props) {
   const isDark = useResolvedColorScheme() === 'dark';
   const { panHandlers, animatedStyle, dimStyle } = useSwipeToBack(onBack);
 
@@ -34,7 +42,10 @@ export function SwipeBackShell({ onBack, children, blurReveal = false, style }: 
           />
         </Animated.View>
       ) : null}
-      <Animated.View style={[styles.page, animatedStyle]} {...panHandlers}>
+      <Animated.View
+        style={[styles.page, edgeSwipeBack ? animatedStyle : null, style]}
+        {...(edgeSwipeBack ? panHandlers : null)}
+      >
         {children}
       </Animated.View>
     </View>
@@ -52,6 +63,9 @@ const styles = StyleSheet.create({
   },
   page: {
     flex: 1,
-    boxShadow: '-2px 0px 10px rgba(0,0,0,0.18)',
+    // iOS/Fabric bug: boxShadow + overflow:hidden + transform (this Animated.View
+    // is transformed during the swipe) clips/occludes child views on iOS — the back
+    // button and header were being chopped. The edge shadow is cosmetic; drop it there.
+    ...(Platform.OS === 'ios' ? null : { boxShadow: '-2px 0px 10px rgba(0,0,0,0.18)' }),
   },
 });

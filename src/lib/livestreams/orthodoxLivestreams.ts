@@ -100,6 +100,13 @@ function dedupeStreams(streams: readonly OrthodoxLivestream[]): OrthodoxLivestre
   return unique;
 }
 
+/** Live streams first; relative order within each group is preserved. */
+function sortLiveFirst(streams: OrthodoxLivestream[]): OrthodoxLivestream[] {
+  const live = streams.filter((stream) => stream.status === 'live');
+  const upcoming = streams.filter((stream) => stream.status !== 'live');
+  return [...live, ...upcoming];
+}
+
 async function fetchRemoteLiveNow(): Promise<OrthodoxLivestream[]> {
   let lastError: unknown;
   for (const url of LIVE_NOW_URLS) {
@@ -214,7 +221,7 @@ export async function fetchOrthodoxLivestreams(options?: {
     ]);
     const base = remote ?? getBundledLivestreams();
     const merged = dedupeStreams([...base, ...(native ?? [])]);
-    cachedStreams = merged;
+    cachedStreams = sortLiveFirst(merged);
     cachedAt = Date.now();
     return merged;
   })();

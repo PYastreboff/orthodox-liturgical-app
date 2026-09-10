@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { useTheme } from "expo-router/react-navigation";
 import Head from 'expo-router/head';
 import { StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppScrollView } from '../src/components/AppScrollView';
 import { RecipesLibrary } from '../src/components/RecipesLibrary';
@@ -36,7 +37,21 @@ export default function RecipesScreen() {
         <meta name="description" content={t('recipes.pageIntro')} />
       </Head>
       <SwipeBackShell onBack={goBack}>
-        <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
+          <SafeAreaView style={styles.safe} edges={['top']}>
+            <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
+            <AppScrollView
+          keyboardShouldPersistTaps="handled"
+          style={styles.scroll}
+          contentContainerStyle={[
+            styles.content,
+            stackContentColumnStyle({
+              paddingLeft: screenSafe.paddingLeft,
+              paddingRight: screenSafe.paddingRight,
+              phone,
+            }),
+            { paddingTop: 16, paddingBottom: insets.bottom + 24 },
+          ]}
+        >
           <StackScreenHeader
             title={t('recipes.pageTitle')}
             subtitle={t('recipes.pageIntro')}
@@ -47,18 +62,6 @@ export default function RecipesScreen() {
             mutedColor={muted}
             iconPlacement="back"
           />
-        <AppScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={[
-            styles.content,
-            stackContentColumnStyle({
-              paddingLeft: screenSafe.paddingLeft,
-              paddingRight: screenSafe.paddingRight,
-              phone,
-            }),
-            { paddingBottom: insets.bottom + 28 },
-          ]}
-        >
           <RecipesLibrary
             textColor={theme.colors.text}
             mutedColor={muted}
@@ -68,16 +71,22 @@ export default function RecipesScreen() {
           />
         </AppScrollView>
         </View>
-      </SwipeBackShell>
+          </SafeAreaView>
+        </SwipeBackShell>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  page: {
+  safe: {
     flex: 1,
   },
-  content: {
-    paddingTop: 8,
+  page: {
+    flex: 1,
+    width: '100%',
   },
+  scroll: {
+    flex: 1,
+  },
+  content: {},
 });

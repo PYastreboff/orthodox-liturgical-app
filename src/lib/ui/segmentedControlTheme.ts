@@ -37,7 +37,7 @@ export function segmentedControlSizeStyle(size: SegmentedControlSize) {
 export function segmentedControlTheme(isDark: boolean): SegmentedControlTheme {
   const chipSelectedBg = colors.accentWine;
   const chipSelectedFg = '#ffffff';
-  const chipIdleBg = isDark ? 'rgba(255,255,255,0.04)' : colors.card;
+  const chipIdleBg = isDark ? colors.darkSurface : colors.card;
   const chipIdleBorder = isDark ? colors.darkBorderSubtle : colors.borderSubtle;
 
   return {

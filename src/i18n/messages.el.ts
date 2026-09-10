@@ -551,6 +551,10 @@ export const el = {
   },
   services: {
     footnote: 'Μόνο τυπική ενοριακή σύσταση — επιβεβαιώστε με το τοπικό πρόγραμμα.',
+
+    note: {
+      parishFeast: 'Για την ενοριακή εορτή: {feast}',
+    },
     category: {
       vespers: 'Εσπερινός',
       matins: 'Όρθρος',
