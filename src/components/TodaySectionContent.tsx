@@ -663,16 +663,25 @@ export function TodaySectionContent({ section, model }: Props) {
                     </Text>
                   </Pressable>
                   {entry.note ? (
-                    <Text
+                    <View
                       style={[
                         styles.serviceNote,
-                        type.hint,
                         isLast ? styles.serviceNoteLast : null,
-                        { color: muted },
                       ]}
                     >
-                      {entry.note}
-                    </Text>
+                      {entry.noteBold ? (
+                        <>
+                          <Text style={[type.hint, { color: muted }]}>
+                            {entry.note.replace(entry.noteBold, '')}
+                          </Text>
+                          <Text style={[type.hint, styles.serviceNoteBold, { color: muted }]}>
+                            {entry.noteBold}
+                          </Text>
+                        </>
+                      ) : (
+                        <Text style={[type.hint, { color: muted }]}>{entry.note}</Text>
+                      )}
+                    </View>
                   ) : null}
                 </View>
               );
@@ -1156,8 +1165,13 @@ const styles = StyleSheet.create({
     opacity: 0.78,
   },
   serviceNote: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginTop: -2,
     marginBottom: 8,
+  },
+  serviceNoteBold: {
+    fontWeight: '700',
   },
   serviceNoteLast: {
     marginBottom: 12,

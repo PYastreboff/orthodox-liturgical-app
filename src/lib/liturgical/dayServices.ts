@@ -34,6 +34,8 @@ export type DayServiceItem = {
   slotKey: string;
   noteKey?: string;
   noteVars?: Record<string, string>;
+  /** Segment of the localized note to render in bold (e.g. a parish feast name). */
+  noteBold?: string;
 };
 
 export type DayServicesData = {
@@ -356,6 +358,7 @@ export function buildDayServices(
       ...item('liturgy_chrysostom', 'morning'),
       noteKey: 'services.note.parishFeast',
       noteVars: { feast: parishFeast.today.join(', ') },
+      noteBold: parishFeast.today.join(', '),
     });
   }
   if (parishFeast?.tomorrow.length && !items.some((entry) => entry.category === 'vespers')) {
@@ -363,6 +366,7 @@ export function buildDayServices(
       ...item('great_vespers', 'afternoon'),
       noteKey: 'services.note.parishFeast',
       noteVars: { feast: parishFeast.tomorrow.join(', ') },
+      noteBold: parishFeast.tomorrow.join(', '),
     });
   }
 
@@ -381,6 +385,7 @@ export function localizeDayServices(data: DayServicesData, lang: UiLanguage) {
       slotLabel: translate(lang, entry.slotKey),
       categoryLabel: translate(lang, categoryLabelKey(entry.category)),
       note: entry.noteKey ? translate(lang, entry.noteKey, entry.noteVars) : undefined,
+  noteBold: entry.noteBold,
     })),
     footnote: translate(lang, data.footnoteKey),
   };

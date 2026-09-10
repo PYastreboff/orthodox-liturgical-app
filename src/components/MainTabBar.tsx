@@ -9,7 +9,7 @@ import { useLiturgicalVestmentAccent } from '../state/VestmentAccentContext';
 import { tabBarScrollStore } from '../state/tabBarScrollStore';
 import { staticAppAccent } from '../lib/liturgical/vestmentAccent';
 import { tabBarChrome } from '../theme/cards';
-import { TAB_BAR_EDGE_PAD_PX } from '../theme/layout';
+import { TAB_BAR_CONTENT_HEIGHT, TAB_BAR_EDGE_PAD_PX } from '../theme/layout';
 import { colors, radii } from '../theme/tokens';
 import { tabBarFloatInsets } from '../theme/tabBarFloat';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
@@ -125,7 +125,9 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
                   accessibilityLabel={descriptor?.options.tabBarAccessibilityLabel}
                   hitSlop={4}
                 >
-                  <View style={styles.itemContent}>
+                  <View
+                    style={[styles.itemContent, showTabBarLabels ? styles.itemContentLabeled : null]}
+                  >
                     {icon}
                     {showTabBarLabels ? (
                       <Text
@@ -194,6 +196,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
+  },
+  itemContentLabeled: {
+    height: TAB_BAR_CONTENT_HEIGHT,
   },
   itemLabel: {
     fontSize: 10,
