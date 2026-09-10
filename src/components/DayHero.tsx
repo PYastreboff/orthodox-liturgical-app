@@ -1,4 +1,5 @@
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
 import {
   Modal,
@@ -11,7 +12,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { feastRankHeroLabelForMajorFeastDay } from '../i18n/feastRank';
+import { feastRankAccessibilityLabel, feastRankHeroLabelForMajorFeastDay } from '../i18n/feastRank';
 import { useFontScale } from '../hooks/useFontScale';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -74,6 +75,7 @@ export function DayHero({
   onShare,
 }: Props) {
   const { t, lang } = useAppTranslation();
+  const router = useRouter();
   const isDark = useResolvedColorScheme() === 'dark';
   const isNativePhone = Platform.OS !== 'web';
   const vestmentAccent = useLiturgicalVestmentAccent();
@@ -384,12 +386,24 @@ export function DayHero({
       </View>
 
       <View style={styles.chipRow}>
-        <View style={[styles.chip, { backgroundColor: chipBg }]}>
+        <Pressable
+          style={[styles.chip, { backgroundColor: chipBg }]}
+          onPress={() => router.push('/day/date')}
+          accessibilityRole="button"
+          accessibilityLabel={toneLabel}
+          hitSlop={6}
+        >
           <Text style={[styles.chipText, chipType, { color: fg }]}>{toneLabel}</Text>
-        </View>
+        </Pressable>
         {showFeastRankChip ? (
           isMajorFeastDay && majorFeastServiceLabel ? (
-            <View style={[styles.chip, styles.feastChip, { backgroundColor: majorFeastChipBg }]}>
+            <Pressable
+              style={[styles.chip, styles.feastChip, { backgroundColor: majorFeastChipBg }]}
+              onPress={() => router.push('/day/date')}
+              accessibilityRole="button"
+              accessibilityLabel={majorFeastServiceLabel}
+              hitSlop={6}
+            >
               <View
                 style={[styles.feastTypikonBackdrop, { backgroundColor: majorFeastTypikonBackdrop }]}
               >
@@ -406,22 +420,31 @@ export function DayHero({
               >
                 {majorFeastServiceLabel}
               </Text>
-            </View>
+            </Pressable>
           ) : (
-            <View style={[styles.chip, { backgroundColor: chipBg }]}>
+            <Pressable
+              style={[styles.chip, { backgroundColor: chipBg }]}
+              onPress={() => router.push('/day/date')}
+              accessibilityRole="button"
+              accessibilityLabel={feastRankAccessibilityLabel(feastRank, lang)}
+              hitSlop={6}
+            >
               <TypikonSymbol
                 feastRank={feastRank}
                 variant="chip"
                 color={typikonColor}
                 style={styles.chipIcon}
               />
-            </View>
+            </Pressable>
           )
         ) : null}
         {heroFastChip ? (
-          <View
+          <Pressable
             style={[styles.chip, styles.fastChip, { backgroundColor: chipBg }]}
+            onPress={() => router.push('/day/fasting')}
+            accessibilityRole="button"
             accessibilityLabel={heroFastA11y ?? undefined}
+            hitSlop={6}
           >
             <Text style={[styles.fastChipText, chipType, { color: fg }]}>{heroFastChip.label}</Text>
             {heroFastChip.icons.noMeat ||
@@ -442,7 +465,7 @@ export function DayHero({
             {heroFastChip.icons.oil ? (
               <FastingFoodIcon kind="oil" color={fg} allowedLabel />
             ) : null}
-          </View>
+          </Pressable>
         ) : null}
       </View>
 

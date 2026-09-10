@@ -277,6 +277,9 @@ export function TodaySectionContent({ section, model }: Props) {
                     )
                   : feastRankServiceLabel(dashboard.feastRank, lang)}
               </Text>
+              <Text style={[styles.toneInRankRow, type.hint, { color: muted }]}>
+                {dashboard.toneLabel}
+              </Text>
             </View>
             <Pressable
               onPress={handlePrintDay}
@@ -1022,6 +1025,13 @@ const styles = StyleSheet.create({
     gap: 8,
     marginTop: 10,
     marginBottom: 2,
+  },
+  toneInRankRow: {
+    fontWeight: '600',
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 6,
+    backgroundColor: 'rgba(128,128,128,0.14)',
   },
   serviceRankLabel: {
     flex: 1,

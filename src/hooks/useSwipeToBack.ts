@@ -41,9 +41,8 @@ export function useSwipeToBack(onBack: () => void): SwipeToBack {
 
   const finishBack = useCallback(() => {
     finishing.current = false;
-    translateX.value = 0;
     onBackRef.current();
-  }, [translateX]);
+  }, []);
 
   const panHandlers = useRef(
     PanResponder.create({
