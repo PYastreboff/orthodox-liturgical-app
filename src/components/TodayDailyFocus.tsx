@@ -156,9 +156,10 @@ const styles = StyleSheet.create({
   loadingLine: {
     fontStyle: 'italic',
   },
-  passage: {
+passage: {
     fontFamily: SCRIPTURE_SERIF,
-    letterSpacing: 0.12,
+    paddingTop: 4,
+    paddingBottom: 4,
   },
   gospelLabel: {
     marginTop: -8,

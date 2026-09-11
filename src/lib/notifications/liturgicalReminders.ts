@@ -373,7 +373,7 @@ export async function syncLiturgicalReminders(prefs: ReminderPrefs): Promise<voi
   }
 }
 
-export type TestNotificationResult = 'ok' | 'unsupported' | 'denied';
+export type TestNotificationResult = 'ok' | 'unsupported' | 'denied' | 'error';
 
 /** Fire one sample alert so the user can confirm permissions and channels. */
 export async function sendTestNotification(lang: UiLanguage): Promise<TestNotificationResult> {
@@ -393,18 +393,30 @@ export async function sendTestNotification(lang: UiLanguage): Promise<TestNotifi
 
   await ensureAndroidChannels(lang);
 
+  // iOS sometimes drops a notification scheduled in the same tick as a fresh
+  // permission grant — the alert session is not active yet. Give it a beat.
+  if (Platform.OS === 'ios') {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
   const testId = `${ID_PREFIX}test`;
   await Notifications.cancelScheduledNotificationAsync(testId).catch(() => undefined);
 
-  await Notifications.scheduleNotificationAsync({
-    identifier: testId,
-    content: {
-      title: translate(lang, 'notifications.testTitle'),
-      body: translate(lang, 'notifications.testBody'),
-      ...(Platform.OS === 'android' ? { channelId: CHANNELS.fasting.id } : null),
-    },
-    trigger: null,
-  });
+  try {
+    await Notifications.scheduleNotificationAsync({
+      identifier: testId,
+      content: {
+        title: translate(lang, 'notifications.testTitle'),
+        body: translate(lang, 'notifications.testBody'),
+        sound: 'default',
+        ...(Platform.OS === 'android' ? { channelId: CHANNELS.fasting.id } : null),
+      },
+      trigger: null,
+    });
+  } catch (err) {
+    console.warn('[notifications] test schedule failed', err);
+    return 'error';
+  }
 
   return 'ok';
 }

@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import Head from 'expo-router/head';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Image,
   type ImageSourcePropType,
@@ -142,6 +142,14 @@ export function RecipeDetailView({
 
   const swipeDismiss = useSwipeToDismissSheet(goBack, true);
 
+  // Ported from SettingsSheetScrollView: a downward drag at the top of the
+  // native ScrollView starts on UIScrollView, which normally beats the
+  // PanResponder on iOS. Briefly disabling scroll cancels the native pan so
+  // the gesture flows to the PanResponder (attached to the ScrollView below).
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+  const disarmScroll = useCallback(() => setScrollEnabled(false), []);
+  const rearmScroll = useCallback(() => setScrollEnabled(true), []);
+
   const handleShare = () => {
     void shareRecipe({
       recipeId: recipe.id,
@@ -167,7 +175,6 @@ export function RecipeDetailView({
       </Head>
       <StatusBar hidden={isIos} />
       <View
-        {...(isIos ? swipeDismiss.scrollPanHandlers : null)}
         style={[
           styles.page,
           { backgroundColor: theme.colors.background },
@@ -175,8 +182,14 @@ export function RecipeDetailView({
         ]}
       >
         <ScrollView
+          {...(isIos ? swipeDismiss.scrollPanHandlers : null)}
           bounces={false}
           style={styles.scroll}
+          onTouchStart={isIos ? rearmScroll : undefined}
+          onScrollBeginDrag={(event) => {
+            if (isIos && event.nativeEvent.contentOffset.y <= 0) disarmScroll();
+          }}
+          scrollEnabled={isIos ? scrollEnabled : undefined}
           onScroll={(event) => {
             swipeDismiss.onSheetScroll(event.nativeEvent.contentOffset.y);
           }}

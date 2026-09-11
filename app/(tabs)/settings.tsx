@@ -471,7 +471,13 @@ export default function SettingsScreen() {
       Alert.alert(t('settings.notifications'), t('settings.notifyPermissionDenied'));
       return;
     }
+    if (result === 'error') {
+      setPermissionHint(false);
+      Alert.alert(t('settings.notifications'), t('settings.notifyTestFailed'));
+      return;
+    }
     setPermissionHint(false);
+    Alert.alert(t('settings.notifications'), t('settings.notifyTestSent'));
   }, [t, uiLanguage]);
 
   const version = getAppVersion();

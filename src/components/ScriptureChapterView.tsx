@@ -59,6 +59,9 @@ const styles = StyleSheet.create({
   },
   passage: {
     textAlign: 'left',
+    letterSpacing: 0.2,
+    paddingTop: 4,
+    paddingBottom: 4,
   },
   verseNumber: {
     fontWeight: '700',

@@ -1,6 +1,13 @@
 import { Feather } from '@expo/vector-icons';
-import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { cloneElement, isValidElement, useState, type ReactElement, type ReactNode } from 'react';
+import {
+  Animated,
+  Platform,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 
 import { HoverPressable } from '../HoverPressable';
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
@@ -62,6 +69,35 @@ export function SettingsNotificationsModal({
   const handleColor = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(43,38,35,0.28)';
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const sheetHeight = Math.round(windowHeight * (windowWidth < 600 ? 2 / 3 : 0.62));
+  const [scaleAnim] = useState(() => new Animated.Value(1));
+  const [bellRotate] = useState(() => new Animated.Value(0));
+  const ringBell = () => {
+    Animated.sequence([
+      Animated.timing(bellRotate, { toValue: -0.28, duration: 60, useNativeDriver: true }),
+      Animated.timing(bellRotate, { toValue: 0.22, duration: 90, useNativeDriver: true }),
+      Animated.timing(bellRotate, { toValue: -0.16, duration: 90, useNativeDriver: true }),
+      Animated.timing(bellRotate, { toValue: 0.12, duration: 90, useNativeDriver: true }),
+      Animated.timing(bellRotate, { toValue: -0.08, duration: 70, useNativeDriver: true }),
+      Animated.spring(bellRotate, { toValue: 0, speed: 30, bounciness: 6, useNativeDriver: true }),
+    ]).start();
+  };
+  const pressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.96,
+      speed: 40,
+      bounciness: 0,
+      useNativeDriver: true,
+    }).start();
+  };
+  const pressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      speed: 40,
+      bounciness: 4,
+      useNativeDriver: true,
+    }).start();
+    ringBell();
+  };
 
   return (
     <SettingsSheetFrame
@@ -119,36 +155,66 @@ export function SettingsNotificationsModal({
         })}
       </SettingsSheetScrollView>
       {testLabel && onTestPress ? (
-        <HoverPressable
-          onPress={onTestPress}
-          disabled={testDisabled}
-          isDark={isDark}
-          baseBackground={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.05)'}
-          style={({ pressed }) => [
-            styles.testBtn,
-            {
-              borderColor,
-              opacity: testDisabled ? 0.45 : pressed ? 0.92 : 1,
-            },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={testLabel}
-          accessibilityState={{ disabled: testDisabled }}
-          {...hoverAccessibilityProps(testLabel, { role: 'button' })}
-        >
-          <Feather name="bell" size={18} color={vestmentAccent.accent} />
-          <View style={styles.textCol}>
-            <Text style={[styles.testLabel, { color: textColor }]}>{testLabel}</Text>
-            {testHint ? (
-              <Text style={[styles.testHint, { color: mutedColor }]} numberOfLines={2}>
-                {testHint}
-              </Text>
-            ) : null}
-          </View>
-        </HoverPressable>
+        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+          <HoverPressable
+            onPress={onTestPress}
+            onPressIn={pressIn}
+            onPressOut={pressOut}
+            disabled={testDisabled}
+            isDark={isDark}
+            baseBackground={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.05)'}
+            style={({ pressed }) => [
+              styles.testBtn,
+              {
+                borderColor,
+                opacity: testDisabled ? 0.45 : pressed ? 0.92 : 1,
+              },
+              Platform.OS === 'ios' ? styles.testBtnBottomIos : null,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={testLabel}
+            accessibilityState={{ disabled: testDisabled }}
+            {...hoverAccessibilityProps(testLabel, { role: 'button' })}
+          >
+            <Animated.View
+              style={{
+                width: 18,
+                height: 18,
+                justifyContent: 'center',
+                alignItems: 'center',
+                transform: [
+                  {
+                    rotate: bellRotate.interpolate({
+                      inputRange: [-0.28, 0.28],
+                      outputRange: ['-16deg', '16deg'],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <Feather name="bell" size={18} color={vestmentAccent.accent} />
+            </Animated.View>
+            <View style={styles.textCol}>
+              <Text style={[styles.testLabel, { color: textColor }]}>{testLabel}</Text>
+              {testHint ? (
+                <Text style={[styles.testHint, { color: mutedColor }]} numberOfLines={2}>
+                  {testHint}
+                </Text>
+              ) : null}
+            </View>
+          </HoverPressable>
+        </Animated.View>
       ) : null}
       {footerNote ? (
-        <Text style={[styles.footerNote, { color: mutedColor }]}>{footerNote}</Text>
+        <Text
+          style={[
+            styles.footerNote,
+            { color: mutedColor },
+            Platform.OS === 'ios' ? styles.footerNoteBottomIos : null,
+          ]}
+        >
+          {footerNote}
+        </Text>
       ) : null}
     </SettingsSheetFrame>
   );
@@ -219,6 +285,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
   },
+  testBtnBottomIos: {
+    marginBottom: 40,
+  },
   testLabel: {
     fontSize: 15,
     fontWeight: '700',
@@ -234,5 +303,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 4,
     paddingBottom: 14,
+  },
+  footerNoteBottomIos: {
+    paddingBottom: 40,
   },
 });

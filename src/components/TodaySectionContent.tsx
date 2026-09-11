@@ -182,6 +182,8 @@ export function TodaySectionContent({ section, model }: Props) {
 
   const muted = isDark ? '#a39e98' : colors.muted;
   const vestmentAccent = useVestmentAccent();
+  const { text } = useFontScale();
+  const bibleBodyType = phone ? text(15.5, 30) : type.body;
   const panel = {
     textColor: theme.colors.text,
     borderColor: theme.colors.border,
@@ -519,7 +521,7 @@ export function TodaySectionContent({ section, model }: Props) {
           mutedColor={muted}
           borderColor={theme.colors.border}
           isDark={isDark}
-          bodyType={type.body}
+          bodyType={bibleBodyType}
           hintType={type.hint}
         />,
       );

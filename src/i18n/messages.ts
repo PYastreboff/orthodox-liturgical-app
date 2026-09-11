@@ -178,6 +178,9 @@ const en = {
     navLabels: 'Navbar Labels',
     navLabelsHint: 'Show a one-word label under each navbar item.',
     notifyPermissionDenied: 'Notification permission is off in system settings.',
+    notifyTestFailed: 'Could not schedule the test alert. Please try again.',
+    notifyTestSent:
+      'Test alert sent — check your screen and Notification Center. If nothing appears, check iOS Settings → Notifications → OrthoDaily.',
     testNotification: 'Send Test Notification',
     testNotificationHint: 'Fires a sample alert now so you can check permissions and sound.',
     version: 'Version {version} · Moscow Patriarchate–oriented rubrics',
@@ -1979,6 +1982,9 @@ const ru = {
     navLabels: 'Подписи в навигации',
     navLabelsHint: 'Показывать одно слово под каждой кнопкой навигации.',
     notifyPermissionDenied: 'Разрешение на уведомления выключено в настройках системы.',
+    notifyTestFailed: 'Не удалось запланировать тестовое уведомление. Попробуйте ещё раз.',
+    notifyTestSent:
+      'Тестовое уведомление отправлено — проверьте экран и Центр уведомлений. Если ничего нет, проверьте Настройки iOS → Уведомления → OrthoDaily.',
     testNotification: 'Отправить тестовое уведомление',
     testNotificationHint: 'Сразу показывает пример, чтобы проверить разрешение и звук.',
     version: 'Версия {version} · ориентир: Московская Патриархия',

@@ -168,7 +168,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [colorSchemePreference, setColorSchemePreferenceState] =
     useState<ColorSchemePreference>('dark');
   const [showVestmentGradient, setShowVestmentGradientState] = useState(false);
-  const [showTabBarLabels, setShowTabBarLabelsState] = useState(false);
+  const [showTabBarLabels, setShowTabBarLabelsState] = useState(true);
   const [uiLanguage, setUiLanguageState] = useState<UiLanguage>('en');
   const [fontScale, setFontScaleState] = useState<FontScalePreference>('default');
   const [servingRole, setServingRoleState] = useState<ClergyRole>('layperson');

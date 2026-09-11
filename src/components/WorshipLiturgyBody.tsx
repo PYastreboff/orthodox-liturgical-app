@@ -706,12 +706,6 @@ export function WorshipLiturgyBody({
             ? { status: 'offline', sections: [], error: chrysostom.error }
             : { status: 'ready', sections: chrysostom.sections };
 
-  const introKey =
-    service === 'vespers'
-      ? 'liturgy.vespers.intro'
-      : service === 'basil'
-        ? 'liturgy.basil.intro'
-        : 'liturgy.chrysostom.intro';
   const disclaimerKey =
     service === 'vespers'
       ? 'liturgy.vespers.disclaimer'
@@ -1002,23 +996,15 @@ export function WorshipLiturgyBody({
   const introControls =
     liturgyState.status === 'ready' ? displayControls : null;
 
-  const introHint =
-    liturgyState.status === 'ready' && variant !== 'tab' && !showCompareSetup ? (
-      <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
-    ) : null;
-
   const scrollableHeader =
     liturgyState.status === 'ready' ? (
       variant === 'tab' ? null : (
         <View style={styles.scrollBody}>
           {introControls}
           {compareSlots}
-          {introHint}
         </View>
       )
-    ) : variant === 'tab' ? null : (
-      <Text style={[styles.intro, hintType, { color: mutedColor }]}>{t(introKey)}</Text>
-    );
+    ) : variant === 'tab' ? null : null;
 
   const scrollBody = (
     <>

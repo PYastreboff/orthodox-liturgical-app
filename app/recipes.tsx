@@ -2,7 +2,6 @@ import { Feather } from '@expo/vector-icons';
 import { useTheme } from "expo-router/react-navigation";
 import Head from 'expo-router/head';
 import { StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppScrollView } from '../src/components/AppScrollView';
 import { RecipesLibrary } from '../src/components/RecipesLibrary';
@@ -37,53 +36,48 @@ export default function RecipesScreen() {
         <meta name="description" content={t('recipes.pageIntro')} />
       </Head>
       <SwipeBackShell onBack={goBack}>
-          <SafeAreaView style={styles.safe} edges={['top']}>
-            <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
-            <AppScrollView
-          keyboardShouldPersistTaps="handled"
-          style={styles.scroll}
-          contentContainerStyle={[
-            styles.content,
-            stackContentColumnStyle({
-              paddingLeft: screenSafe.paddingLeft,
-              paddingRight: screenSafe.paddingRight,
-              phone,
-            }),
-            { paddingTop: 16, paddingBottom: insets.bottom + 24 },
-          ]}
-        >
-          <StackScreenHeader
-            title={t('recipes.pageTitle')}
-            subtitle={t('recipes.pageIntro')}
-            backLabel={t('recipes.back')}
-            onBack={goBack}
-            icon={<Feather name="book-open" size={22} color={vestmentAccent.accent} />}
-            accentSoft={vestmentAccent.accentSoft}
-            mutedColor={muted}
-            iconPlacement="back"
-          />
-          <RecipesLibrary
-            textColor={theme.colors.text}
-            mutedColor={muted}
-            borderColor={theme.colors.border}
-            isDark={isDark}
-            contentBottom={8}
-          />
-        </AppScrollView>
+        <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
+          <AppScrollView
+            contentInsetAdjustmentBehavior="never"
+            keyboardShouldPersistTaps="handled"
+            style={styles.scroll}
+            contentContainerStyle={[
+              styles.content,
+              stackContentColumnStyle({
+                paddingLeft: screenSafe.paddingLeft,
+                paddingRight: screenSafe.paddingRight,
+                phone,
+              }),
+              { paddingTop: screenSafe.paddingTop + 16, paddingBottom: insets.bottom + 28 },
+            ]}
+          >
+            <StackScreenHeader
+              title={t('recipes.pageTitle')}
+              subtitle={t('recipes.pageIntro')}
+              backLabel={t('recipes.back')}
+              onBack={goBack}
+              icon={<Feather name="book-open" size={22} color={vestmentAccent.accent} />}
+              accentSoft={vestmentAccent.accentSoft}
+              mutedColor={muted}
+              iconPlacement="back"
+            />
+            <RecipesLibrary
+              textColor={theme.colors.text}
+              mutedColor={muted}
+              borderColor={theme.colors.border}
+              isDark={isDark}
+              contentBottom={8}
+            />
+          </AppScrollView>
         </View>
-          </SafeAreaView>
-        </SwipeBackShell>
+      </SwipeBackShell>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-  },
   page: {
     flex: 1,
-    width: '100%',
   },
   scroll: {
     flex: 1,

@@ -1,12 +1,19 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import { useFontScale } from '../hooks/useFontScale';
+import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import type { LiturgicalTextCategory, LiturgicalTextItem } from '../lib/liturgical/liturgicalTexts';
 import { liturgicalItemHasText, noneForDayLabel } from '../lib/liturgical/liturgicalTexts';
 import type { ReadingsSingleLanguage } from '../lib/readings/textLanguage';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { LiturgicalReadingIcon } from './LiturgicalReadingIcon';
+
+const SCRIPTURE_SERIF = Platform.select({
+  ios: 'Georgia',
+  android: 'serif',
+  default: 'Georgia, "Times New Roman", serif',
+});
 
 function passageTitle(item: LiturgicalTextItem): string {
   const suffix = item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : '';
@@ -20,9 +27,10 @@ type PassageBodyProps = {
 };
 
 function PassageBody({ item, textColor, verseNumberColor }: PassageBodyProps) {
-  const { text } = useFontScale();
-  const paragraphType = text(13, 19);
-  const verseType = text(11, 13);
+  const { text, fs } = useFontScale();
+  const phone = usePhoneLayout();
+  const paragraphType = text(phone ? 14.5 : 13, phone ? 27 : 19);
+  const verseType = { fontSize: fs(11), lineHeight: paragraphType.lineHeight };
   const hasText = item.paragraphs.some((p) => p.some((line) => line.text.trim()));
 
   if (!hasText) return null;
@@ -315,9 +323,14 @@ const styles = StyleSheet.create({
   passage: {
     marginTop: 4,
   },
-  paragraph: {},
+  paragraph: {
+    fontFamily: SCRIPTURE_SERIF,
+    letterSpacing: 0.2,
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
   paragraphGap: {
-    marginTop: 6,
+    marginTop: 8,
   },
   verseNumber: {
     fontWeight: '600',

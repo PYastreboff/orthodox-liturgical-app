@@ -21,6 +21,9 @@ const WEB_SAFE_AREA_METRICS: Metrics = {
   frame: { x: 0, y: 0, width: 0, height: 0 },
 };
 
+/** Pushed pages whose swipe-back reveal should show the page below (no black gap). */
+const PUSHED_TRANSPARENT_ROUTES = ['legend', 'privacy', 'recipes', 'easter-cooking'] as const;
+
 function RootStack() {
   const theme = useTheme();
   return (
@@ -51,6 +54,22 @@ function RootStack() {
             gestureEnabled: false,
           }}
         />
+        {PUSHED_TRANSPARENT_ROUTES.map((name) => (
+          <Stack.Screen
+            key={name}
+            name={name}
+            options={{
+              ...(Platform.OS === 'web'
+                ? {}
+                : {
+                    // Keep the screen below mounted so the left-edge swipe
+                    // reveal shows the actual page (not the window's black).
+                    presentation: 'transparentModal',
+                    animation: 'slide_from_right',
+                  }),
+            }}
+          />
+        ))}
       </Stack>
     </View>
   );

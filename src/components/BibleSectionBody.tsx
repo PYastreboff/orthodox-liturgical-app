@@ -29,9 +29,9 @@ export function BibleSectionBody({
   hintType,
 }: Props) {
   const { t } = useAppTranslation();
-  const { text } = useFontScale();
+  const { text, fs } = useFontScale();
   const headingType = text(16, 22);
-  const verseType = text(11, 13);
+  const verseType = { fontSize: fs(11), lineHeight: bodyType.lineHeight };
   const labelType = text(13, 18);
   const [bookPickerOpen, setBookPickerOpen] = useState(false);
   const [chapterPickerOpen, setChapterPickerOpen] = useState(false);
