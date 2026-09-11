@@ -14,7 +14,8 @@ export type RecipeCategory =
   | 'breakfast'
   | 'bread'
   | 'sweet'
-  | 'drink';
+  | 'drink'
+  | 'snack';
 
 export type RecipeDifficulty = 'easy' | 'medium' | 'hard';
 
@@ -30,6 +31,7 @@ export const RECIPE_CATEGORIES: readonly RecipeCategory[] = [
   'bread',
   'sweet',
   'drink',
+  'snack',
 ] as const;
 
 /** List-page meal filters (maps from recipe categories). */
@@ -56,6 +58,7 @@ export function recipeMealSlot(category: RecipeCategory): RecipeMealSlot {
     case 'sweet':
     case 'drink':
     case 'bread':
+    case 'snack':
       return 'snack';
   }
 }

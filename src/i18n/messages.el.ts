@@ -1739,6 +1739,7 @@ export const el = {
       bread: 'Ψωμί',
       sweet: 'Επιδόρπιο',
       drink: 'Ποτό',
+      snack: 'Σνακ',
     },
     meal: {
       breakfast: 'Πρωινό',

@@ -1754,6 +1754,7 @@ const en = {
       bread: 'Bread',
       sweet: 'Dessert',
       drink: 'Drink',
+      snack: 'Snack',
     },
     meal: {
       breakfast: 'Breakfast',
@@ -3572,6 +3573,7 @@ const ru = {
       bread: 'Хлеб',
       sweet: 'Десерт',
       drink: 'Напиток',
+      snack: 'Перекус',
     },
     meal: {
       breakfast: 'Завтрак',

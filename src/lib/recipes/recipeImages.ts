@@ -105,6 +105,7 @@ const RECIPE_IMAGE_IDS = new Set([
   'red-lentil-dal',
   'rustic-lenten-bread',
   'walnut-halva-bites',
+  'kolyva',
   'paximadia',
 ]);
 
