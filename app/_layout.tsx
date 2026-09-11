@@ -22,7 +22,14 @@ const WEB_SAFE_AREA_METRICS: Metrics = {
 };
 
 /** Pushed pages whose swipe-back reveal should show the page below (no black gap). */
-const PUSHED_TRANSPARENT_ROUTES = ['legend', 'privacy', 'recipes', 'easter-cooking'] as const;
+const PUSHED_TRANSPARENT_ROUTES = [
+  'legend',
+  'privacy',
+  'recipes',
+  'recipes/[id]',
+  'easter-cooking',
+  'easter-cooking/[id]',
+] as const;
 
 function RootStack() {
   const theme = useTheme();

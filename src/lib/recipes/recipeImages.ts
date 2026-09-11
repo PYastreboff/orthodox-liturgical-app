@@ -51,6 +51,7 @@ const RECIPE_IMAGE_IDS = new Set([
   'brownie-baked-oatmeal',
   'berry-orange-smoothie',
   'apple-oatmeal-muffins',
+  'barley-vegetable-pilaf',
   'greek-potato-salad',
   'red-cabbage-apple',
   'spinach-strawberry-salad',
@@ -77,6 +78,8 @@ const RECIPE_IMAGE_IDS = new Set([
   'lentil-bulgur-wraps',
   'dandelion-toast',
   'horta',
+  'grilled-vegetable-platter',
+  'honey-yogurt-parfait',
   'oatmeal-cups',
   'stuffed-dates',
   'vegan-rizogalo',
@@ -97,6 +100,11 @@ const RECIPE_IMAGE_IDS = new Set([
   'skillet-lemon-potatoes',
   'lenten-spanakopita',
   'longevity-stew',
+  'melitzanosalata',
+  'pea-mint-soup',
+  'red-lentil-dal',
+  'rustic-lenten-bread',
+  'walnut-halva-bites',
   'paximadia',
 ]);
 

@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import Head from 'expo-router/head';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import {
   Image,
   type ImageSourcePropType,
@@ -18,7 +18,7 @@ import { useTheme } from "expo-router/react-navigation";
 
 import { useFontScale } from '../hooks/useFontScale';
 import { useShareRecipe } from '../hooks/useShareRecipe';
-import { useSwipeToDismissSheet } from '../hooks/useSwipeToDismissSheet';
+import { SwipeBackShell } from './SwipeBackShell';
 import { useLayoutSafeAreaInsets } from '../hooks/useLayoutSafeAreaInsets';
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useScreenSafePadding } from '../hooks/useScreenSafePadding';
@@ -140,16 +140,6 @@ export function RecipeDetailView({
 
   const goBack = useStackBack(backFallbackRoute);
 
-  const swipeDismiss = useSwipeToDismissSheet(goBack, true);
-
-  // Ported from SettingsSheetScrollView: a downward drag at the top of the
-  // native ScrollView starts on UIScrollView, which normally beats the
-  // PanResponder on iOS. Briefly disabling scroll cancels the native pan so
-  // the gesture flows to the PanResponder (attached to the ScrollView below).
-  const [scrollEnabled, setScrollEnabled] = useState(true);
-  const disarmScroll = useCallback(() => setScrollEnabled(false), []);
-  const rearmScroll = useCallback(() => setScrollEnabled(true), []);
-
   const handleShare = () => {
     void shareRecipe({
       recipeId: recipe.id,
@@ -174,26 +164,11 @@ export function RecipeDetailView({
         <meta name="description" content={summary} />
       </Head>
       <StatusBar hidden={isIos} />
-      <View
-        style={[
-          styles.page,
-          { backgroundColor: theme.colors.background },
-          swipeDismiss.translateY > 0 ? { transform: [{ translateY: swipeDismiss.translateY }] } : null,
-        ]}
-      >
+      <SwipeBackShell onBack={goBack}>
+        <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
         <ScrollView
-          {...(isIos ? swipeDismiss.scrollPanHandlers : null)}
           bounces={false}
           style={styles.scroll}
-          onTouchStart={isIos ? rearmScroll : undefined}
-          onScrollBeginDrag={(event) => {
-            if (isIos && event.nativeEvent.contentOffset.y <= 0) disarmScroll();
-          }}
-          scrollEnabled={isIos ? scrollEnabled : undefined}
-          onScroll={(event) => {
-            swipeDismiss.onSheetScroll(event.nativeEvent.contentOffset.y);
-          }}
-          scrollEventThrottle={16}
           contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
           showsVerticalScrollIndicator={false}
           contentInsetAdjustmentBehavior="never"
@@ -203,7 +178,7 @@ export function RecipeDetailView({
               onPress={goBack}
               style={[
                 styles.backFab,
-                { top: isIos ? 10 : screenSafe.paddingTop + 10, left: 12 },
+                { top: isIos ? 16 : screenSafe.paddingTop + 10, left: 24 },
               ]}
               accessibilityRole="button"
               accessibilityLabel={t('recipes.back')}
@@ -217,7 +192,7 @@ export function RecipeDetailView({
               onPress={handleShare}
               style={[
                 styles.shareFab,
-                { top: isIos ? 10 : screenSafe.paddingTop + 10, right: 12 },
+                { top: isIos ? 16 : screenSafe.paddingTop + 10, right: 24 },
               ]}
               accessibilityRole="button"
               accessibilityLabel={t('recipes.shareRecipeA11y')}
@@ -417,7 +392,8 @@ export function RecipeDetailView({
             ) : null}
           </View>
         </ScrollView>
-      </View>
+        </View>
+      </SwipeBackShell>
     </>
   );
 }
