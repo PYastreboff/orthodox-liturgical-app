@@ -84,6 +84,7 @@ export function DayHero({
   const { text } = useFontScale();
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [roleMenuPos, setRoleMenuPos] = useState({ top: 0, left: 0 });
+  const [titleNeedsShrink, setTitleNeedsShrink] = useState(false);
   const roleBtnRef = useRef<View>(null);
   const heroStyle = useMemo(
     () => vestmentHeroGradient(appearance, isDark),
@@ -118,7 +119,8 @@ export function DayHero({
       ? 'rgba(255,255,255,0.92)'
       : vestmentAccent.accent;
   const todayBtnFg = isDark ? fg : darkHeroSurface ? colors.ink : vestmentAccent.onAccent;
-  const dayTitleType = text(26, 38);
+  const dayTitleType = text(titleNeedsShrink ? 23 : 26, titleNeedsShrink ? 34 : 38);
+  const dayTitleMeasureType = text(26, 38);
   const primaryDateType = text(17, 22);
   const julianDateType = text(12, 16);
   const chipType = text(12, 16);
@@ -233,6 +235,24 @@ export function DayHero({
             color={fg}
           />
         </Pressable>
+        <Text
+          style={[
+            styles.dayTitle,
+            styles.dayTitleMeasure,
+            dayTitleMeasureType,
+            { color: 'transparent' },
+            phoneLayout ? styles.dayTitleWithCornersPhone : styles.dayTitleWithCorners,
+          ]}
+          numberOfLines={0}
+          pointerEvents="none"
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          onTextLayout={(e) => {
+            if (e.nativeEvent.lines.length > 2) setTitleNeedsShrink(true);
+          }}
+        >
+          {dayTitle}
+        </Text>
         <Text
           style={[
             styles.dayTitle,
@@ -516,6 +536,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.2,
     width: '100%',
+  },
+  dayTitleMeasure: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    opacity: 0,
   },
   dayTitleFeast: {
     letterSpacing: 0.35,
