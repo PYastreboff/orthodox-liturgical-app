@@ -14,13 +14,26 @@ export function useBasilLiturgy(): BasilLiturgyState & { reload: () => void } {
       : { status: 'loading', sections: [] },
   );
 
-  const load = useCallback((force = false) => {
-    if (!force && getCachedBasilLiturgy()) {
-      setState({ status: 'ready', sections: getCachedBasilLiturgy()! });
-      return;
-    }
+  useEffect(() => {
+    if (getCachedBasilLiturgy()) return;
+    let cancelled = false;
+    void fetchBasilLiturgy({ force: false })
+      .then((sections) => {
+        if (!cancelled) setState({ status: 'ready', sections });
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        const message = error instanceof Error ? error.message : 'Network error';
+        setState({ status: 'offline', sections: [], error: message });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const reload = useCallback(() => {
     setState((prev) => ({ status: 'loading', sections: prev.sections }));
-    void fetchBasilLiturgy({ force })
+    void fetchBasilLiturgy({ force: true })
       .then((sections) => {
         setState({ status: 'ready', sections });
       })
@@ -30,9 +43,5 @@ export function useBasilLiturgy(): BasilLiturgyState & { reload: () => void } {
       });
   }, []);
 
-  useEffect(() => {
-    load(false);
-  }, [load]);
-
-  return { ...state, reload: () => load(true) };
+  return { ...state, reload };
 }

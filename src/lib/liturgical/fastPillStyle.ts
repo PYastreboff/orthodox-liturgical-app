@@ -1,8 +1,9 @@
+import { type ColorValue } from 'react-native';
 import type { FastSummaryKind } from '../../i18n/fastingLabels';
 
 export type FastPillStyle = {
-  backgroundColor: string;
-  color: string;
+  backgroundColor: ColorValue;
+  color: ColorValue;
 };
 
 const FAST_PILL_STYLES: Record<FastSummaryKind, FastPillStyle> = {

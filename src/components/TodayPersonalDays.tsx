@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { useFontScale } from '../hooks/useFontScale';
@@ -33,7 +33,7 @@ function personalColor(kind: PersonalDayDisplayKind, isDark: boolean): string {
 type Props = {
   occurrences: readonly PersonalDayOccurrence[];
   isDark: boolean;
-  textColor: string;
+  textColor: ColorValue;
   /** Larger list rows for the day section page. */
   variant?: 'chips' | 'list';
   emptyMessage?: string;

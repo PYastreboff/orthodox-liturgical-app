@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View, type ScrollView } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View, type ScrollView, type ColorValue } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { AppScrollView } from './AppScrollView';
@@ -19,9 +19,9 @@ import { surfaceCard } from '../theme/cards';
 import { radii } from '../theme/tokens';
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };
@@ -60,8 +60,8 @@ function PrayerRow({
   id: PrayerId;
   expanded: boolean;
   onToggle: () => void;
-  textColor: string;
-  mutedColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };

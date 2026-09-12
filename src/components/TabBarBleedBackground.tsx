@@ -1,7 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, type ColorValue } from 'react-native';
 
 type Props = {
-  color: string;
+  color: ColorValue;
   /** Extra fill below the tab icons (safe-area / seam pad). */
   bleedPx: number;
 };

@@ -1,5 +1,6 @@
 import type React from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { type ColorValue } from 'react-native';
 
 import { translate } from '../i18n/translate';
 import type { UiLanguage } from '../i18n/types';
@@ -64,7 +65,7 @@ const DISPLAY_LABEL_KEYS: Record<VestmentKind, string> = {
 
 type Props = {
   kind: VestmentKind;
-  color: string;
+  color: ColorValue;
   size?: number;
 };
 

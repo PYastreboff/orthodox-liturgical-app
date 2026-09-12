@@ -13,6 +13,7 @@ import {
   Text,
   useWindowDimensions,
   View,
+  type ColorValue,
 } from 'react-native';
 import { useTheme } from "expo-router/react-navigation";
 
@@ -74,7 +75,7 @@ function StatChip({
 }: {
   icon: keyof typeof Feather.glyphMap;
   label: string;
-  mutedColor: string;
+  mutedColor: ColorValue;
   isDark: boolean;
 }) {
   return (
@@ -419,7 +420,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   heroImage: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     width: '100%',
     height: '100%',
     ...(Platform.OS === 'web'

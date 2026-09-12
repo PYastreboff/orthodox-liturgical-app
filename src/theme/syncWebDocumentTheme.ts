@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Platform, type ColorValue } from 'react-native';
 
 import { todayPageBackgroundColor } from '../lib/liturgical/vestmentGradient';
 import { colors } from './tokens';
@@ -8,10 +8,10 @@ function pageBackground(isDark: boolean): string {
   return todayPageBackgroundColor(isDark);
 }
 
-export function syncWebDocumentTheme(isDark: boolean, chromeColor?: string): void {
+export function syncWebDocumentTheme(isDark: boolean, chromeColor?: ColorValue): void {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return;
 
-  const bg = chromeColor ?? pageBackground(isDark);
+  const bg = typeof chromeColor === 'string' ? chromeColor : pageBackground(isDark);
   document.documentElement.style.setProperty('--orthodaily-page-bg', bg);
   applyWebViewportMetrics(bg);
 

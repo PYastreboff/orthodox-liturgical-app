@@ -6,8 +6,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
-} from 'react-native';
+  View, type ColorValue } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -27,9 +26,9 @@ import { recipeDifficultyLabelKey } from '../lib/recipes/recipeLabels';
 import { colors } from '../theme/tokens';
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   contentBottom?: number;
 };
@@ -42,9 +41,9 @@ function EasterFoodRow({
   isDark,
 }: {
   food: EasterFood;
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
 }) {
   const { t, lang } = useAppTranslation();

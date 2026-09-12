@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, useWindowDimensions, View, type ColorValue } from 'react-native';
 
 import { HoverPressable } from './HoverPressable';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
@@ -98,7 +98,7 @@ function BookRow({
   book: BibleBook;
   label: string;
   selected: boolean;
-  textColor: string;
+  textColor: ColorValue;
   isDark: boolean;
   onSelect: (bookNum: number) => void;
   onClose: () => void;

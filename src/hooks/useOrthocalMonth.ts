@@ -18,13 +18,6 @@ import {
 import { shouldShowCalendarTypikon } from '../lib/liturgical/calendarTypikon';
 import { toDayIso } from '../lib/calendar/localDate';
 
-function initialMonthData(
-  liturgicalCalendar: PrimaryCalendar,
-  visibleMonth: Date,
-): MonthDayMap {
-  return getCachedMonth(liturgicalCalendar, visibleMonth) ?? buildAppearanceOnlyMonth(visibleMonth, liturgicalCalendar);
-}
-
 function mergeMonthMaps(prev: MonthDayMap, partial: MonthDayMap): MonthDayMap {
   let changed = false;
   const next = { ...prev };
@@ -37,35 +30,50 @@ function mergeMonthMaps(prev: MonthDayMap, partial: MonthDayMap): MonthDayMap {
   return changed ? next : prev;
 }
 
+type MonthDayState = {
+  key: string;
+  dayByIso: MonthDayMap;
+};
+
 export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: PrimaryCalendar) {
   const monthKey = `${visibleMonth.getFullYear()}-${visibleMonth.getMonth()}`;
-  const [dayByIso, setDayByIso] = useState<MonthDayMap>(() =>
-    initialMonthData(liturgicalCalendar, visibleMonth),
-  );
-  const [loading, setLoading] = useState(
-    () => !isMonthCacheComplete(liturgicalCalendar, visibleMonth),
-  );
+  const seedDayByIso =
+    getCachedMonth(liturgicalCalendar, visibleMonth) ??
+    buildAppearanceOnlyMonth(visibleMonth, liturgicalCalendar);
+  const [dayState, setDayState] = useState<MonthDayState>(() => ({
+    key: monthKey,
+    dayByIso: seedDayByIso,
+  }));
+  const [loadingState, setLoadingState] = useState<{ key: string; loading: boolean }>(() => ({
+    key: monthKey,
+    loading: !isMonthCacheComplete(liturgicalCalendar, visibleMonth),
+  }));
 
-  const onMonthProgress = useCallback((partial: MonthDayMap) => {
-    setDayByIso((prev) => mergeMonthMaps(prev, partial));
-  }, []);
+  /** Cached-month shell for the visible month — derived, so no query-key reset effect. */
+  const dayByIso = dayState.key === monthKey ? dayState.dayByIso : seedDayByIso;
+  const loading =
+    loadingState.key === monthKey
+      ? loadingState.loading
+      : !isMonthCacheComplete(liturgicalCalendar, visibleMonth);
 
   useEffect(() => {
     let cancelled = false;
     const cached = getCachedMonth(liturgicalCalendar, visibleMonth);
     const shell = buildAppearanceOnlyMonth(visibleMonth, liturgicalCalendar);
 
-    setDayByIso(cached ?? shell);
-    setLoading(!isMonthCacheComplete(liturgicalCalendar, visibleMonth));
+    const mergeIntoMonth = (prev: MonthDayState, partial: MonthDayMap): MonthDayState => {
+      const base = prev.key === monthKey ? prev.dayByIso : cached ?? shell;
+      return { key: monthKey, dayByIso: mergeMonthMaps(base, partial) };
+    };
 
     const handleProgress = (partial: MonthDayMap) => {
-      if (!cancelled) onMonthProgress(partial);
+      if (!cancelled) setDayState((prev) => mergeIntoMonth(prev, partial));
     };
 
     loadOrthocalMonth(liturgicalCalendar, visibleMonth, handleProgress).then((next) => {
       if (!cancelled) {
-        setDayByIso((prev) => mergeMonthMaps(prev, next));
-        setLoading(false);
+        setDayState((prev) => mergeIntoMonth(prev, next));
+        setLoadingState({ key: monthKey, loading: false });
       }
     });
 
@@ -74,7 +82,7 @@ export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: Primary
     return () => {
       cancelled = true;
     };
-  }, [liturgicalCalendar, monthKey, onMonthProgress, visibleMonth]);
+  }, [liturgicalCalendar, monthKey, visibleMonth]);
 
   const dayInfoForDate = useCallback(
     (date: Date): CalendarDayInfo => {

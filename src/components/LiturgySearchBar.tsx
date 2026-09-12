@@ -1,4 +1,4 @@
-import { Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, TextInput, View, type ColorValue } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -17,8 +17,8 @@ type Props = {
   onSearchQueryChange: (value: string) => void;
   isDark: boolean;
   hintType: { fontSize: number; lineHeight: number };
-  mutedColor: string;
-  textColor: string;
+  mutedColor: ColorValue;
+  textColor: ColorValue;
   searchMatchCount: number | null;
   activeMatchIndex: number | null;
   onPreviousMatch: () => void;

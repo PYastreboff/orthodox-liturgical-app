@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type ColorValue } from 'react-native';
 
+import { useValidatedChoice } from '../hooks/useValidatedChoice';
 import { useFontScale } from '../hooks/useFontScale';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import {
@@ -9,14 +9,13 @@ import {
   DEACON_GUIDE_ROWS,
   DEACON_GUIDE_SOURCE_KEYS,
   type DeaconGuideDayContext,
-  type DeaconLiturgyForm,
 } from '../lib/liturgical/deaconGuide';
 import { colors } from '../theme/tokens';
 import { DayPagePanel } from './day/DayPagePanel';
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
   isDark: boolean;
   first?: boolean;
   dayContext: DeaconGuideDayContext;
@@ -29,18 +28,10 @@ export function DeaconGuideTable({ textColor, mutedColor, isDark, first, dayCont
   const hintType = text(12, 17);
   const headerType = text(12, 16);
   const forms = availableDeaconForms(dayContext);
-  const [form, setForm] = useState<DeaconLiturgyForm>(() => defaultDeaconForm(dayContext));
-
-  useEffect(() => {
-    const nextForms = availableDeaconForms(dayContext);
-    const next = defaultDeaconForm(dayContext);
-    setForm((prev) => (nextForms.includes(prev) ? prev : next));
-  }, [
-    dayContext.appearanceKey,
-    dayContext.feastLevel,
-    dayContext.weekday,
-    dayContext.isPresanctified,
-  ]);
+  const { value: form, choose: setForm } = useValidatedChoice(
+    forms.join(','),
+    () => defaultDeaconForm(dayContext),
+  );
 
   const chipSelectedBg = isDark ? colors.darkInk : colors.ink;
   const chipSelectedFg = isDark ? colors.darkBg : colors.parchment;

@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, type ColorValue } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { FastingFoodIcon } from './FastingFoodIcon';
@@ -27,7 +27,7 @@ type Props = {
   kind: 'fish' | 'wine' | 'oil' | 'noMeat' | 'noEating';
   size?: number;
   /** Override glyph colour (e.g. white on the hero). */
-  color?: string;
+  color?: ColorValue;
   /** Override slash colour for `noMeat` (defaults to calendar dark red). */
   slashColor?: string;
 };
@@ -35,7 +35,7 @@ type Props = {
 export function calendarFastingFoodIconColor(
   kind: Props['kind'],
   onDarkBackground: boolean,
-  foregroundColor = '#ffffff',
+  foregroundColor: ColorValue = '#ffffff',
 ): string {
   if (kind === 'noEating') return fastingNoEatingColor(onDarkBackground, foregroundColor);
   if (kind === 'noMeat') return FASTING_NO_MEAT_COLOR;
@@ -47,7 +47,7 @@ export function calendarFastingFoodIconColor(
  * Uses a path fill (not stroked lines) so the mark stays visible on dark UI
  * when react-native-svg stroke colouring is unreliable on web.
  */
-function NoEatingGlyph({ color }: { color: string }) {
+function NoEatingGlyph({ color }: { color: ColorValue }) {
   return (
     <Path
       fill={color}

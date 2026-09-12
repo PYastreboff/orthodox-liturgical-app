@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type ComponentProps } from 'react';
+import { useCallback, useRef, useState, type ComponentProps } from 'react';
 import { StyleSheet, View, type ScrollView } from 'react-native';
 import { useFocusEffect, useTheme } from "expo-router/react-navigation";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -29,7 +29,10 @@ export default function WorshipScreen() {
   const scrollBottomPadding = useTabBarBottomPadding();
   const vestmentAccent = useVestmentAccent();
   const params = useLocalSearchParams<{ service?: string }>();
-  const [service, setService] = useState<WorshipServiceId>(() => parseWorshipServiceId(params.service));
+  const [serviceState, setServiceState] = useState<{
+    key?: string;
+    value: WorshipServiceId;
+  }>(() => ({ key: params.service, value: parseWorshipServiceId(params.service) }));
   const muted = isDark ? '#a39e98' : colors.muted;
   const bodyType = text(14, 20);
   const hintType = text(13, 20);
@@ -37,12 +40,20 @@ export default function WorshipScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const onTabScroll = useTabBarScroll('liturgy', scrollRef);
 
+  /** Service from the URL params — derived, so no params-sync effect. */
+  const service =
+    serviceState.key === params.service
+      ? serviceState.value
+      : parseWorshipServiceId(params.service);
+  const setService = useCallback(
+    (id: WorshipServiceId) => {
+      setServiceState({ key: params.service, value: id });
+    },
+    [params.service],
+  );
+
   const pageTitle = t(worshipServicePageTitleKey(service));
   const pageSubtitle = t(worshipServicePageSubtitleKey(service));
-
-  useEffect(() => {
-    setService(parseWorshipServiceId(params.service));
-  }, [params.service]);
 
   useFocusEffect(
     useCallback(() => {

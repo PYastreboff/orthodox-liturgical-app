@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import { CalendarFastingFoodIcon, calendarFastingFoodIconColor } from './CalendarFastingFoodIcon';
 import { CALENDAR_FASTING_ICON_SIZE } from './fastingAllowanceIcons';
@@ -23,7 +23,7 @@ import { colors } from '../theme/tokens';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 
 type Props = {
-  textColor: string;
+  textColor: ColorValue;
   mutedColor?: string;
   /** Full-page layout (less inset padding than Settings card). */
   pageLayout?: boolean;

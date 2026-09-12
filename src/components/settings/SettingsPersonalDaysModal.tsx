@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -149,16 +149,9 @@ export function SettingsPersonalDaysModal({
   const { t, lang } = useAppTranslation();
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const sheetHeight = Math.round(windowHeight * (windowWidth < 600 ? 2 / 3 : 0.85));
-  const [draft, setDraft] = useState<Draft | null>(null);
-
-  useEffect(() => {
-    if (!visible) {
-      setDraft(null);
-      return;
-    }
-    const hasItems = days.some((d) => d.kind === kind);
-    setDraft(hasItems ? null : emptyDraft(kind, 'gregorian'));
-  }, [visible, kind]);
+  const [draft, setDraft] = useState<Draft | null>(() =>
+    days.some((d) => d.kind === kind) ? null : emptyDraft(kind, 'gregorian'),
+  );
 
   const setDraftCalendar = (calendar: PersonalDayCalendar) => {
     if (!draft) return;

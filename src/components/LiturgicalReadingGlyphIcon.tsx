@@ -1,3 +1,4 @@
+import { type ColorValue } from 'react-native';
 import Svg, { Circle, G, Line, Path, Rect } from 'react-native-svg';
 
 import type { LiturgicalTextCategory } from '../lib/liturgical/liturgicalTexts';
@@ -5,7 +6,7 @@ import type { LiturgicalTextCategory } from '../lib/liturgical/liturgicalTexts';
 type Props = {
   category: LiturgicalTextCategory;
   size: number;
-  color: string;
+  color: ColorValue;
 };
 
 const VIEW = 24;
@@ -15,7 +16,7 @@ function strokeWidth(size: number): number {
 }
 
 /** Apostolos — rolled scroll with text lines (not used elsewhere in the app). */
-function EpistleGlyph({ color, sw }: { color: string; sw: number }) {
+function EpistleGlyph({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Path
@@ -40,7 +41,7 @@ function EpistleGlyph({ color, sw }: { color: string; sw: number }) {
 }
 
 /** Evangelion — open codex with central cross (distinct from tab Orthodox cross). */
-function GospelGlyph({ color, sw }: { color: string; sw: number }) {
+function GospelGlyph({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Path
@@ -58,7 +59,7 @@ function GospelGlyph({ color, sw }: { color: string; sw: number }) {
 }
 
 /** Troparion — hymn: flame over a short staff. */
-function TroparionGlyph({ color, sw }: { color: string; sw: number }) {
+function TroparionGlyph({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Line x1={8} y1={17} x2={16} y2={17} stroke={color} strokeWidth={sw * 0.7} strokeLinecap="round" />
@@ -73,7 +74,7 @@ function TroparionGlyph({ color, sw }: { color: string; sw: number }) {
 }
 
 /** Kontakion — kontakion verse: two stacked phrases (double arc). */
-function KontakionGlyph({ color, sw }: { color: string; sw: number }) {
+function KontakionGlyph({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Path
@@ -97,7 +98,7 @@ function KontakionGlyph({ color, sw }: { color: string; sw: number }) {
 }
 
 /** Prokeimenon — verse before epistle: bold vertical cadence bar. */
-function ProkeimenonGlyph({ color, sw }: { color: string; sw: number }) {
+function ProkeimenonGlyph({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Line x1={12} y1={6} x2={12} y2={18} stroke={color} strokeWidth={sw * 1.15} strokeLinecap="round" />
@@ -109,7 +110,7 @@ function ProkeimenonGlyph({ color, sw }: { color: string; sw: number }) {
 }
 
 /** Alleluia — three rising “alleluia” arcs. */
-function AlleluiaGlyph({ color, sw }: { color: string; sw: number }) {
+function AlleluiaGlyph({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Path d="M 5 16 Q 6.5 11 8 16" fill="none" stroke={color} strokeWidth={sw} strokeLinecap="round" />
@@ -120,7 +121,7 @@ function AlleluiaGlyph({ color, sw }: { color: string; sw: number }) {
 }
 
 /** Communion — chalice with bread disc (unique silhouette). */
-function CommunionGlyph({ color, sw }: { color: string; sw: number }) {
+function CommunionGlyph({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Path

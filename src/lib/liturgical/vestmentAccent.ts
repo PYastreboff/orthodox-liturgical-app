@@ -1,3 +1,4 @@
+import { type ColorValue } from 'react-native';
 import type { LiturgicalDayAppearance } from '../calendar/dayAppearance';
 import { colors } from '../../theme/tokens';
 import { liturgicalVestmentColor } from './vestments';
@@ -8,7 +9,7 @@ export type VestmentAccent = {
   /** Icon and link colour on normal surfaces (readable when accent is a light fill). */
   icon: string;
   /** Soft tinted surface for icon badges. */
-  accentSoft: string;
+  accentSoft: ColorValue;
   /** Soft tinted surface for chips and subtle fills. */
   accentMuted: string;
   /** Foreground on solid accent (selected rows, buttons). */

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type ColorValue } from 'react-native';
 
+import { useValidatedChoice } from '../hooks/useValidatedChoice';
 import { useFontScale } from '../hooks/useFontScale';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import {
@@ -9,14 +9,13 @@ import {
   PRIEST_GUIDE_ROWS,
   PRIEST_GUIDE_SOURCE_KEYS,
   type PriestGuideDayContext,
-  type PriestLiturgyForm,
 } from '../lib/liturgical/priestGuide';
 import { colors } from '../theme/tokens';
 import { DayPagePanel } from './day/DayPagePanel';
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
   isDark: boolean;
   first?: boolean;
   dayContext: PriestGuideDayContext;
@@ -29,18 +28,10 @@ export function PriestGuideTable({ textColor, mutedColor, isDark, first, dayCont
   const hintType = text(12, 17);
   const headerType = text(12, 16);
   const forms = availablePriestForms(dayContext);
-  const [form, setForm] = useState<PriestLiturgyForm>(() => defaultPriestForm(dayContext));
-
-  useEffect(() => {
-    const nextForms = availablePriestForms(dayContext);
-    const next = defaultPriestForm(dayContext);
-    setForm((prev) => (nextForms.includes(prev) ? prev : next));
-  }, [
-    dayContext.appearanceKey,
-    dayContext.feastLevel,
-    dayContext.weekday,
-    dayContext.isPresanctified,
-  ]);
+  const { value: form, choose: setForm } = useValidatedChoice(
+    forms.join(','),
+    () => defaultPriestForm(dayContext),
+  );
 
   const chipSelectedBg = isDark ? colors.darkInk : colors.ink;
   const chipSelectedFg = isDark ? colors.darkBg : colors.parchment;

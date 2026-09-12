@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import { colors } from '../../theme/tokens';
 
 type Props = {
   title?: string;
   children: ReactNode;
-  textColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   /** Tighter top margin when first on the page. */
   first?: boolean;

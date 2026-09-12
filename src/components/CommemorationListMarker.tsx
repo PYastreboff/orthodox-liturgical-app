@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import type { PersonalDayDisplayKind } from '../lib/personalDays';
 
@@ -7,7 +7,7 @@ type Kind = 'feast' | 'saint';
 
 type Props = {
   kind: Kind;
-  color: string;
+  color: ColorValue;
   /** Match the adjacent first line height. */
   lineHeight?: number;
   size?: number;

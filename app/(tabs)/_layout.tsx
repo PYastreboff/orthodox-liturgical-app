@@ -1,3 +1,4 @@
+import type { MaterialTopTabBarProps } from "expo-router/js-top-tabs";
 import { useTheme } from "expo-router/react-navigation";
 import { StyleSheet, View } from 'react-native';
 
@@ -23,7 +24,7 @@ function TabsLayoutContent() {
     <View style={styles.shell}>
       <SwipeTabs
         tabBarPosition="bottom"
-        tabBar={(props) => <MainTabBar {...props} />}
+        tabBar={(props: MaterialTopTabBarProps) => <MainTabBar {...props} />}
         screenOptions={{
           swipeEnabled: true,
           animationEnabled: true,

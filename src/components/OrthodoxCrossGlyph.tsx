@@ -1,3 +1,4 @@
+import { type ColorValue } from 'react-native';
 import Svg, { G, Rect } from 'react-native-svg';
 
 import {
@@ -7,7 +8,7 @@ import {
 } from '../brand/orthodoxCrossGeometry';
 
 type PathProps = {
-  color: string;
+  color: ColorValue;
   size: number;
   footrest?: boolean;
 };
@@ -68,7 +69,7 @@ export function OrthodoxCrossPaths({ color, size, footrest = true }: PathProps) 
 
 type Props = {
   size: number;
-  color: string;
+  color: ColorValue;
   footrest?: boolean;
 };
 

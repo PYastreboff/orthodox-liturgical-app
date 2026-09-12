@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   View,
+  type ColorValue,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -27,10 +28,10 @@ import { colors, radii } from '../theme/tokens';
 type Props = {
   calendar: PrimaryCalendar;
   year: number;
-  textColor: string;
-  mutedColor: string;
-  cardBg: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  cardBg: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   onSelectDate: (date: Date) => void;
   /** When false, parent supplies horizontal inset (e.g. calendar intro block). */
@@ -73,10 +74,10 @@ function SearchResultRow({
 }: {
   result: CalendarSearchResult;
   intlLocale: string;
-  textColor: string;
-  mutedColor: string;
-  cardBg: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  cardBg: ColorValue;
+  borderColor: ColorValue;
   onPress: () => void;
 }) {
   const { t, lang } = useAppTranslation();

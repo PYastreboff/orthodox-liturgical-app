@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PanResponder, type GestureResponderHandlers } from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
 
 type SwipeToDismissSheet = {
   /** Attach to the sheet surface: claims at touch start via the bubbling phase,
@@ -19,74 +20,63 @@ function isDownwardDismissGesture(dy: number, dx: number): boolean {
 
 /**
  * Swipe a bottom sheet downward to dismiss (settings pickers).
- * Pure RN (no reanimated): the sheet transform is plain state, matching the
- * in-app modal pattern that works on iOS. Attach panHandlers to the sheet;
- * pair scrollable content with SettingsSheetScrollView.
+ * The sheet transform is plain state (matching the in-app modal pattern that
+ * works on iOS); shared values hold transient gesture flags. Attach panHandlers
+ * to the sheet; pair scrollable content with SettingsSheetScrollView.
  */
 export function useSwipeToDismissSheet(
   onDismiss: () => void,
   visible: boolean,
 ): SwipeToDismissSheet {
-  const onDismissRef = useRef(onDismiss);
   const [translateY, setTranslateY] = useState(0);
-  const dragging = useRef(false);
-  const finishing = useRef(false);
-  const scrollOffsetY = useRef(0);
+  const dragging = useSharedValue(false);
+  const scrollOffsetY = useSharedValue(0);
 
-  useEffect(() => {
-    onDismissRef.current = onDismiss;
-  }, [onDismiss]);
+  const onSheetScroll = (offsetY: number) => {
+    scrollOffsetY.value = offsetY;
+  };
 
-  const onSheetScroll = useCallback((offsetY: number) => {
-    scrollOffsetY.current = offsetY;
-  }, []);
-
-  const resetSheetScroll = useCallback(() => {
-    scrollOffsetY.current = 0;
-  }, []);
+  const resetSheetScroll = () => {
+    scrollOffsetY.value = 0;
+  };
 
   useEffect(() => {
     if (visible) {
-      finishing.current = false;
-      scrollOffsetY.current = 0;
-      setTranslateY(0);
+      scrollOffsetY.value = 0;
     }
-  }, [visible]);
+  }, [visible, scrollOffsetY]);
 
   const panResponderConfig = {
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponderCapture: (_evt: unknown, gesture: { dy: number; dx: number }) => {
-      if (finishing.current) return false;
-      if (scrollOffsetY.current > 1) return false;
+      if (scrollOffsetY.value > 1) return false;
       return isDownwardDismissGesture(gesture.dy, gesture.dx);
     },
     onMoveShouldSetPanResponder: (_evt: unknown, gesture: { dy: number; dx: number }) => {
-      if (finishing.current) return false;
-      if (scrollOffsetY.current > 1) return false;
+      if (scrollOffsetY.value > 1) return false;
       return isDownwardDismissGesture(gesture.dy, gesture.dx);
     },
     onPanResponderGrant: () => {
-      dragging.current = true;
+      dragging.value = true;
     },
     onPanResponderMove: (_evt: unknown, gesture: { dy: number }) => {
-      if (!dragging.current) return;
+      if (!dragging.value) return;
       setTranslateY(Math.max(0, gesture.dy));
     },
     onPanResponderTerminationRequest: () => false,
     onPanResponderRelease: (_evt: unknown, gesture: { dy: number; vy: number }) => {
-      dragging.current = false;
+      dragging.value = false;
       const shouldDismiss =
         gesture.dy > 160 || (gesture.dy > 56 && gesture.vy > 0.45);
       if (shouldDismiss) {
-        finishing.current = true;
-        onDismissRef.current();
+        onDismiss();
       } else {
         setTranslateY(0);
       }
     },
     onPanResponderTerminate: () => {
-      dragging.current = false;
-      if (!finishing.current) setTranslateY(0);
+      dragging.value = false;
+      setTranslateY(0);
     },
   };
 
@@ -95,10 +85,14 @@ export function useSwipeToDismissSheet(
     onStartShouldSetPanResponder: () => false,
   };
 
-  const panHandlers = useRef(PanResponder.create(panResponderConfig)).current.panHandlers;
-  const scrollPanHandlers = useRef(
-    PanResponder.create(scrollPanResponderConfig),
-  ).current.panHandlers;
+  const panHandlers = PanResponder.create(panResponderConfig).panHandlers;
+  const scrollPanHandlers = PanResponder.create(scrollPanResponderConfig).panHandlers;
 
-  return { panHandlers, scrollPanHandlers, translateY, onSheetScroll, resetSheetScroll };
+  return {
+    panHandlers,
+    scrollPanHandlers,
+    translateY: visible ? translateY : 0,
+    onSheetScroll,
+    resetSheetScroll,
+  };
 }

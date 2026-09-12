@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type ColorValue } from 'react-native';
 
+import { useValidatedChoice } from '../hooks/useValidatedChoice';
 import { useFontScale } from '../hooks/useFontScale';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import {
@@ -9,14 +9,13 @@ import {
   CHOIR_GUIDE_ROWS,
   CHOIR_GUIDE_SOURCE_KEYS,
   type ChoirGuideDayContext,
-  type ChoirLiturgyForm,
 } from '../lib/liturgical/choirGuide';
 import { colors } from '../theme/tokens';
 import { DayPagePanel } from './day/DayPagePanel';
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
   isDark: boolean;
   first?: boolean;
   dayContext: ChoirGuideDayContext;
@@ -29,18 +28,10 @@ export function ChoirGuideTable({ textColor, mutedColor, isDark, first, dayConte
   const hintType = text(12, 17);
   const headerType = text(12, 16);
   const forms = availableChoirForms(dayContext);
-  const [form, setForm] = useState<ChoirLiturgyForm>(() => defaultChoirForm(dayContext));
-
-  useEffect(() => {
-    const nextForms = availableChoirForms(dayContext);
-    const next = defaultChoirForm(dayContext);
-    setForm((prev) => (nextForms.includes(prev) ? prev : next));
-  }, [
-    dayContext.appearanceKey,
-    dayContext.feastLevel,
-    dayContext.weekday,
-    dayContext.isPresanctified,
-  ]);
+  const { value: form, choose: setForm } = useValidatedChoice(
+    forms.join(','),
+    () => defaultChoirForm(dayContext),
+  );
 
   const chipSelectedBg = isDark ? colors.darkInk : colors.ink;
   const chipSelectedFg = isDark ? colors.darkBg : colors.parchment;

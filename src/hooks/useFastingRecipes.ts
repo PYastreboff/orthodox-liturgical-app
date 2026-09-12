@@ -16,13 +16,26 @@ export function useFastingRecipes(): RecipeLibraryState & { reload: () => void }
       : { status: 'loading', recipes: [] },
   );
 
-  const load = useCallback((force = false) => {
-    if (!force && getCachedFastingRecipes()) {
-      setState({ status: 'ready', recipes: getCachedFastingRecipes()! });
-      return;
-    }
+  useEffect(() => {
+    if (getCachedFastingRecipes()) return;
+    let cancelled = false;
+    void fetchFastingRecipes({ force: false })
+      .then((recipes) => {
+        if (!cancelled) setState({ status: 'ready', recipes });
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        const message = error instanceof Error ? error.message : 'Network error';
+        setState({ status: 'offline', recipes: [], error: message });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const reload = useCallback(() => {
     setState((prev) => ({ status: 'loading', recipes: prev.recipes }));
-    void fetchFastingRecipes({ force })
+    void fetchFastingRecipes({ force: true })
       .then((recipes) => {
         setState({ status: 'ready', recipes });
       })
@@ -32,13 +45,9 @@ export function useFastingRecipes(): RecipeLibraryState & { reload: () => void }
       });
   }, []);
 
-  useEffect(() => {
-    load(false);
-  }, [load]);
-
   return {
     ...state,
-    reload: () => load(true),
+    reload,
   };
 }
 

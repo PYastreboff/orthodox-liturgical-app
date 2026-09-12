@@ -1,3 +1,4 @@
+import { type ColorValue } from 'react-native';
 import { colors } from '../../theme/tokens';
 import type { LiturgicalDayAppearance } from './dayAppearance';
 import { liturgicalSwatchKey, type LiturgicalSwatchKey } from '../liturgical/liturgicalSwatchKey';
@@ -7,7 +8,7 @@ import { WEEKLY_FAST_APPEARANCE_KEYS } from './weeklyFast';
 export type CalendarColourMode = 'fasting' | 'liturgical';
 
 export type CalendarCellStyle = {
-  backgroundColor: string;
+  backgroundColor: ColorValue;
   foreground: string;
 };
 
@@ -264,13 +265,13 @@ function toHex(r: number, g: number, b: number): string {
 
 /** Slightly darken (light mode) or lighten (dark mode) — applied on the cell itself, not a square overlay. */
 export function calendarCellHoverBackground(
-  backgroundColor: string,
+  backgroundColor: ColorValue,
   hovered: boolean,
   isDark: boolean,
 ): string {
-  if (!hovered) return backgroundColor;
-  const rgb = parseHex(backgroundColor);
-  if (!rgb) return backgroundColor;
+  if (!hovered) return backgroundColor as string;
+  const rgb = parseHex(backgroundColor as string);
+  if (!rgb) return backgroundColor as string;
   if (isDark) {
     const mix = 0.14;
     return toHex(

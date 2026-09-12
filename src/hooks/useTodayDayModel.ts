@@ -54,6 +54,10 @@ function addDays(d: Date, days: number) {
   return startOfLocalDay(next);
 }
 
+function monthStartFor(d: Date): Date {
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+
 /** Shared day model for Today home + `/day/[section]` screens. */
 export function useTodayDayModel() {
   const isDark = useResolvedColorScheme() === 'dark';
@@ -74,20 +78,23 @@ export function useTodayDayModel() {
   } = usePreferences();
   const today = useMemo(() => startOfLocalDay(new Date()), []);
 
-  const [calendarMonth, setCalendarMonth] = useState(
-    () => new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
-  );
+  const [calendarMonthState, setCalendarMonthState] = useState<{
+    key: string;
+    month: Date;
+  }>(() => ({ key: toDayIso(selectedDate), month: monthStartFor(selectedDate) }));
   const thisMonth = useMemo(() => {
     const n = new Date();
     return new Date(n.getFullYear(), n.getMonth(), 1);
   }, []);
 
-  useEffect(() => {
-    setCalendarMonth(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
-  }, [selectedDate]);
+  /** Calendar month re-targets to the selected day's month — derived, no reset effect. */
+  const calendarMonth =
+    calendarMonthState.key === toDayIso(selectedDate)
+      ? calendarMonthState.month
+      : monthStartFor(selectedDate);
 
   const setCalendarMonthCursor = useCallback((date: Date) => {
-    setCalendarMonth(new Date(date.getFullYear(), date.getMonth(), 1));
+    setCalendarMonthState({ key: toDayIso(date), month: monthStartFor(date) });
   }, []);
 
   const onCalendarChangeMonth = useCallback(
@@ -353,7 +360,6 @@ export function useTodayDayModel() {
     julianDateLabel,
     gospelPreviewSections,
     printDay,
-    gospelPreviewSections,
     saints,
     shareFeastHighlight,
   ]);

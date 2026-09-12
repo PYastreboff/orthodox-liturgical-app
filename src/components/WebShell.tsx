@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View, type ColorValue } from 'react-native';
 
 import { isIosMobileWeb, isIosSafariBrowser } from '../theme/webViewport';
 
 type Props = {
   children: ReactNode;
-  backgroundColor: string;
+  backgroundColor: ColorValue;
 };
 
 /** Fills the web shell; iOS Safari browser uses backdrop + inner scroll like a normal app shell. */

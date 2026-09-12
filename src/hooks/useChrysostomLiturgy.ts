@@ -14,13 +14,26 @@ export function useChrysostomLiturgy(): ChrysostomLiturgyState & { reload: () =>
       : { status: 'loading', sections: [] },
   );
 
-  const load = useCallback((force = false) => {
-    if (!force && getCachedChrysostomLiturgy()) {
-      setState({ status: 'ready', sections: getCachedChrysostomLiturgy()! });
-      return;
-    }
+  useEffect(() => {
+    if (getCachedChrysostomLiturgy()) return;
+    let cancelled = false;
+    void fetchChrysostomLiturgy({ force: false })
+      .then((sections) => {
+        if (!cancelled) setState({ status: 'ready', sections });
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        const message = error instanceof Error ? error.message : 'Network error';
+        setState({ status: 'offline', sections: [], error: message });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const reload = useCallback(() => {
     setState((prev) => ({ status: 'loading', sections: prev.sections }));
-    void fetchChrysostomLiturgy({ force })
+    void fetchChrysostomLiturgy({ force: true })
       .then((sections) => {
         setState({ status: 'ready', sections });
       })
@@ -30,9 +43,5 @@ export function useChrysostomLiturgy(): ChrysostomLiturgyState & { reload: () =>
       });
   }, []);
 
-  useEffect(() => {
-    load(false);
-  }, [load]);
-
-  return { ...state, reload: () => load(true) };
+  return { ...state, reload };
 }

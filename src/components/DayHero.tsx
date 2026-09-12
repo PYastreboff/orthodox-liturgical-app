@@ -88,7 +88,7 @@ export function DayHero({
   const roleBtnRef = useRef<View>(null);
   const heroStyle = useMemo(
     () => vestmentHeroGradient(appearance, isDark),
-    [appearance.key, appearance.label, isDark],
+    [appearance, isDark],
   );
   const fg = heroStyle.foreground;
   const fgLower = fg.toLowerCase();
@@ -157,22 +157,15 @@ export function DayHero({
   const roleMenuBorder = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(43,38,35,0.12)';
   const servingRoleLabel = t(SERVING_ROLE_LABEL_KEYS[servingRole]);
 
-  const onPreviousRef = useRef(onPrevious);
-  const onNextRef = useRef(onNext);
-  onPreviousRef.current = onPrevious;
-  onNextRef.current = onNext;
-
-  const daySwipe = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_evt, gesture) =>
-        Math.abs(gesture.dx) > 18 && Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.4,
-      onPanResponderRelease: (_evt, gesture) => {
-        if (Math.abs(gesture.dx) < 48) return;
-        if (gesture.dx < 0) onNextRef.current();
-        else onPreviousRef.current();
-      },
-    }),
-  ).current;
+  const daySwipe = PanResponder.create({
+    onMoveShouldSetPanResponder: (_evt, gesture) =>
+      Math.abs(gesture.dx) > 18 && Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.4,
+    onPanResponderRelease: (_evt, gesture) => {
+      if (Math.abs(gesture.dx) < 48) return;
+      if (gesture.dx < 0) onNext();
+      else onPrevious();
+    },
+  }).panHandlers;
 
   const openRoleMenu = () => {
     if (roleMenuOpen) {
@@ -207,7 +200,7 @@ export function DayHero({
           ? { borderWidth: 4, borderColor: majorFeastBorder }
           : null,
       ]}
-      {...daySwipe.panHandlers}
+      {...daySwipe}
     >
       <LinearGradient
         colors={[...heroStyle.gradient]}
@@ -590,7 +583,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   roleMenuBackdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
   roleMenu: {
     position: 'absolute',

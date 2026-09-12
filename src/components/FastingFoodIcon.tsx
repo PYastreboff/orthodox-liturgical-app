@@ -1,6 +1,6 @@
 import type React from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, type ColorValue } from 'react-native';
 
 import type { FastingFoodKind } from '../i18n/fastingLabels';
 import { translate } from '../i18n/translate';
@@ -33,7 +33,7 @@ const FOOD_ICON_META: Record<
 
 type Props = {
   kind: FastingFoodKind;
-  color: string;
+  color: ColorValue;
   size?: number;
   /** Calendar / hero tooltips — "Fish allowed" instead of the food-list noun. */
   allowedLabel?: boolean;

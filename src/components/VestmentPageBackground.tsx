@@ -28,7 +28,7 @@ export function VestmentPageBackground({
   const backgroundColor = todayPageBackgroundColor(isDark);
   const gradient = useMemo(
     () => vestmentPageGradient(appearance, gradientEnabled, isDark),
-    [appearance.key, appearance.label, gradientEnabled, isDark],
+    [appearance, gradientEnabled, isDark],
   );
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   gradientLayer: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     zIndex: 0,
   },
   content: {

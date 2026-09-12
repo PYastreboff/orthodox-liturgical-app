@@ -1,3 +1,5 @@
+import { type ColorValue } from 'react-native';
+
 /** Shared size for fish / wine / oil allowance glyphs (hero, lists). */
 export const FASTING_ALLOWANCE_ICON_SIZE = 16;
 
@@ -27,6 +29,9 @@ export function fastingAllowanceColor(kind: FastingAllowanceKind): string {
 }
 
 /** noEating cross — white on dark UI; near-black on light grey calendar cells. */
-export function fastingNoEatingColor(onDarkBackground: boolean, _foregroundColor: string): string {
+export function fastingNoEatingColor(
+  onDarkBackground: boolean,
+  _foregroundColor: ColorValue,
+): string {
   return onDarkBackground ? '#ffffff' : FASTING_NO_EATING_COLOR;
 }

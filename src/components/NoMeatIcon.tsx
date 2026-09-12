@@ -1,3 +1,4 @@
+import { type ColorValue } from 'react-native';
 import Svg, { Line, Path } from 'react-native-svg';
 
 export const FASTING_NO_MEAT_COLOR = '#b02222';
@@ -18,7 +19,7 @@ const M_GLYPH_PATH = `M${GLYPH_LEFT} 19V5h2.5l3.9 9.5L15.95 5h2.5v14h-2.3v-8.7l-
 
 type Props = {
   size: number;
-  color?: string;
+  color?: ColorValue;
   slashColor?: string;
 };
 

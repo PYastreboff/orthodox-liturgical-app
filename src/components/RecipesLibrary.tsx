@@ -8,8 +8,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
-} from 'react-native';
+  View, type ColorValue } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -37,9 +36,9 @@ import { colors } from '../theme/tokens';
 type MealFilter = 'all' | RecipeMealSlot;
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   contentBottom?: number;
 };
@@ -52,9 +51,9 @@ function RecipeRow({
   isDark,
 }: {
   recipe: FastingRecipe;
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
 }) {
   const { t, lang } = useAppTranslation();

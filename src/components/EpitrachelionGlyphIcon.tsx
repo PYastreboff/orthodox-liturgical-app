@@ -1,15 +1,16 @@
+import { type ColorValue } from 'react-native';
 import Svg, { Line, Path } from 'react-native-svg';
 
 type Props = {
   size: number;
-  color: string;
+  color: ColorValue;
 };
 
 function strokeWidth(size: number): number {
   return Math.max(1.35, size * 0.085);
 }
 
-function stoleCross(x: number, y: number, sw: number, color: string) {
+function stoleCross(x: number, y: number, sw: number, color: ColorValue) {
   const csw = sw * 0.55;
   const arm = 1.1;
   return (

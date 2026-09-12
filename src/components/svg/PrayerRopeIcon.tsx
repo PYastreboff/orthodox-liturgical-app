@@ -1,9 +1,10 @@
 import React from 'react';
+import { type ColorValue } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 type IconProps = {
   size?: number;
-  color?: string;
+  color?: ColorValue;
 };
 
 export function PrayerRopeIcon({ size = 20, color = 'currentColor' }: IconProps) {

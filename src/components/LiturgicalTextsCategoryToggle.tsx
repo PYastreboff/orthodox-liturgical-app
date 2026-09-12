@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   modalBackdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
   menu: {
     position: 'absolute',

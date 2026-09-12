@@ -1,3 +1,4 @@
+import { type ColorValue } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -58,7 +59,7 @@ export const SECTION_ICON_SIZE = 22;
 
 type Props = {
   name: SectionIconName;
-  color: string;
+  color: ColorValue;
   size?: number;
 };
 

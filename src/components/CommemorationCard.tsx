@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type ColorValue } from 'react-native';
 import { Feather, FontAwesome5 } from '@expo/vector-icons';
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
@@ -10,9 +10,9 @@ import { colors, radii } from '../theme/tokens';
 
 type Props = {
   entry: CommemorationEntry;
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };

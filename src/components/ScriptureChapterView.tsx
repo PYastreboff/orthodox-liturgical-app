@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import type { BibleChapterVerse } from '../lib/bible/scriptureTranslation';
 
@@ -11,7 +11,7 @@ const SCRIPTURE_SERIF = Platform.select({
 type Props = {
   chapterTitle: string;
   verses: BibleChapterVerse[];
-  textColor: string;
+  textColor: ColorValue;
   verseNumberColor: string;
   headingType: { fontSize: number; lineHeight: number };
   bodyType: { fontSize: number; lineHeight: number };

@@ -7,6 +7,7 @@ import {
   Text,
   useWindowDimensions,
   View,
+  type ColorValue,
 } from 'react-native';
 import { useTheme } from "expo-router/react-navigation";
 import { Feather } from '@expo/vector-icons';
@@ -166,8 +167,8 @@ function CalendarFastingIconsRow({
   icons: CalendarFastingFoodIcons;
   isFastDay: boolean;
   isDark: boolean;
-  textColor: string;
-  mutedColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
 }) {
   const { t } = useAppTranslation();
   const showIcons =
@@ -291,8 +292,8 @@ type MonthNavButtonProps = {
   onPress: () => void;
   label: string;
   size: number;
-  iconColor: string;
-  buttonColors: { backgroundColor: string; borderColor: string };
+  iconColor: ColorValue;
+  buttonColors: { backgroundColor: ColorValue; borderColor: ColorValue };
   buttonShadow: ReturnType<typeof monthNavButtonElevation>;
 };
 
@@ -744,7 +745,7 @@ function DayCell({
   personalFortieth: { title: string }[];
   showTypikonForDate: (date: Date) => boolean;
   orthocalPending?: boolean;
-  loadingBorderColor: string;
+  loadingBorderColor: ColorValue;
   isDark: boolean;
   liturgicalCalendar: PrimaryCalendar;
   calendarColourMode: CalendarColourMode;
@@ -1153,12 +1154,12 @@ function CalendarMonthAgenda({
   onDayPress: (date: Date) => void;
   phoneLayout: boolean;
   monthLoading: boolean;
-  loadingBorderColor: string;
+  loadingBorderColor: ColorValue;
   intlLocale: string;
-  textColor: string;
-  mutedColor: string;
-  cardBg: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  cardBg: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
 }) {
   const { t, lang } = useAppTranslation();

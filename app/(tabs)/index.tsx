@@ -32,20 +32,46 @@ export default function TodayScreen() {
 
   const paddingTop = screenSafe.paddingTop + (phone ? 20 : 28);
 
+  const setSelectedDate = model.setSelectedDate;
+
+  const scrollTopPendingRef = useRef(false);
+
+  const scrollToTop = useCallback(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, []);
+
+  // When a day is opened from the calendar tab, land at the top of the Today
+  // page. iOS can drop a single rAF during the tab pager transition, so we
+  // scroll eagerly, retry next frame, and keep re-applying on content-size
+  // changes (skeleton -> loaded day) until the layout has settled.
   useFocusEffect(
     useCallback(() => {
       const day = consumePendingDay();
       if (!day) return;
-      model.setSelectedDate(day);
-      const id = requestAnimationFrame(() => {
-        scrollRef.current?.scrollTo({ y: 0, animated: false });
+      setSelectedDate(day);
+      scrollTopPendingRef.current = true;
+      scrollToTop();
+      const frame = requestAnimationFrame(() => {
+        if (scrollTopPendingRef.current) scrollToTop();
       });
-      return () => cancelAnimationFrame(id);
-    }, [consumePendingDay, model.setSelectedDate]),
+      const settledAt = setTimeout(() => {
+        scrollTopPendingRef.current = false;
+      }, 600);
+      return () => {
+        cancelAnimationFrame(frame);
+        clearTimeout(settledAt);
+      };
+    }, [consumePendingDay, scrollToTop, setSelectedDate]),
   );
 
   const onScrollLayout = useCallback((event: LayoutChangeEvent) => {
     setViewportHeight(event.nativeEvent.layout.height);
+  }, []);
+
+  const onContentSizeChange = useCallback(() => {
+    if (scrollTopPendingRef.current) {
+      scrollRef.current?.scrollTo({ y: 0, animated: false });
+    }
   }, []);
 
   const aboveFoldMinHeight =
@@ -62,6 +88,7 @@ export default function TodayScreen() {
         onScroll={onTabScroll}
         scrollEventThrottle={16}
         onLayout={onScrollLayout}
+        onContentSizeChange={onContentSizeChange}
         contentContainerStyle={[
           styles.container,
           {

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type ColorValue } from 'react-native';
 import { useTheme } from "expo-router/react-navigation";
 import { Feather, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -50,8 +50,8 @@ function CommemorationBlockHeading({
 }: {
   icon: 'feasts' | 'saints';
   label: string;
-  color: string;
-  iconColor: string;
+  color: ColorValue;
+  iconColor: ColorValue;
 }) {
   const { text } = useFontScale();
   const titleType = text(20, 26);
@@ -91,9 +91,9 @@ function CommemorationEntryList({
 }: {
   entries: CommemorationEntry[];
   emptyMessage: string;
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };
   isMajorFeastDay?: boolean;

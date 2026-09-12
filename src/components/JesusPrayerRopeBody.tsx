@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View, Vibration } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View, Vibration, type ColorValue } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
@@ -19,9 +19,9 @@ import { PrayerRopeVisual } from './PrayerRopeVisual';
 const TARGET_STORAGE_KEY = '@orthoDaily/jesusPrayerTarget';
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };

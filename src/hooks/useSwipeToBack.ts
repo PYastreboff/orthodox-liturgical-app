@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import {
   PanResponder,
   useWindowDimensions,
@@ -28,59 +28,55 @@ type SwipeToBack = {
 export function useSwipeToBack(onBack: () => void): SwipeToBack {
   const { width } = useWindowDimensions();
   const widthSv = useSharedValue(width);
-  const onBackRef = useRef(onBack);
-  onBackRef.current = onBack;
 
   useEffect(() => {
     widthSv.value = width;
   }, [width, widthSv]);
 
   const translateX = useSharedValue(0);
-  const dragging = useRef(false);
-  const finishing = useRef(false);
+  const dragging = useSharedValue(false);
+  const finishing = useSharedValue(false);
 
-  const finishBack = useCallback(() => {
-    finishing.current = false;
-    onBackRef.current();
-  }, []);
+  const finishBack = () => {
+    finishing.value = false;
+    onBack();
+  };
 
-  const panHandlers = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (evt, gesture) => {
-        if (finishing.current) return false;
-        const startX = evt.nativeEvent.pageX - gesture.dx;
-        if (startX > 36) return false;
-        return gesture.dx > 12 && Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.25;
-      },
-      onPanResponderGrant: () => {
-        dragging.current = true;
-      },
-      onPanResponderMove: (_evt, gesture) => {
-        if (!dragging.current) return;
-        translateX.value = Math.max(0, gesture.dx);
-      },
-      onPanResponderTerminationRequest: () => false,
-      onPanResponderRelease: (_evt, gesture) => {
-        dragging.current = false;
-        const w = widthSv.value;
-        const shouldBack = gesture.dx > w * 0.28 || (gesture.dx > 48 && gesture.vx > 0.45);
-        if (shouldBack) {
-          finishing.current = true;
-          translateX.value = withTiming(w, { duration: 200 }, (done) => {
-            if (done) runOnJS(finishBack)();
-          });
-        } else {
-          translateX.value = withSpring(0, { damping: 22, stiffness: 260, mass: 0.9 });
-        }
-      },
-      onPanResponderTerminate: () => {
-        dragging.current = false;
-        if (!finishing.current) {
-          translateX.value = withSpring(0, { damping: 22, stiffness: 260, mass: 0.9 });
-        }
-      },
-    }),
-  ).current.panHandlers;
+  const panHandlers = PanResponder.create({
+    onMoveShouldSetPanResponder: (evt, gesture) => {
+      if (finishing.value) return false;
+      const startX = evt.nativeEvent.pageX - gesture.dx;
+      if (startX > 36) return false;
+      return gesture.dx > 12 && Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.25;
+    },
+    onPanResponderGrant: () => {
+      dragging.value = true;
+    },
+    onPanResponderMove: (_evt, gesture) => {
+      if (!dragging.value) return;
+      translateX.value = Math.max(0, gesture.dx);
+    },
+    onPanResponderTerminationRequest: () => false,
+    onPanResponderRelease: (_evt, gesture) => {
+      dragging.value = false;
+      const w = widthSv.value;
+      const shouldBack = gesture.dx > w * 0.28 || (gesture.dx > 48 && gesture.vx > 0.45);
+      if (shouldBack) {
+        finishing.value = true;
+        translateX.value = withTiming(w, { duration: 200 }, (done) => {
+          if (done) runOnJS(finishBack)();
+        });
+      } else {
+        translateX.value = withSpring(0, { damping: 22, stiffness: 260, mass: 0.9 });
+      }
+    },
+    onPanResponderTerminate: () => {
+      dragging.value = false;
+      if (!finishing.value) {
+        translateX.value = withSpring(0, { damping: 22, stiffness: 260, mass: 0.9 });
+      }
+    },
+  }).panHandlers;
 
   const animatedStyle = useAnimatedStyle(() => {
     const tx = translateX.value;

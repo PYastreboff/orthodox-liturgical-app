@@ -1,8 +1,9 @@
+import { type ColorValue } from 'react-native';
 import Svg, { Circle, Line, Path } from 'react-native-svg';
 
 type Props = {
   size: number;
-  color: string;
+  color: ColorValue;
 };
 
 function strokeWidth(size: number): number {

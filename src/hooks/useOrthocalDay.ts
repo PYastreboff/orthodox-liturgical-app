@@ -14,6 +14,7 @@ import {
 } from '../lib/calendar/liturgicalCalendar';
 
 type State = {
+  queryKey: string;
   liturgicalDay: OrthocalDay | null;
   /** True only when there is no cached day to show yet. */
   loading: boolean;
@@ -22,40 +23,37 @@ type State = {
   error: string | null;
 };
 
+function shellFor(
+  queryKey: string,
+  liturgicalDay: OrthocalDay | null | undefined,
+): State {
+  return {
+    queryKey,
+    liturgicalDay: liturgicalDay ?? null,
+    loading: !liturgicalDay,
+    refreshing: Boolean(liturgicalDay),
+    error: null,
+  };
+}
+
 export function useOrthocalDay(civilDate: Date, liturgicalCalendar: PrimaryCalendar) {
   const civil = civilPlainDateFromLocal(civilDate);
   const queryDate = orthocalQueryDate(civil);
   const queryKey = `${liturgicalCalendar}:${queryDate.year}-${queryDate.month}-${queryDate.day}`;
 
-  const [state, setState] = useState<State>(() => {
-    const memHit = getCachedOrthocalDay(liturgicalCalendar, queryDate);
-    return {
-      liturgicalDay: memHit ?? null,
-      loading: !memHit,
-      refreshing: false,
-      error: null,
-    };
-  });
+  const [state, setState] = useState<State>(() =>
+    shellFor(queryKey, getCachedOrthocalDay(liturgicalCalendar, queryDate)),
+  );
+
+  /** Cached-day shell for the requested date — derived, so no query-key reset effect. */
+  const current =
+    state.queryKey === queryKey
+      ? state
+      : shellFor(queryKey, getCachedOrthocalDay(liturgicalCalendar, queryDate));
 
   useEffect(() => {
     let cancelled = false;
-
     const memHit = getCachedOrthocalDay(liturgicalCalendar, queryDate);
-    if (memHit) {
-      setState({
-        liturgicalDay: memHit,
-        loading: false,
-        refreshing: true,
-        error: null,
-      });
-    } else {
-      setState({
-        liturgicalDay: null,
-        loading: true,
-        refreshing: false,
-        error: null,
-      });
-    }
 
     async function load() {
       let hadCached = Boolean(memHit);
@@ -66,6 +64,7 @@ export function useOrthocalDay(civilDate: Date, liturgicalCalendar: PrimaryCalen
         if (persisted) {
           hadCached = true;
           setState({
+            queryKey,
             liturgicalDay: persisted,
             loading: false,
             refreshing: true,
@@ -80,6 +79,7 @@ export function useOrthocalDay(civilDate: Date, liturgicalCalendar: PrimaryCalen
         });
         if (!cancelled) {
           setState({
+            queryKey,
             liturgicalDay,
             loading: false,
             refreshing: false,
@@ -90,6 +90,7 @@ export function useOrthocalDay(civilDate: Date, liturgicalCalendar: PrimaryCalen
         if (!cancelled) {
           const message = e instanceof Error ? e.message : 'Could not load liturgical data';
           setState((prev) => ({
+            queryKey,
             liturgicalDay: prev.liturgicalDay,
             loading: false,
             refreshing: false,
@@ -105,7 +106,7 @@ export function useOrthocalDay(civilDate: Date, liturgicalCalendar: PrimaryCalen
     return () => {
       cancelled = true;
     };
-  }, [queryKey, liturgicalCalendar, civilDate]);
+  }, [queryKey, queryDate, liturgicalCalendar, civilDate]);
 
-  return state;
+  return current;
 }

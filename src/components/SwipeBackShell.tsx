@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   blurWrap: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
   page: {
     flex: 1,

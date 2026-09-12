@@ -1,5 +1,5 @@
 import { useRouter, type Href } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type ColorValue } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -14,8 +14,8 @@ import { SectionIcon } from './SectionIcon';
 
 type Props = {
   servingRole: ClergyRole;
-  textColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
 };
 

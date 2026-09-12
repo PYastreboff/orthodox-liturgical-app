@@ -8,8 +8,7 @@ import {
   useWindowDimensions,
   View,
   type GestureResponderHandlers,
-  type ScrollViewProps,
-} from 'react-native';
+  type ScrollViewProps, type ColorValue } from 'react-native';
 
 import { useSwipeToDismissSheet } from '../../hooks/useSwipeToDismissSheet';
 import { radii } from '../../theme/tokens';
@@ -73,7 +72,7 @@ type Props = {
   onClose: () => void;
   sheetHeight: number;
   surfaceBg: string;
-  borderColor: string;
+  borderColor: ColorValue;
   handleColor: string;
   children: ReactNode;
 };

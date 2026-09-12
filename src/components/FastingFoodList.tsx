@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import type { FastingFoodItem } from '../i18n/fastingLabels';
 import { FastingFoodIcon } from './FastingFoodIcon';
@@ -6,8 +6,8 @@ import { FastingFoodIcon } from './FastingFoodIcon';
 type Props = {
   heading: string;
   items: FastingFoodItem[];
-  textColor: string;
-  iconColor: string;
+  textColor: ColorValue;
+  iconColor: ColorValue;
   bodyType: { fontSize: number; lineHeight: number };
 };
 

@@ -287,10 +287,6 @@ export function CompareSidePicker<T extends string>({
     remeasureFill();
   }, [remeasureFill]);
 
-  useEffect(() => {
-    if (!measureFill) setFillHeight(null);
-  }, [measureFill]);
-
   return (
     <View
       ref={wrapRef}

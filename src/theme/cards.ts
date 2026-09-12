@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet, type ViewStyle, type ColorValue } from 'react-native';
 
 import { colors, radii } from './tokens';
 
@@ -47,7 +47,7 @@ export function surfaceCard(isDark: boolean, options?: { radius?: number; elevat
   };
 }
 
-export function iconBadgeSurface(accentSoft: string): ViewStyle {
+export function iconBadgeSurface(accentSoft: ColorValue): ViewStyle {
   return {
     width: 40,
     height: 40,
@@ -58,7 +58,7 @@ export function iconBadgeSurface(accentSoft: string): ViewStyle {
   };
 }
 
-export function chipSurface(accentMuted: string, isDark = false): ViewStyle {
+export function chipSurface(accentMuted: ColorValue, isDark = false): ViewStyle {
   return {
     borderRadius: radii.pill,
     paddingVertical: 6,

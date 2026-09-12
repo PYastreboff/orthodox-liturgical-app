@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from "expo-router/react-navigation";
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View, type ColorValue } from 'react-native';
 
 import { cardElevation } from '../theme/cards';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
@@ -14,8 +14,8 @@ type Props = {
   backLabel: string;
   onBack: () => void;
   icon: ReactNode;
-  accentSoft: string;
-  mutedColor: string;
+  accentSoft: ColorValue;
+  mutedColor: ColorValue;
   /** When `back`, chevron back button sits in the hero row instead of the section icon. */
   iconPlacement?: 'hero' | 'back';
 };

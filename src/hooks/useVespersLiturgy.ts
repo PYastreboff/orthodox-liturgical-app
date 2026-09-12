@@ -14,11 +14,24 @@ export function useVespersLiturgy(): VespersLiturgyState & { reload: () => void 
       : { status: 'loading', sections: [] },
   );
 
-  const load = useCallback((force = false) => {
-    if (!force && getCachedVespersLiturgy()) {
-      setState({ status: 'ready', sections: getCachedVespersLiturgy()! });
-      return;
-    }
+  useEffect(() => {
+    if (getCachedVespersLiturgy()) return;
+    let cancelled = false;
+    void fetchVespersLiturgy()
+      .then((sections) => {
+        if (!cancelled) setState({ status: 'ready', sections });
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        const message = error instanceof Error ? error.message : 'Network error';
+        setState({ status: 'offline', sections: [], error: message });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const reload = useCallback(() => {
     setState((prev) => ({ status: 'loading', sections: prev.sections }));
     void fetchVespersLiturgy()
       .then((sections) => {
@@ -30,9 +43,5 @@ export function useVespersLiturgy(): VespersLiturgyState & { reload: () => void 
       });
   }, []);
 
-  useEffect(() => {
-    load(false);
-  }, [load]);
-
-  return { ...state, reload: () => load(true) };
+  return { ...state, reload };
 }

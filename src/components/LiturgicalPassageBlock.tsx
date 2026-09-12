@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View, type ColorValue } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import { useFontScale } from '../hooks/useFontScale';
@@ -22,7 +22,7 @@ function passageTitle(item: LiturgicalTextItem): string {
 
 type PassageBodyProps = {
   item: LiturgicalTextItem;
-  textColor: string;
+  textColor: ColorValue;
   verseNumberColor: string;
 };
 
@@ -73,7 +73,7 @@ function PassageBody({ item, textColor, verseNumberColor }: PassageBodyProps) {
 
 type Props = {
   item: LiturgicalTextItem;
-  textColor: string;
+  textColor: ColorValue;
   verseNumberColor: string;
 };
 
@@ -101,9 +101,9 @@ type CompareColumnProps = {
   lang: ReadingsSingleLanguage | null;
   item?: LiturgicalTextItem;
   loading?: boolean;
-  textColor: string;
+  textColor: ColorValue;
   verseNumberColor: string;
-  mutedColor: string;
+  mutedColor: ColorValue;
   hintType: { fontSize: number; lineHeight: number };
   loadingLabel: string;
 };
@@ -154,9 +154,9 @@ type SideBySideProps = {
   rightLang: ReadingsSingleLanguage | null;
   leftLoading?: boolean;
   rightLoading?: boolean;
-  textColor: string;
+  textColor: ColorValue;
   verseNumberColor: string;
-  mutedColor: string;
+  mutedColor: ColorValue;
 };
 
 export function LiturgicalPassageBlockSideBySide({
@@ -216,9 +216,9 @@ type SectionProps = {
   category: LiturgicalTextCategory;
   title: string;
   items: LiturgicalTextItem[];
-  textColor: string;
+  textColor: ColorValue;
   verseNumberColor: string;
-  headingColor: string;
+  headingColor: ColorValue;
   topGap?: boolean;
   /** Extra space before the first section on the readings page. */
   leadingGap?: boolean;

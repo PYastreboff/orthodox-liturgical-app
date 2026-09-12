@@ -1,8 +1,9 @@
+import { type ColorValue } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
 
 type Props = {
   size: number;
-  color: string;
+  color: ColorValue;
 };
 
 /** Short-sleeved bishop’s sakkos — boxy tunic, distinct from the conical phelonion. */

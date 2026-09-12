@@ -16,9 +16,25 @@ export function useOrthodoxLivestreams(): OrthodoxLivestreamsState & { reload: (
     streams: [],
   });
 
-  const load = useCallback((force = false) => {
+  useEffect(() => {
+    let cancelled = false;
+    void fetchOrthodoxLivestreams({ force: false })
+      .then((streams) => {
+        if (!cancelled) setState({ status: 'ready', streams });
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        const message = error instanceof Error ? error.message : 'Network error';
+        setState({ status: 'offline', streams: [], error: message });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const reload = useCallback(() => {
     setState((prev) => ({ status: 'loading', streams: prev.streams }));
-    void fetchOrthodoxLivestreams({ force })
+    void fetchOrthodoxLivestreams({ force: true })
       .then((streams) => {
         setState({ status: 'ready', streams });
       })
@@ -28,9 +44,5 @@ export function useOrthodoxLivestreams(): OrthodoxLivestreamsState & { reload: (
       });
   }, []);
 
-  useEffect(() => {
-    load(false);
-  }, [load]);
-
-  return { ...state, reload: () => load(true) };
+  return { ...state, reload };
 }

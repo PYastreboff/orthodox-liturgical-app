@@ -1,4 +1,4 @@
-import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View, type ColorValue } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import { useOrthodoxLivestreams } from '../hooks/useOrthodoxLivestreams';
@@ -9,8 +9,8 @@ import { colors } from '../theme/tokens';
 const GOARCH_LIVE_BROADCASTS_URL = 'https://www.goarch.org/live-broadcasts';
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };

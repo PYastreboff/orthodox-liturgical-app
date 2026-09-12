@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import type { UiLanguage } from '../../i18n/types';
 
@@ -13,7 +13,7 @@ export const LANGUAGE_GLYPH_ICON_SIZE = 22;
 
 type Props = {
   lang: UiLanguage;
-  color: string;
+  color: ColorValue;
 };
 
 export function LanguageGlyphIcon({ lang, color }: Props) {

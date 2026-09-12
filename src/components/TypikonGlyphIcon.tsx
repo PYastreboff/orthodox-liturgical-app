@@ -1,3 +1,4 @@
+import { type ColorValue } from 'react-native';
 import Svg, { Circle, G, Line, Path } from 'react-native-svg';
 
 import type { TypikonGlyph } from '../lib/liturgical/typikonSymbols';
@@ -5,11 +6,11 @@ import type { TypikonGlyph } from '../lib/liturgical/typikonSymbols';
 type Props = {
   glyph: TypikonGlyph;
   size: number;
-  color: string;
+  color: ColorValue;
 };
 
 /** Pommée cross used on polyeleos / great-feast typikon marks. */
-function PommeeCross({ color, sw }: { color: string; sw: number }) {
+function PommeeCross({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Line x1={12} y1={5.5} x2={12} y2={18.5} stroke={color} strokeWidth={sw} strokeLinecap="round" />
@@ -19,7 +20,7 @@ function PommeeCross({ color, sw }: { color: string; sw: number }) {
   );
 }
 
-function GreatFeastMark({ color, sw }: { color: string; sw: number }) {
+function GreatFeastMark({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Circle cx={12} cy={12} r={9.5} fill="none" stroke={color} strokeWidth={sw} />
@@ -28,7 +29,7 @@ function GreatFeastMark({ color, sw }: { color: string; sw: number }) {
   );
 }
 
-function VigilMark({ color, sw }: { color: string; sw: number }) {
+function VigilMark({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Path
@@ -43,11 +44,11 @@ function VigilMark({ color, sw }: { color: string; sw: number }) {
   );
 }
 
-function PolyeleosMark({ color, sw }: { color: string; sw: number }) {
+function PolyeleosMark({ color, sw }: { color: ColorValue; sw: number }) {
   return <PommeeCross color={color} sw={sw} />;
 }
 
-function ThreeDotsMark({ color, sw }: { color: string; sw: number }) {
+function ThreeDotsMark({ color, sw }: { color: ColorValue; sw: number }) {
   const dot = sw * 0.55;
   return (
     <G>
@@ -65,7 +66,7 @@ function ThreeDotsMark({ color, sw }: { color: string; sw: number }) {
   );
 }
 
-function LiturgyWheelMark({ color, sw }: { color: string; sw: number }) {
+function LiturgyWheelMark({ color, sw }: { color: ColorValue; sw: number }) {
   const rays = [0, 45, 90, 135, 180, 225, 270, 315];
   return (
     <G>
@@ -91,7 +92,7 @@ function LiturgyWheelMark({ color, sw }: { color: string; sw: number }) {
   );
 }
 
-function NoLiturgyMark({ color, sw }: { color: string; sw: number }) {
+function NoLiturgyMark({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <G>
       <Circle cx={12} cy={12} r={9} fill="none" stroke={color} strokeWidth={sw} />
@@ -108,7 +109,7 @@ function NoLiturgyMark({ color, sw }: { color: string; sw: number }) {
   );
 }
 
-function OrdinaryMark({ color, sw }: { color: string; sw: number }) {
+function OrdinaryMark({ color, sw }: { color: ColorValue; sw: number }) {
   return (
     <Line
       x1={7}

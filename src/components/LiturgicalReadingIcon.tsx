@@ -1,3 +1,4 @@
+import { type ColorValue } from 'react-native';
 import type { LiturgicalTextCategory } from '../lib/liturgical/liturgicalTexts';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { HoverAccessible } from './HoverAccessible';
@@ -17,7 +18,7 @@ const A11Y_KEYS: Record<LiturgicalTextCategory, string> = {
 
 type Props = {
   category: LiturgicalTextCategory;
-  color: string;
+  color: ColorValue;
   size?: number;
 };
 

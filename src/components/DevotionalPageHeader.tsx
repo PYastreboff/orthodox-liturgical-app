@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import { iconBadgeSurface } from '../theme/cards';
 import { typography } from '../theme/tokens';
@@ -8,11 +8,11 @@ type Props = {
   icon?: ReactNode;
   /** Replaces the icon badge — e.g. inline back control on day section pages. */
   leading?: ReactNode;
-  accentSoft: string;
+  accentSoft: ColorValue;
   title: string;
   subtitle?: string;
-  textColor: string;
-  mutedColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
 };
 
 /** Tab-screen hero for Prayers and Liturgy — icon badge plus title block. */

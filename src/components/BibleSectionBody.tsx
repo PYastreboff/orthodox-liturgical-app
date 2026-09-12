@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View, type ColorValue } from 'react-native';
 import { useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 
@@ -12,9 +12,9 @@ import { BibleTranslationToggle } from './BibleTranslationToggle';
 import { ScriptureChapterView } from './ScriptureChapterView';
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };

@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, type ColorValue } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { HoverAccessible } from './HoverAccessible';
@@ -10,7 +10,7 @@ type TabName = 'today' | 'calendar' | 'prayers' | 'liturgy' | 'settings';
 
 type Props = {
   name: TabName;
-  color: string;
+  color: ColorValue;
   size?: number;
   focused?: boolean;
   compact?: boolean;
@@ -128,7 +128,7 @@ export function tabBarIconOptions(
 ) {
   const a11yLabel = t(TAB_A11Y_KEY[name]);
   return {
-    tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
+    tabBarIcon: ({ color, focused }: { color: ColorValue; focused: boolean }) => (
       <TabNavIcon
         name={name}
         color={color}

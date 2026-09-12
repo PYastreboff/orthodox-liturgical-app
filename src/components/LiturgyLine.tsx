@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text } from 'react-native';
+import { Platform, StyleSheet, Text, type ColorValue } from 'react-native';
 
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { translate } from '../i18n/translate';
@@ -22,8 +22,8 @@ const LITURGY_SERIF = Platform.select({
 type Props = {
   line: string;
   lang: LiturgyTextLang;
-  textColor: string;
-  mutedColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
   isDark: boolean;
   compact?: boolean;
   searchQuery?: string;
@@ -78,6 +78,9 @@ export function LiturgyLine({
       activeMatchIndex,
       matchIndexStart: matchCursor,
     });
+    // Render-time highlight cursor — mark() is invoked only while building JSX
+    // below, so the running match index never outlives the render.
+    // eslint-disable-next-line react-hooks/immutability
     matchCursor = result.nextMatchIndex;
     return result.nodes;
   };

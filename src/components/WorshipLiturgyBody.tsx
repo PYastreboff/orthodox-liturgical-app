@@ -1,4 +1,4 @@
-import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View, type ScrollView, type View as RNView, type ViewStyle } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View, type ScrollView, type View as RNView, type ViewStyle, type ColorValue } from 'react-native';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 
 import { AppScrollView } from './AppScrollView';
@@ -47,9 +47,9 @@ import { surfaceCard } from '../theme/cards';
 import { colors, radii } from '../theme/tokens';
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   hintType: { fontSize: number; lineHeight: number };
@@ -222,8 +222,8 @@ function WorshipLiturgyLineItem({
   lineKey: string;
   line: string;
   lang: LiturgyTextLang;
-  textColor: string;
-  mutedColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
   isDark: boolean;
   compact?: boolean;
   searchQuery: string;
@@ -301,8 +301,8 @@ function CompareCell({
   lineKeyPrefix: string;
   lines: string[];
   lang: 'en' | 'el' | 'ru';
-  textColor: string;
-  mutedColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
   isDark: boolean;
   searchQuery: string;
   activeMatchIndex: number | null;
@@ -347,7 +347,7 @@ function LiturgySectionBlock({
 }: {
   title: string;
   body: ReactNode;
-  textColor: string;
+  textColor: ColorValue;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
 }) {
@@ -382,9 +382,9 @@ function ChrysostomSectionBody({
   id: ChrysostomSectionId | BasilSectionId;
   sections: readonly ChrysostomSection[] | readonly BasilSection[];
   mode: LiturgyDisplayMode;
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   searchQuery: string;
@@ -520,9 +520,9 @@ function VespersSectionBody({
   id: VespersSectionId;
   sections: readonly VespersSection[];
   mode: LiturgyDisplayMode;
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
   bodyType: { fontSize: number; lineHeight: number };
   searchQuery: string;
@@ -659,8 +659,23 @@ export function WorshipLiturgyBody({
   const vespers = useVespersLiturgy();
   const [mode, setMode] = useState<LiturgyDisplayMode>({ kind: 'single', lang: 'en' });
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeMatchIndex, setActiveMatchIndex] = useState<number | null>(null);
   const searchNorm = normalizeSearch(searchQuery);
+  const searchKey = `${searchNorm ?? ''}|${service ?? ''}|${mode.kind}`;
+  const [activeMatchState, setActiveMatchState] = useState<{
+    key: string;
+    index: number | null;
+  }>(() => ({ key: searchKey, index: searchNorm ? 0 : null }));
+  /** Active search match — derived for the current search; stored value only mirrors user navigation. */
+  const activeMatchIndex =
+    activeMatchState.key === searchKey
+      ? activeMatchState.index
+      : searchNorm
+        ? 0
+        : null;
+  const setActiveMatchIndex = useCallback(
+    (index: number | null) => setActiveMatchState({ key: searchKey, index }),
+    [searchKey],
+  );
   const pageBg = isDark ? colors.darkBg : colors.parchment;
   const scrollRef = useRef<ScrollView>(null);
   const onTabScroll = useTabBarScroll(scrollRoute ?? '__none__', scrollRef);
@@ -741,21 +756,13 @@ export function WorshipLiturgyBody({
 
   const searchMatchCount = searchPlan?.total ?? (searchNorm ? 0 : null);
 
-  useEffect(() => {
-    if (!searchNorm) {
-      setActiveMatchIndex(null);
-      return;
-    }
-    setActiveMatchIndex(0);
-  }, [searchNorm, service, mode]);
-
   const goToMatch = useCallback(
     (index: number) => {
       if (!searchPlan?.total) return;
       const wrapped = ((index % searchPlan.total) + searchPlan.total) % searchPlan.total;
       setActiveMatchIndex(wrapped);
     },
-    [searchPlan],
+    [searchPlan, setActiveMatchIndex],
   );
 
   const goToNextMatch = useCallback(() => {

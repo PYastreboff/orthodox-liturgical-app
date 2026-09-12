@@ -1,5 +1,5 @@
 import { useRouter, type Href } from 'expo-router';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, type ColorValue } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { PrayerRopeIcon } from './svg/PrayerRopeIcon';
 
@@ -10,9 +10,9 @@ import { surfaceCard } from '../theme/cards';
 import { radii } from '../theme/tokens';
 
 type Props = {
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
+  textColor: ColorValue;
+  mutedColor: ColorValue;
+  borderColor: ColorValue;
   isDark: boolean;
 };
 

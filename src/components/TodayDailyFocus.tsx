@@ -1,6 +1,6 @@
 import { useRouter, type Href } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
@@ -14,7 +14,7 @@ import { SectionIcon } from './SectionIcon';
 
 type Props = {
   gospel: ReadingExcerpt | null;
-  textColor: string;
+  textColor: ColorValue;
   isDark: boolean;
   loading?: boolean;
 };

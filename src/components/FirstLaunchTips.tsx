@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(18, 16, 14, 0.55)',
   },
   sheet: {

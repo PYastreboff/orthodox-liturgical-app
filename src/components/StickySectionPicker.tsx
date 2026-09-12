@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { radii } from '../theme/tokens';
@@ -15,7 +15,7 @@ type Props = {
   onSelect: (id: string) => void;
   isDark: boolean;
   accentColor: string;
-  accentSoft: string;
+  accentSoft: ColorValue;
 };
 
 /** Horizontal chip bar for jumping between long-form devotional sections. */
