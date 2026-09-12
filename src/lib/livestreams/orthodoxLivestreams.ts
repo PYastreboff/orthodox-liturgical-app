@@ -223,7 +223,7 @@ export async function fetchOrthodoxLivestreams(options?: {
     const merged = dedupeStreams([...base, ...(native ?? [])]);
     cachedStreams = sortLiveFirst(merged);
     cachedAt = Date.now();
-    return merged;
+    return cachedStreams;
   })();
 
   try {
