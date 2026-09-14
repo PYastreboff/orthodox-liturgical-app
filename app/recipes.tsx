@@ -3,7 +3,6 @@ import { useTheme } from "expo-router/react-navigation";
 import Head from 'expo-router/head';
 import { StyleSheet, View } from 'react-native';
 
-import { AppScrollView } from '../src/components/AppScrollView';
 import { RecipesLibrary } from '../src/components/RecipesLibrary';
 import { StackScreenHeader } from '../src/components/StackScreenHeader';
 import { SwipeBackShell } from '../src/components/SwipeBackShell';
@@ -37,10 +36,8 @@ export default function RecipesScreen() {
       </Head>
       <SwipeBackShell onBack={goBack}>
         <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
-          <AppScrollView
-            contentInsetAdjustmentBehavior="never"
-            keyboardShouldPersistTaps="handled"
-            style={styles.scroll}
+          <RecipesLibrary
+            style={styles.list}
             contentContainerStyle={[
               styles.content,
               stackContentColumnStyle({
@@ -50,25 +47,24 @@ export default function RecipesScreen() {
               }),
               { paddingTop: screenSafe.paddingTop + 16, paddingBottom: insets.bottom + 28 },
             ]}
-          >
-            <StackScreenHeader
-              title={t('recipes.pageTitle')}
-              subtitle={t('recipes.pageIntro')}
-              backLabel={t('recipes.back')}
-              onBack={goBack}
-              icon={<Feather name="book-open" size={22} color={vestmentAccent.accent} />}
-              accentSoft={vestmentAccent.accentSoft}
-              mutedColor={muted}
-              iconPlacement="back"
-            />
-            <RecipesLibrary
-              textColor={theme.colors.text}
-              mutedColor={muted}
-              borderColor={theme.colors.border}
-              isDark={isDark}
-              contentBottom={8}
-            />
-          </AppScrollView>
+            textColor={theme.colors.text}
+            mutedColor={muted}
+            borderColor={theme.colors.border}
+            isDark={isDark}
+            contentBottom={8}
+            header={
+              <StackScreenHeader
+                title={t('recipes.pageTitle')}
+                subtitle={t('recipes.pageIntro')}
+                backLabel={t('recipes.back')}
+                onBack={goBack}
+                icon={<Feather name="book-open" size={22} color={vestmentAccent.accent} />}
+                accentSoft={vestmentAccent.accentSoft}
+                mutedColor={muted}
+                iconPlacement="back"
+              />
+            }
+          />
         </View>
       </SwipeBackShell>
     </>
@@ -79,7 +75,7 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
-  scroll: {
+  list: {
     flex: 1,
   },
   content: {},

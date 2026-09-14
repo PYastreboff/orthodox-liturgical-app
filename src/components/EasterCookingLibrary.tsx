@@ -1,12 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import {
+  FlatList,
   Image,
   Platform,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
-  View, type ColorValue } from 'react-native';
+  View, type ColorValue, type StyleProp, type ViewStyle } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -20,7 +21,11 @@ import {
   easterFoodTotalMinutes,
   type EasterFood,
 } from '../lib/easter/easterCooking';
-import { easterFoodImageSource, easterFoodImageUriFallback } from '../lib/easter/easterCookingImages';
+import {
+  easterFoodImageSource,
+  easterFoodImageUriFallback,
+  easterFoodThumbSource,
+} from '../lib/easter/easterCookingImages';
 import { fuzzyNameScore } from '../lib/liturgical/fuzzySearch';
 import { recipeDifficultyLabelKey } from '../lib/recipes/recipeLabels';
 import { colors } from '../theme/tokens';
@@ -31,6 +36,9 @@ type Props = {
   borderColor: ColorValue;
   isDark: boolean;
   contentBottom?: number;
+  header?: ReactNode;
+  style?: StyleProp<ViewStyle>;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
 function EasterFoodRow({
@@ -50,15 +58,18 @@ function EasterFoodRow({
   const { text } = useFontScale();
   const router = useRouter();
   const [imageFailed, setImageFailed] = useState(false);
+  const [thumbFailed, setThumbFailed] = useState(false);
   const [useFallbackImage, setUseFallbackImage] = useState(false);
   const title = easterFoodTitle(food, lang);
   const totalMinutes = easterFoodTotalMinutes(food);
-  const imageSource = useFallbackImage
+  const thumbSource = easterFoodThumbSource(food.id);
+  const fullSource = useFallbackImage
     ? (() => {
         const uri = easterFoodImageUriFallback(food.id);
         return uri ? { uri } : null;
       })()
     : easterFoodImageSource(food.id);
+  const imageSource = thumbFailed ? fullSource : thumbSource;
   const titleType = text(16, 21);
   const metaType = text(13, 18);
 
@@ -84,6 +95,10 @@ function EasterFoodRow({
           resizeMode="cover"
           accessibilityIgnoresInvertColors
           onError={() => {
+            if (!thumbFailed && easterFoodThumbSource(food.id)) {
+              setThumbFailed(true);
+              return;
+            }
             if (!useFallbackImage && easterFoodImageUriFallback(food.id)) {
               setUseFallbackImage(true);
               return;
@@ -130,12 +145,16 @@ export function EasterCookingLibrary({
   borderColor,
   isDark,
   contentBottom = 40,
+  header,
+  style,
+  contentContainerStyle,
 }: Props) {
   const { t, lang } = useAppTranslation();
   const { text } = useFontScale();
   const bodyType = text(14, 20);
   const [query, setQuery] = useState('');
   const searchBg = isDark ? 'rgba(255,255,255,0.05)' : colors.card;
+  const rowCount = EASTER_FOODS.length;
 
   const filtered = useMemo(() => {
     const q = query.trim();
@@ -163,8 +182,9 @@ export function EasterCookingLibrary({
     return scored.map((row) => row.food);
   }, [lang, query]);
 
-  return (
-    <View style={styles.root}>
+  const renderHeader = () => (
+    <View style={styles.headerBlock}>
+      {header}
       <View
         style={[
           styles.searchWrap,
@@ -199,44 +219,60 @@ export function EasterCookingLibrary({
           </Pressable>
         ) : null}
       </View>
-
-      <View style={[styles.list, { paddingBottom: contentBottom }]}>
-        {filtered.length === 0 ? (
-          <View style={styles.emptyState}>
-            <View
-              style={[
-                styles.emptyIconWrap,
-                {
-                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)',
-                },
-              ]}
-            >
-              <Feather name="search" size={28} color={mutedColor} />
-            </View>
-            <Text style={[styles.emptyTitle, bodyType, { color: textColor }]}>
-              {t('recipes.noResults')}
-            </Text>
-          </View>
-        ) : (
-          filtered.map((food) => (
-            <EasterFoodRow
-              key={food.id}
-              food={food}
-              textColor={textColor}
-              mutedColor={mutedColor}
-              borderColor={borderColor}
-              isDark={isDark}
-            />
-          ))
-        )}
-      </View>
     </View>
+  );
+
+  const renderEmpty = () => (
+    <View style={styles.emptyState}>
+      <View
+        style={[
+          styles.emptyIconWrap,
+          {
+            backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)',
+          },
+        ]}
+      >
+        <Feather name="search" size={28} color={mutedColor} />
+      </View>
+      <Text style={[styles.emptyTitle, bodyType, { color: textColor }]}>
+        {t('recipes.noResults')}
+      </Text>
+    </View>
+  );
+
+  return (
+    <FlatList
+      data={filtered}
+      keyExtractor={(food) => food.id}
+      renderItem={({ item }) => (
+        <EasterFoodRow
+          food={item}
+          textColor={textColor}
+          mutedColor={mutedColor}
+          borderColor={borderColor}
+          isDark={isDark}
+        />
+      )}
+      ListHeaderComponent={renderHeader}
+      ListEmptyComponent={renderEmpty}
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      contentContainerStyle={[styles.listContent, { paddingBottom: contentBottom }, contentContainerStyle]}
+      style={style}
+      contentInsetAdjustmentBehavior="never"
+      keyboardShouldPersistTaps="handled"
+      windowSize={7}
+      maxToRenderPerBatch={12}
+      initialNumToRender={12}
+      removeClippedSubviews={Platform.OS !== 'web' && rowCount > 12}
+      accessibilityLabel={t('easterCooking.pageTitle')}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
+  headerBlock: {
     gap: 14,
+    paddingBottom: 14,
   },
   searchWrap: {
     flexDirection: 'row',
@@ -254,9 +290,12 @@ const styles = StyleSheet.create({
     margin: 0,
     ...(Platform.OS === 'web' ? { outlineStyle: 'none' as 'solid' } : null),
   },
-  list: {
-    gap: 10,
+  listContent: {
+    flexGrow: 1,
     minHeight: 220,
+  },
+  separator: {
+    height: 10,
   },
   emptyState: {
     alignItems: 'center',

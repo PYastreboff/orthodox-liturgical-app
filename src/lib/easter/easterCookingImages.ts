@@ -42,3 +42,10 @@ export function easterFoodImageSource(id: string): ImageSourcePropType | null {
   const uri = easterFoodImageUri(id);
   return uri ? { uri } : null;
 }
+
+/** Downscaled thumbnail for list rows (light on memory at runtime). */
+export function easterFoodThumbSource(id: string): ImageSourcePropType | null {
+  if (!EASTER_IMAGE_IDS.has(id as EasterFoodId)) return null;
+  const base = EASTER_IMAGE_BASE.replace(/\/$/, '');
+  return { uri: `${base}/${id}-thumb.jpg` };
+}

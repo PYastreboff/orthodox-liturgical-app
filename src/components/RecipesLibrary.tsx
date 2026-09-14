@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import {
   ActivityIndicator,
+  FlatList,
   Image,
   Platform,
   Pressable,
@@ -8,7 +9,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View, type ColorValue } from 'react-native';
+  View, type ColorValue, type StyleProp, type ViewStyle } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -29,7 +30,7 @@ import {
   recipeDifficultyLabelKey,
   recipeMealSlotLabelKey,
 } from '../lib/recipes/recipeLabels';
-import { recipeImageSource } from '../lib/recipes/recipeImages';
+import { recipeImageSource, recipeThumbSource } from '../lib/recipes/recipeImages';
 import { fuzzyNameScore } from '../lib/liturgical/fuzzySearch';
 import { colors } from '../theme/tokens';
 
@@ -41,6 +42,9 @@ type Props = {
   borderColor: ColorValue;
   isDark: boolean;
   contentBottom?: number;
+  header?: ReactNode;
+  style?: StyleProp<ViewStyle>;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
 function RecipeRow({
@@ -60,9 +64,12 @@ function RecipeRow({
   const { text } = useFontScale();
   const router = useRouter();
   const [imageFailed, setImageFailed] = useState(false);
+  const [thumbFailed, setThumbFailed] = useState(false);
   const title = recipeTitle(recipe, lang);
   const totalMinutes = recipeTotalMinutes(recipe);
-  const imageSource = recipeImageSource(recipe.id);
+  const thumbSource = recipeThumbSource(recipe.id);
+  const fullSource = recipeImageSource(recipe.id);
+  const imageSource = thumbFailed ? fullSource : thumbSource;
   const titleType = text(16, 21);
   const metaType = text(13, 18);
 
@@ -87,7 +94,13 @@ function RecipeRow({
           style={styles.thumb}
           resizeMode="cover"
           accessibilityIgnoresInvertColors
-          onError={() => setImageFailed(true)}
+          onError={() => {
+            if (!thumbFailed && thumbSource) {
+              setThumbFailed(true);
+              return;
+            }
+            setImageFailed(true);
+          }}
         />
       ) : (
         <View
@@ -128,6 +141,9 @@ export function RecipesLibrary({
   borderColor,
   isDark,
   contentBottom = 40,
+  header,
+  style,
+  contentContainerStyle,
 }: Props) {
   const { t, lang } = useAppTranslation();
   const { text } = useFontScale();
@@ -174,9 +190,11 @@ export function RecipesLibrary({
   const chipSelectedFg = isDark ? colors.darkBg : colors.parchment;
   const chipIdleBg = isDark ? 'rgba(255,255,255,0.04)' : colors.card;
   const searchBg = isDark ? 'rgba(255,255,255,0.05)' : colors.card;
+  const rowCount = filtered.length;
 
-  return (
-    <View style={styles.root}>
+  const renderHeader = () => (
+    <View style={styles.headerBlock}>
+      {header}
       <View
         style={[
           styles.searchWrap,
@@ -253,79 +271,104 @@ export function RecipesLibrary({
           );
         })}
       </ScrollView>
-
-      <View style={[styles.list, { paddingBottom: contentBottom }]}>
-        {library.status === 'loading' ? (
-          <View style={styles.emptyState}>
-            <ActivityIndicator size="small" color={colors.accentWine} />
-            <Text style={[styles.emptyTitle, bodyType, { color: mutedColor }]}>
-              {t('recipes.loadingLibrary')}
-            </Text>
-          </View>
-        ) : library.status === 'offline' ? (
-          <View style={styles.emptyState}>
-            <View
-              style={[
-                styles.emptyIconWrap,
-                {
-                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)',
-                },
-              ]}
-            >
-              <Feather name="wifi-off" size={28} color={mutedColor} />
-            </View>
-            <Text style={[styles.emptyTitle, bodyType, { color: textColor }]}>
-              {t('recipes.offlineTitle')}
-            </Text>
-            <Text style={[styles.emptyHint, bodyType, { color: mutedColor }]}>
-              {t('recipes.offlineBody')}
-            </Text>
-            <Pressable
-              onPress={library.reload}
-              style={[styles.retryBtn, { borderColor }]}
-              accessibilityRole="button"
-              accessibilityLabel={t('recipes.retry')}
-              {...hoverAccessibilityProps(t('recipes.retry'), { role: 'button' })}
-            >
-              <Text style={[styles.retryLabel, { color: textColor }]}>{t('recipes.retry')}</Text>
-            </Pressable>
-          </View>
-        ) : filtered.length === 0 ? (
-          <View style={styles.emptyState}>
-            <View
-              style={[
-                styles.emptyIconWrap,
-                {
-                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)',
-                },
-              ]}
-            >
-              <Feather name="search" size={28} color={mutedColor} />
-            </View>
-            <Text style={[styles.emptyTitle, bodyType, { color: textColor }]}>
-              {t('recipes.noResults')}
-            </Text>
-          </View>
-        ) : (
-          filtered.map((recipe) => (
-            <RecipeRow
-              key={recipe.id}
-              recipe={recipe}
-              textColor={textColor}
-              mutedColor={mutedColor}
-              borderColor={borderColor}
-              isDark={isDark}
-            />
-          ))
-        )}
-      </View>
     </View>
+  );
+
+  const renderEmpty = () => {
+    if (library.status === 'loading') {
+      return (
+        <View style={styles.emptyState}>
+          <ActivityIndicator size="small" color={colors.accentWine} />
+          <Text style={[styles.emptyTitle, bodyType, { color: mutedColor }]}>
+            {t('recipes.loadingLibrary')}
+          </Text>
+        </View>
+      );
+    }
+    if (library.status === 'offline') {
+      return (
+        <View style={styles.emptyState}>
+          <View
+            style={[
+              styles.emptyIconWrap,
+              {
+                backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)',
+              },
+            ]}
+          >
+            <Feather name="wifi-off" size={28} color={mutedColor} />
+          </View>
+          <Text style={[styles.emptyTitle, bodyType, { color: textColor }]}>
+            {t('recipes.offlineTitle')}
+          </Text>
+          <Text style={[styles.emptyHint, bodyType, { color: mutedColor }]}>
+            {t('recipes.offlineBody')}
+          </Text>
+          <Pressable
+            onPress={library.reload}
+            style={[styles.retryBtn, { borderColor }]}
+            accessibilityRole="button"
+            accessibilityLabel={t('recipes.retry')}
+            {...hoverAccessibilityProps(t('recipes.retry'), { role: 'button' })}
+          >
+            <Text style={[styles.retryLabel, { color: textColor }]}>{t('recipes.retry')}</Text>
+          </Pressable>
+        </View>
+      );
+    }
+    return (
+      <View style={styles.emptyState}>
+        <View
+          style={[
+            styles.emptyIconWrap,
+            {
+              backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(43,38,35,0.06)',
+            },
+          ]}
+        >
+          <Feather name="search" size={28} color={mutedColor} />
+        </View>
+        <Text style={[styles.emptyTitle, bodyType, { color: textColor }]}>
+          {t('recipes.noResults')}
+        </Text>
+      </View>
+    );
+  };
+
+  return (
+    <FlatList
+      data={filtered}
+      keyExtractor={(recipe) => recipe.id}
+      renderItem={({ item }) => (
+        <RecipeRow
+          recipe={item}
+          textColor={textColor}
+          mutedColor={mutedColor}
+          borderColor={borderColor}
+          isDark={isDark}
+        />
+      )}
+      ListHeaderComponent={renderHeader}
+      ListEmptyComponent={renderEmpty}
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      contentContainerStyle={[styles.listContent, { paddingBottom: contentBottom }, contentContainerStyle]}
+      style={style}
+      contentInsetAdjustmentBehavior="never"
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={(Platform.OS === 'web' ? undefined : undefined) as undefined}
+      windowSize={7}
+      maxToRenderPerBatch={12}
+      initialNumToRender={12}
+      removeClippedSubviews={Platform.OS !== 'web' && rowCount > 20}
+      accessibilityLabel={t('recipes.pageTitle')}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
+  headerBlock: {
     gap: 14,
+    paddingBottom: 14,
   },
   searchWrap: {
     flexDirection: 'row',
@@ -364,9 +407,12 @@ const styles = StyleSheet.create({
   chipLabel: {
     fontWeight: '600',
   },
-  list: {
-    gap: 10,
+  listContent: {
+    flexGrow: 1,
     minHeight: 220,
+  },
+  separator: {
+    height: 10,
   },
   emptyState: {
     alignItems: 'center',

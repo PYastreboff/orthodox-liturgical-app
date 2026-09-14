@@ -123,6 +123,18 @@ export function recipeImageUriFallback(recipeId: string): string | null {
   return `${JSDELIVR_BASE}/${recipeId}.jpg`;
 }
 
+export function recipeImageThumbUri(recipeId: string): string | null {
+  if (!RECIPE_IMAGE_IDS.has(recipeId)) return null;
+  const base = RECIPE_IMAGE_BASE.replace(/\/$/, '');
+  return `${base}/${recipeId}-thumb.jpg`;
+}
+
+/** Downscaled thumbnail for list rows (light on memory at runtime). */
+export function recipeThumbSource(recipeId: string): ImageSourcePropType | null {
+  const uri = recipeImageThumbUri(recipeId);
+  return uri ? { uri } : null;
+}
+
 export function recipeImageSource(recipeId: string): ImageSourcePropType | null {
   const uri = recipeImageUri(recipeId);
   return uri ? { uri } : null;

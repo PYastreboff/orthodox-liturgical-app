@@ -3,7 +3,6 @@ import { useTheme } from "expo-router/react-navigation";
 import Head from 'expo-router/head';
 import { StyleSheet, View } from 'react-native';
 
-import { AppScrollView } from '../src/components/AppScrollView';
 import { EasterCookingLibrary } from '../src/components/EasterCookingLibrary';
 import { StackScreenHeader } from '../src/components/StackScreenHeader';
 import { SwipeBackShell } from '../src/components/SwipeBackShell';
@@ -36,10 +35,8 @@ export default function EasterCookingScreen() {
       </Head>
       <SwipeBackShell onBack={goBack}>
         <View style={[styles.page, { backgroundColor: theme.colors.background }]}>
-          <AppScrollView
-            contentInsetAdjustmentBehavior="never"
-            keyboardShouldPersistTaps="handled"
-            style={styles.scroll}
+          <EasterCookingLibrary
+            style={styles.list}
             contentContainerStyle={[
               styles.content,
               stackContentColumnStyle({
@@ -49,25 +46,24 @@ export default function EasterCookingScreen() {
               }),
               { paddingTop: screenSafe.paddingTop + 16, paddingBottom: insets.bottom + 28 },
             ]}
-          >
-            <StackScreenHeader
-              title={t('easterCooking.pageTitle')}
-              subtitle={t('easterCooking.intro')}
-              backLabel={t('easterCooking.back')}
-              onBack={goBack}
-              icon={<Feather name="gift" size={22} color={vestmentAccent.accent} />}
-              accentSoft={vestmentAccent.accentSoft}
-              mutedColor={muted}
-              iconPlacement="back"
-            />
-            <EasterCookingLibrary
-              textColor={theme.colors.text}
-              mutedColor={muted}
-              borderColor={theme.colors.border}
-              isDark={isDark}
-              contentBottom={8}
-            />
-          </AppScrollView>
+            textColor={theme.colors.text}
+            mutedColor={muted}
+            borderColor={theme.colors.border}
+            isDark={isDark}
+            contentBottom={8}
+            header={
+              <StackScreenHeader
+                title={t('easterCooking.pageTitle')}
+                subtitle={t('easterCooking.intro')}
+                backLabel={t('easterCooking.back')}
+                onBack={goBack}
+                icon={<Feather name="gift" size={22} color={vestmentAccent.accent} />}
+                accentSoft={vestmentAccent.accentSoft}
+                mutedColor={muted}
+                iconPlacement="back"
+              />
+            }
+          />
         </View>
       </SwipeBackShell>
     </>
@@ -78,7 +74,7 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
-  scroll: {
+  list: {
     flex: 1,
   },
   content: {},
