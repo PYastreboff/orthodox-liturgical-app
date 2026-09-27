@@ -2,6 +2,7 @@ import type { MaterialTopTabBarProps } from "expo-router/js-top-tabs";
 import { useTheme } from "expo-router/react-navigation";
 import { StyleSheet, View } from 'react-native';
 
+import { FirstLaunchTips } from '../../src/components/FirstLaunchTips';
 import { MainTabBar } from '../../src/components/MainTabBar';
 import { tabBarIconOptions } from '../../src/components/TabBarIcon';
 import { useCalendarPrefetch } from '../../src/hooks/useCalendarPrefetch';
@@ -114,6 +115,7 @@ function TabsLayoutContent() {
           }}
         />
       </SwipeTabs>
+      <FirstLaunchTips />
     </View>
   );
 }

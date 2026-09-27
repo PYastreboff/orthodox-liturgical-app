@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { onTodayChange } from '../hooks/useToday';
 import { fromDayIso, startOfLocalDay, toDayIso } from '../lib/calendar/localDate';
 import {
   parseDayIsoFromQueryParam,
@@ -51,6 +52,22 @@ export function DayNavigationProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     syncDayQueryParamOnWeb(mountDayIsoRef.current);
   }, []);
+
+  const selectedDateRef = useRef(selectedDate);
+  useEffect(() => {
+    selectedDateRef.current = selectedDate;
+  }, [selectedDate]);
+
+  // Someone who left the app on "today" overnight should see the new today, not yesterday.
+  useEffect(
+    () =>
+      onTodayChange((previous, next) => {
+        if (selectedDateRef.current.getTime() !== previous.getTime()) return;
+        setSelectedDateState(next);
+        syncDayQueryParamOnWeb(toDayIso(next));
+      }),
+    [],
+  );
 
   useEffect(() => {
     const handleUrl = (incoming: string) => {

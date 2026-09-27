@@ -148,7 +148,9 @@ export function RecipesLibrary({
   const { t, lang } = useAppTranslation();
   const { text } = useFontScale();
   const bodyType = text(14, 20);
-  const chipType = text(13, 18);
+  const chipType = text(15, 20);
+  // iOS offsets single-line TextInput text vertically when lineHeight is set.
+  const searchType = Platform.OS === 'ios' ? { fontSize: bodyType.fontSize } : bodyType;
   const [query, setQuery] = useState('');
   const [meal, setMeal] = useState<MealFilter>('all');
   const library = useFastingRecipes();
@@ -210,7 +212,7 @@ export function RecipesLibrary({
           onChangeText={setQuery}
           placeholder={t('recipes.searchPlaceholder')}
           placeholderTextColor={mutedColor}
-          style={[styles.searchInput, bodyType, { color: textColor }]}
+          style={[styles.searchInput, searchType, { color: textColor }]}
           autoCorrect={false}
           autoCapitalize="none"
           clearButtonMode="while-editing"
@@ -262,8 +264,6 @@ export function RecipesLibrary({
                   { color: selected ? chipSelectedFg : textColor },
                 ]}
                 numberOfLines={1}
-                adjustsFontSizeToFit
-                minimumFontScale={0.85}
               >
                 {label}
               </Text>
@@ -348,8 +348,8 @@ export function RecipesLibrary({
           isDark={isDark}
         />
       )}
-      ListHeaderComponent={renderHeader}
-      ListEmptyComponent={renderEmpty}
+      ListHeaderComponent={renderHeader()}
+      ListEmptyComponent={renderEmpty()}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
       contentContainerStyle={[styles.listContent, { paddingBottom: contentBottom }, contentContainerStyle]}
       style={style}

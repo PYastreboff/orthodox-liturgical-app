@@ -21,6 +21,17 @@ function interpolate(template: string, params?: Record<string, string | number>)
   });
 }
 
+let activeUiLanguage: UiLanguage = 'en';
+
+/** Kept in sync by PreferencesProvider for UI that renders outside it (root error boundary). */
+export function setActiveUiLanguage(lang: UiLanguage): void {
+  activeUiLanguage = lang;
+}
+
+export function getActiveUiLanguage(): UiLanguage {
+  return activeUiLanguage;
+}
+
 export function translate(
   lang: UiLanguage,
   path: string,

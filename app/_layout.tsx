@@ -2,12 +2,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import '../src/lib/notifications/expoGoQuiet';
 
-import { Stack } from 'expo-router';
+import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import Head from 'expo-router/head';
 import { useTheme } from "expo-router/react-navigation";
 import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, type Metrics } from 'react-native-safe-area-context';
 
+import { AppErrorScreen } from '../src/components/AppErrorScreen';
 import { AppThemeProvider } from '../src/components/AppThemeProvider';
 import { LiturgicalRemindersSync } from '../src/components/LiturgicalRemindersSync';
 import { SplashGate } from '../src/components/SplashGate';
@@ -80,6 +81,10 @@ function RootStack() {
       </Stack>
     </View>
   );
+}
+
+export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
+  return <AppErrorScreen onRetry={() => void retry()} />;
 }
 
 export default function RootLayout() {

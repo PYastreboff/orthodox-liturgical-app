@@ -9,6 +9,7 @@ import { useFontScale } from '../hooks/useFontScale';
 import { BibleBookPickerModal } from './BibleBookPickerModal';
 import { BibleChapterPickerModal } from './BibleChapterPickerModal';
 import { BibleTranslationToggle } from './BibleTranslationToggle';
+import { OfflineNotice } from './OfflineNotice';
 import { ScriptureChapterView } from './ScriptureChapterView';
 
 type Props = {
@@ -128,7 +129,7 @@ export function BibleSectionBody({
           <Text style={[styles.hint, hintType, { color: mutedColor }]}>{t('bible.loading')}</Text>
         </View>
       ) : bible.error ? (
-        <Text style={[styles.hint, hintType, { color: mutedColor }]}>{t('bible.unavailable')}</Text>
+        <OfflineNotice message={t('bible.unavailable')} onRetry={bible.retry} textStyle={hintType} />
       ) : (
         <ScriptureChapterView
           chapterTitle={bible.chapterTitle}

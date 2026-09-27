@@ -4,6 +4,12 @@ import { el } from './messages.el';
 const en = {
   app: {
     name: 'OrthoDaily',
+    retry: 'Try Again',
+    crashTitle: 'Something Went Wrong',
+    crashBody: 'This screen hit an unexpected error. Your settings and saved dates are safe.',
+    notFoundTitle: 'Page Not Found',
+    notFoundBody: 'This link doesn’t match any page in OrthoDaily.',
+    goHome: 'Go to Today',
   },
   onboarding: {
     welcome: 'Welcome!',
@@ -173,8 +179,6 @@ const en = {
     notifyPresanctifiedHint: 'Afternoon alert (~16:30).',
     notifyWeeklyDigest: 'Weekly Digest',
     notifyWeeklyDigestHint: 'Sunday morning (~8:00) — feasts, fasts, and personal days ahead.',
-    homeScreenWidget: 'Home Screen Widget',
-    homeScreenWidgetHint: 'Today’s feast and fast on lock screen.',
     navLabels: 'Navbar Labels',
     navLabelsHint: 'Show a one-word label under each navbar item.',
     notifyPermissionDenied: 'Notification permission is off in system settings.',
@@ -197,6 +201,14 @@ const en = {
     sourceOcmaLink: 'OCMA-API',
     sourceOcmaHint:
       'Structured Orthodox calendar reference (Julian & Revised Julian); multilingual labels',
+    sourceGoarchLink: 'GOARCH Online Chapel',
+    sourceGoarchHint: 'Divine Liturgy texts (St John Chrysostom, St Basil) and Great Vespers',
+    sourceMarilenaLink: 'Marilena’s Kitchen',
+    sourceMarilenaHint: 'Lenten recipe inspiration and food photos',
+    sourceMiaKouppaLink: 'Mia Kouppa',
+    sourceMiaKouppaHint: 'Nistisima recipe inspiration and food photos',
+    replayTips: 'Show Tips Again',
+    replayTipsHint: 'Replay the short welcome tour.',
     dataSourcesNote:
       'Verify against your typikon where Moscow Patriarchate practice differs from OCA data.',
     bugReportTitle: 'Something Wrong?',
@@ -214,6 +226,13 @@ const en = {
     tipJarBody:
       'If the app helps your prayer or parish life, a tip via PayPal keeps development going. Never required. Thank you either way.',
     tipJarButton: 'Tip with PayPal',
+    tipJarBodyIos:
+      'If the app helps your prayer or parish life, a one-time tip keeps development going. Never required, and it unlocks nothing. Thank you either way.',
+    tipSmall: 'Small tip',
+    tipMedium: 'Kind tip',
+    tipLarge: 'Generous tip',
+    tipThanks: 'Thank you for your support!',
+    tipFailed: 'The purchase could not be completed. Please try again.',
     prayers: 'Prayers',
     prayersRowHint: 'Choose which prayers appear on Today.',
     prayersModalHint: 'Morning, evening, and Communion are on by default. Turn on others as you like.',
@@ -281,7 +300,7 @@ const en = {
   today: {
     loading: 'Loading liturgical data…',
     refreshing: 'Updating…',
-    offline: 'Offline or API unavailable — showing local calendar defaults. ({error})',
+    offline: 'Couldn’t reach the liturgical calendar service — showing local calendar defaults.',
     servingRole: 'Serving Role',
     roleLayperson: 'Layperson',
     roleChorister: 'Chorister',
@@ -1808,6 +1827,12 @@ const en = {
 const ru = {
   app: {
     name: 'OrthoDaily',
+    retry: 'Повторить',
+    crashTitle: 'Что-то Пошло Не Так',
+    crashBody: 'На этом экране произошла непредвиденная ошибка. Ваши настройки и даты сохранены.',
+    notFoundTitle: 'Страница Не Найдена',
+    notFoundBody: 'Эта ссылка не ведёт ни на одну страницу OrthoDaily.',
+    goHome: 'На Сегодня',
   },
   onboarding: {
     welcome: 'Добро пожаловать!',
@@ -1978,8 +2003,6 @@ const ru = {
     notifyPresanctifiedHint: 'Днём (~16:30).',
     notifyWeeklyDigest: 'Еженедельная сводка',
     notifyWeeklyDigestHint: 'Воскресенье утром (~8:00) — праздники, пост и личные даты на неделю.',
-    homeScreenWidget: 'Виджет на главном экране',
-    homeScreenWidgetHint: 'Праздник и пост на экране блокировки.',
     navLabels: 'Подписи в навигации',
     navLabelsHint: 'Показывать одно слово под каждой кнопкой навигации.',
     notifyPermissionDenied: 'Разрешение на уведомления выключено в настройках системы.',
@@ -2002,6 +2025,14 @@ const ru = {
     sourceOcmaLink: 'OCMA-API',
     sourceOcmaHint:
       'Структурированный православный календарь (юлианский и новый стиль); многоязычные подписи',
+    sourceGoarchLink: 'GOARCH Online Chapel',
+    sourceGoarchHint: 'Тексты Божественной литургии (свт. Иоанна Златоуста, свт. Василия) и вечерни',
+    sourceMarilenaLink: 'Marilena’s Kitchen',
+    sourceMarilenaHint: 'Идеи постных рецептов и фотографии блюд',
+    sourceMiaKouppaLink: 'Mia Kouppa',
+    sourceMiaKouppaHint: 'Идеи постных рецептов (nistisima) и фотографии блюд',
+    replayTips: 'Показать подсказки снова',
+    replayTipsHint: 'Повторить короткое знакомство с приложением.',
     dataSourcesNote:
       'Сверяйте с вашим типиконом, где практика Московской Патриархии расходится с данными OCA.',
     bugReportTitle: 'Что-то не так?',
@@ -2019,6 +2050,13 @@ const ru = {
     tipJarBody:
       'Если приложение помогает в молитве или приходской жизни, чаевые через PayPal поддерживают разработку. Не обязательно. В любом случае спасибо.',
     tipJarButton: 'Чаевые через PayPal',
+    tipJarBodyIos:
+      'Если приложение помогает вам в молитве или приходской жизни, разовые чаевые поддержат его развитие. Это не обязательно и ничего не открывает. Спасибо в любом случае.',
+    tipSmall: 'Небольшие',
+    tipMedium: 'Щедрые',
+    tipLarge: 'Очень щедрые',
+    tipThanks: 'Спасибо за поддержку!',
+    tipFailed: 'Не удалось завершить покупку. Попробуйте ещё раз.',
     prayers: 'Молитвы',
     prayersRowHint: 'Выберите, какие молитвы показывать на экране «Сегодня».',
     prayersModalHint:
@@ -2088,7 +2126,7 @@ const ru = {
   today: {
     loading: 'Загрузка литургических данных…',
     refreshing: 'Обновление…',
-    offline: 'Нет сети или API недоступен — показаны локальные значения календаря. ({error})',
+    offline: 'Не удалось связаться с сервисом календаря — показаны локальные значения.',
     servingRole: 'Служение',
     roleLayperson: 'Мирянин',
     roleChorister: 'Певчий',

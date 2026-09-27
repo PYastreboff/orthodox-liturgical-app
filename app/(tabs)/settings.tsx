@@ -15,11 +15,6 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 import { OrthoDailyLogo } from '../../src/components/OrthoDailyLogo';
-import {
-  PAYPAL_BUTTON_BLUE,
-  PAYPAL_BUTTON_BLUE_PRESSED,
-  PayPalMark,
-} from '../../src/components/PayPalLogo';
 import { AppScrollView } from '../../src/components/AppScrollView';
 import { DevotionalPageHeader } from '../../src/components/DevotionalPageHeader';
 import {
@@ -32,6 +27,7 @@ import {
   type NotificationToggleOption,
 } from '../../src/components/settings/SettingsNotificationsModal';
 import { SettingsPersonalDaysModal } from '../../src/components/settings/SettingsPersonalDaysModal';
+import { TipJarCard } from '../../src/components/settings/TipJarCard';
 import { getAppVersion } from '../../src/lib/appVersion';
 import { SettingsSwitch } from '../../src/components/settings/SettingsSwitch';
 import { LanguageGlyphIcon } from '../../src/components/settings/LanguageGlyphIcon';
@@ -39,7 +35,7 @@ import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useTabBarScroll } from '../../src/hooks/useTabBarScroll';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
-import { SUPPORT_URL, DONATION_URL } from '../../src/lib/legal/urls';
+import { SUPPORT_URL } from '../../src/lib/legal/urls';
 import {
   SERVING_ROLE_ICON_NAMES,
   SERVING_ROLE_IDS,
@@ -62,7 +58,6 @@ import type { ClergyRole } from '../../src/types/liturgical';
 import { syncWebDocumentTheme } from '../../src/theme/syncWebDocumentTheme';
 import { useResolvedColorScheme } from '../../src/theme/useResolvedColorScheme';
 import { useVestmentAccent } from '../../src/state/VestmentAccentContext';
-import { iconBadgeSurface } from '../../src/theme/cards';
 import { colors } from '../../src/theme/tokens';
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/peter-yastreboff-6a9664313/';
@@ -72,6 +67,9 @@ const TYPIKON_XML_URL =
 const PONOMAR_URL = 'https://www.ponomar.net/';
 const GETBIBLE_URL = 'https://getbible.net/v2/';
 const OCMA_API_URL = 'https://ocma-api-e9870f.gitlab.io/';
+const GOARCH_TEXTS_URL = 'https://www.goarch.org/chapel/texts';
+const MARILENA_URL = 'https://www.marilenaskitchen.com/';
+const MIA_KOUPPA_URL = 'https://www.miakouppa.com/';
 
 type SettingsPicker =
   | 'servingRole'
@@ -90,13 +88,19 @@ type DataSource = {
     | 'settings.sourceTypikonLink'
     | 'settings.sourceRoysterLink'
     | 'settings.sourceGetBibleLink'
-    | 'settings.sourceOcmaLink';
+    | 'settings.sourceOcmaLink'
+    | 'settings.sourceGoarchLink'
+    | 'settings.sourceMarilenaLink'
+    | 'settings.sourceMiaKouppaLink';
   hintKey:
     | 'settings.sourceOrthocalHint'
     | 'settings.sourceTypikonHint'
     | 'settings.sourceRoysterHint'
     | 'settings.sourceGetBibleHint'
-    | 'settings.sourceOcmaHint';
+    | 'settings.sourceOcmaHint'
+    | 'settings.sourceGoarchHint'
+    | 'settings.sourceMarilenaHint'
+    | 'settings.sourceMiaKouppaHint';
 };
 
 const LITURGICAL_DATA_SOURCES: DataSource[] = [
@@ -124,6 +128,21 @@ const LITURGICAL_DATA_SOURCES: DataSource[] = [
     url: OCMA_API_URL,
     linkKey: 'settings.sourceOcmaLink',
     hintKey: 'settings.sourceOcmaHint',
+  },
+  {
+    url: GOARCH_TEXTS_URL,
+    linkKey: 'settings.sourceGoarchLink',
+    hintKey: 'settings.sourceGoarchHint',
+  },
+  {
+    url: MARILENA_URL,
+    linkKey: 'settings.sourceMarilenaLink',
+    hintKey: 'settings.sourceMarilenaHint',
+  },
+  {
+    url: MIA_KOUPPA_URL,
+    linkKey: 'settings.sourceMiaKouppaLink',
+    hintKey: 'settings.sourceMiaKouppaHint',
   },
 ];
 
@@ -159,10 +178,9 @@ export default function SettingsScreen() {
     setNotifyPresanctified,
     notifyWeeklyDigest,
     setNotifyWeeklyDigest,
-    homeScreenWidget,
-    setHomeScreenWidget,
     personalDays,
     setPersonalDays,
+    setOnboardingCompleted,
   } = usePreferences();
 
   const [activePicker, setActivePicker] = useState<SettingsPicker>(null);
@@ -628,25 +646,6 @@ export default function SettingsScreen() {
             />
             <SettingsLinkRow
               isDark={isDark}
-              icon="smartphone"
-              label={t('settings.homeScreenWidget')}
-              hint={
-                nativeReminders
-                  ? t('settings.homeScreenWidgetHint')
-                  : t('settings.notificationsWebOnly')
-              }
-              trailing={
-                <SettingsSwitch
-                  value={homeScreenWidget}
-                  onValueChange={setHomeScreenWidget}
-                  isDark={isDark}
-                  accessibilityLabel={t('settings.homeScreenWidget')}
-                />
-              }
-              showDivider
-            />
-            <SettingsLinkRow
-              isDark={isDark}
               icon="bookmark"
               label={t('settings.personalDays')}
               hint={t('settings.personalDaysRowHint')}
@@ -660,6 +659,14 @@ export default function SettingsScreen() {
               label={t('settings.colorsLegendLink')}
               hint={t('settings.colorsLegendLinkHint')}
               onPress={() => router.push('/legend')}
+              showDivider
+            />
+            <SettingsLinkRow
+              isDark={isDark}
+              icon="help-circle"
+              label={t('settings.replayTips')}
+              hint={t('settings.replayTipsHint')}
+              onPress={() => setOnboardingCompleted(false)}
               showDivider
             />
             <SettingsLinkRow
@@ -681,46 +688,7 @@ export default function SettingsScreen() {
             />
           </View>
 
-          <View
-            style={[
-              settingsListCard(isDark),
-              styles.tipJarCard,
-              {
-                backgroundColor: vestmentAccent.accentMuted,
-                borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(107, 45, 60, 0.08)',
-              },
-            ]}
-          >
-            <View style={styles.tipJarInner}>
-              <View style={iconBadgeSurface(vestmentAccent.accentSoft)}>
-                <Feather name="coffee" size={18} color={vestmentAccent.accent} />
-              </View>
-              <Text style={[styles.tipJarTitle, { color: theme.colors.text }]}>
-                {t('settings.tipJarTitle')}
-              </Text>
-              <Text style={[styles.tipJarBody, { color: muted }]}>
-                {t('settings.tipJarBody')}
-              </Text>
-              <Pressable
-                onPress={() => Linking.openURL(DONATION_URL)}
-                accessibilityRole="link"
-                accessibilityLabel={t('settings.tipJarButton')}
-                style={({ pressed }) => [
-                  styles.tipJarButton,
-                  {
-                    backgroundColor: pressed ? PAYPAL_BUTTON_BLUE_PRESSED : PAYPAL_BUTTON_BLUE,
-                    opacity: pressed ? 0.96 : 1,
-                    transform: [{ scale: pressed ? 0.98 : 1 }],
-                  },
-                ]}
-              >
-                <View style={styles.tipJarButtonMarkChip}>
-                  <PayPalMark height={14} />
-                </View>
-                <Text style={styles.tipJarButtonLabel}>{t('settings.tipJarButton')}</Text>
-              </Pressable>
-            </View>
-          </View>
+          <TipJarCard />
 
           <View style={styles.footer}>
             <OrthoDailyLogo size={36} />
@@ -885,51 +853,6 @@ const styles = StyleSheet.create({
   },
   pageHeader: {
     marginBottom: 16,
-  },
-  tipJarCard: {
-    marginTop: 18,
-  },
-  tipJarInner: {
-    paddingVertical: 18,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    gap: 8,
-  },
-  tipJarTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginTop: 4,
-  },
-  tipJarBody: {
-    fontSize: 13,
-    lineHeight: 18,
-    textAlign: 'center',
-    paddingHorizontal: 8,
-  },
-  tipJarButton: {
-    marginTop: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    minWidth: 200,
-    boxShadow: '0px 2px 4px rgba(0,48,135,0.18)',
-  },
-  tipJarButtonMarkChip: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 4,
-    paddingHorizontal: 5,
-    paddingVertical: 3,
-  },
-  tipJarButtonLabel: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
-    letterSpacing: 0.1,
   },
   footer: {
     marginTop: 8,

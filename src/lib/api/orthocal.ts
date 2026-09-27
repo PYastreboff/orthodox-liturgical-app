@@ -1,12 +1,18 @@
 import type { PlainDate } from '../calendar/julianGregorian';
+import { createRequestLimiter, fetchJson } from '../net/fetchJson';
 import {
   hydrateOrthocalMemoryCache,
   readPersistedOrthocalDay,
   writePersistedOrthocalDay,
   writePersistedOrthocalDays,
 } from './orthocalPersistentCache';
+import { normalizeOrthocalDay } from './orthocalValidate';
 
 const API_BASE = 'https://orthocal.info/api';
+/** orthocal.info is a free community service — keep the app's fan-out polite. */
+const orthocalLimiter = createRequestLimiter(6);
+/** A cached day is re-fetched in the background at most this often. */
+const REFRESH_TTL_MS = 6 * 60 * 60 * 1000;
 
 export type OrthocalCalendar = 'julian' | 'gregorian';
 
@@ -54,7 +60,11 @@ export type OrthocalDay = {
 };
 
 const dayCache = new Map<string, OrthocalDay>();
+/** When each day was last fetched from the network (this session or persisted). */
+const dayFetchedAt = new Map<string, number>();
+const dayInFlight = new Map<string, Promise<OrthocalDay>>();
 const gregorianMonthCache = new Map<string, OrthocalDay[]>();
+const monthInFlight = new Map<string, Promise<OrthocalDay[]>>();
 
 function cacheKey(cal: OrthocalCalendar, date: PlainDate) {
   return `${cal}:${date.year}-${date.month}-${date.day}`;
@@ -74,8 +84,9 @@ export function primeOrthocalDayCache(
 }
 
 export async function hydrateOrthocalFromPersistentCache(): Promise<number> {
-  return hydrateOrthocalMemoryCache((key, day) => {
+  return hydrateOrthocalMemoryCache((key, day, fetchedAt) => {
     dayCache.set(key, day);
+    if (!dayFetchedAt.has(key)) dayFetchedAt.set(key, fetchedAt);
   });
 }
 
@@ -100,52 +111,65 @@ export async function fetchOrthocalGregorianMonth(
   const key = gregorianMonthKey(year, month);
   const hit = gregorianMonthCache.get(key);
   if (hit) return hit;
+  const pending = monthInFlight.get(key);
+  if (pending) return pending;
 
-  const url = `${API_BASE}/gregorian/${year}/${month}/`;
-  const res = await fetch(url, {
-    headers: { Accept: 'application/json' },
+  const promise = orthocalLimiter(async () => {
+    const raw = await fetchJson(`${API_BASE}/gregorian/${year}/${month}/`);
+    if (!Array.isArray(raw)) throw new Error(`Orthocal: unexpected month payload ${year}-${month}`);
+    const data = raw.map(normalizeOrthocalDay).filter((d): d is OrthocalDay => d !== null);
+    if (data.length === 0) throw new Error(`Orthocal: empty month ${year}-${month}`);
+
+    gregorianMonthCache.set(key, data);
+    const now = Date.now();
+    const persistBatch: { queryDate: PlainDate; day: OrthocalDay }[] = [];
+    for (const day of data) {
+      const queryDate: PlainDate = { year: day.year, month: day.month, day: day.day };
+      const dayKey = cacheKey('gregorian', queryDate);
+      dayCache.set(dayKey, day);
+      dayFetchedAt.set(dayKey, now);
+      persistBatch.push({ queryDate, day });
+    }
+    void writePersistedOrthocalDays('gregorian', persistBatch);
+    return data;
+  }).finally(() => {
+    monthInFlight.delete(key);
   });
-
-  if (!res.ok) {
-    throw new Error(`Orthocal API ${res.status} for gregorian ${year}-${month}`);
-  }
-
-  const data = (await res.json()) as OrthocalDay[];
-  gregorianMonthCache.set(key, data);
-  const persistBatch: { queryDate: PlainDate; day: OrthocalDay }[] = [];
-  for (const day of data) {
-    const queryDate: PlainDate = { year: day.year, month: day.month, day: day.day };
-    dayCache.set(cacheKey('gregorian', queryDate), day);
-    persistBatch.push({ queryDate, day });
-  }
-  void writePersistedOrthocalDays('gregorian', persistBatch);
-  return data;
+  monthInFlight.set(key, promise);
+  return promise;
 }
 
+/**
+ * One day from orthocal.info. Concurrent callers for the same day share one request.
+ * `refresh` re-fetches a cached day, but only when it is older than REFRESH_TTL_MS.
+ */
 export async function fetchOrthocalDay(
   cal: OrthocalCalendar,
   date: PlainDate,
   options?: { refresh?: boolean },
 ): Promise<OrthocalDay> {
   const key = cacheKey(cal, date);
-  if (!options?.refresh) {
-    const hit = dayCache.get(key);
-    if (hit) return hit;
+  const hit = dayCache.get(key);
+  if (hit) {
+    const age = Date.now() - (dayFetchedAt.get(key) ?? 0);
+    if (!options?.refresh || age < REFRESH_TTL_MS) return hit;
   }
+  const pending = dayInFlight.get(key);
+  if (pending) return pending;
 
-  const url = `${API_BASE}/${cal}/${date.year}/${date.month}/${date.day}/`;
-  const res = await fetch(url, {
-    headers: { Accept: 'application/json' },
+  const promise = orthocalLimiter(async () => {
+    const raw = await fetchJson(`${API_BASE}/${cal}/${date.year}/${date.month}/${date.day}/`);
+    const data = normalizeOrthocalDay(raw);
+    if (!data) throw new Error(`Orthocal: unexpected day payload ${key}`);
+    dayCache.set(key, data);
+    dayFetchedAt.set(key, Date.now());
+    void writePersistedOrthocalDay(cal, date, data);
+    return data;
+  }).finally(() => {
+    dayInFlight.delete(key);
   });
-
-  if (!res.ok) {
-    throw new Error(`Orthocal API ${res.status} for ${cal} ${date.year}-${date.month}-${date.day}`);
-  }
-
-  const data = (await res.json()) as OrthocalDay;
-  dayCache.set(key, data);
-  void writePersistedOrthocalDay(cal, date, data);
-  return data;
+  dayInFlight.set(key, promise);
+  return promise;
 }
 
 export function getCachedOrthocalDay(

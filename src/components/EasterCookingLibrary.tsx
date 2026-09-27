@@ -152,6 +152,8 @@ export function EasterCookingLibrary({
   const { t, lang } = useAppTranslation();
   const { text } = useFontScale();
   const bodyType = text(14, 20);
+  // iOS offsets single-line TextInput text vertically when lineHeight is set.
+  const searchType = Platform.OS === 'ios' ? { fontSize: bodyType.fontSize } : bodyType;
   const [query, setQuery] = useState('');
   const searchBg = isDark ? 'rgba(255,255,255,0.05)' : colors.card;
   const rowCount = EASTER_FOODS.length;
@@ -200,7 +202,7 @@ export function EasterCookingLibrary({
           onChangeText={setQuery}
           placeholder={t('recipes.searchPlaceholder')}
           placeholderTextColor={mutedColor}
-          style={[styles.searchInput, bodyType, { color: textColor }]}
+          style={[styles.searchInput, searchType, { color: textColor }]}
           autoCorrect={false}
           autoCapitalize="none"
           clearButtonMode="while-editing"
@@ -253,8 +255,8 @@ export function EasterCookingLibrary({
           isDark={isDark}
         />
       )}
-      ListHeaderComponent={renderHeader}
-      ListEmptyComponent={renderEmpty}
+      ListHeaderComponent={renderHeader()}
+      ListEmptyComponent={renderEmpty()}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
       contentContainerStyle={[styles.listContent, { paddingBottom: contentBottom }, contentContainerStyle]}
       style={style}

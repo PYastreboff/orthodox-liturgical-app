@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View, type LayoutChangeEvent, type ScrollView } from 'react-native';
+import { StyleSheet, View, type LayoutChangeEvent, type ScrollView } from 'react-native';
 import { useCallback, useRef, useState } from 'react';
 import { useFocusEffect, useTheme } from "expo-router/react-navigation";
 
 import { AppScrollView } from '../../src/components/AppScrollView';
 import { DayHero } from '../../src/components/DayHero';
+import { OfflineNotice } from '../../src/components/OfflineNotice';
 import { TodayDailyFocus } from '../../src/components/TodayDailyFocus';
 import { TodaySkeleton } from '../../src/components/TodaySkeleton';
 import { TodaySectionTiles } from '../../src/components/TodaySectionTiles';
@@ -17,8 +18,6 @@ import { useTabBarScroll } from '../../src/hooks/useTabBarScroll';
 import { startOfLocalDay } from '../../src/lib/calendar/localDate';
 import { firstGospelExcerpt } from '../../src/lib/liturgical/hymnExcerpt';
 import { useDayNavigation } from '../../src/state/DayNavigationContext';
-import { colors } from '../../src/theme/tokens';
-
 export default function TodayScreen() {
   const theme = useTheme();
   const model = useTodayDayModel();
@@ -121,9 +120,11 @@ export default function TodayScreen() {
           />
           {model.waitingForDay ? <TodaySkeleton isDark={model.isDark} /> : null}
           {model.error ? (
-            <Text style={[styles.statusLine, model.type.status, styles.statusError]}>
-              {model.t('today.offline', { error: model.error })}
-            </Text>
+            <OfflineNotice
+              message={model.t('today.offline')}
+              onRetry={model.retryDay}
+              textStyle={model.type.status}
+            />
           ) : null}
 
           {!model.waitingForDay ? (
@@ -178,13 +179,5 @@ const styles = StyleSheet.create({
   },
   homeCalendarWeb: {
     marginTop: 32,
-  },
-  statusLine: {
-    textAlign: 'center',
-    marginBottom: 10,
-    marginTop: -6,
-  },
-  statusError: {
-    color: colors.accentWine,
   },
 });

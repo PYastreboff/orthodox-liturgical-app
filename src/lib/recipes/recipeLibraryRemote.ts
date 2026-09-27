@@ -1,13 +1,20 @@
 /**
- * Remote Lenten recipe library (JSON on GitHub).
- * Not bundled into the app — requires network on first load of a session.
+ * Lenten recipe library. A copy of `data/recipes/fasting-recipes.json` ships in the
+ * binary so the page always works offline; newer copies from GitHub `main` replace it
+ * (and are persisted) only when they pass schema-version and shape validation.
  */
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { fetchJson } from '../net/fetchJson';
 import type { FastingRecipe } from './fastingRecipes';
+import { parseRecipeLibrary, type RecipeLibrary } from './recipeLibrarySchema';
 
 const DEFAULT_URLS = [
   'https://raw.githubusercontent.com/PYastreboff/orthodox-liturgical-app/main/data/recipes/fasting-recipes.json',
   'https://cdn.jsdelivr.net/gh/PYastreboff/orthodox-liturgical-app@main/data/recipes/fasting-recipes.json',
 ] as const;
+
+const STORAGE_KEY = '@orthodaily/recipe-library/v1';
 
 function libraryUrls(): string[] {
   const override =
@@ -15,93 +22,99 @@ function libraryUrls(): string[] {
   return override ? [override, ...DEFAULT_URLS] : [...DEFAULT_URLS];
 }
 
-type RecipeLibraryPayload = {
-  version?: number;
-  updated?: string;
-  recipes: FastingRecipe[];
-};
-
 export type RecipeLibraryState =
   | { status: 'loading'; recipes: readonly FastingRecipe[] }
   | { status: 'ready'; recipes: readonly FastingRecipe[] }
   | { status: 'offline'; recipes: readonly FastingRecipe[]; error: string };
 
-let memoryCache: readonly FastingRecipe[] | null = null;
+let bundledLibrary: RecipeLibrary | null = null;
+function getBundledLibrary(): RecipeLibrary {
+  if (!bundledLibrary) {
+    const raw: unknown = require('../../../data/recipes/fasting-recipes.json');
+    bundledLibrary = parseRecipeLibrary(raw) ?? { updated: '', recipes: [] };
+  }
+  return bundledLibrary;
+}
+
+let current: RecipeLibrary | null = null;
+let persistedLoaded = false;
+let remoteChecked = false;
 let inflight: Promise<readonly FastingRecipe[]> | null = null;
 
-function isRecipe(value: unknown): value is FastingRecipe {
-  if (!value || typeof value !== 'object') return false;
-  const r = value as Record<string, unknown>;
-  return (
-    typeof r.id === 'string' &&
-    typeof r.level === 'string' &&
-    typeof r.category === 'string' &&
-    typeof r.title === 'object' &&
-    r.title !== null
-  );
+function getCurrent(): RecipeLibrary {
+  if (!current) current = getBundledLibrary();
+  return current;
 }
 
-function parsePayload(data: unknown): FastingRecipe[] {
-  if (!data || typeof data !== 'object') throw new Error('Invalid recipe library');
-  const recipes = (data as RecipeLibraryPayload).recipes;
-  if (!Array.isArray(recipes) || recipes.length === 0) {
-    throw new Error('Recipe library is empty');
-  }
-  const valid = recipes.filter(isRecipe);
-  if (valid.length === 0) throw new Error('No valid recipes in library');
-  return valid;
+function adoptIfNewer(candidate: RecipeLibrary | null): boolean {
+  if (!candidate) return false;
+  if (candidate.updated < getCurrent().updated) return false;
+  current = candidate;
+  return true;
 }
 
-async function fetchFromUrl(url: string): Promise<FastingRecipe[]> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
+async function loadPersisted(): Promise<void> {
+  if (persistedLoaded) return;
+  persistedLoaded = true;
   try {
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: { Accept: 'application/json' },
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    const data: unknown = await response.json();
-    return parsePayload(data);
-  } finally {
-    clearTimeout(timeout);
+    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    if (raw) adoptIfNewer(parseRecipeLibrary(JSON.parse(raw)));
+  } catch {
+    // Corrupt or unavailable storage — the bundled copy is still valid.
   }
 }
 
+async function fetchRemote(): Promise<void> {
+  let lastError: unknown = new Error('Network error');
+  for (const url of libraryUrls()) {
+    try {
+      const library = parseRecipeLibrary(await fetchJson(url, { timeoutMs: 20000 }));
+      if (!library) throw new Error('Recipe library failed validation');
+      if (adoptIfNewer(library)) {
+        void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(library)).catch(() => {});
+      }
+      return;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
+}
+
+/**
+ * Best available recipes. Checks GitHub once per session (or on `force`); when that
+ * fails the persisted or bundled library is returned instead of throwing, unless
+ * there is nothing at all to show.
+ */
 export async function fetchFastingRecipes(options?: {
   force?: boolean;
 }): Promise<readonly FastingRecipe[]> {
-  if (!options?.force && memoryCache) return memoryCache;
-  if (!options?.force && inflight) return inflight;
+  if (!options?.force && remoteChecked) return getCurrent().recipes;
+  if (inflight) return inflight;
 
   inflight = (async () => {
     try {
-      let lastError: unknown;
-      for (const url of libraryUrls()) {
-        try {
-          const recipes = await fetchFromUrl(url);
-          memoryCache = recipes;
-          return recipes;
-        } catch (error) {
-          lastError = error;
-        }
+      await loadPersisted();
+      try {
+        await fetchRemote();
+      } catch (error) {
+        if (getCurrent().recipes.length === 0) throw error;
       }
-      const message = lastError instanceof Error ? lastError.message : 'Network error';
-      throw new Error(message);
+      remoteChecked = true;
+      return getCurrent().recipes;
     } finally {
       inflight = null;
     }
   })();
-
   return inflight;
 }
 
+/** Recipes available synchronously (bundled or already-fetched); empty only if the bundle is broken. */
 export function getCachedFastingRecipes(): readonly FastingRecipe[] | null {
-  return memoryCache;
+  const recipes = getCurrent().recipes;
+  return recipes.length > 0 ? recipes : null;
 }
 
 export function getRecipeFromCache(id: string): FastingRecipe | undefined {
-  return memoryCache?.find((recipe) => recipe.id === id);
+  return getCurrent().recipes.find((recipe) => recipe.id === id);
 }

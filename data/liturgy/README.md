@@ -16,7 +16,13 @@ Rebuild after editing sources:
 
 ```bash
 npm run export:liturgy
+npm run verify:content
 ```
+
+Installed apps pick up the `main` copy only when it validates and its `version`
+(content revision) is at least the bundled one. For incompatible shape changes,
+bump a top-level `"schemaVersion"` (missing means `1`) alongside the app code that
+reads it — older builds then keep their bundled text.
 
 ## Typikon (Services page)
 

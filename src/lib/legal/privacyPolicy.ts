@@ -1,5 +1,5 @@
 /** Canonical English privacy policy body (App Store / public web). */
-export const PRIVACY_POLICY_LAST_UPDATED = '16 August 2026';
+export const PRIVACY_POLICY_LAST_UPDATED = '27 September 2026';
 
 export type PrivacySection = {
   heading: string;
@@ -18,14 +18,17 @@ export const PRIVACY_POLICY_SECTIONS: PrivacySection[] = [
     heading: 'Information stored on your device',
     paragraphs: [
       'The App stores preferences locally on your device (for example theme, language, calendar mode, text size, serving role, and which sections you expand). On phones this uses on-device storage; on the web it uses your browser’s local storage.',
-      'These preferences are not uploaded to our servers. Clearing app data or site data removes them.',
+      'Personal dates you add (such as name days, birthdays, or days of repose), reminder settings, your place in the Bible reader, and cached calendar, recipe, and liturgy data are stored the same way. Reminders are scheduled as local notifications on your device.',
+      'None of this is uploaded to our servers — the App has no servers of its own. Clearing app data or site data removes it.',
     ],
   },
   {
     heading: 'Information from the internet',
     paragraphs: [
-      'To show the liturgical day, the App requests public calendar and scripture data from third-party services, including orthocal.info, getBible.net, and related open liturgical sources listed in Settings.',
-      'Those requests typically include the date you are viewing. We do not attach your name, email, or account identity to those requests because the App has no accounts.',
+      'To show the liturgical day, the App requests public calendar and scripture data from third-party services: orthocal.info (calendar, fasts, saints, and readings) and api.getbible.net (scripture text).',
+      'Updated recipe, liturgy-text, and livestream lists are downloaded from the App’s public GitHub repository via raw.githubusercontent.com (GitHub) and cdn.jsdelivr.net (jsDelivr).',
+      'Those requests typically include the date or file you are viewing. We do not attach your name, email, or account identity because the App has no accounts. As with any internet request, these services can see your device’s IP address and basic request details (such as the time and app or browser version) and may keep them in their server logs.',
+      'Livestreams open on YouTube only when you tap one; YouTube then handles that visit under its own policy.',
       'Third-party sites have their own privacy practices. Review their policies if you need details about their servers’ logs.',
     ],
   },
@@ -34,6 +37,12 @@ export const PRIVACY_POLICY_SECTIONS: PrivacySection[] = [
     paragraphs: [
       'The App does not use advertising identifiers, third-party analytics SDKs, or cross-app tracking.',
       'If you open an external link (for example feedback on GitHub or a data-source website), that service may collect information according to its own policy.',
+    ],
+  },
+  {
+    heading: 'Tips and donations',
+    paragraphs: [
+      'On iPhone and iPad, optional tips are In-App Purchases processed by Apple. On Android and the web, the optional tip link opens PayPal. We do not receive your payment card details; Apple or PayPal process the payment under their own privacy policies.',
     ],
   },
   {

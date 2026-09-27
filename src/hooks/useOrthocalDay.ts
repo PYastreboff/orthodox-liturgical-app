@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   fetchOrthocalDay,
@@ -20,6 +20,7 @@ type State = {
   loading: boolean;
   /** Background refresh while cached content is visible. */
   refreshing: boolean;
+  /** Diagnostic only — UI shows a localized message instead. */
   error: string | null;
 };
 
@@ -38,8 +39,15 @@ function shellFor(
 
 export function useOrthocalDay(civilDate: Date, liturgicalCalendar: PrimaryCalendar) {
   const civil = civilPlainDateFromLocal(civilDate);
-  const queryDate = orthocalQueryDate(civil);
-  const queryKey = `${liturgicalCalendar}:${queryDate.year}-${queryDate.month}-${queryDate.day}`;
+  const { year, month, day } = orthocalQueryDate(civil);
+  const queryKey = `${liturgicalCalendar}:${year}-${month}-${day}`;
+  // Stable identity per day: a fresh object would re-run the fetch effect on every render.
+  const queryDate = useMemo(() => ({ year, month, day }), [year, month, day]);
+  const civilDay = useMemo(
+    () => new Date(civil.year, civil.month - 1, civil.day),
+    [civil.year, civil.month, civil.day],
+  );
+  const [attempt, setAttempt] = useState(0);
 
   const [state, setState] = useState<State>(() =>
     shellFor(queryKey, getCachedOrthocalDay(liturgicalCalendar, queryDate)),
@@ -89,24 +97,36 @@ export function useOrthocalDay(civilDate: Date, liturgicalCalendar: PrimaryCalen
       } catch (e) {
         if (!cancelled) {
           const message = e instanceof Error ? e.message : 'Could not load liturgical data';
-          setState((prev) => ({
-            queryKey,
-            liturgicalDay: prev.liturgicalDay,
-            loading: false,
-            refreshing: false,
-            error: prev.liturgicalDay ? null : message,
-          }));
+          setState((prev) => {
+            // Never carry another date's content over into this one.
+            const kept =
+              (prev.queryKey === queryKey ? prev.liturgicalDay : null) ??
+              getCachedOrthocalDay(liturgicalCalendar, queryDate) ??
+              null;
+            return {
+              queryKey,
+              liturgicalDay: kept,
+              loading: false,
+              refreshing: false,
+              error: kept ? null : message,
+            };
+          });
         }
       }
 
-      prefetchOrthocalDayNeighbors(liturgicalCalendar, civilDate);
+      prefetchOrthocalDayNeighbors(liturgicalCalendar, civilDay);
     }
 
     void load();
     return () => {
       cancelled = true;
     };
-  }, [queryKey, queryDate, liturgicalCalendar, civilDate]);
+  }, [queryKey, queryDate, liturgicalCalendar, civilDay, attempt]);
 
-  return current;
+  const retry = useCallback(() => {
+    setState((prev) => (prev.queryKey === queryKey ? { ...prev, loading: !prev.liturgicalDay, error: null } : prev));
+    setAttempt((n) => n + 1);
+  }, [queryKey]);
+
+  return { ...current, retry };
 }

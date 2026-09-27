@@ -12,6 +12,7 @@ import { Feather } from '@expo/vector-icons';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { usePreferences } from '../state/PreferencesContext';
+import { useSplashRevealed } from './SplashGate';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { colors } from '../theme/tokens';
 
@@ -27,16 +28,18 @@ const STEP_ICONS: Record<TipStep, keyof typeof Feather.glyphMap> = {
 
 /**
  * Short first-launch tips after splash — calendar mode, serving role, notifications.
- * Guest-friendly; dismiss persists via PreferencesContext.
+ * Mounted by the tabs layout, so a deep link to a recipe or the privacy policy is not
+ * covered by it. Dismiss persists via PreferencesContext; Settings can replay it.
  */
 export function FirstLaunchTips() {
   const { t } = useAppTranslation();
   const isDark = useResolvedColorScheme() === 'dark';
   const { preferencesReady, onboardingCompleted, setOnboardingCompleted } = usePreferences();
+  const splashRevealed = useSplashRevealed();
   const { width } = useWindowDimensions();
   const [stepIndex, setStepIndex] = useState(0);
 
-  const visible = preferencesReady && !onboardingCompleted;
+  const visible = preferencesReady && splashRevealed && !onboardingCompleted;
   const step = STEPS[stepIndex] ?? 'welcome';
   const isFirst = stepIndex <= 0;
   const isLast = stepIndex >= STEPS.length - 1;
@@ -65,6 +68,7 @@ export function FirstLaunchTips() {
 
   const finish = useCallback(() => {
     setOnboardingCompleted(true);
+    setStepIndex(0);
   }, [setOnboardingCompleted]);
 
   const goPrev = useCallback(() => {

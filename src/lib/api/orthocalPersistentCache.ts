@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import type { PlainDate } from '../calendar/julianGregorian';
 import type { OrthocalCalendar, OrthocalDay } from './orthocal';
+import { normalizeOrthocalDay } from './orthocalValidate';
 
 const STORAGE_KEY = '@orthodaily/orthocal-days/v2';
 /** ~13 months of daily lookups for two calendar modes. */
@@ -20,17 +21,6 @@ let persistTimer: ReturnType<typeof setTimeout> | null = null;
 
 export function orthocalPersistentKey(cal: OrthocalCalendar, queryDate: PlainDate): string {
   return `${cal}:${queryDate.year}-${queryDate.month}-${queryDate.day}`;
-}
-
-function isOrthocalDay(value: unknown): value is OrthocalDay {
-  if (!value || typeof value !== 'object') return false;
-  const day = value as OrthocalDay;
-  return (
-    typeof day.year === 'number' &&
-    typeof day.month === 'number' &&
-    typeof day.day === 'number' &&
-    Array.isArray(day.saints)
-  );
 }
 
 function trimStore(next: Store): Store {
@@ -62,8 +52,18 @@ async function ensureLoaded(): Promise<Store> {
     loadPromise = (async () => {
       try {
         const raw = await AsyncStorage.getItem(STORAGE_KEY);
-        const parsed = raw ? (JSON.parse(raw) as Store) : {};
-        store = trimStore(parsed);
+        const parsed: unknown = raw ? JSON.parse(raw) : {};
+        const next: Store = {};
+        if (parsed && typeof parsed === 'object') {
+          for (const [key, entry] of Object.entries(parsed as Record<string, unknown>)) {
+            const candidate = entry as Partial<CachedEntry> | null;
+            const day = normalizeOrthocalDay(candidate?.day);
+            if (!day) continue;
+            const fetchedAt = typeof candidate?.fetchedAt === 'number' ? candidate.fetchedAt : 0;
+            next[key] = { day, fetchedAt };
+          }
+        }
+        store = trimStore(next);
       } catch {
         store = {};
       }
@@ -75,13 +75,12 @@ async function ensureLoaded(): Promise<Store> {
 
 /** Load disk cache into memory on app start (non-blocking). */
 export async function hydrateOrthocalMemoryCache(
-  memorySet: (key: string, day: OrthocalDay) => void,
+  memorySet: (key: string, day: OrthocalDay, fetchedAt: number) => void,
 ): Promise<number> {
   const loaded = await ensureLoaded();
   let count = 0;
   for (const [key, entry] of Object.entries(loaded)) {
-    if (!isOrthocalDay(entry?.day)) continue;
-    memorySet(key, entry.day);
+    memorySet(key, entry.day, entry.fetchedAt);
     count += 1;
   }
   return count;
@@ -93,7 +92,7 @@ export async function readPersistedOrthocalDay(
 ): Promise<OrthocalDay | null> {
   const loaded = await ensureLoaded();
   const entry = loaded[orthocalPersistentKey(cal, queryDate)];
-  return entry && isOrthocalDay(entry.day) ? entry.day : null;
+  return entry?.day ?? null;
 }
 
 export async function writePersistedOrthocalDay(

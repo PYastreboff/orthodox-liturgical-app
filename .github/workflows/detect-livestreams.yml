@@ -2,6 +2,9 @@ name: Detect livestreams
 
 on:
   workflow_dispatch:
+  schedule:
+    # Hourly; the script only commits when a stream changes (or twice a day to refresh seenAt).
+    - cron: '17 * * * *'
 
 permissions:
   contents: write
@@ -28,10 +31,16 @@ jobs:
         id: age
         run: |
           UPDATED=$(node -e "const d=require('./data/livestreams/live-now.json'); process.stdout.write(typeof d.updated==='string'?d.updated:'')")
-          if [ -z "$UPDATED" ]; then echo "fresh-enough=false"; echo "updated=never"; else
-            AGE=$(( ( $(date +%s) - $(date -d "$UPDATED" +%s) ) / 1 ))
+          if [ -z "$UPDATED" ]; then
+            echo "fresh-enough=false" >> "$GITHUB_OUTPUT"
+          else
+            AGE=$(( $(date +%s) - $(date -d "$UPDATED" +%s) ))
             echo "age=$AGE"
-            if [ "$AGE" -lt 900 ]; then echo "fresh-enough=true"; else echo "fresh-enough=false"; fi
+            if [ "$AGE" -lt 900 ]; then
+              echo "fresh-enough=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "fresh-enough=false" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       - run: node scripts/detect-livestreams.mjs

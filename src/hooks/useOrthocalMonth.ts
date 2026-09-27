@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { PrimaryCalendar } from '../lib/calendar/dateDisplay';
 import { getLiturgicalAppearanceForLocalDate } from '../lib/calendar/dayAppearance';
@@ -56,8 +56,14 @@ export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: Primary
       ? loadingState.loading
       : !isMonthCacheComplete(liturgicalCalendar, visibleMonth);
 
+  // Keyed by year-month: callers may pass a new Date for the same month on every render.
+  const year = visibleMonth.getFullYear();
+  const monthIndex = visibleMonth.getMonth();
+  const stableMonth = useMemo(() => new Date(year, monthIndex, 1), [year, monthIndex]);
+
   useEffect(() => {
     let cancelled = false;
+    const visibleMonth = stableMonth;
     const cached = getCachedMonth(liturgicalCalendar, visibleMonth);
     const shell = buildAppearanceOnlyMonth(visibleMonth, liturgicalCalendar);
 
@@ -70,19 +76,21 @@ export function useOrthocalMonth(visibleMonth: Date, liturgicalCalendar: Primary
       if (!cancelled) setDayState((prev) => mergeIntoMonth(prev, partial));
     };
 
-    loadOrthocalMonth(liturgicalCalendar, visibleMonth, handleProgress).then((next) => {
-      if (!cancelled) {
-        setDayState((prev) => mergeIntoMonth(prev, next));
-        setLoadingState({ key: monthKey, loading: false });
-      }
-    });
+    loadOrthocalMonth(liturgicalCalendar, visibleMonth, handleProgress)
+      .then((next) => {
+        if (!cancelled) setDayState((prev) => mergeIntoMonth(prev, next));
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLoadingState({ key: monthKey, loading: false });
+      });
 
     prefetchAdjacentMonths(liturgicalCalendar, visibleMonth);
 
     return () => {
       cancelled = true;
     };
-  }, [liturgicalCalendar, monthKey, visibleMonth]);
+  }, [liturgicalCalendar, monthKey, stableMonth]);
 
   const dayInfoForDate = useCallback(
     (date: Date): CalendarDayInfo => {

@@ -29,6 +29,7 @@ type BibleChapterState = {
   verses: BibleChapterVerse[];
   loading: boolean;
   error: boolean;
+  retry: () => void;
   canGoPrev: boolean;
   canGoNext: boolean;
   setBook: (bookNum: number) => void;
@@ -93,6 +94,8 @@ export function useBibleChapter(): BibleChapterState {
     };
   }, []);
 
+  const [attempt, setAttempt] = useState(0);
+
   const persist = useCallback(async (location: StoredLocation) => {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(location));
   }, []);
@@ -132,7 +135,9 @@ export function useBibleChapter(): BibleChapterState {
     return () => {
       cancelled = true;
     };
-  }, [bookNum, chapter, translation, hydrated, persist]);
+  }, [bookNum, chapter, translation, hydrated, persist, attempt]);
+
+  const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
   const setBook = useCallback((nextBookNum: number) => {
     const nextBook = bibleBookByNum(nextBookNum);
@@ -178,6 +183,7 @@ export function useBibleChapter(): BibleChapterState {
     verses,
     loading,
     error,
+    retry,
     canGoPrev: prevChapterLocation(bookNum, chapter) != null,
     canGoNext: nextChapterLocation(bookNum, chapter) != null,
     setBook,

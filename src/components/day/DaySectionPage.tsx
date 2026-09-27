@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { AppScrollView } from '../AppScrollView';
+import { OfflineNotice } from '../OfflineNotice';
 import { StackScreenHeader } from '../StackScreenHeader';
 import { SwipeBackShell } from '../SwipeBackShell';
 import { SectionIcon } from '../SectionIcon';
@@ -125,9 +126,11 @@ export function DaySectionPage({ section }: Props) {
               {model.waitingForDay ? (
                 <TodaySkeleton isDark={isDark} />
               ) : model.error ? (
-                <Text style={[styles.statusError, model.type.status]}>
-                  {t('today.offline', { error: model.error })}
-                </Text>
+                <OfflineNotice
+                  message={t('today.offline')}
+                  onRetry={model.retryDay}
+                  textStyle={model.type.status}
+                />
               ) : (
                 <TodaySectionContent section={section} model={model} />
               )}
@@ -146,11 +149,6 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     gap: 0,
-  },
-  statusError: {
-    color: colors.accentWine,
-    textAlign: 'center',
-    marginTop: 16,
   },
 });
 

@@ -18,6 +18,7 @@ import { CALENDAR_FASTING_ICON_GAP, CALENDAR_FASTING_ICON_SIZE } from './fasting
 import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { calendarFastingIconLabel } from '../i18n/fastingLabels';
 import { useOrthocalMonth, orthocalMonthLoadingStats } from '../hooks/useOrthocalMonth';
+import { useToday } from '../hooks/useToday';
 import { toDayIso } from '../lib/calendar/localDate';
 import type { CalendarFastingFoodIcons } from '../i18n/fastingLabels';
 import {
@@ -362,7 +363,7 @@ export function LiturgicalMonthGrid({
   const { width: windowWidth } = useWindowDimensions();
   const [layoutWidth, setLayoutWidth] = useState(0);
   const width = layoutWidth > 0 ? layoutWidth : windowWidth;
-  const today = useMemo(() => new Date(), []);
+  const today = useToday();
   const rows = useMemo(() => buildMonthCells(visibleMonth), [visibleMonth]);
   const { dayByIso, dayInfoForDate, showTypikonForDate, loading } = useOrthocalMonth(
     visibleMonth,

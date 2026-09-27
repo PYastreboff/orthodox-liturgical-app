@@ -14,6 +14,7 @@ import { CalendarSearch } from '../../src/components/CalendarSearch';
 import { DevotionalPageHeader } from '../../src/components/DevotionalPageHeader';
 import { LiturgicalMonthGrid } from '../../src/components/LiturgicalMonthGrid';
 import { useScreenSafePadding } from '../../src/hooks/useScreenSafePadding';
+import { useToday } from '../../src/hooks/useToday';
 import { useTabBarBottomPadding } from '../../src/hooks/useTabBarBottomPadding';
 import { useTabBarScroll } from '../../src/hooks/useTabBarScroll';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
@@ -31,10 +32,8 @@ export default function CalendarScreen() {
   const { t } = useAppTranslation();
   const { requestOpenDay } = useDayNavigation();
   const { primaryCalendar } = usePreferences();
-  const thisMonth = useMemo(() => {
-    const n = new Date();
-    return new Date(n.getFullYear(), n.getMonth(), 1);
-  }, []);
+  const today = useToday();
+  const thisMonth = useMemo(() => new Date(today.getFullYear(), today.getMonth(), 1), [today]);
 
   const screenSafe = useScreenSafePadding();
   const scrollBottomPadding = useTabBarBottomPadding();

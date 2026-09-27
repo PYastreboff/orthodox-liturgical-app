@@ -7,19 +7,19 @@ import {
   type RecipeLibraryState,
 } from '../lib/recipes/recipeLibraryRemote';
 
-/** Loads the remote recipe JSON; shows offline when the network fetch fails. */
+/**
+ * Shows the bundled (or previously downloaded) recipes immediately, then swaps in a
+ * newer remote copy if one validates. Offline only when there is nothing to show.
+ */
 export function useFastingRecipes(): RecipeLibraryState & { reload: () => void } {
-  const cached = getCachedFastingRecipes();
-  const [state, setState] = useState<RecipeLibraryState>(() =>
-    cached
-      ? { status: 'ready', recipes: cached }
-      : { status: 'loading', recipes: [] },
-  );
+  const [state, setState] = useState<RecipeLibraryState>(() => {
+    const cached = getCachedFastingRecipes();
+    return cached ? { status: 'ready', recipes: cached } : { status: 'loading', recipes: [] };
+  });
 
-  useEffect(() => {
-    if (getCachedFastingRecipes()) return;
+  const load = useCallback((force: boolean) => {
     let cancelled = false;
-    void fetchFastingRecipes({ force: false })
+    void fetchFastingRecipes({ force })
       .then((recipes) => {
         if (!cancelled) setState({ status: 'ready', recipes });
       })
@@ -33,17 +33,14 @@ export function useFastingRecipes(): RecipeLibraryState & { reload: () => void }
     };
   }, []);
 
+  useEffect(() => load(false), [load]);
+
   const reload = useCallback(() => {
-    setState((prev) => ({ status: 'loading', recipes: prev.recipes }));
-    void fetchFastingRecipes({ force: true })
-      .then((recipes) => {
-        setState({ status: 'ready', recipes });
-      })
-      .catch((error: unknown) => {
-        const message = error instanceof Error ? error.message : 'Network error';
-        setState({ status: 'offline', recipes: [], error: message });
-      });
-  }, []);
+    setState((prev) =>
+      prev.recipes.length > 0 ? prev : { status: 'loading', recipes: prev.recipes },
+    );
+    load(true);
+  }, [load]);
 
   return {
     ...state,

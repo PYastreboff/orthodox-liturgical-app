@@ -262,15 +262,18 @@ export function loadOrthocalMonth(
 
   deliverCachedSnapshot();
 
-  const promise = fetchMonthDayMap(month, calendar, key).then((data) => {
-    monthCache.set(key, data);
-    monthComplete.add(key);
-    inFlight.delete(key);
-    emitMonthProgress(key, data);
-    return data;
-  }).finally(() => {
-    unsubscribe?.();
-  });
+  const promise = fetchMonthDayMap(month, calendar, key)
+    .then((data) => {
+      monthCache.set(key, data);
+      // Days that failed (offline, timeout) stay unloaded so the next visit retries them.
+      if (monthFullyLoadedFromOrthocal(days, data)) monthComplete.add(key);
+      emitMonthProgress(key, data);
+      return data;
+    })
+    .finally(() => {
+      inFlight.delete(key);
+      unsubscribe?.();
+    });
   inFlight.set(key, promise);
   return promise;
 }

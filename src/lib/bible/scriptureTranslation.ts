@@ -4,6 +4,7 @@ import type {
   LiturgicalTextItem,
   LiturgicalTextSection,
 } from '../liturgical/liturgicalTexts';
+import { fetchJson } from '../net/fetchJson';
 import { resolveScriptureRefs } from './parseCitation';
 
 const GETBIBLE_BASE = 'https://api.getbible.net/v2';
@@ -42,21 +43,23 @@ export async function fetchBibleChapter(
   if (cached) return cached;
 
   try {
-    const res = await fetch(`${GETBIBLE_BASE}/${translation}/${bookNum}/${chapter}.json`);
-    if (!res.ok) return null;
-    const data = (await res.json()) as {
-      verses?: BibleChapterVerse[];
-      book_name?: string;
-      name?: string;
-      chapter?: number;
-    };
-    const verses = data.verses ?? [];
+    const data = (await fetchJson(`${GETBIBLE_BASE}/${translation}/${bookNum}/${chapter}.json`)) as {
+      verses?: unknown;
+      book_name?: unknown;
+      name?: unknown;
+      chapter?: unknown;
+    } | null;
+    const verses = Array.isArray(data?.verses)
+      ? (data.verses as BibleChapterVerse[]).filter(
+          (v) => v && typeof v.verse === 'number' && typeof v.text === 'string',
+        )
+      : [];
     if (!verses.length) return null;
 
-    const bookName = data.book_name?.trim() ?? '';
-    const chapterNum = data.chapter ?? chapter;
+    const bookName = typeof data?.book_name === 'string' ? data.book_name.trim() : '';
+    const chapterNum = typeof data?.chapter === 'number' ? data.chapter : chapter;
     const chapterTitle =
-      data.name?.trim() ??
+      (typeof data?.name === 'string' ? data.name.trim() : '') ||
       (bookName ? `${bookName} ${chapterNum}` : `Chapter ${chapterNum}`);
 
     const content: BibleChapterContent = { verses, bookName, chapterTitle };

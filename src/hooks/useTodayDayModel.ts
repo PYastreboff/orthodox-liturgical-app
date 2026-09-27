@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useOrthocalDay } from './useOrthocalDay';
+import { useToday } from './useToday';
 import { useFontScale } from './useFontScale';
 import { sectionsForReadingsLanguage, useLiturgicalTexts } from './useLiturgicalTexts';
 import { usePrintDay } from './usePrintDay';
@@ -76,22 +77,25 @@ export function useTodayDayModel() {
     setServingRole,
     personalDays,
   } = usePreferences();
-  const today = useMemo(() => startOfLocalDay(new Date()), []);
+  const today = useToday();
 
   const [calendarMonthState, setCalendarMonthState] = useState<{
     key: string;
     month: Date;
   }>(() => ({ key: toDayIso(selectedDate), month: monthStartFor(selectedDate) }));
-  const thisMonth = useMemo(() => {
-    const n = new Date();
-    return new Date(n.getFullYear(), n.getMonth(), 1);
-  }, []);
+  const thisMonth = useMemo(() => monthStartFor(today), [today]);
 
   /** Calendar month re-targets to the selected day's month — derived, no reset effect. */
+  const selectedYear = selectedDate.getFullYear();
+  const selectedMonthIndex = selectedDate.getMonth();
+  const selectedMonthStart = useMemo(
+    () => new Date(selectedYear, selectedMonthIndex, 1),
+    [selectedYear, selectedMonthIndex],
+  );
   const calendarMonth =
     calendarMonthState.key === toDayIso(selectedDate)
       ? calendarMonthState.month
-      : monthStartFor(selectedDate);
+      : selectedMonthStart;
 
   const setCalendarMonthCursor = useCallback((date: Date) => {
     setCalendarMonthState({ key: toDayIso(date), month: monthStartFor(date) });
@@ -126,7 +130,13 @@ export function useTodayDayModel() {
     return `${String(julian.month).padStart(2, '0')}-${String(julian.day).padStart(2, '0')}`;
   }, [civilPlain]);
 
-  const { liturgicalDay, loading, refreshing, error } = useOrthocalDay(selectedDate, primaryCalendar);
+  const {
+    liturgicalDay,
+    loading,
+    refreshing,
+    error,
+    retry: retryDay,
+  } = useOrthocalDay(selectedDate, primaryCalendar);
   const waitingForDay = loading && !liturgicalDay;
   const personalOnDay = useMemo(
     () => personalDayOccurrencesOnCivilDate(personalDays, selectedDate),
@@ -224,13 +234,22 @@ export function useTodayDayModel() {
   }, [readingsCategoryFilter, readingsSourceSections]);
 
   useEffect(() => {
+    // While a day loads there are no sections yet; resetting then would wipe the saved filter.
+    if (!liturgicalDay || waitingForDay || readingsSourceSections.length === 0) return;
     if (
       readingsCategoryFilter !== 'all' &&
       !readingsAvailableCategories.includes(readingsCategoryFilter)
     ) {
       setReadingsCategoryFilter('all');
     }
-  }, [readingsAvailableCategories, readingsCategoryFilter, setReadingsCategoryFilter]);
+  }, [
+    liturgicalDay,
+    readingsAvailableCategories,
+    readingsCategoryFilter,
+    readingsSourceSections.length,
+    setReadingsCategoryFilter,
+    waitingForDay,
+  ]);
 
   const { feasts, saints } = useMemo(() => {
     const entries = buildCommemorationEntries(liturgicalDay, uiLanguage);
@@ -406,6 +425,7 @@ export function useTodayDayModel() {
     waitingForDay,
     refreshing,
     error,
+    retryDay,
     personalOnDay,
     appearance,
     dashboard,
