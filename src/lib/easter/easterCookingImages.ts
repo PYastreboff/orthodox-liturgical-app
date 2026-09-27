@@ -1,51 +1,39 @@
-import type { ImageSourcePropType } from 'react-native';
-
 import type { EasterFoodId } from './easterCooking';
 
 /**
- * Easter food photos live in the GitHub repo (`assets/easter/{id}.jpg`).
- * They load at runtime over the network so they are not packed into the app binary.
+ * Easter food photos live in the GitHub repo (`assets/easter/{id}.webp`,
+ * generated from the `.jpg` originals by `npm run generate:thumbs`). They load
+ * at runtime so they are not packed into the app binary.
  *
- * Primary (GitHub raw — live as soon as files are on `main`):
- *   https://raw.githubusercontent.com/PYastreboff/orthodox-liturgical-app/main/assets/easter/{id}.jpg
+ * Primary: WebP from the jsDelivr CDN. Fallback: the `.jpg` original from GitHub raw.
  *
  * Override with EXPO_PUBLIC_EASTER_IMAGE_BASE if needed.
  */
-const DEFAULT_BASE =
+const CDN_BASE = 'https://cdn.jsdelivr.net/gh/PYastreboff/orthodox-liturgical-app@main/assets/easter';
+
+const RAW_BASE =
   'https://raw.githubusercontent.com/PYastreboff/orthodox-liturgical-app/main/assets/easter';
 
-const JSDELIVR_BASE =
-  'https://cdn.jsdelivr.net/gh/PYastreboff/orthodox-liturgical-app@main/assets/easter';
+const OVERRIDE_BASE =
+  typeof process !== 'undefined'
+    ? process.env.EXPO_PUBLIC_EASTER_IMAGE_BASE?.trim().replace(/\/$/, '')
+    : undefined;
 
-const EASTER_IMAGE_BASE =
-  (typeof process !== 'undefined' && process.env.EXPO_PUBLIC_EASTER_IMAGE_BASE?.trim()) ||
-  DEFAULT_BASE;
-
-/** Easter food ids that have a matching `{id}.jpg` in assets/easter. */
+/** Easter food ids that have a matching photo in assets/easter. */
 const EASTER_IMAGE_IDS = new Set<EasterFoodId>(['pascha', 'kulich', 'tsoureki', 'red_eggs']);
 
-export function easterFoodImageUri(id: string): string | null {
-  if (!EASTER_IMAGE_IDS.has(id as EasterFoodId)) return null;
-  return `${EASTER_IMAGE_BASE.replace(/\/$/, '')}/${id}.jpg`;
+function photoUris(file: string): string[] {
+  if (OVERRIDE_BASE) return [`${OVERRIDE_BASE}/${file}.webp`, `${OVERRIDE_BASE}/${file}.jpg`];
+  return [`${CDN_BASE}/${file}.webp`, `${RAW_BASE}/${file}.jpg`];
 }
 
-/** Alternate host when the primary CDN misses a newly pushed file. */
-export function easterFoodImageUriFallback(id: string): string | null {
-  if (!EASTER_IMAGE_IDS.has(id as EasterFoodId)) return null;
-  const override =
-    typeof process !== 'undefined' && process.env.EXPO_PUBLIC_EASTER_IMAGE_BASE?.trim();
-  if (override) return null;
-  return `${JSDELIVR_BASE}/${id}.jpg`;
+/** Full-size photo candidates for the detail hero, in load order. */
+export function easterFoodImageUris(id: string): string[] {
+  return EASTER_IMAGE_IDS.has(id as EasterFoodId) ? photoUris(id) : [];
 }
 
-export function easterFoodImageSource(id: string): ImageSourcePropType | null {
-  const uri = easterFoodImageUri(id);
-  return uri ? { uri } : null;
-}
-
-/** Downscaled thumbnail for list rows (light on memory at runtime). */
-export function easterFoodThumbSource(id: string): ImageSourcePropType | null {
-  if (!EASTER_IMAGE_IDS.has(id as EasterFoodId)) return null;
-  const base = EASTER_IMAGE_BASE.replace(/\/$/, '');
-  return { uri: `${base}/${id}-thumb.jpg` };
+/** Thumbnail candidates for list rows, falling back to the full photo. */
+export function easterFoodThumbUris(id: string): string[] {
+  if (!EASTER_IMAGE_IDS.has(id as EasterFoodId)) return [];
+  return [...photoUris(`${id}-thumb`), ...photoUris(id)];
 }

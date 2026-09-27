@@ -1,7 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import {
   FlatList,
-  Image,
   Platform,
   Pressable,
   StyleSheet,
@@ -21,14 +20,11 @@ import {
   easterFoodTotalMinutes,
   type EasterFood,
 } from '../lib/easter/easterCooking';
-import {
-  easterFoodImageSource,
-  easterFoodImageUriFallback,
-  easterFoodThumbSource,
-} from '../lib/easter/easterCookingImages';
+import { easterFoodThumbUris } from '../lib/easter/easterCookingImages';
 import { fuzzyNameScore } from '../lib/liturgical/fuzzySearch';
 import { recipeDifficultyLabelKey } from '../lib/recipes/recipeLabels';
 import { colors } from '../theme/tokens';
+import { RemoteImage } from './RemoteImage';
 
 type Props = {
   textColor: ColorValue;
@@ -57,19 +53,8 @@ function EasterFoodRow({
   const { t, lang } = useAppTranslation();
   const { text } = useFontScale();
   const router = useRouter();
-  const [imageFailed, setImageFailed] = useState(false);
-  const [thumbFailed, setThumbFailed] = useState(false);
-  const [useFallbackImage, setUseFallbackImage] = useState(false);
   const title = easterFoodTitle(food, lang);
   const totalMinutes = easterFoodTotalMinutes(food);
-  const thumbSource = easterFoodThumbSource(food.id);
-  const fullSource = useFallbackImage
-    ? (() => {
-        const uri = easterFoodImageUriFallback(food.id);
-        return uri ? { uri } : null;
-      })()
-    : easterFoodImageSource(food.id);
-  const imageSource = thumbFailed ? fullSource : thumbSource;
   const titleType = text(16, 21);
   const metaType = text(13, 18);
 
@@ -88,36 +73,21 @@ function EasterFoodRow({
       accessibilityLabel={`${title}, ${t('recipes.minutes', { n: totalMinutes })}, ${t(recipeDifficultyLabelKey(food.difficulty))}`}
       {...hoverAccessibilityProps(title, { role: 'button' })}
     >
-      {imageSource && !imageFailed ? (
-        <Image
-          source={imageSource}
-          style={styles.thumb}
-          resizeMode="cover"
-          accessibilityIgnoresInvertColors
-          onError={() => {
-            if (!thumbFailed && easterFoodThumbSource(food.id)) {
-              setThumbFailed(true);
-              return;
-            }
-            if (!useFallbackImage && easterFoodImageUriFallback(food.id)) {
-              setUseFallbackImage(true);
-              return;
-            }
-            setImageFailed(true);
-          }}
-        />
-      ) : (
-        <View
-          style={[
-            styles.thumb,
-            styles.thumbFallback,
-            { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(107,45,60,0.1)' },
-          ]}
-        >
-          <Feather name="image" size={22} color={mutedColor} />
-        </View>
-      )}
-
+      <RemoteImage
+        uris={easterFoodThumbUris(food.id)}
+        style={styles.thumb}
+        fallback={
+          <View
+            style={[
+              styles.thumb,
+              styles.thumbFallback,
+              { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(107,45,60,0.1)' },
+            ]}
+          >
+            <Feather name="image" size={22} color={mutedColor} />
+          </View>
+        }
+      />
       <View style={styles.rowBody}>
         <Text style={[styles.title, titleType, { color: textColor }]} numberOfLines={2}>
           {title}

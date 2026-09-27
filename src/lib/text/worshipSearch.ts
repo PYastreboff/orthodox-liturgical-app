@@ -60,6 +60,8 @@ export type WorshipSearchPlan = {
   lineKeys: string[];
   /** Global match index where each line's highlights begin. */
   offsets: Record<string, number>;
+  /** Number of matches in each line. */
+  counts: Record<string, number>;
 };
 
 export function buildWorshipSearchPlan(
@@ -68,16 +70,47 @@ export function buildWorshipSearchPlan(
 ): WorshipSearchPlan {
   const lineKeys: string[] = [];
   const offsets: Record<string, number> = {};
+  const counts: Record<string, number> = {};
   let cursor = 0;
 
   for (const entry of entries) {
     offsets[entry.key] = cursor;
     const count = countLineSearchMatches(entry.line, entry.lang, query);
+    counts[entry.key] = count;
     for (let index = 0; index < count; index += 1) {
       lineKeys.push(entry.key);
     }
     cursor += count;
   }
 
-  return { total: cursor, lineKeys, offsets };
+  return { total: cursor, lineKeys, offsets, counts };
+}
+
+export type LineSearchProps = {
+  searchQuery: string;
+  activeMatchIndex: number | null;
+  matchIndexOffset: number;
+};
+
+const NO_LINE_SEARCH: LineSearchProps = { searchQuery: '', activeMatchIndex: null, matchIndexOffset: 0 };
+
+/**
+ * Search props for one rendered line, narrowed so lines without matches get
+ * identical values and memoized rows skip re-rendering while typing or
+ * stepping between matches.
+ */
+export function lineSearchProps(
+  lineKey: string,
+  searchQuery: string,
+  activeMatchIndex: number | null,
+  plan: WorshipSearchPlan | null,
+): LineSearchProps {
+  const count = plan?.counts[lineKey] ?? 0;
+  if (!searchQuery || count === 0) return NO_LINE_SEARCH;
+  const offset = plan?.offsets[lineKey] ?? 0;
+  const active =
+    activeMatchIndex !== null && activeMatchIndex >= offset && activeMatchIndex < offset + count
+      ? activeMatchIndex
+      : null;
+  return { searchQuery, activeMatchIndex: active, matchIndexOffset: offset };
 }

@@ -2,7 +2,6 @@ import { useMemo, useState, type ReactNode } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   Platform,
   Pressable,
   ScrollView,
@@ -30,7 +29,8 @@ import {
   recipeDifficultyLabelKey,
   recipeMealSlotLabelKey,
 } from '../lib/recipes/recipeLabels';
-import { recipeImageSource, recipeThumbSource } from '../lib/recipes/recipeImages';
+import { recipeThumbUris } from '../lib/recipes/recipeImages';
+import { RemoteImage } from './RemoteImage';
 import { fuzzyNameScore } from '../lib/liturgical/fuzzySearch';
 import { colors } from '../theme/tokens';
 
@@ -63,13 +63,8 @@ function RecipeRow({
   const { t, lang } = useAppTranslation();
   const { text } = useFontScale();
   const router = useRouter();
-  const [imageFailed, setImageFailed] = useState(false);
-  const [thumbFailed, setThumbFailed] = useState(false);
   const title = recipeTitle(recipe, lang);
   const totalMinutes = recipeTotalMinutes(recipe);
-  const thumbSource = recipeThumbSource(recipe.id);
-  const fullSource = recipeImageSource(recipe.id);
-  const imageSource = thumbFailed ? fullSource : thumbSource;
   const titleType = text(16, 21);
   const metaType = text(13, 18);
 
@@ -88,31 +83,21 @@ function RecipeRow({
       accessibilityLabel={`${title}, ${t('recipes.minutes', { n: totalMinutes })}, ${t(recipeDifficultyLabelKey(recipe.difficulty))}`}
       {...hoverAccessibilityProps(title, { role: 'button' })}
     >
-      {imageSource && !imageFailed ? (
-        <Image
-          source={imageSource}
-          style={styles.thumb}
-          resizeMode="cover"
-          accessibilityIgnoresInvertColors
-          onError={() => {
-            if (!thumbFailed && thumbSource) {
-              setThumbFailed(true);
-              return;
-            }
-            setImageFailed(true);
-          }}
-        />
-      ) : (
-        <View
-          style={[
-            styles.thumb,
-            styles.thumbFallback,
-            { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(107,45,60,0.1)' },
-          ]}
-        >
-          <Feather name="image" size={22} color={mutedColor} />
-        </View>
-      )}
+      <RemoteImage
+        uris={recipeThumbUris(recipe.id)}
+        style={styles.thumb}
+        fallback={
+          <View
+            style={[
+              styles.thumb,
+              styles.thumbFallback,
+              { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(107,45,60,0.1)' },
+            ]}
+          >
+            <Feather name="image" size={22} color={mutedColor} />
+          </View>
+        }
+      />
 
       <View style={styles.rowBody}>
         <Text style={[styles.title, titleType, { color: textColor }]} numberOfLines={2}>

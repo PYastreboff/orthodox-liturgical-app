@@ -77,6 +77,7 @@ function isCreedClause(text: string): boolean {
     /^и во единаго/i.test(speech) ||
     /^ради нас/i.test(speech) ||
     /^и в единаго/i.test(speech) ||
+    /^и в духа/i.test(speech) ||
     /^исповедую/i.test(speech) ||
     /^чаю/i.test(speech)
   );

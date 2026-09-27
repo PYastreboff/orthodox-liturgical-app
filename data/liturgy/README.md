@@ -1,23 +1,37 @@
 # Liturgy texts
 
-Bundled JSON served to the app (and optionally refreshed from GitHub/jsDelivr on first open).
+Bundled JSON served to the app (the Divine Liturgy files can also be refreshed from GitHub/jsDelivr on first open).
 
 ## Source of truth
 
-[GOARCH Chapel Texts](https://www.goarch.org/chapel/texts) — Hieratikon skeleton PDFs via `dcs.goarch.org`.
+The JSON files in this folder are the source of truth and are **maintained by hand**:
 
-| Text | English | Greek | Russian |
-|------|---------|-------|---------|
-| St John Chrysostom | `scripts/liturgy-sources/chrysostom-en-goarch.txt` | `chrysostom-gr-en-goarch.txt` | `chrysostom-ru.txt` |
-| St Basil the Great | `scripts/liturgy-sources/basil-en-goarch.txt` | English spine + Chrysostom reuse, `basil-gr-en-goarch.txt` pairs, `basil-el-overrides.json` | Chrysostom RU (parallel parts; hand Basil anaphora TBD) |
-| Great Vespers | `data/liturgy/vespers-liturgy.json` | bundled | bundled |
+| File | Service |
+|------|---------|
+| `chrysostom-liturgy.json` | Divine Liturgy of St John Chrysostom |
+| `basil-liturgy.json` | Divine Liturgy of St Basil the Great |
+| `vespers-liturgy.json` | Great Vespers (fixed parts) |
 
-Rebuild after editing sources:
+- Greek follows the Ieratikon and Horologion; Church Slavonic (in civil script) follows the Sluzhebnik and Chasoslov.
+- The English is an original translation made from the Greek for this app. Do not paste in published English translations (for example GOARCH), which are under copyright.
+- Every unit has `en`, `ru` and `el`, and the three must match line for line: same role, same direction note, same placeholders.
+- Sections use `units` only (no `paragraphs`).
+
+### Line conventions
+
+- Role labels: `PRIEST` / `DEACON` / `CHOIR` / `PEOPLE` / `READER`; `Священник` / `Диакон` / `Хор` / `Народ` / `Чтец`; `ΙΕΡΕΥΣ` / `ΔΙΑΚΟΝΟΣ` / `ΧΟΡΟΣ` / `ΛΑΟΣ` / `ΑΝΑΓΝΩΣΤΗΣ`.
+- Direction notes go in parentheses before the colon: `(aloud)` / `(возглас)` / `(ἐκφώνως)`; `(in a low voice)` / `(тайно)`, or `(тихо)` for the deacon / `(χαμηλοφώνως)`; `(after each petition)` / `(на каждое прошение)` / `(εἰς ἕκαστον αἴτημα)`.
+- Repeats: `(three times)` / `(трижды)` / `(ἐκ τρίτου)`. Name placeholders: `(name)` / `(имя)` / `(δεῖνος)`.
+- Rubrics are whole lines in parentheses in all three languages. One litany petition per unit.
+- `__CREED_TITLE__` and `__LORDS_PRAYER_TITLE__` units are replaced by localized headings in the app.
+
+When you change a file, bump its top-level `version` and `updated`, then run:
 
 ```bash
-npm run export:liturgy
 npm run verify:content
 ```
+
+> **Warning:** do not run `npm run export:liturgy`. It regenerates `chrysostom-liturgy.json` and `basil-liturgy.json` from the old GOARCH-based sources in `scripts/liturgy-sources/` and would overwrite the hand-maintained text.
 
 Installed apps pick up the `main` copy only when it validates and its `version`
 (content revision) is at least the bundled one. For incompatible shape changes,

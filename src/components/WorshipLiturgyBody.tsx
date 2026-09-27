@@ -1,5 +1,5 @@
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View, type ScrollView, type View as RNView, type ViewStyle, type ColorValue } from 'react-native';
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
+import { memo, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 
 import { AppScrollView } from './AppScrollView';
 import { CompareSidePicker } from './CompareSidePicker';
@@ -40,7 +40,9 @@ import { liturgyCompareHasSelection, liturgyCompareReady } from '../lib/liturgy/
 import { expandLiturgyDisplayLines } from '../lib/liturgy/liturgySanitize';
 import {
   buildWorshipSearchPlan,
+  lineSearchProps,
   type WorshipLineEntry,
+  type WorshipSearchPlan,
 } from '../lib/text/worshipSearch';
 import { scrollAppScrollViewToElement } from '../lib/ui/scrollAppScrollViewToElement';
 import { surfaceCard } from '../theme/cards';
@@ -206,7 +208,7 @@ function collectWorshipLineEntries(
   return entries;
 }
 
-function WorshipLiturgyLineItem({
+const WorshipLiturgyLineItem = memo(function WorshipLiturgyLineItem({
   lineKey,
   line,
   lang,
@@ -250,7 +252,7 @@ function WorshipLiturgyLineItem({
       />
     </View>
   );
-}
+});
 
 function sectionHasDivineLiturgyContent(
   sections: readonly ChrysostomSection[] | readonly BasilSection[],
@@ -295,7 +297,7 @@ function CompareCell({
   isDark,
   searchQuery,
   activeMatchIndex,
-  searchOffsets,
+  searchPlan,
   registerLineRef,
 }: {
   lineKeyPrefix: string;
@@ -306,7 +308,7 @@ function CompareCell({
   isDark: boolean;
   searchQuery: string;
   activeMatchIndex: number | null;
-  searchOffsets: Record<string, number>;
+  searchPlan: WorshipSearchPlan | null;
   registerLineRef: (key: string, node: RNView | null) => void;
 }) {
   const expanded = lines.flatMap((line) => expandLiturgyDisplayLines(line)).filter((line) => line.trim());
@@ -327,9 +329,7 @@ function CompareCell({
             mutedColor={mutedColor}
             isDark={isDark}
             compact
-            searchQuery={searchQuery}
-            activeMatchIndex={activeMatchIndex}
-            matchIndexOffset={searchOffsets?.[lineKey] ?? 0}
+            {...lineSearchProps(lineKey, searchQuery, activeMatchIndex, searchPlan)}
             registerLineRef={registerLineRef}
           />
         );
@@ -375,7 +375,7 @@ function ChrysostomSectionBody({
   bodyType,
   searchQuery,
   activeMatchIndex,
-  searchOffsets,
+  searchPlan,
   registerLineRef,
   variant = 'chrysostom',
 }: {
@@ -389,7 +389,7 @@ function ChrysostomSectionBody({
   bodyType: { fontSize: number; lineHeight: number };
   searchQuery: string;
   activeMatchIndex: number | null;
-  searchOffsets: Record<string, number>;
+  searchPlan: WorshipSearchPlan | null;
   registerLineRef: (key: string, node: RNView | null) => void;
   variant?: 'chrysostom' | 'basil';
 }) {
@@ -429,7 +429,7 @@ function ChrysostomSectionBody({
             isDark={isDark}
             searchQuery={searchQuery}
             activeMatchIndex={activeMatchIndex}
-            searchOffsets={searchOffsets}
+            searchPlan={searchPlan}
             registerLineRef={registerLineRef}
           />
         ) : null;
@@ -443,7 +443,7 @@ function ChrysostomSectionBody({
             isDark={isDark}
             searchQuery={searchQuery}
             activeMatchIndex={activeMatchIndex}
-            searchOffsets={searchOffsets}
+            searchPlan={searchPlan}
             registerLineRef={registerLineRef}
           />
         ) : null;
@@ -481,9 +481,7 @@ function ChrysostomSectionBody({
               textColor={textColor}
               mutedColor={mutedColor}
               isDark={isDark}
-              searchQuery={searchQuery}
-              activeMatchIndex={activeMatchIndex}
-              matchIndexOffset={searchOffsets?.[lineKey] ?? 0}
+              {...lineSearchProps(lineKey, searchQuery, activeMatchIndex, searchPlan)}
               registerLineRef={registerLineRef}
             />
           );
@@ -514,7 +512,7 @@ function VespersSectionBody({
   bodyType,
   searchQuery,
   activeMatchIndex,
-  searchOffsets,
+  searchPlan,
   registerLineRef,
 }: {
   id: VespersSectionId;
@@ -527,7 +525,7 @@ function VespersSectionBody({
   bodyType: { fontSize: number; lineHeight: number };
   searchQuery: string;
   activeMatchIndex: number | null;
-  searchOffsets: Record<string, number>;
+  searchPlan: WorshipSearchPlan | null;
   registerLineRef: (key: string, node: RNView | null) => void;
 }) {
   const { t } = useAppTranslation();
@@ -557,7 +555,7 @@ function VespersSectionBody({
             isDark={isDark}
             searchQuery={searchQuery}
             activeMatchIndex={activeMatchIndex}
-            searchOffsets={searchOffsets}
+            searchPlan={searchPlan}
             registerLineRef={registerLineRef}
           />
         ) : null;
@@ -571,7 +569,7 @@ function VespersSectionBody({
             isDark={isDark}
             searchQuery={searchQuery}
             activeMatchIndex={activeMatchIndex}
-            searchOffsets={searchOffsets}
+            searchPlan={searchPlan}
             registerLineRef={registerLineRef}
           />
         ) : null;
@@ -609,9 +607,7 @@ function VespersSectionBody({
               textColor={textColor}
               mutedColor={mutedColor}
               isDark={isDark}
-              searchQuery={searchQuery}
-              activeMatchIndex={activeMatchIndex}
-              matchIndexOffset={searchOffsets?.[lineKey] ?? 0}
+              {...lineSearchProps(lineKey, searchQuery, activeMatchIndex, searchPlan)}
               registerLineRef={registerLineRef}
             />
           );
@@ -659,7 +655,8 @@ export function WorshipLiturgyBody({
   const vespers = useVespersLiturgy();
   const [mode, setMode] = useState<LiturgyDisplayMode>({ kind: 'single', lang: 'en' });
   const [searchQuery, setSearchQuery] = useState('');
-  const searchNorm = normalizeSearch(searchQuery);
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+  const searchNorm = normalizeSearch(deferredSearchQuery);
   const searchKey = `${searchNorm ?? ''}|${service ?? ''}|${mode.kind}`;
   const [activeMatchState, setActiveMatchState] = useState<{
     key: string;
@@ -859,7 +856,7 @@ export function WorshipLiturgyBody({
           bodyType={bodyType}
           searchQuery={searchNorm}
           activeMatchIndex={activeMatchIndex}
-          searchOffsets={searchPlan?.offsets ?? {}}
+          searchPlan={searchPlan}
           registerLineRef={registerLineRef}
         />
       ));
@@ -881,7 +878,7 @@ export function WorshipLiturgyBody({
         bodyType={bodyType}
         searchQuery={searchNorm}
         activeMatchIndex={activeMatchIndex}
-        searchOffsets={searchPlan?.offsets ?? {}}
+        searchPlan={searchPlan}
         registerLineRef={registerLineRef}
       />
     ));
@@ -895,7 +892,7 @@ export function WorshipLiturgyBody({
     mutedColor,
     registerLineRef,
     searchNorm,
-    searchPlan?.offsets,
+    searchPlan,
     service,
     showSections,
     textColor,

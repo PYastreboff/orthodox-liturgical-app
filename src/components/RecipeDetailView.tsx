@@ -2,10 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import Head from 'expo-router/head';
-import { useState } from 'react';
 import {
-  Image,
-  type ImageSourcePropType,
   Platform,
   Pressable,
   ScrollView,
@@ -40,7 +37,8 @@ import {
   recipeCategoryLabelKey,
   recipeDifficultyLabelKey,
 } from '../lib/recipes/recipeLabels';
-import { recipeImageSource } from '../lib/recipes/recipeImages';
+import { recipeImageUris } from '../lib/recipes/recipeImages';
+import { RemoteImage } from './RemoteImage';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { colors } from '../theme/tokens';
 
@@ -57,10 +55,8 @@ type Props = {
   recipe: FastingRecipe;
   /** Route when there is no back stack (default `/recipes`). */
   backFallbackRoute?: string;
-  /** Override hero/list image resolution (default fasting recipe assets). */
-  resolveImageSource?: (id: string) => ImageSourcePropType | null;
-  /** Alternate image host when the primary URI fails to load. */
-  resolveImageUriFallback?: (id: string) => string | null;
+  /** Photo candidate URLs in load order. */
+  resolveImageUris?: (id: string) => string[];
   /** Optional eyebrow above the title instead of the recipe category label. */
   eyebrowLabel?: string;
   /** Path prefix for shared links (default `/recipes`). */
@@ -99,8 +95,7 @@ function StatChip({
 export function RecipeDetailView({
   recipe,
   backFallbackRoute = '/recipes',
-  resolveImageSource = recipeImageSource,
-  resolveImageUriFallback,
+  resolveImageUris = recipeImageUris,
   eyebrowLabel,
   shareBasePath = '/recipes',
 }: Props) {
@@ -113,8 +108,6 @@ export function RecipeDetailView({
   const insets = useLayoutSafeAreaInsets();
   const { width } = useWindowDimensions();
   const { text } = useFontScale();
-  const [imageFailed, setImageFailed] = useState(false);
-  const [useFallbackImage, setUseFallbackImage] = useState(false);
 
   const muted = isDark ? '#a39e98' : colors.muted;
   const textColor = theme.colors.text;
@@ -127,12 +120,6 @@ export function RecipeDetailView({
   const servingSize = recipeServingSize(recipe, lang);
   const totalMinutes = recipeTotalMinutes(recipe);
   const isIos = Platform.OS === 'ios';
-  const imageSource = useFallbackImage
-    ? (() => {
-        const uri = resolveImageUriFallback?.(recipe.id) ?? null;
-        return uri ? { uri } : null;
-      })()
-    : resolveImageSource(recipe.id);
   const heroHeight = phone
     ? Math.min(220, Math.round(width * 0.55))
     : Math.min(280, Math.round(width * 0.28));
@@ -201,34 +188,24 @@ export function RecipeDetailView({
             >
               <Feather name="share-2" size={18} color="#fff" />
             </Pressable>
-            {imageSource && !imageFailed ? (
-              <Image
-                source={imageSource}
-                style={styles.heroImage}
-                resizeMode="cover"
-                accessibilityIgnoresInvertColors
-                onError={() => {
-                  if (!useFallbackImage && resolveImageUriFallback?.(recipe.id)) {
-                    setUseFallbackImage(true);
-                    return;
-                  }
-                  setImageFailed(true);
-                }}
-              />
-            ) : (
-              <View
-                style={[
-                  styles.heroImage,
-                  {
-                    backgroundColor: isDark ? '#2a1c1e' : '#e8d5d8',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  },
-                ]}
-              >
-                <Feather name="coffee" size={48} color={muted} />
-              </View>
-            )}
+            <RemoteImage
+              uris={resolveImageUris(recipe.id)}
+              style={styles.heroImage}
+              fallback={
+                <View
+                  style={[
+                    styles.heroImage,
+                    {
+                      backgroundColor: isDark ? '#2a1c1e' : '#e8d5d8',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    },
+                  ]}
+                >
+                  <Feather name="coffee" size={48} color={muted} />
+                </View>
+              }
+            />
             <LinearGradient
               colors={
                 isDark

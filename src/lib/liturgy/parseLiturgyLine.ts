@@ -24,11 +24,11 @@ const EN_ROLE_ONLY =
   /^(Priest|Deacon|Choir|People|Reader|Celebrant)(\s*\(([^)]+)\))?\s*$/i;
 
 const RU_ROLE_SPEECH =
-  /^(Священник|Диакон|Чтец|Народ|Хор|Сослужащие)\s*:\s*(.+)$/i;
+  /^(Священник|Диакон|Чтец|Народ|Хор|Сослужащие)(\s*\(([^)]+)\))?\s*:\s*(.+)$/i;
 const RU_ROLE_ONLY = /^(Священник|Диакон|Чтец|Народ|Хор)\s*:?\s*$/i;
 
 const EL_ROLE_SPEECH =
-  /^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)\s*[:·]\s*(.+)$/i;
+  /^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)(\s*\(([^)]+)\))?\s*[:·]\s*(.+)$/i;
 const EL_ROLE_ONLY = /^(ΔΙΑΚΟΝΟΣ|ΙΕΡΕΥΣ|ΧΟΡΟΣ|ΛΑΟΣ|ΑΝΑΓΝΩΣΤΗΣ)$/;
 
 function normalizeRole(word: string): LiturgyRole {
@@ -62,7 +62,8 @@ function parseRoleLine(trimmed: string): ParsedLiturgyLine | null {
       kind: 'role-speech',
       role,
       label: ruSpeech[1],
-      speech: ruSpeech[2].trim(),
+      direction: ruSpeech[3]?.trim(),
+      speech: ruSpeech[4].trim(),
     };
   }
 
@@ -73,7 +74,8 @@ function parseRoleLine(trimmed: string): ParsedLiturgyLine | null {
       kind: 'role-speech',
       role,
       label: elSpeech[1].toUpperCase(),
-      speech: elSpeech[2].trim(),
+      direction: elSpeech[3]?.trim(),
+      speech: elSpeech[4].trim(),
     };
   }
 
@@ -174,11 +176,12 @@ function isCreedText(text: string): boolean {
     /^ὁμολογῶ/i.test(speech) ||
     /^προσδοκῶ/i.test(speech) ||
     /^верую во едина/i.test(speech) ||
-    /^и во единаго\b/i.test(speech) ||
+    /^и во единаго(?![а-яё])/i.test(speech) ||
     /^ради нас/i.test(speech) ||
     /^и в единаго/i.test(speech) ||
-    /^исповедую\b/i.test(speech) ||
-    /^чаю\b/i.test(speech)
+    /^и в духа/i.test(speech) ||
+    /^исповедую(?![а-яё])/i.test(speech) ||
+    /^чаю(?![а-яё])/i.test(speech)
   );
 }
 
@@ -269,7 +272,7 @@ export function parseLiturgyLine(line: string, lang: UiLanguage): ParsedLiturgyL
   }
 
   if (isLitanyDeaconLine(trimmed, lang)) {
-    return { kind: 'role-speech', role: 'deacon', label: 'DEACON', speech: trimmed };
+    return { kind: 'role-speech', role: 'deacon', label: deaconLabel(lang), speech: trimmed };
   }
 
   if (isHeadingLine(trimmed)) {

@@ -93,10 +93,12 @@
         }
       ],
       "expo-status-bar",
-      "expo-font"
+      "expo-font",
+      "expo-image"
     ],
     "experiments": {
-      "baseUrl": "/orthodox-liturgical-app"
+      "baseUrl": "/orthodox-liturgical-app",
+      "reactCompiler": true
     },
     "extra": {
       "privacyPolicyUrl": "https://pyastreboff.github.io/orthodox-liturgical-app/privacy",

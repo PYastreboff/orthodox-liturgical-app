@@ -1,6 +1,8 @@
 /**
  * Generates downscaled {name}-thumb.jpg files next to the full-res recipe and
- * Easter food photos. List rows load these; the detail hero keeps the full image.
+ * Easter food photos, plus WebP copies of both ({name}.webp, {name}-thumb.webp).
+ * The app loads the WebP files (list rows use thumbs, the detail hero the full
+ * image); the JPGs stay as source originals and a legacy fallback.
  *
  * Run: npm run generate:thumbs
  */
@@ -14,9 +16,10 @@ const TARGET_DIRS = [
 ];
 
 const THUMB_MAX = 320;
+const WEBP_QUALITY = 78;
 
 async function main() {
-  let thumbnails = 0;
+  let photos = 0;
   for (const dir of TARGET_DIRS) {
     const entries = await readdir(dir);
     for (const entry of entries) {
@@ -24,16 +27,19 @@ async function main() {
       const file = join(dir, entry);
       const info = await stat(file);
       if (!info.isFile()) continue;
-      const out = join(dir, `${basename(entry, extname(entry))}-thumb.jpg`);
-      await sharp(file)
-        .rotate()
-        .resize({ width: THUMB_MAX, height: THUMB_MAX, fit: 'inside', withoutEnlargement: true })
-        .jpeg({ quality: 80, progressive: true })
-        .toFile(out);
-      thumbnails += 1;
+      const name = basename(entry, extname(entry));
+      const thumb = () =>
+        sharp(file)
+          .rotate()
+          .resize({ width: THUMB_MAX, height: THUMB_MAX, fit: 'inside', withoutEnlargement: true });
+
+      await thumb().jpeg({ quality: 80, progressive: true }).toFile(join(dir, `${name}-thumb.jpg`));
+      await thumb().webp({ quality: WEBP_QUALITY }).toFile(join(dir, `${name}-thumb.webp`));
+      await sharp(file).rotate().webp({ quality: WEBP_QUALITY }).toFile(join(dir, `${name}.webp`));
+      photos += 1;
     }
   }
-  console.log(`Generated ${thumbnails} thumbnails (max ${THUMB_MAX}px).`);
+  console.log(`Generated thumbnails and WebP copies for ${photos} photos (thumbs max ${THUMB_MAX}px).`);
 }
 
 void main();

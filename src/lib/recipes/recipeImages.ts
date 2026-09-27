@@ -1,25 +1,24 @@
-import type { ImageSourcePropType } from 'react-native';
-
 /**
- * Recipe photos live in the GitHub repo (`assets/recipes/{id}.jpg`).
- * They load at runtime over the network so they are not packed into the app binary.
+ * Recipe photos live in the GitHub repo (`assets/recipes/{id}.webp`, generated
+ * from the `.jpg` originals by `npm run generate:thumbs`). They load at runtime
+ * so they are not packed into the app binary.
  *
- * Primary (GitHub raw — live as soon as files are on `main`):
- *   https://raw.githubusercontent.com/PYastreboff/orthodox-liturgical-app/main/assets/recipes/{id}.jpg
+ * Primary: WebP from the jsDelivr CDN (long-lived cache). Fallback: the `.jpg`
+ * original from GitHub raw, which picks up newly pushed files immediately.
  *
  * Override with EXPO_PUBLIC_RECIPE_IMAGE_BASE if needed.
  */
-const DEFAULT_BASE =
+const CDN_BASE = 'https://cdn.jsdelivr.net/gh/PYastreboff/orthodox-liturgical-app@main/assets/recipes';
+
+const RAW_BASE =
   'https://raw.githubusercontent.com/PYastreboff/orthodox-liturgical-app/main/assets/recipes';
 
-const JSDELIVR_BASE =
-  'https://cdn.jsdelivr.net/gh/PYastreboff/orthodox-liturgical-app@main/assets/recipes';
+const OVERRIDE_BASE =
+  typeof process !== 'undefined'
+    ? process.env.EXPO_PUBLIC_RECIPE_IMAGE_BASE?.trim().replace(/\/$/, '')
+    : undefined;
 
-const RECIPE_IMAGE_BASE =
-  (typeof process !== 'undefined' && process.env.EXPO_PUBLIC_RECIPE_IMAGE_BASE?.trim()) ||
-  DEFAULT_BASE;
-
-/** Recipe ids that have a matching `{id}.jpg` in assets/recipes. */
+/** Recipe ids that have a matching photo in assets/recipes. */
 const RECIPE_IMAGE_IDS = new Set([
   'oat-porridge',
   'hummus',
@@ -109,33 +108,18 @@ const RECIPE_IMAGE_IDS = new Set([
   'paximadia',
 ]);
 
-export function recipeImageUri(recipeId: string): string | null {
-  if (!RECIPE_IMAGE_IDS.has(recipeId)) return null;
-  return `${RECIPE_IMAGE_BASE.replace(/\/$/, '')}/${recipeId}.jpg`;
+function photoUris(file: string): string[] {
+  if (OVERRIDE_BASE) return [`${OVERRIDE_BASE}/${file}.webp`, `${OVERRIDE_BASE}/${file}.jpg`];
+  return [`${CDN_BASE}/${file}.webp`, `${RAW_BASE}/${file}.jpg`];
 }
 
-/** Alternate host when the primary CDN misses a newly pushed file. */
-export function recipeImageUriFallback(recipeId: string): string | null {
-  if (!RECIPE_IMAGE_IDS.has(recipeId)) return null;
-  const override =
-    typeof process !== 'undefined' && process.env.EXPO_PUBLIC_RECIPE_IMAGE_BASE?.trim();
-  if (override) return null;
-  return `${JSDELIVR_BASE}/${recipeId}.jpg`;
+/** Full-size photo candidates for the detail hero, in load order. */
+export function recipeImageUris(recipeId: string): string[] {
+  return RECIPE_IMAGE_IDS.has(recipeId) ? photoUris(recipeId) : [];
 }
 
-export function recipeImageThumbUri(recipeId: string): string | null {
-  if (!RECIPE_IMAGE_IDS.has(recipeId)) return null;
-  const base = RECIPE_IMAGE_BASE.replace(/\/$/, '');
-  return `${base}/${recipeId}-thumb.jpg`;
-}
-
-/** Downscaled thumbnail for list rows (light on memory at runtime). */
-export function recipeThumbSource(recipeId: string): ImageSourcePropType | null {
-  const uri = recipeImageThumbUri(recipeId);
-  return uri ? { uri } : null;
-}
-
-export function recipeImageSource(recipeId: string): ImageSourcePropType | null {
-  const uri = recipeImageUri(recipeId);
-  return uri ? { uri } : null;
+/** Thumbnail candidates for list rows, falling back to the full photo. */
+export function recipeThumbUris(recipeId: string): string[] {
+  if (!RECIPE_IMAGE_IDS.has(recipeId)) return [];
+  return [...photoUris(`${recipeId}-thumb`), ...photoUris(recipeId)];
 }

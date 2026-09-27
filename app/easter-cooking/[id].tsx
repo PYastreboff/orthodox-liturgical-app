@@ -7,7 +7,7 @@ import { RecipeDetailView } from '../../src/components/RecipeDetailView';
 import { SwipeBackMissingPage } from '../../src/components/SwipeBackMissingPage';
 import { useAppTranslation } from '../../src/i18n/useAppTranslation';
 import { easterFoodAsRecipe, easterFoodById } from '../../src/lib/easter/easterCooking';
-import { easterFoodImageSource, easterFoodImageUriFallback } from '../../src/lib/easter/easterCookingImages';
+import { easterFoodImageUris } from '../../src/lib/easter/easterCookingImages';
 
 export default function EasterCookingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -32,8 +32,7 @@ export default function EasterCookingDetailScreen() {
     <RecipeDetailView
       recipe={easterFoodAsRecipe(food)}
       backFallbackRoute="/easter-cooking"
-      resolveImageSource={(id) => easterFoodImageSource(id)}
-      resolveImageUriFallback={(id) => easterFoodImageUriFallback(id)}
+      resolveImageUris={easterFoodImageUris}
       eyebrowLabel={t('easterCooking.recipeEyebrow')}
       shareBasePath="/easter-cooking"
     />
