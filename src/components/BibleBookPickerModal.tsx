@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, useWindowDimensions, View, type ColorValue } from 'react-native';
+import { StyleSheet, Text, useWindowDimensions, View, type ColorValue } from 'react-native';
 
 import { HoverPressable } from './HoverPressable';
 import { hoverAccessibilityProps } from '../lib/a11y/hoverAccessible';
@@ -8,7 +8,7 @@ import { useAppTranslation } from '../i18n/useAppTranslation';
 import { BIBLE_BOOKS, type BibleBook } from '../lib/bible/bibleCanon';
 import { localizedBibleBookName } from '../lib/bible/bibleBookNames';
 import type { BibleTextLang } from '../lib/bible/bibleTranslation';
-import { SettingsSheetFrame } from './settings/SettingsSheetFrame';
+import { SettingsSheetFrame, SettingsSheetScrollView } from './settings/SettingsSheetFrame';
 
 const SELECTED_FG = '#fff';
 
@@ -59,7 +59,7 @@ export function BibleBookPickerModal({
       handleColor={handleColor}
     >
       <Text style={[styles.title, { color: textColor }]}>{t('bible.chooseBook')}</Text>
-      <ScrollView
+      <SettingsSheetScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
@@ -81,7 +81,7 @@ export function BibleBookPickerModal({
             ))}
           </View>
         ))}
-      </ScrollView>
+      </SettingsSheetScrollView>
     </SettingsSheetFrame>
   );
 }

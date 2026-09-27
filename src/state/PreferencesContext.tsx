@@ -60,7 +60,8 @@ type StoredPreferences = {
   readingsCategoryFilter?: LiturgicalTextCategoryFilter;
   colorSchemePreference?: ColorSchemePreference;
   showVestmentGradient?: boolean;
-  showTabBarLabels?: boolean;
+  /** Replaces the legacy `showTabBarLabels` key so older installs pick up the "on" default. */
+  showNavbarLabels?: boolean;
   uiLanguage?: UiLanguage;
   fontScale?: FontScalePreference;
   servingRole?: ClergyRole;
@@ -221,8 +222,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         if (typeof parsed.showVestmentGradient === 'boolean') {
           setShowVestmentGradientState(parsed.showVestmentGradient);
         }
-        if (typeof parsed.showTabBarLabels === 'boolean') {
-          setShowTabBarLabelsState(parsed.showTabBarLabels);
+        if (typeof parsed.showNavbarLabels === 'boolean') {
+          setShowTabBarLabelsState(parsed.showNavbarLabels);
         }
         if (parsed.uiLanguage === 'en' || parsed.uiLanguage === 'ru' || parsed.uiLanguage === 'el') {
           setUiLanguageState(parsed.uiLanguage);
@@ -333,7 +334,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const setShowTabBarLabels = useCallback(
     (value: boolean) => {
       setShowTabBarLabelsState(value);
-      void persist({ showTabBarLabels: value });
+      void persist({ showNavbarLabels: value });
     },
     [persist],
   );

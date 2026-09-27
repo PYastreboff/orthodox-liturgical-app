@@ -1,6 +1,6 @@
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import type { Product, Purchase } from 'expo-iap';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAppTranslation } from '../../i18n/useAppTranslation';
@@ -32,19 +32,19 @@ function loadExpoIap(): ExpoIap | null {
 }
 
 type Status = 'idle' | 'purchasing' | 'thanks' | 'error';
+type LoadState = 'loading' | 'ready' | 'unavailable';
 
 /** iOS: tips go through StoreKit (App Store guideline 3.1.1), not PayPal. */
 export function TipJarCard() {
   const { t } = useAppTranslation();
   const vestmentAccent = useVestmentAccent();
-  const iapRef = useRef<ExpoIap | null>(null);
+  const [iap] = useState(loadExpoIap);
   const [products, setProducts] = useState<Product[]>([]);
+  const [loadState, setLoadState] = useState<LoadState>(iap ? 'loading' : 'unavailable');
   const [status, setStatus] = useState<Status>('idle');
   const [pendingSku, setPendingSku] = useState<string | null>(null);
 
   useEffect(() => {
-    const iap = loadExpoIap();
-    iapRef.current = iap;
     if (!iap) return;
 
     let cancelled = false;
@@ -75,8 +75,11 @@ export function TipJarCard() {
         const list = ((result ?? []) as Product[]).filter((p) => tipIds.has(p.id));
         list.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
         setProducts(list);
+        setLoadState(list.length > 0 ? 'ready' : 'unavailable');
       } catch {
-        if (!cancelled) setProducts([]);
+        if (cancelled) return;
+        setProducts([]);
+        setLoadState('unavailable');
       }
     })();
 
@@ -86,13 +89,9 @@ export function TipJarCard() {
       failed.remove();
       void iap.endConnection().catch(() => undefined);
     };
-  }, []);
-
-  // No StoreKit (Expo Go) or products not live yet: hide rather than show a dead button.
-  if (products.length === 0) return null;
+  }, [iap]);
 
   const buy = (sku: string) => {
-    const iap = iapRef.current;
     if (!iap || status === 'purchasing') return;
     setPendingSku(sku);
     setStatus('purchasing');
@@ -106,47 +105,65 @@ export function TipJarCard() {
 
   return (
     <TipJarFrame body={t('settings.tipJarBodyIos')}>
-      <View style={styles.row}>
-        {products.map((product, index) => {
-          const busy = pendingSku === product.id;
-          const label = tierLabels[index] ?? product.title;
-          return (
-            <Pressable
-              key={product.id}
-              onPress={() => buy(product.id)}
-              disabled={status === 'purchasing'}
-              accessibilityRole="button"
-              accessibilityLabel={`${label}, ${product.displayPrice}`}
-              accessibilityState={{ busy, disabled: status === 'purchasing' }}
-              style={({ pressed }) => [
-                styles.tier,
-                {
-                  backgroundColor: vestmentAccent.accent,
-                  opacity: status === 'purchasing' && !busy ? 0.5 : pressed ? 0.85 : 1,
-                },
-              ]}
-            >
-              {busy ? (
-                <ActivityIndicator size="small" color={vestmentAccent.onAccent} />
-              ) : (
-                <>
-                  <Text style={[styles.tierLabel, { color: vestmentAccent.onAccent }]}>{label}</Text>
-                  <Text style={[styles.tierPrice, { color: vestmentAccent.onAccent }]}>
-                    {product.displayPrice}
-                  </Text>
-                </>
-              )}
-            </Pressable>
-          );
-        })}
-      </View>
+      {loadState === 'loading' ? (
+        <ActivityIndicator style={styles.loading} color={vestmentAccent.accent} />
+      ) : null}
+      {loadState === 'unavailable' ? (
+        <Text style={[styles.note, { color: vestmentAccent.accent }]}>
+          {t('settings.tipUnavailableIos')}
+        </Text>
+      ) : null}
+      {loadState === 'ready' ? (
+        <View style={styles.row}>
+          {products.map((product, index) => {
+            const busy = pendingSku === product.id;
+            const label = tierLabels[index] ?? product.title;
+            return (
+              <Pressable
+                key={product.id}
+                onPress={() => buy(product.id)}
+                disabled={status === 'purchasing'}
+                accessibilityRole="button"
+                accessibilityLabel={`${label}, ${product.displayPrice}`}
+                accessibilityState={{ busy, disabled: status === 'purchasing' }}
+                style={({ pressed }) => [
+                  styles.tier,
+                  {
+                    backgroundColor: vestmentAccent.accent,
+                    opacity: status === 'purchasing' && !busy ? 0.5 : pressed ? 0.85 : 1,
+                  },
+                ]}
+              >
+                {busy ? (
+                  <ActivityIndicator size="small" color={vestmentAccent.onAccent} />
+                ) : (
+                  <>
+                    <Text style={[styles.tierLabel, { color: vestmentAccent.onAccent }]}>
+                      {label}
+                    </Text>
+                    <Text style={[styles.tierPrice, { color: vestmentAccent.onAccent }]}>
+                      {product.displayPrice}
+                    </Text>
+                  </>
+                )}
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : null}
       {status === 'thanks' ? (
-        <Text style={[styles.note, { color: vestmentAccent.accent }]} accessibilityLiveRegion="polite">
+        <Text
+          style={[styles.note, { color: vestmentAccent.accent }]}
+          accessibilityLiveRegion="polite"
+        >
           {t('settings.tipThanks')}
         </Text>
       ) : null}
       {status === 'error' ? (
-        <Text style={[styles.note, { color: vestmentAccent.accent }]} accessibilityLiveRegion="polite">
+        <Text
+          style={[styles.note, { color: vestmentAccent.accent }]}
+          accessibilityLiveRegion="polite"
+        >
           {t('settings.tipFailed')}
         </Text>
       ) : null}
@@ -155,6 +172,10 @@ export function TipJarCard() {
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    marginTop: 8,
+    minHeight: 56,
+  },
   row: {
     marginTop: 8,
     flexDirection: 'row',

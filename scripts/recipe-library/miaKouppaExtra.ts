@@ -50,7 +50,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 6,
     servingSize: L('1 square (~120 g)', '1 кусок (~120 г)', '1 κομμάτι (~120 γρ.)'),
     title: L('Brownie baked oatmeal', 'Овсянка-брауни', 'Ψητή βρώμη τύπου brownie'),
-    summary: L('Cocoa baked oats with banana — a Lenten breakfast that tastes like dessert.', 'Овсянка с какао и бананом в духовке — постный завтрак как десерт.', 'Ψητή βρώμη με κακάο και μπανάνα — νηστίσιμο πρωινό σαν επιδόρπιο.'),
+    summary: L('Cocoa baked oats with banana, a Lenten breakfast that tastes like dessert.', 'Овсянка с какао и бананом в духовке — постный завтрак как десерт.', 'Ψητή βρώμη με κακάο και μπανάνα, νηστίσιμο πρωινό σαν επιδόρπιο.'),
     ingredients: lines(
       [
         '2 ripe bananas, mashed',
@@ -131,7 +131,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 2,
     servingSize: L('1 glass (~300 ml)', '1 стакан (~300 мл)', '1 ποτήρι (~300 ml)'),
     title: L('Berry orange smoothie', 'Смузи ягоды и апельсин', 'Smoothie μούρα και πορτοκάλι'),
-    summary: L('Cold orange juice blended with berries and banana — quick strict-fast drink.', 'Апельсиновый сок с ягодами и бананом — быстрый строгий напиток.', 'Χυμός πορτοκαλιού με μούρα και μπανάνα — γρήγορο αυστηρό ρόφημα.'),
+    summary: L('Cold orange juice blended with berries and banana, quick strict-fast drink.', 'Апельсиновый сок с ягодами и бананом — быстрый строгий напиток.', 'Χυμός πορτοκαλιού με μούρα και μπανάνα, γρήγορο αυστηρό ρόφημα.'),
     ingredients: lines(
       [
         '1 cup (240 ml) fresh orange juice',
@@ -278,7 +278,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 bowl (~220 g)', '1 миска (~220 г)', '1 μπολ (~220 γρ.)'),
     title: L('Greek potato salad', 'Греческий картофельный салат', 'Πατατοσαλάτα με μυρωδικά'),
-    summary: L('Warm boiled potatoes with herbs, onion, lemon, and olive oil — no mayo.', 'Тёплый картофель с зеленью, луком, лимоном и маслом — без майонеза.', 'Ζεστές πατάτες με μυρωδικά, κρεμμύδι, λεμόνι και λάδι — χωρίς μαγιονέζα.'),
+    summary: L('Warm boiled potatoes with herbs, onion, lemon, and olive oil, no mayo.', 'Тёплый картофель с зеленью, луком, лимоном и маслом — без майонеза.', 'Ζεστές πατάτες με μυρωδικά, κρεμμύδι, λεμόνι και λάδι, χωρίς μαγιονέζα.'),
     ingredients: lines(
       [
         '800 g potatoes, boiled and cubed',
@@ -353,7 +353,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 bowl (~180 g)', '1 миска (~180 г)', '1 μπολ (~180 γρ.)'),
     title: L('Red cabbage & apple salad', 'Салат из красной капусты с яблоком', 'Κόκκινο λάχανο με μήλο'),
-    summary: L('Crunchy red cabbage with apple and vinegar — bright strict-fast salad.', 'Хрустящая красная капуста с яблоком и уксусом — яркий строгий салат.', 'Τραγανό κόκκινο λάχανο με μήλο και ξίδι — δροσερή αυστηρή σαλάτα.'),
+    summary: L('Crunchy red cabbage with apple and vinegar, bright strict-fast salad.', 'Хрустящая красная капуста с яблоком и уксусом — яркий строгий салат.', 'Τραγανό κόκκινο λάχανο με μήλο και ξίδι, δροσερή αυστηρή σαλάτα.'),
     ingredients: lines(
       [
         '½ small red cabbage, shredded',
@@ -422,7 +422,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 3,
     servingSize: L('1 bowl (~200 g)', '1 миска (~200 г)', '1 μπολ (~200 γρ.)'),
     title: L('Spinach & strawberry salad', 'Салат шпинат с клубникой', 'Σπανάκι με φράουλες'),
-    summary: L('Baby greens with strawberries, balsamic, and olive oil — light oil-day salad.', 'Зелень с клубникой, бальзамиком и маслом — лёгкий салат с маслом.', 'Χόρτα με φράουλες, βαλσάμικο και λάδι — ελαφριά σαλάτα.'),
+    summary: L('Baby greens with strawberries, balsamic, and olive oil, light oil-day salad.', 'Зелень с клубникой, бальзамиком и маслом — лёгкий салат с маслом.', 'Χόρτα με φράουλες, βαλσάμικο και λάδι, ελαφριά σαλάτα.'),
     ingredients: lines(
       [
         '150 g baby spinach or arugula mix',
@@ -710,7 +710,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 5,
     servingSize: L('1 bowl (~350 ml)', '1 миска (~350 мл)', '1 μπολ (~350 ml)'),
     title: L('Mung bean soup', 'Суп из маша', 'Σούπα μουνγκ (ψιλοφάσουλα)'),
-    summary: L('Greek-style psilofasola — small mung beans simmered with veg and olive oil.', 'Греческий псилофасола — маш с овощами и оливковым маслом.', 'Ψιλοφάσουλα — μουνγκ με λαχανικά και ελαιόλαδο.'),
+    summary: L('Greek-style psilofasola: small mung beans simmered with veg and olive oil.', 'Греческий псилофасола — маш с овощами и оливковым маслом.', 'Ψιλοφάσουλα: μουνγκ με λαχανικά και ελαιόλαδο.'),
     ingredients: lines(
       [
         '1½ cups (300 g) dried mung beans, rinsed',
@@ -788,7 +788,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 5,
     servingSize: L('1 bowl (~350 ml)', '1 миска (~350 мл)', '1 μπολ (~350 ml)'),
     title: L('Black-eyed pea & kale soup', 'Суп чёрный глаз с кале', 'Σούπα μαυρομάτικα με kale'),
-    summary: L('Hearty bean soup with kale (or greens) and olive oil — winter Lenten bowl.', 'Сытный суп из фасоли с кале и маслом — зимняя постная миска.', 'Χορταστική σούπα οσπρίων με χόρτα και λάδι.'),
+    summary: L('Hearty bean soup with kale (or greens) and olive oil, winter Lenten bowl.', 'Сытный суп из фасоли с кале и маслом — зимняя постная миска.', 'Χορταστική σούπα οσπρίων με χόρτα και λάδι.'),
     ingredients: lines(
       [
         '1½ cups (300 g) dried black-eyed peas, soaked',
@@ -869,7 +869,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 5,
     servingSize: L('1 portion (~280 g)', '1 порция (~280 г)', '1 μερίδα (~280 γρ.)'),
     title: L('Green beans with potatoes', 'Стручковая фасоль с картофелем', 'Φασολάκια λαδερά με πατάτες'),
-    summary: L('Classic Greek fasolakia — green beans and potatoes in tomato and olive oil.', 'Классические фасолакия — стручки и картофель в томате с маслом.', 'Κλασικά φασολάκια — φασολάκια και πατάτες σε ντομάτα με λάδι.'),
+    summary: L('Classic Greek fasolakia: green beans and potatoes in tomato and olive oil.', 'Классические фасолакия — стручки и картофель в томате с маслом.', 'Κλασικά φασολάκια: φασολάκια και πατάτες σε ντομάτα με λάδι.'),
     ingredients: lines(
       [
         '700 g green beans, trimmed',
@@ -924,7 +924,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Frozen green beans work — no need to thaw fully.',
+        'Frozen green beans work, no need to thaw fully.',
         'Sauce should be juicy, not dry.',
       ],
       [
@@ -947,7 +947,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 bowl (~300 g)', '1 миска (~300 г)', '1 μπολ (~300 γρ.)'),
     title: L('Herbed orzo with chickpeas', 'Орзо с нутом и зеленью', 'Κριθαράκι με ρεβίθια και μυρωδικά'),
-    summary: L('One-pan orzo with chickpeas, lemon, and plenty of herbs — oil-day comfort.', 'Орзо с нутом, лимоном и зеленью — уютное блюдо с маслом.', 'Κριθαράκι με ρεβίθια, λεμόνι και μυρωδικά — άνετο πιάτο με λάδι.'),
+    summary: L('One-pan orzo with chickpeas, lemon, and plenty of herbs, oil-day comfort.', 'Орзо с нутом, лимоном и зеленью — уютное блюдо с маслом.', 'Κριθαράκι με ρεβίθια, λεμόνι και μυρωδικά, άνετο πιάτο με λάδι.'),
     ingredients: lines(
       [
         '1½ cups (300 g) orzo',
@@ -1074,7 +1074,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Crowding the pan steams — use two pans if needed.',
+        'Crowding the pan steams; use two pans if needed.',
         'Add chickpeas for the last 15 minutes for protein.',
       ],
       [
@@ -1097,7 +1097,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 bowl (~320 g)', '1 миска (~320 г)', '1 μπολ (~320 γρ.)'),
     title: L('Red beans and rice', 'Красная фасоль с рисом', 'Κόκκινα φασόλια με ρύζι'),
-    summary: L('Tomato-simmered beans over rice — simple Lenten plate for oil days.', 'Фасоль в томате с рисом — простое постное блюдо с маслом.', 'Φασόλια σε ντομάτα με ρύζι — απλό νηστίσιμο με λάδι.'),
+    summary: L('Tomato-simmered beans over rice, simple Lenten plate for oil days.', 'Фасоль в томате с рисом — простое постное блюдо с маслом.', 'Φασόλια σε ντομάτα με ρύζι, απλό νηστίσιμο με λάδι.'),
     ingredients: lines(
       [
         '2 cups cooked red or kidney beans (or 1 large can)',
@@ -1152,7 +1152,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Brown rice needs longer — start it first.',
+        'Brown rice needs longer; start it first.',
         'A pinch of smoked paprika deepens the flavour.',
       ],
       [
@@ -1259,7 +1259,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 half (~280 g)', '1 половинка (~280 г)', '1 μισό (~280 γρ.)'),
     title: L('Stuffed eggplant', 'Фаршированные баклажаны', 'Μελιτζάνες γεμιστές (παπουτσάκια)'),
-    summary: L('Roasted eggplant boats filled with tomato-herb rice — Lenten papoutsakia.', 'Лодочки из баклажана с рисом в томате — постные папуцакия.', 'Βαρκούλες μελιτζάνας με ρύζι ντομάτας — νηστίσιμα παπουτσάκια.'),
+    summary: L('Roasted eggplant boats filled with tomato-herb rice, Lenten papoutsakia.', 'Лодочки из баклажана с рисом в томате — постные папуцакия.', 'Βαρκούλες μελιτζάνας με ρύζι ντομάτας, νηστίσιμα παπουτσάκια.'),
     ingredients: lines(
       [
         '2 large eggplants, halved lengthwise',
@@ -1340,7 +1340,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 5,
     servingSize: L('1 bowl (~320 g)', '1 миска (~320 г)', '1 μπολ (~320 γρ.)'),
     title: L('Youvetsi with chickpeas', 'Гиувеци с нутом', 'Γιουβέτσι με ρεβίθια'),
-    summary: L('Baked orzo (kritharaki) in tomato with chickpeas — Sunday Lenten youvetsi.', 'Запечённое орзо в томате с нутом — воскресное постное гиувеци.', 'Κριθαράκι στο φούρνο με ντομάτα και ρεβίθια — κυριακάτικο γιουβέτσι.'),
+    summary: L('Baked orzo (kritharaki) in tomato with chickpeas, Sunday Lenten youvetsi.', 'Запечённое орзо в томате с нутом — воскресное постное гиувеци.', 'Κριθαράκι στο φούρνο με ντομάτα και ρεβίθια, κυριακάτικο γιουβέτσι.'),
     ingredients: lines(
       [
         '2 cups (400 g) orzo / kritharaki',
@@ -1399,7 +1399,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     tips: lines(
       [
         'Add hot water if the pan looks dry before the orzo is done.',
-        'Traditional with a cinnamon stick — optional but lovely.',
+        'Traditional with a cinnamon stick, optional but lovely.',
       ],
       [
         'Долейте горячей воды, если сухо.',
@@ -1485,7 +1485,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
       ],
       [
         'Ψήστε τις γλυκοπατάτες από πριν.',
-        'Καλαμποκίσια πίτα — ζεστάνετε πρώτα.',
+        'Καλαμποκίσια πίτα: ζεστάνετε πρώτα.',
       ],
     ),
   }),
@@ -1499,7 +1499,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 6,
     servingSize: L('1 bowl (~350 g)', '1 миска (~350 г)', '1 μπολ (~350 γρ.)'),
     title: L('Vegan chili', 'Постный чили', 'Vegan chili'),
-    summary: L('Tomato chili with beans and spices — hearty Lenten pot, oil optional but lovely.', 'Томатный чили с фасолью и специями — сытная постная кастрюля.', 'Chili ντομάτας με φασόλια — χορταστική νηστίσιμη κατσαρόλα.'),
+    summary: L('Tomato chili with beans and spices: hearty Lenten pot, oil optional but lovely.', 'Томатный чили с фасолью и специями — сытная постная кастрюля.', 'Chili ντομάτας με φασόλια, χορταστική νηστίσιμη κατσαρόλα.'),
     ingredients: lines(
       [
         '2 tbsp olive oil',
@@ -1580,7 +1580,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('2–3 pieces', '2–3 штуки', '2–3 κομμάτια'),
     title: L('Stuffed calamari', 'Фаршированные кальмары', 'Καλαμάρια γεμιστά'),
-    summary: L('Calamari tubes filled with rice and herbs in tomato — for fish-allowed fasting days.', 'Кальмары с рисом и зеленью в томате — в дни, когда разрешена рыба.', 'Καλαμάρια με ρύζι και μυρωδικά σε ντομάτα — τις μέρες με ψάρι/θαλασσινά.'),
+    summary: L('Calamari tubes filled with rice and herbs in tomato, for fish-allowed fasting days.', 'Кальмары с рисом и зеленью в томате — в дни, когда разрешена рыба.', 'Καλαμάρια με ρύζι και μυρωδικά σε ντομάτα, τις μέρες με ψάρι/θαλασσινά.'),
     ingredients: lines(
       [
         '800 g cleaned calamari tubes',
@@ -1638,7 +1638,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Do not overstuff — rice swells.',
+        'Do not overstuff: rice swells.',
         'Only on days your parish allows shellfish/fish.',
       ],
       [
@@ -1661,7 +1661,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 plate (~320 g)', '1 тарелка (~320 г)', '1 πιάτο (~320 γρ.)'),
     title: L('Octopus and pasta', 'Осьминог с пастой', 'Χταπόδι με ζυμαρικά'),
-    summary: L('Slow-simmered octopus in tomato tossed with pasta — fish-day main.', 'Осьминог в томате с пастой — основное блюдо в рыбный день.', 'Χταπόδι σε ντομάτα με ζυμαρικά — κυρίως πιάτο σε μέρα με ψάρι.'),
+    summary: L('Slow-simmered octopus in tomato tossed with pasta, fish-day main.', 'Осьминог в томате с пастой — основное блюдо в рыбный день.', 'Χταπόδι σε ντομάτα με ζυμαρικά, κυρίως πιάτο σε μέρα με ψάρι.'),
     ingredients: lines(
       [
         '1 kg octopus, cleaned',
@@ -1739,7 +1739,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 bowl (~300 g)', '1 миска (~300 г)', '1 μπολ (~300 γρ.)'),
     title: L('Shrimp and rice', 'Креветки с рисом', 'Γαρίδες με ρύζι'),
-    summary: L('One-pan tomato rice finished with shrimp — for fish-allowed days.', 'Рис в томате с креветками — когда разрешена рыба/морепродукты.', 'Ρύζι ντομάτας με γαρίδες — τις μέρες με θαλασσινά.'),
+    summary: L('One-pan tomato rice finished with shrimp, for fish-allowed days.', 'Рис в томате с креветками — когда разрешена рыба/морепродукты.', 'Ρύζι ντομάτας με γαρίδες, τις μέρες με θαλασσινά.'),
     ingredients: lines(
       [
         '400 g shrimp, peeled',
@@ -1794,7 +1794,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Do not overcook shrimp — they toughen quickly.',
+        'Do not overcook shrimp: they toughen quickly.',
         'Use vegetable broth instead of water if you have it.',
       ],
       [
@@ -1817,7 +1817,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 bowl (~300 g)', '1 миска (~300 г)', '1 μπολ (~300 γρ.)'),
     title: L('Calamari and rice', 'Кальмары с рисом', 'Καλαμάρι με ρύζι'),
-    summary: L('Tomato rice simmered with calamari rings — simple fish-day pot.', 'Томатный рис с кольцами кальмара — простая рыбная кастрюля.', 'Ρύζι ντομάτας με καλαμάρι — απλή κατσαρόλα θαλασσινών.'),
+    summary: L('Tomato rice simmered with calamari rings, simple fish-day pot.', 'Томатный рис с кольцами кальмара — простая рыбная кастрюля.', 'Ρύζι ντομάτας με καλαμάρι, απλή κατσαρόλα θαλασσινών.'),
     ingredients: lines(
       [
         '600 g calamari, sliced into rings',
@@ -1895,7 +1895,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 2,
     servingSize: L('1 sandwich', '1 сэндвич', '1 σάντουιτς'),
     title: L('Eggplant BLT', 'Сэндвич с баклажаном', 'Σάντουιτς μελιτζάνας'),
-    summary: L('Roasted eggplant strips with tomato and greens in toasted bread — oil-day lunch.', 'Запечённый баклажан с томатом и зеленью в хлебе — обед с маслом.', 'Ψητή μελιτζάνα με ντομάτα και χόρτα σε ψωμί — μεσημεριανό με λάδι.'),
+    summary: L('Roasted eggplant strips with tomato and greens in toasted bread, oil-day lunch.', 'Запечённый баклажан с томатом и зеленью в хлебе — обед с маслом.', 'Ψητή μελιτζάνα με ντομάτα και χόρτα σε ψωμί, μεσημεριανό με λάδι.'),
     ingredients: lines(
       [
         '1 medium eggplant, sliced',
@@ -1967,7 +1967,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 wrap', '1 ролл', '1 wrap'),
     title: L('Chickpea wraps', 'Роллы с нутом', 'Wrap με ρεβίθια'),
-    summary: L('Mashed spiced chickpeas in flatbreads with crunchy veg — quick oil-day wrap.', 'Размятый нут со специями в лепёшке с овощами — быстрый ролл.', 'Λιωμένα ρεβίθια με μπαχαρικά σε πίτα με λαχανικά.'),
+    summary: L('Mashed spiced chickpeas in flatbreads with crunchy veg, quick oil-day wrap.', 'Размятый нут со специями в лепёшке с овощами — быстрый ролл.', 'Λιωμένα ρεβίθια με μπαχαρικά σε πίτα με λαχανικά.'),
     ingredients: lines(
       [
         '2 cans chickpeas, rinsed',
@@ -2002,7 +2002,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     steps: lines(
       [
-        'Mash chickpeas with oil, spices, lemon, and salt — leave some texture.',
+        'Mash chickpeas with oil, spices, lemon, and salt. Leave some texture.',
         'Warm wraps. Spread filling; add raw veg.',
         'Roll tightly and slice if desired.',
       ],
@@ -2097,7 +2097,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Tahini thickens — loosen with lemon water.',
+        'Tahini thickens; loosen with lemon water.',
         'Make the filling ahead for easy lunches.',
       ],
       [
@@ -2105,7 +2105,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
         'Начинку можно заранее.',
       ],
       [
-        'Το ταχίνι πήζει — αραιώστε με λεμονόνερο.',
+        'Το ταχίνι πήζει· αραιώστε με λεμονόνερο.',
         'Το γέμισμα γίνεται από πριν.',
       ],
     ),
@@ -2120,7 +2120,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 2,
     servingSize: L('2 toasts', '2 тоста', '2 φέτες'),
     title: L('Dandelion greens on toast', 'Одуванчик на тосте', 'Ραδίκια σε ψωμί'),
-    summary: L('Wilted bitter greens with lemon and oil on grilled bread — classic meze.', 'Припущенная горькая зелень с лимоном и маслом на хлебе.', 'Μαραμένα πικρά χόρτα με λεμόνι και λάδι σε ψωμί.'),
+    summary: L('Wilted bitter greens with lemon and oil on grilled bread, classic meze.', 'Припущенная горькая зелень с лимоном и маслом на хлебе.', 'Μαραμένα πικρά χόρτα με λεμόνι και λάδι σε ψωμί.'),
     ingredients: lines(
       [
         '300 g dandelion greens or chicory, washed',
@@ -2166,7 +2166,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Any bitter green works — endive, escarole, wild greens.',
+        'Any bitter green works: endive, escarole, wild greens.',
         'A pinch of chili flakes wakes it up.',
       ],
       [
@@ -2189,7 +2189,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 plate (~200 g)', '1 тарелка (~200 г)', '1 πιάτο (~200 γρ.)'),
     title: L('Horta', 'Хорта (варёная зелень)', 'Χόρτα βραστά'),
-    summary: L('Boiled wild greens dressed with olive oil and lemon — essential Greek Lenten side.', 'Варёная зелень с маслом и лимоном — обязательный греческий гарнир поста.', 'Βραστά χόρτα με λάδι και λεμόνι — βασικό νηστίσιμο συνοδευτικό.'),
+    summary: L('Boiled wild greens dressed with olive oil and lemon, essential Greek Lenten side.', 'Варёная зелень с маслом и лимоном — обязательный греческий гарнир поста.', 'Βραστά χόρτα με λάδι και λεμόνι, βασικό νηστίσιμο συνοδευτικό.'),
     ingredients: lines(
       [
         '1 kg mixed greens (amaranth, chicory, spinach, beet greens)',
@@ -2252,7 +2252,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 10,
     servingSize: L('1 cup (~40 g)', '1 шт. (~40 г)', '1 τεμ. (~40 γρ.)'),
     title: L('Oatmeal cups', 'Овсяные чашечки', 'Βρώμη σε φορμάκια'),
-    summary: L('No-bake oat cups with nut butter and dried fruit — Lenten snack bites.', 'Овсяные чашечки без выпечки с пастой из орехов и сухофруктами.', 'Φορμάκια βρώμης χωρίς φούρνο με ταχίνι/φυστικοβούτυρο και ξερά φρούτα.'),
+    summary: L('No-bake oat cups with nut butter and dried fruit, Lenten snack bites.', 'Овсяные чашечки без выпечки с пастой из орехов и сухофруктами.', 'Φορμάκια βρώμης χωρίς φούρνο με ταχίνι/φυστικοβούτυρο και ξερά φρούτα.'),
     ingredients: lines(
       [
         '2 cups (180 g) rolled oats',
@@ -2321,7 +2321,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 12,
     servingSize: L('2 dates', '2 финика', '2 χουρμάδες'),
     title: L('Stuffed dates', 'Фаршированные финики', 'Χουρμάδες γεμιστοί'),
-    summary: L('Dates filled with almond butter and coconut — no-cook Lenten sweet.', 'Финики с миндальной пастой и кокосом — сладкое без готовки.', 'Χουρμάδες με αμυγδαλοβούτυρο και καρύδα — γλυκό χωρίς ψήσιμο.'),
+    summary: L('Dates filled with almond butter and coconut, no-cook Lenten sweet.', 'Финики с миндальной пастой и кокосом — сладкое без готовки.', 'Χουρμάδες με αμυγδαλοβούτυρο και καρύδα, γλυκό χωρίς ψήσιμο.'),
     ingredients: lines(
       [
         '12 soft Medjool dates, pitted',
@@ -2384,7 +2384,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 4,
     servingSize: L('1 bowl (~200 g)', '1 миска (~200 г)', '1 μπολ (~200 γρ.)'),
     title: L('Vegan rizogalo', 'Постный рисовый пудинг', 'Νηστίσιμο ρυζόγαλο'),
-    summary: L('Creamy rice pudding with plant milk and cinnamon — dairy-free Greek classic.', 'Нежный рисовый пудинг на растительном молоке с корицей.', 'Κρεμώδες ρυζόγαλο με φυτικό γάλα και κανέλα.'),
+    summary: L('Creamy rice pudding with plant milk and cinnamon, dairy-free Greek classic.', 'Нежный рисовый пудинг на растительном молоке с корицей.', 'Κρεμώδες ρυζόγαλο με φυτικό γάλα και κανέλα.'),
     ingredients: lines(
       [
         '½ cup short-grain rice',
@@ -2431,7 +2431,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     tips: lines(
       [
         'Stir often so it does not catch on the bottom.',
-        'Thicker as it cools — loosen with a splash of plant milk.',
+        'Thicker as it cools. Loosen with a splash of plant milk.',
       ],
       [
         'Часто мешайте.',
@@ -2439,7 +2439,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
       ],
       [
         'Ανακατεύετε συχνά.',
-        'Όσο κρυώνει πήζει — λίγο γάλα.',
+        'Όσο κρυώνει πήζει· λίγο γάλα.',
       ],
     ),
   }),
@@ -2525,7 +2525,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 10,
     servingSize: L('1 slice (~90 g)', '1 кусок (~90 г)', '1 φέτα (~90 γρ.)'),
     title: L('Chocolate blueberry cake', 'Шоколадный кекс с черникой', 'Κέικ σοκολάτας με μύρτιλα'),
-    summary: L('Cocoa Lenten cake folded with blueberries — oil-based, no eggs.', 'Какао-кекс с черникой — на масле, без яиц.', 'Κέικ κακάο με μύρτιλα — με λάδι, χωρίς αυγά.'),
+    summary: L('Cocoa Lenten cake folded with blueberries: oil-based, no eggs.', 'Какао-кекс с черникой — на масле, без яиц.', 'Κέικ κακάο με μύρτιλα: με λάδι, χωρίς αυγά.'),
     ingredients: lines(
       [
         '1½ cups (180 g) flour',
@@ -2580,7 +2580,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Frozen berries work — do not thaw.',
+        'Frozen berries work; do not thaw.',
         'Dust with cocoa instead of icing sugar.',
       ],
       [
@@ -2588,7 +2588,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
         'Какао вместо сахарной пудры.',
       ],
       [
-        'Κατεψυγμένα μούρα — χωρίς απόψυξη.',
+        'Κατεψυγμένα μούρα, χωρίς απόψυξη.',
         'Κακάο αντί άχνη.',
       ],
     ),
@@ -2603,7 +2603,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 16,
     servingSize: L('1 cookie (~35 g)', '1 печенье (~35 г)', '1 μπισκότο (~35 γρ.)'),
     title: L('Chocolate strawberry cookies', 'Шоколадное печенье с клубникой', 'Μπισκότα σοκολάτας με φράουλα'),
-    summary: L('Soft cocoa cookies with dried strawberry pieces — Lenten tray bake.', 'Мягкое какао-печенье с кусочками клубники.', 'Απαλά μπισκότα κακάο με κομμάτια φράουλας.'),
+    summary: L('Soft cocoa cookies with dried strawberry pieces, Lenten tray bake.', 'Мягкое какао-печенье с кусочками клубники.', 'Απαλά μπισκότα κακάο με κομμάτια φράουλας.'),
     ingredients: lines(
       [
         '1½ cups flour',
@@ -2655,7 +2655,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'They firm up as they cool — do not overbake.',
+        'They firm up as they cool; do not overbake.',
         'Swap strawberries for raisins if needed.',
       ],
       [
@@ -2678,7 +2678,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 10,
     servingSize: L('1 slice (~90 g)', '1 кусок (~90 г)', '1 φέτα (~90 γρ.)'),
     title: L('Chocolate orange cake', 'Шоколадный кекс с апельсином', 'Κέικ σοκολάτας με πορτοκάλι'),
-    summary: L('Cocoa cake scented with orange zest and juice — Lenten favourite.', 'Какао-кекс с цедрой и соком апельсина.', 'Κέικ κακάο με ξύσμα και χυμό πορτοκαλιού.'),
+    summary: L('Cocoa cake scented with orange zest and juice, Lenten favourite.', 'Какао-кекс с цедрой и соком апельсина.', 'Κέικ κακάο με ξύσμα και χυμό πορτοκαλιού.'),
     ingredients: lines(
       [
         '1½ cups flour',
@@ -2756,7 +2756,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 10,
     servingSize: L('1 slice (~90 g)', '1 кусок (~90 г)', '1 φέτα (~90 γρ.)'),
     title: L('Vegan apple cake', 'Постный яблочный пирог', 'Νηστίσιμο μηλόπιτα-κέικ'),
-    summary: L('Oil-based apple cake with cinnamon — simple Lenten tray dessert.', 'Яблочный кекс на масле с корицей — простой постный десерт.', 'Κέικ μήλου με λάδι και κανέλα — απλό νηστίσιμο γλυκό.'),
+    summary: L('Oil-based apple cake with cinnamon, simple Lenten tray dessert.', 'Яблочный кекс на масле с корицей — простой постный десерт.', 'Κέικ μήλου με λάδι και κανέλα, απλό νηστίσιμο γλυκό.'),
     ingredients: lines(
       [
         '2 cups flour',
@@ -2831,7 +2831,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 10,
     servingSize: L('1 slice (~80 g)', '1 кусок (~80 г)', '1 φέτα (~80 γρ.)'),
     title: L('Vegan banana bread', 'Постный банановый хлеб', 'Νηστίσιμο κέικ μπανάνας'),
-    summary: L('Classic banana loaf with oil — no eggs or dairy.', 'Классический банановый кекс на масле — без яиц и молока.', 'Κλασικό κέικ μπανάνας με λάδι — χωρίς αυγά και γάλα.'),
+    summary: L('Classic banana loaf with oil, no eggs or dairy.', 'Классический банановый кекс на масле — без яиц и молока.', 'Κλασικό κέικ μπανάνας με λάδι, χωρίς αυγά και γάλα.'),
     ingredients: lines(
       [
         '3 ripe bananas, mashed',
@@ -2906,7 +2906,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servings: 20,
     servingSize: L('1 cookie (~30 g)', '1 печенье (~30 г)', '1 μπισκότο (~30 γρ.)'),
     title: L('Tahini cookies', 'Печенье с тахини', 'Μπισκότα ταχινιού'),
-    summary: L('Crisp-edged tahini cookies — classic Greek Lenten sweet for oil days.', 'Печенье с тахини — классическое греческое постное сладкое.', 'Μπισκότα ταχινιού — κλασικό νηστίσιμο γλυκό.'),
+    summary: L('Crisp-edged tahini cookies, classic Greek Lenten sweet for oil days.', 'Печенье с тахини — классическое греческое постное сладкое.', 'Μπισκότα ταχινιού, κλασικό νηστίσιμο γλυκό.'),
     ingredients: lines(
       [
         '1 cup (250 g) tahini',
@@ -2952,7 +2952,7 @@ export const MIA_KOUPPA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Stir tahini well before measuring — oil separates.',
+        'Stir tahini well before measuring: oil separates.',
         'They crisp as they cool.',
       ],
       [

@@ -77,11 +77,11 @@ export function TodaySectionTiles({
                   accessibilityLabel={title}
                   {...hoverAccessibilityProps(title, { role: 'button' })}
                 >
-                  <SectionIcon name={tile.icon} color={iconColor} size={18} />
+                  <SectionIcon name={tile.icon} color={iconColor} size={23} />
                   <Text style={[styles.rowLabel, { color: textColor }]} numberOfLines={2}>
                     {title}
                   </Text>
-                  <Feather name="chevron-right" size={16} color={sectionMuted} />
+                  <Feather name="chevron-right" size={18} color={sectionMuted} />
                 </Pressable>
               );
             })}
@@ -111,16 +111,16 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    minHeight: 52,
+    gap: 14,
+    paddingVertical: 19,
+    paddingHorizontal: 18,
+    minHeight: 62,
   },
   rowLabel: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: '600',
     letterSpacing: 0.05,
-    lineHeight: 20,
+    lineHeight: 22,
   },
 });

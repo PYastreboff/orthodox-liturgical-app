@@ -56,16 +56,16 @@ R({
     servingSize: L('1 bowl (~300 g)', '1 миска (~300 г)', '1 μπολ (~300 γρ.)'),
     title: L('Oat porridge with fruit', 'Овсянка с фруктами', 'Νιφάδες βρώμης με φρούτα'),
     summary: L(
-      'Warm rolled oats simmered in water, finished with banana or dried fruit — a classic strict-fast breakfast.',
+      'Warm rolled oats simmered in water, finished with banana or dried fruit, a classic strict-fast breakfast.',
       'Тёплая овсянка на воде с бананом или сухофруктами — простое строгое блюдо.',
-      'Ζεστή βρώμη σε νερό με μπανάνα ή ξερά φρούτα — απλό αυστηρό πρωινό.',
+      'Ζεστή βρώμη σε νερό με μπανάνα ή ξερά φρούτα, απλό αυστηρό πρωινό.',
     ),
     ingredients: lines(
       [
         '1 cup (90 g) rolled oats',
         '2 cups (480 ml) water',
         'Pinch of fine salt',
-        '1 ripe banana, sliced — or 3 tbsp raisins',
+        '1 ripe banana, sliced, or 3 tbsp raisins',
         '½ tsp ground cinnamon (optional)',
         '1 tsp maple syrup or date syrup (optional, if used in your practice)',
       ],
@@ -81,7 +81,7 @@ R({
         '1 φλ. (90 γρ.) νιφάδες βρώμης',
         '2 φλ. (480 ml) νερό',
         'Πιτσίλισμα αλάτι',
-        '1 ώριμη μπανάνα σε φέτες — ή 3 κ.σ. σταφίδες',
+        '1 ώριμη μπανάνα σε φέτες, ή 3 κ.σ. σταφίδες',
         '½ κ.γ. κανέλα (προαιρετικά)',
         '1 κ.γ. σιρόπι σφενδάμου ή χουρμά (προαιρετικά)',
       ],
@@ -132,13 +132,13 @@ R({
     servingSize: L('~⅓ cup (80 g)', '~⅓ стакана (80 г)', '~⅓ φλ. (80 γρ.)'),
     title: L('Oil-free chickpea hummus', 'Хумус без масла', 'Χούμους χωρίς λάδι'),
     summary: L(
-      'Smooth chickpea dip with lemon and garlic — thinned with aquafaba so it stays strict-fast friendly.',
+      'Smooth chickpea dip with lemon and garlic, thinned with aquafaba so it stays strict-fast friendly.',
       'Нежный хумус с лимоном и чесноком — разбавлен жидкостью от нута, без масла.',
-      'Απαλό χούμους με λεμόνι και σκόρδο — αραιωμένο με νερό ρεβιθιών, χωρίς λάδι.',
+      'Απαλό χούμους με λεμόνι και σκόρδο, αραιωμένο με νερό ρεβιθιών, χωρίς λάδι.',
     ),
     ingredients: lines(
       [
-        '1 can (400 g) chickpeas, drained — reserve 6 tbsp aquafaba',
+        '1 can (400 g) chickpeas, drained (reserve 6 tbsp aquafaba)',
         'Juice of 1 large lemon (~3 tbsp)',
         '2 garlic cloves, minced',
         '½ tsp fine salt, plus more to taste',
@@ -154,7 +154,7 @@ R({
         'Паприка и сырые овощи для подачи',
       ],
       [
-        '1 κονσέρβα (400 γρ.) ρεβίθια — κρατήστε 6 κ.σ. νερό ρεβιθιών',
+        '1 κονσέρβα (400 γρ.) ρεβίθια· κρατήστε 6 κ.σ. νερό ρεβιθιών',
         'Χυμός 1 μεγάλου λεμονιού (~3 κ.σ.)',
         '2 σκελίδες σκόρδο',
         '½ κ.γ. αλάτι, κι άλλο στη γεύση',
@@ -208,9 +208,9 @@ R({
     servingSize: L('1½ cups (~360 ml)', '1½ стакана (~360 мл)', '1½ φλ. (~360 ml)'),
     title: L('Red lentil soup', 'Суп из красной чечевицы', 'Σούπα κόκκινης φακής'),
     summary: L(
-      'Hearty Lenten soup with onion, carrot, and cumin — no oil, finished with lemon.',
+      'Hearty Lenten soup with onion, carrot, and cumin. No oil, finished with lemon.',
       'Сытный постный суп с луком, морковью и тмином — без масла, с лимоном.',
-      'Χορταστική νηστίσιμη σούπα με κρεμμύδι, καρότο και κύμινο — χωρίς λάδι, με λεμόνι.',
+      'Χορταστική νηστίσιμη σούπα με κρεμμύδι, καρότο και κύμινο· χωρίς λάδι, με λεμόνι.',
     ),
     ingredients: lines(
       [
@@ -269,7 +269,7 @@ R({
     ),
     tips: lines(
       [
-        'Soup thickens as it cools — thin with hot water when reheating.',
+        'Soup thickens as it cools. Thin with hot water when reheating.',
         'On oil days, start the vegetables in 2 tbsp olive oil instead of water.',
       ],
       [
@@ -277,7 +277,7 @@ R({
         'В дни с маслом обжарьте овощи на 2 ст.л. оливкового масла.',
       ],
       [
-        'Πήζει καθώς κρυώνει — αραιώστε με ζεστό νερό στο ζέσταμα.',
+        'Πήζει καθώς κρυώνει· αραιώστε με ζεστό νερό στο ζέσταμα.',
         'Σε ημέρες λαδιού σοτάρετε τα λαχανικά σε 2 κ.σ. ελαιόλαδο.',
       ],
     ),
@@ -293,13 +293,13 @@ R({
     servingSize: L('1¼ cups (~280 g)', '1¼ стакана (~280 г)', '1¼ φλ. (~280 γρ.)'),
     title: L('Tomato bean stew', 'Фасоль в томате', 'Φασόλια κοκκινιστά'),
     summary: L(
-      'White beans simmered with onion, tomato, and bay — a monastery-style main for strict days.',
+      'White beans simmered with onion, tomato, and bay: a monastery-style main for strict days.',
       'Белая фасоль с луком, томатом и лавром — монастырское основное блюдо для строгого поста.',
-      'Άσπρα φασόλια με κρεμμύδι, ντομάτα και δαφνή — μοναστηριακό κυρίως πιάτο.',
+      'Άσπρα φασόλια με κρεμμύδι, ντομάτα και δαφνή, μοναστηριακό κυρίως πιάτο.',
     ),
     ingredients: lines(
       [
-        '3 cups (450 g) cooked white beans — or 2 cans, rinsed',
+        '3 cups (450 g) cooked white beans, or 2 cans, rinsed',
         '1 large onion, sliced',
         '2 cups (480 ml) tomato passata or crushed tomatoes',
         '2 bay leaves',
@@ -319,7 +319,7 @@ R({
         'Горсть петрушки',
       ],
       [
-        '3 φλ. (450 γρ.) βρασμένα άσπρα φασόλια — ή 2 κονσέρβες',
+        '3 φλ. (450 γρ.) βρασμένα άσπρα φασόλια, ή 2 κονσέρβες',
         '1 μεγάλο κρεμμύδι σε φέτες',
         '2 φλ. (480 ml) ντομάτα passata ή λιωμένη',
         '2 δαφνόφυλλα',
@@ -378,9 +378,9 @@ R({
     servingSize: L('1 cup (~120 g)', '1 стакан (~120 г)', '1 φλ. (~120 γρ.)'),
     title: L('Cabbage and carrot salad', 'Салат из капусты и моркови', 'Σαλάτα λάχανο-καρότο'),
     summary: L(
-      'Crunchy shredded cabbage with carrot, vinegar, and dill — no oil needed.',
+      'Crunchy shredded cabbage with carrot, vinegar, and dill. No oil needed.',
       'Хрустящая капуста с морковью, уксусом и укропом — без масла.',
-      'Τραγανό λάχανο με καρότο, ξίδι και άνηθο — χωρίς λάδι.',
+      'Τραγανό λάχανο με καρότο, ξίδι και άνηθο, χωρίς λάδι.',
     ),
     ingredients: lines(
       [
@@ -415,7 +415,7 @@ R({
       [
         'Toss cabbage and carrot with salt in a large bowl. Massage 1–2 minutes until slightly wilted.',
         'Add vinegar (and sugar if using). Toss well and rest 10 minutes.',
-        'Fold in dill and pepper. Taste — add more acid or salt if needed.',
+        'Fold in dill and pepper. Taste. Add more acid or salt if needed.',
         'Serve ~120 g per person cold or room temperature.',
       ],
       [
@@ -433,7 +433,7 @@ R({
     ),
     tips: lines(
       [
-        'Make up to a day ahead — it softens and sweetens in the fridge.',
+        'Make up to a day ahead. It softens and sweetens in the fridge.',
         'On oil days, dress with 2 tbsp olive oil just before serving.',
       ],
       [
@@ -457,9 +457,9 @@ R({
     servingSize: L('1½ cups (~250 g)', '1½ стакана (~250 г)', '1½ φλ. (~250 γρ.)'),
     title: L('Water-sautéed potatoes', 'Картофель на воде', 'Πατάτες σοτέ σε νερό'),
     summary: L(
-      'Crisp-edged potatoes and onion cooked with steam and little water — no oil for strict fast.',
+      'Crisp-edged potatoes and onion cooked with steam and little water, no oil for strict fast.',
       'Картофель с луком «на воде» с корочкой — без масла для строгого поста.',
-      'Πατάτες με κρεμμύδι σε ατμό/νερό — χωρίς λάδι για αυστηρή νηστεία.',
+      'Πατάτες με κρεμμύδι σε ατμό/νερό, χωρίς λάδι για αυστηρή νηστεία.',
     ),
     ingredients: lines(
       [
@@ -509,7 +509,7 @@ R({
     ),
     tips: lines(
       [
-        'A heavy lid traps steam — that is what cooks the potatoes without oil.',
+        'A heavy lid traps steam: that is what cooks the potatoes without oil.',
         'Leftovers reheat well in a covered pan with a spoon of water.',
       ],
       [
@@ -517,7 +517,7 @@ R({
         'Остатки разогревайте под крышкой с ложкой воды.',
       ],
       [
-        'Βαρύ καπάκι κρατά τον ατμό — έτσι ψήνονται χωρίς λάδι.',
+        'Βαρύ καπάκι κρατά τον ατμό· έτσι ψήνονται χωρίς λάδι.',
         'Τα περισσεύματα ζεσταίνονται σκεπαστά με κουταλιά νερό.',
       ],
     ),
@@ -533,9 +533,9 @@ R({
     servingSize: L('1 cup liquid + fruit (~250 ml)', '1 стакан с фруктами (~250 мл)', '1 φλ. με φρούτα (~250 ml)'),
     title: L('Dried fruit compote (uzvar)', 'Компот из сухофруктов (узва́р)', 'Κομπόστα αποξηραμένων'),
     summary: L(
-      'Lightly sweetened dried-fruit drink served warm or chilled — traditional for Lenten and memorial tables.',
+      'Lightly sweetened dried-fruit drink served warm or chilled, traditional for Lenten and memorial tables.',
       'Слабо подслащённый напиток из сухофруктов — тёплым или холодным, для поста и поминальных столов.',
-      'Ελαφρά γλυκό ποτό από ξερά φρούτα — ζεστό ή κρύο, για νηστεία και μνημόσυνα.',
+      'Ελαφρά γλυκό ποτό από ξερά φρούτα, ζεστό ή κρύο, για νηστεία και μνημόσυνα.',
     ),
     ingredients: lines(
       [
@@ -606,9 +606,9 @@ R({
     servingSize: L('¾ cup cooked (~140 g)', '¾ стакана (~140 г)', '¾ φλ. (~140 γρ.)'),
     title: L('Buckwheat kasha', 'Гречневая каша', 'Φαγόπυρο (κασά)'),
     summary: L(
-      'Toasted buckwheat simmered in water — a Russian Lenten side that pairs with almost anything.',
+      'Toasted buckwheat simmered in water, a Russian Lenten side that pairs with almost anything.',
       'Поджаренная гречка на воде — русский постный гарнир почти ко всему.',
-      'Καβουρδισμένο φαγόπυρο σε νερό — ρωσικό νηστίσιμο συνοδευτικό.',
+      'Καβουρδισμένο φαγόπυρο σε νερό, ρωσικό νηστίσιμο συνοδευτικό.',
     ),
     ingredients: lines(
       [
@@ -676,9 +676,9 @@ R({
     servingSize: L('1 mug (~250 ml)', '1 кружка (~250 мл)', '1 κούπα (~250 ml)'),
     title: L('Mint and lemon herbal tea', 'Травяной чай с мятой и лимоном', 'Τσάι δυόσμου και λεμονιού'),
     summary: L(
-      'Caffeine-free pot of mint with lemon — soothing on any strict day.',
+      'Caffeine-free pot of mint with lemon, soothing on any strict day.',
       'Бескофеиновый чай с мятой и лимоном — мягкий напиток в любой строгий день.',
-      'Τσάι χωρίς καφεΐνη με δυόσμο και λεμόνι — απαλό ρόφημα σε αυστηρή νηστεία.',
+      'Τσάι χωρίς καφεΐνη με δυόσμο και λεμόνι, απαλό ρόφημα σε αυστηρή νηστεία.',
     ),
     ingredients: lines(
       [
@@ -719,7 +719,7 @@ R({
     ),
     tips: lines(
       [
-        'Dried mint is stronger — start with less and taste.',
+        'Dried mint is stronger. Start with less and taste.',
         'Chamomile or linden blossom work the same way.',
       ],
       [
@@ -727,7 +727,7 @@ R({
         'Так же заваривают ромашку или липу.',
       ],
       [
-        'Ο ξερός δυόσμος είναι πιο δυνατός — ξεκινήστε με λιγότερο.',
+        'Ο ξερός δυόσμος είναι πιο δυνατός· ξεκινήστε με λιγότερο.',
         'Το ίδιο γίνεται με χαμομήλι ή φλαμούρι.',
       ],
     ),
@@ -743,9 +743,9 @@ R({
     servingSize: L('1 bowl (~400 g)', '1 миска (~400 г)', '1 μπολ (~400 γρ.)'),
     title: L('Berry smoothie bowl', 'Ягодный смузи-боул', 'Bowl με μούρα'),
     summary: L(
-      'Thick blended frozen berries with banana — dairy-free breakfast you eat with a spoon.',
+      'Thick blended frozen berries with banana, dairy-free breakfast you eat with a spoon.',
       'Густой смузи из замороженных ягод и банана — безмолочный завтрак ложкой.',
-      'Πηχτό smoothie από κατεψυγμένα μούρα και μπανάνα — πρωινό χωρίς γάλα.',
+      'Πηχτό smoothie από κατεψυγμένα μούρα και μπανάνα, πρωινό χωρίς γάλα.',
     ),
     ingredients: lines(
       [
@@ -772,7 +772,7 @@ R({
     ),
     steps: lines(
       [
-        'Blend berries and banana with just enough liquid to move the blades — keep it thick.',
+        'Blend berries and banana with just enough liquid to move the blades. Keep it thick.',
         'Scrape into a bowl (~400 g).',
         'Top with seeds and optional granola. Eat immediately.',
       ],
@@ -782,7 +782,7 @@ R({
         'Посыпьте семенами и гранолой. Ешьте сразу.',
       ],
       [
-        'Χτυπήστε μούρα και μπανάνα με ελάχιστο υγρό — να μείνει πηχτό.',
+        'Χτυπήστε μούρα και μπανάνα με ελάχιστο υγρό· να μείνει πηχτό.',
         'Σε μπολ (~400 γρ.).',
         'Σπόροι και προαιρετικά granola. Φάτε αμέσως.',
       ],
@@ -813,9 +813,9 @@ R({
     servingSize: L('1 deep bowl (~450 ml)', '1 глубокая миска (~450 мл)', '1 βαθύ μπολ (~450 ml)'),
     title: L('Vegetable / prawn laksa', 'Овощная / креветочная лакса', 'Λάκσα λαχανικών / γαρίδας'),
     summary: L(
-      'Fragrant coconut-curry noodle soup with vegetables and tofu — add prawns when fish is allowed.',
+      'Fragrant coconut-curry noodle soup with vegetables and tofu. Add prawns when fish is allowed.',
       'Ароматный кокосово-карри суп с лапшой, овощами и тофу — с креветками, когда разрешена рыба.',
-      'Αρωματική σούπα κάρι καρύδας με noodles, λαχανικά και τόφου — με γαρίδες όταν επιτρέπεται ψάρι.',
+      'Αρωματική σούπα κάρι καρύδας με noodles, λαχανικά και τόφου· με γαρίδες όταν επιτρέπεται ψάρι.',
     ),
     ingredients: lines(
       [
@@ -824,7 +824,7 @@ R({
         '1 can (400 ml) full-fat coconut milk',
         '3 cups (720 ml) vegetable broth',
         '200 g firm tofu, cubed (omit or reduce if using plenty of prawns)',
-        '250 g raw prawns, peeled and deveined (optional — for fish days)',
+        '250 g raw prawns, peeled and deveined (optional, for fish days)',
         '1 red bell pepper, thinly sliced',
         '1 cup (100 g) bean sprouts',
         '1 cup (80 g) shredded cabbage or bok choy',
@@ -854,7 +854,7 @@ R({
         '1 κονσέρβα (400 ml) γάλα καρύδας',
         '3 φλ. (720 ml) ζωμό λαχανικών',
         '200 γρ. τόφου σε κύβους (λιγότερο αν βάλετε πολλές γαρίδες)',
-        '250 γρ. ωμές γαρίδες καθαρισμένες (προαιρετικά — ημέρες ψαριού)',
+        '250 γρ. ωμές γαρίδες καθαρισμένες (προαιρετικά, ημέρες ψαριού)',
         '1 κόκκινη πιπεριά σε λεπτές φέτες',
         '1 φλ. (100 γρ.) φύτρες',
         '1 φλ. (80 γρ.) λάχανο ή bok choy',
@@ -870,9 +870,9 @@ R({
         'In a wide pot over medium heat, loosen the laksa/curry paste with a splash of coconut milk. Cook 1–2 minutes until fragrant.',
         'Pour in the remaining coconut milk and the broth. Whisk smooth, bring to a gentle simmer.',
         'Add tofu and bell pepper. Simmer 8–10 minutes.',
-        'If using prawns, add them now and cook 2–4 minutes until just pink and opaque — do not overcook.',
+        'If using prawns, add them now and cook 2–4 minutes until just pink and opaque. Do not overcook.',
         'Stir in soy sauce, sugar if using, and cabbage; cook 2–3 minutes more.',
-        'Taste — it should be rich, salty-sweet, and fragrant. Finish with lime juice.',
+        'Taste: it should be rich, salty-sweet, and fragrant. Finish with lime juice.',
         'Divide noodles among 4 deep bowls. Ladle ~450 ml broth and toppings over each. Finish with sprouts, herbs, chili, and lime wedges.',
       ],
       [
@@ -890,16 +890,16 @@ R({
         'Σε φαρδιά κατσαρόλα σε μέτρια φωτιά, αραιώστε την πάστα με λίγο γάλα καρύδας. 1–2 λεπτά μέχρι αρωματική.',
         'Ρίξτε το υπόλοιπο γάλα καρύδας και τον ζωμό. Ανακατέψτε, σιγοβράστε απαλά.',
         'Προσθέστε τόφου και πιπεριά. 8–10 λεπτά.',
-        'Αν βάλετε γαρίδες, προσθέστε τώρα και μαγειρέψτε 2–4 λεπτά μέχρι ροζ — όχι παραπάνω.',
+        'Αν βάλετε γαρίδες, προσθέστε τώρα και μαγειρέψτε 2–4 λεπτά μέχρι ροζ, όχι παραπάνω.',
         'Σος σόγιας, ζάχαρη και λάχανο· ακόμη 2–3 λεπτά.',
-        'Δοκιμάστε — πλούσιο, αλμυρό-γλυκό, αρωματικό. Τελειώστε με λάιμ.',
+        'Δοκιμάστε: πλούσιο, αλμυρό-γλυκό, αρωματικό. Τελειώστε με λάιμ.',
         'Μοιράστε noodles σε 4 βαθιά μπολ. Ρίξτε ~450 ml ζωμό και υλικά. Φύτρες, βότανα, καυτερή, λάιμ.',
       ],
     ),
     tips: lines(
       [
         'Skip the prawns for a fully plant-based bowl; keep tofu as the protein.',
-        'Many bottled laksa pastes already contain shrimp — fine with prawns; use vegetarian paste for a plant-only version.',
+        'Many bottled laksa pastes already contain shrimp. Fine with prawns; use vegetarian paste for a plant-only version.',
         'For more heat, add fresh bird’s-eye chili or chili flakes at the table.',
       ],
       [
@@ -908,15 +908,15 @@ R({
         'Для остроты добавьте свежий перец чили или хлопья за столом.',
       ],
       [
-        'Χωρίς γαρίδες — πλήρως φυτικό μπολ· πρωτεΐνη από τόφου.',
-        'Πολλές πάστες λάκσα έχουν ήδη γαρίδα — εντάξει με γαρίδες· για φυτική εκδοχή διαλέξτε χορτοφαγική πάστα.',
+        'Χωρίς γαρίδες: πλήρως φυτικό μπολ· πρωτεΐνη από τόφου.',
+        'Πολλές πάστες λάκσα έχουν ήδη γαρίδα. Εντάξει με γαρίδες· για φυτική εκδοχή διαλέξτε χορτοφαγική πάστα.',
         'Για πιο καυτερό, φρέσκια καυτερή ή νιφάδες τσίλι στο τραπέζι.',
       ],
     ),
     notes: L(
-      'No cooking oil — the paste is loosened in coconut milk. Prawns only when fish is allowed; otherwise keep it vegetable and tofu.',
+      'No cooking oil: the paste is loosened in coconut milk. Prawns only when fish is allowed; otherwise keep it vegetable and tofu.',
       'Без масла — паста разводится в кокосовом молоке. Креветки — только когда разрешена рыба; иначе овощи и тофу.',
-      'Χωρίς λάδι μαγειρέματος — η πάστα αραιώνεται σε γάλα καρύδας. Γαρίδες μόνο όταν επιτρέπεται ψάρι· αλλιώς λαχανικά και τόφου.',
+      'Χωρίς λάδι μαγειρέματος: η πάστα αραιώνεται σε γάλα καρύδας. Γαρίδες μόνο όταν επιτρέπεται ψάρι· αλλιώς λαχανικά και τόφου.',
     ),
   }),
   R({
@@ -930,9 +930,9 @@ R({
     servingSize: L('1 bowl (~200 g)', '1 миска (~200 г)', '1 μπολ (~200 γρ.)'),
     title: L('Beet and white bean salad', 'Салат из свёклы с фасолью', 'Σαλάτα παντζάρι με φασόλια'),
     summary: L(
-      'Earthy beets, white beans, garlic, and vinegar — a classic Slavic Lenten plate. Use pre-cooked beets; no oil.',
+      'Earthy beets, white beans, garlic, and vinegar: a classic Slavic Lenten plate. Use pre-cooked beets; no oil.',
       'Свёкла, белая фасоль, чеснок и уксус — классика славянского поста. Готовая свёкла; без масла.',
-      'Παντζάρια, άσπρα φασόλια, σκόρδο και ξίδι — κλασικό νηστίσιμο πιάτο. Έτοιμα παντζάρια· χωρίς λάδι.',
+      'Παντζάρια, άσπρα φασόλια, σκόρδο και ξίδι: κλασικό νηστίσιμο πιάτο. Έτοιμα παντζάρια· χωρίς λάδι.',
     ),
     ingredients: lines(
       [
@@ -971,7 +971,7 @@ R({
         'In a large bowl, whisk vinegar, garlic, salt, and pepper.',
         'Add beets, beans, and onion. Toss gently until coated.',
         'Fold in dill. Taste and adjust salt or vinegar.',
-        'Rest 10 minutes if you can — flavours meld. Serve cold (~200 g per person).',
+        'Rest 10 minutes if you can. Flavours meld. Serve cold (~200 g per person).',
       ],
       [
         'В миске смешайте уксус, чеснок, соль и перец.',
@@ -989,15 +989,15 @@ R({
     tips: lines(
       [
         'Vacuum-packed cooked beets make this a 10-minute dish; avoid heavily pickled jars.',
-        'Keeps 2–3 days in the fridge — even better the next day.',
+        'Keeps 2–3 days in the fridge, even better the next day.',
       ],
       [
         'Вакуумная варёная свёкла — блюдо за 10 мин; не берите сильно маринованную.',
         'Хранится 2–3 дня в холодильнике — назавтра ещё вкуснее.',
       ],
       [
-        'Έτοιμα παντζάρια σε κενό — έτοιμο σε 10 λεπτά· αποφύγετε πολύ ξιδάτα.',
-        'Κρατάει 2–3 μέρες στο ψυγείο — καλύτερο την επόμενη μέρα.',
+        'Έτοιμα παντζάρια σε κενό, έτοιμο σε 10 λεπτά· αποφύγετε πολύ ξιδάτα.',
+        'Κρατάει 2–3 μέρες στο ψυγείο· καλύτερο την επόμενη μέρα.',
       ],
     ),
   }),
@@ -1012,9 +1012,9 @@ R({
     servingSize: L('1 plate (~280 g)', '1 тарелка (~280 г)', '1 πιάτο (~280 γρ.)'),
     title: L('Spinach rice (spanakorizo-style)', 'Рис со шпинатом', 'Σπανακόρυζο χωρίς λάδι'),
     summary: L(
-      'Greek-style spinach and rice simmered with lemon and dill — water-sautéed onion, no oil.',
+      'Greek-style spinach and rice simmered with lemon and dill. Water-sautéed onion, no oil.',
       'Рис со шпинатом, лимоном и укропом по-гречески — лук на воде, без масла.',
-      'Σπανάκι με ρύζι, λεμόνι και άνηθο — κρεμμύδι σε νερό, χωρίς λάδι.',
+      'Σπανάκι με ρύζι, λεμόνι και άνηθο· κρεμμύδι σε νερό, χωρίς λάδι.',
     ),
     ingredients: lines(
       [
@@ -1076,7 +1076,7 @@ R({
     ),
     tips: lines(
       [
-        'Frozen spinach works well — squeeze out excess water before adding.',
+        'Frozen spinach works well. Squeeze out excess water before adding.',
         'For a thicker pot, use 2½ cups liquid; for soupier, use 3½.',
       ],
       [
@@ -1084,7 +1084,7 @@ R({
         'Для густого — 2½ стакана жидкости; для пожиже — 3½.',
       ],
       [
-        'Κατεψυγμένο σπανάκι — στύψτε καλά το νερό.',
+        'Κατεψυγμένο σπανάκι: στύψτε καλά το νερό.',
         'Για πιο πηχτό: 2½ φλ. υγρό· για πιο αραιό: 3½.',
       ],
     ),
@@ -1100,15 +1100,15 @@ R({
     servingSize: L('1 bowl (~400 ml)', '1 миска (~400 мл)', '1 μπολ (~400 ml)'),
     title: L('Lemon chickpea soup', 'Гороховый суп из нута с лимоном', 'Ρεβιθόσουπα με λεμόνι'),
     summary: L(
-      'Simple revithosoupa-style chickpeas with onion, bay, and plenty of lemon — no oil.',
+      'Simple revithosoupa-style chickpeas with onion, bay, and plenty of lemon, no oil.',
       'Простой суп из нута с луком, лавром и лимоном — без масла.',
-      'Απλή ρεβιθόσουπα με κρεμμύδι, δαφνόφυλλο και λεμόνι — χωρίς λάδι.',
+      'Απλή ρεβιθόσουπα με κρεμμύδι, δαφνόφυλλο και λεμόνι, χωρίς λάδι.',
     ),
     ingredients: lines(
       [
         '1 large onion, chopped',
         '2 garlic cloves, minced',
-        '2 cans (400 g each) chickpeas, drained and rinsed — or 3 cups cooked',
+        '2 cans (400 g each) chickpeas, drained and rinsed, or 3 cups cooked',
         '5 cups (1.2 L) water or vegetable broth',
         '1 bay leaf',
         '1 tsp ground cumin (optional)',
@@ -1144,7 +1144,7 @@ R({
         'Soften onion in a splash of water 4–5 minutes. Add garlic 30 seconds.',
         'Add chickpeas, water/broth, bay, cumin if using, and salt. Bring to a boil.',
         'Simmer uncovered 25–30 minutes. Mash a cup of chickpeas against the pot wall for body, or blend briefly.',
-        'Remove bay. Stir in lemon juice off heat. Taste — it should be bright and savoury.',
+        'Remove bay. Stir in lemon juice off heat. Taste: it should be bright and savoury.',
         'Ladle ~400 ml per bowl. Top with parsley.',
       ],
       [
@@ -1165,7 +1165,7 @@ R({
     tips: lines(
       [
         'Dried chickpeas: soak overnight, boil until tender (~1 hour), then continue from step 2.',
-        'Extra lemon at the table wakes it up — Lenten chickpea soup loves acid.',
+        'Extra lemon at the table wakes it up. Lenten chickpea soup loves acid.',
       ],
       [
         'Сухой нут: замочите на ночь, отварите (~1 ч), затем со шага 2.',
@@ -1173,7 +1173,7 @@ R({
       ],
       [
         'Ξερά ρεβίθια: μούλιασμα όλο το βράδυ, βράσιμο (~1 ώρα), μετά από το βήμα 2.',
-        'Έξτρα λεμόνι στο τραπέζι — η ρεβιθόσουπα αγαπά την οξύτητα.',
+        'Έξτρα λεμόνι στο τραπέζι· η ρεβιθόσουπα αγαπά την οξύτητα.',
       ],
     ),
   }),
@@ -1188,9 +1188,9 @@ R({
     servingSize: L('1 bowl (~400 ml)', '1 миска (~400 мл)', '1 μπολ (~400 ml)'),
     title: L('Mushroom barley soup', 'Грибной суп с перловкой', 'Σούπα μανιταριών με κριθάρι'),
     summary: L(
-      'Hearty Eastern European barley and mushrooms — onion softened in water, no oil.',
+      'Hearty Eastern European barley and mushrooms. Onion softened in water, no oil.',
       'Сытный грибной суп с перловкой — лук на воде, без масла.',
-      'Χορταστική σούπα με κριθάρι και μανιτάρια — κρεμμύδι σε νερό, χωρίς λάδι.',
+      'Χορταστική σούπα με κριθάρι και μανιτάρια· κρεμμύδι σε νερό, χωρίς λάδι.',
     ),
     ingredients: lines(
       [
@@ -1259,7 +1259,7 @@ R({
     tips: lines(
       [
         'Pearl barley softens faster than hulled; if using hulled, add 15–20 minutes.',
-        'Dried mushrooms (a handful, soaked) deepen the broth — add soaking liquid too.',
+        'Dried mushrooms (a handful, soaked) deepen the broth. Add soaking liquid too.',
       ],
       [
         'Перловка быстрее шелушёной; шелушёной добавьте 15–20 мин.',
@@ -1267,7 +1267,7 @@ R({
       ],
       [
         'Το μαργαριταρένιο κριθάρι μαλακώνει πιο γρήγορα· το ολόκληρο θέλει +15–20 λεπτά.',
-        'Αποξηραμένα μανιτάρια βαθαίνουν τον ζωμό — μαζί με το νερό μουλιάσματος.',
+        'Αποξηραμένα μανιτάρια βαθαίνουν τον ζωμό, μαζί με το νερό μουλιάσματος.',
       ],
     ),
   }),
@@ -1282,9 +1282,9 @@ R({
     servingSize: L('1–2 peppers', '1–2 перца', '1–2 πιπεριές'),
     title: L('Stuffed peppers with rice', 'Перцы фаршированные рисом', 'Γεμιστές πιπεριές με ρύζι'),
     summary: L(
-      'Oven-baked peppers filled with rice, tomato, and herbs — a Lenten yemista without oil.',
+      'Oven-baked peppers filled with rice, tomato, and herbs: a Lenten yemista without oil.',
       'Перцы с рисом, томатом и зеленью в духовке — постные «гемиста» без масла.',
-      'Πιπεριές γεμιστές με ρύζι, ντομάτα και βότανα — νηστίσιμα γεμιστά χωρίς λάδι.',
+      'Πιπεριές γεμιστές με ρύζι, ντομάτα και βότανα, νηστίσιμα γεμιστά χωρίς λάδι.',
     ),
     ingredients: lines(
       [
@@ -1330,7 +1330,7 @@ R({
     steps: lines(
       [
         'Heat oven to 190°C / 375°F. Soften onion in a splash of water 5 minutes; add garlic 30 seconds.',
-        'Stir in rice, tomato, tomato paste, herbs, salt, pepper, and 1½ cups liquid. Simmer 5 minutes — rice stays undercooked.',
+        'Stir in rice, tomato, tomato paste, herbs, salt, pepper, and 1½ cups liquid. Simmer 5 minutes (rice stays undercooked).',
         'Stand peppers in a baking dish. Fill with rice mixture. Cap with pepper tops if you kept them.',
         'Pour ~1 cm water or broth into the dish around the peppers. Cover tightly with foil.',
         'Bake 40–45 minutes until peppers are soft and rice is tender. Uncover last 10 minutes if you want lightly browned tops. Rest 5 minutes before serving.',
@@ -1344,7 +1344,7 @@ R({
       ],
       [
         'Φούρνος 190°C. Κρεμμύδι με νερό 5 λεπτά· σκόρδο 30 δεύτερα.',
-        'Ρύζι, ντομάτα, πελτές, βότανα, αλάτι, πιπέρι και 1½ φλ. υγρό. 5 λεπτά — ρύζι μισοψημένο.',
+        'Ρύζι, ντομάτα, πελτές, βότανα, αλάτι, πιπέρι και 1½ φλ. υγρό. 5 λεπτά, ρύζι μισοψημένο.',
         'Στήστε τις πιπεριές σε ταψί, γεμίστε. Βάλτε τα «καπάκια».',
         'Ρίξτε ~1 εκ. νερό/ζωμό στον πάτο. Καλύψτε με αλουμινόχαρτο.',
         'Ψήστε 40–45 λεπτά. Τα τελευταία 10 χωρίς αλουμινόχαρτο αν θέλετε. Ξεκούραση 5 λεπτά.',
@@ -1376,9 +1376,9 @@ R({
     servingSize: L('1 bowl (~300 g)', '1 миска (~300 г)', '1 μπολ (~300 γρ.)'),
     title: L('Split pea porridge', 'Гороховая каша', 'Φακές κίτρινες (πουρές)'),
     summary: L(
-      'Creamy yellow split peas with onion and bay — thick Lenten porridge, no oil.',
+      'Creamy yellow split peas with onion and bay. Thick Lenten porridge, no oil.',
       'Нежный гороховый пудинг с луком и лавром — густая постная каша без масла.',
-      'Κρεμώδεις κίτρινες φακές με κρεμμύδι και δάφνη — πηχτός νηστίσιμος πουρές χωρίς λάδι.',
+      'Κρεμώδεις κίτρινες φακές με κρεμμύδι και δάφνη, πηχτός νηστίσιμος πουρές χωρίς λάδι.',
     ),
     ingredients: lines(
       [
@@ -1437,7 +1437,7 @@ R({
     ),
     tips: lines(
       [
-        'Stir near the end — split peas catch easily on the bottom.',
+        'Stir near the end: split peas catch easily on the bottom.',
         'Leftovers thicken in the fridge; loosen with hot water when reheating.',
       ],
       [
@@ -1445,7 +1445,7 @@ R({
         'В холодильнике густеет; при разогреве разбавьте горячей водой.',
       ],
       [
-        'Στο τέλος ανακατεύετε συχνά — κολλάνε εύκολα.',
+        'Στο τέλος ανακατεύετε συχνά· κολλάνε εύκολα.',
         'Στο ψυγείο πήζει· ζεσταίνοντας αραιώστε με ζεστό νερό.',
       ],
     ),
@@ -1461,9 +1461,9 @@ R({
     servingSize: L('1 bowl (~350 ml)', '1 миска (~350 мл)', '1 μπολ (~350 ml)'),
     title: L('Lenten beet borscht', 'Постный борщ', 'Νηστίσιμο μπορς'),
     summary: L(
-      'Ruby beet soup with cabbage, potato, and tomato — monastic-style, no oil or sour cream.',
+      'Ruby beet soup with cabbage, potato, and tomato. Monastic-style, no oil or sour cream.',
       'Свекольный борщ с капустой, картофелем и томатом — постный, без масла и сметаны.',
-      'Κόκκινη σούπα παντζαριού με λάχανο, πατάτα και ντομάτα — χωρίς λάδι και κρέμα.',
+      'Κόκκινη σούπα παντζαριού με λάχανο, πατάτα και ντομάτα, χωρίς λάδι και κρέμα.',
     ),
     ingredients: lines(
       [
@@ -1514,7 +1514,7 @@ R({
         'Soften onion and carrot in a splash of water 5 minutes. Add beet; cook 5 minutes more, adding water as needed so nothing sticks.',
         'Stir in tomato paste 1 minute. Add water/broth, potatoes, tomatoes, bay, and salt. Bring to a boil.',
         'Simmer 15 minutes. Add cabbage; cook 10–15 minutes more until vegetables are tender.',
-        'Stir in vinegar or lemon — this keeps the colour bright. Remove bay. Taste for salt.',
+        'Stir in vinegar or lemon. This keeps the colour bright. Remove bay. Taste for salt.',
         'Serve ~350 ml topped with dill and pepper.',
       ],
       [
@@ -1528,7 +1528,7 @@ R({
         'Κρεμμύδι και καρότο με νερό 5 λεπτά. Παντζάρι άλλα 5, με λίγο νερό.',
         'Πελτές 1 λεπτό. Νερό/ζωμό, πατάτες, ντομάτα, δάφνη, αλάτι. Βράστε.',
         '15 λεπτά. Λάχανο· ακόμη 10–15 μέχρι μαλακά.',
-        'Ξίδι ή λεμόνι — κρατά το χρώμα. Βγάλετε τη δάφνη.',
+        'Ξίδι ή λεμόνι, κρατά το χρώμα. Βγάλετε τη δάφνη.',
         'Μερίδα ~350 ml με άνηθο και πιπέρι.',
       ],
     ),
@@ -1558,9 +1558,9 @@ R({
     servingSize: L('1 bowl (~280 g)', '1 миска (~280 г)', '1 μπολ (~280 γρ.)'),
     title: L('Tomato orzo pot', 'Орзо в томате', 'Κριθαράκι με ντομάτα'),
     summary: L(
-      'One-pot orzo (kritharaki) simmered in tomato and onion — quick Lenten comfort, no oil.',
+      'One-pot orzo (kritharaki) simmered in tomato and onion. Quick Lenten comfort, no oil.',
       'Орзо (крифараки) в томате с луком — быстрый постный ужин без масла.',
-      'Κριθαράκι σε ντομάτα με κρεμμύδι — γρήγορο νηστίσιμο, χωρίς λάδι.',
+      'Κριθαράκι σε ντομάτα με κρεμμύδι· γρήγορο νηστίσιμο, χωρίς λάδι.',
     ),
     ingredients: lines(
       [
@@ -1625,7 +1625,7 @@ R({
     ),
     tips: lines(
       [
-        'Any small pasta works — ditalini or broken spaghetti in a pinch.',
+        'Any small pasta works: ditalini or broken spaghetti in a pinch.',
         'Stir often in the last minutes; orzo loves to stick.',
       ],
       [
@@ -1633,7 +1633,7 @@ R({
         'В конце часто мешайте — орзо прилипает.',
       ],
       [
-        'Οποιοδήποτε μικρό ζυμαρικό — ditalini ή σπασμένα σπαγγέτι.',
+        'Οποιοδήποτε μικρό ζυμαρικό: ditalini ή σπασμένα σπαγγέτι.',
         'Στο τέλος ανακατεύετε συχνά· κολλάει εύκολα.',
       ],
     ),
@@ -1649,9 +1649,9 @@ R({
     servingSize: L('1 cookie (~35 g)', '1 печенье (~35 г)', '1 μπισκότο (~35 γρ.)'),
     title: L('Banana oat cookies', 'Овсяное печенье с бананом', 'Μπισκότα βρώμης με μπανάνα'),
     summary: L(
-      'Soft Lenten cookies from ripe banana, oats, and raisins — no oil, eggs, or dairy.',
+      'Soft Lenten cookies from ripe banana, oats, and raisins. No oil, eggs, or dairy.',
       'Мягкое постное печенье из банана, овсянки и изюма — без масла, яиц и молока.',
-      'Απαλά νηστίσιμα μπισκότα από μπανάνα, βρώμη και σταφίδες — χωρίς λάδι, αυγά ή γάλα.',
+      'Απαλά νηστίσιμα μπισκότα από μπανάνα, βρώμη και σταφίδες· χωρίς λάδι, αυγά ή γάλα.',
     ),
     ingredients: lines(
       [
@@ -1686,7 +1686,7 @@ R({
       [
         'Heat oven to 180°C / 350°F. Line a baking sheet with parchment (no oil needed).',
         'In a bowl, mash bananas until mostly smooth. Stir in oats, raisins, cinnamon, vanilla if using, salt, and optional nuts.',
-        'Let the mixture sit 5 minutes so the oats hydrate — it should be thick and scoopable.',
+        'Let the mixture sit 5 minutes so the oats hydrate. It should be thick and scoopable.',
         'Scoop ~12 mounds (about 2 tbsp each) onto the sheet. Flatten slightly with a spoon into cookie shapes.',
         'Bake 12–15 minutes until set and lightly golden at the edges. Cool on the sheet 5 minutes, then move to a rack. Makes 12 cookies (~35 g each).',
       ],
@@ -1700,7 +1700,7 @@ R({
       [
         'Φούρνος 180°C. Ταψί με αντικολλητικό χαρτί (χωρίς λάδι).',
         'Λιώστε τις μπανάνες. Ανακατέψτε βρώμη, σταφίδες, κανέλα, βανίλια, αλάτι και ξηρούς καρπούς.',
-        'Αφήστε 5 λεπτά να φουσκώσει η βρώμη — πηχτό μείγμα.',
+        'Αφήστε 5 λεπτά να φουσκώσει η βρώμη, πηχτό μείγμα.',
         'Βάλτε ~12 μπάλες (~2 κ.σ.), πιέστε ελαφρά.',
         'Ψήστε 12–15 λεπτά μέχρι χρυσαφένια στις άκρες. 5 λεπτά στο ταψί, μετά σε σχάρα. 12 μπισκότα (~35 γρ.).',
       ],
@@ -1738,13 +1738,13 @@ R({
       'Παλικάρια (πολυσπόρια)',
     ),
     summary: L(
-      'Boiled mixed beans and wheat berries with herbs and a bright lemon-vinegar dressing — the Greek Fotokolyva grain plate, oil-free.',
+      'Boiled mixed beans and wheat berries with herbs and a bright lemon-vinegar dressing, the Greek Fotokolyva grain plate, oil-free.',
       'Смесь бобовых и пшеницы с зеленью и лимонно-уксусной заправкой — греческая полиспория / фотоколыва без масла.',
-      'Μείγμα οσπρίων και σιταριού με μυρωδικά και λεμονάτη σάλτσα — πολυσπόρια / φωτοκόλλυβα χωρίς λάδι.',
+      'Μείγμα οσπρίων και σιταριού με μυρωδικά και λεμονάτη σάλτσα, πολυσπόρια / φωτοκόλλυβα χωρίς λάδι.',
     ),
     ingredients: lines(
       [
-        '3 cups (about 500 g) mixed cooked beans — chickpeas, navy, black beans, black-eyed peas',
+        '3 cups (about 500 g) mixed cooked beans: chickpeas, navy, black beans, black-eyed peas',
         '¼ cup (45 g) wheat berries, cooked until tender',
         '⅓ cup red onion, finely chopped',
         '¼ cup fresh dill, chopped',
@@ -1768,7 +1768,7 @@ R({
         'Соль и перец',
       ],
       [
-        '3 φλ. (~500 γρ.) βρασμένα όσπρια — ρεβίθια, άσπρα, μαύρα, μαυρομάτικα',
+        '3 φλ. (~500 γρ.) βρασμένα όσπρια: ρεβίθια, άσπρα, μαύρα, μαυρομάτικα',
         '¼ φλ. (45 γρ.) σιτάρι, βρασμένο',
         '⅓ φλ. κόκκινο κρεμμύδι',
         '¼ φλ. άνηθο',
@@ -1802,7 +1802,7 @@ R({
     ),
     tips: lines(
       [
-        'Canned beans work — rinse well and skip the long boil.',
+        'Canned beans work. Rinse well and skip the long boil.',
         'On wine-and-oil days, replace half the vinegar with 3–4 tbsp olive oil.',
         'Traditionally linked to the Presentation of Christ (Fotokolyva) and winter feast days.',
       ],
@@ -1812,7 +1812,7 @@ R({
         'Связано с Сретением (Фотоколыва) и зимними праздниками.',
       ],
       [
-        'Κονσέρβα όσπρια — ξεπλύνετε καλά.',
+        'Κονσέρβα όσπρια: ξεπλύνετε καλά.',
         'Σε μέρες με λάδι, 3–4 κ.σ. ελαιόλαδο αντί για μέρος του ξιδιού.',
         'Συνδέεται με τα Εισόδια / Φωτοκόλλυβα και χειμωνιάτικες γιορτές.',
       ],
@@ -1829,9 +1829,9 @@ R({
     servingSize: L('1 portion (~250 g)', '1 порция (~250 г)', '1 μερίδα (~250 γρ.)'),
     title: L('Gigantes plaki', 'Гигантес плаки', 'Γίγαντες πλακί'),
     summary: L(
-      'Giant white beans baked in tomato with carrot, celery, and leek — classic Greek wine-and-oil Lenten main.',
+      'Giant white beans baked in tomato with carrot, celery, and leek. Classic Greek wine-and-oil Lenten main.',
       'Крупная белая фасоль в томате с овощами — классическое греческое постное блюдо с маслом.',
-      'Γίγαντες στον φούρνο με ντομάτα και λαχανικά — κλασικό νηστίσιμο με λάδι.',
+      'Γίγαντες στον φούρνο με ντομάτα και λαχανικά, κλασικό νηστίσιμο με λάδι.',
     ),
     ingredients: lines(
       [
@@ -1900,15 +1900,15 @@ R({
     tips: lines(
       [
         'No gigantes? Large butter beans or cannellini work; reduce boil time if canned.',
-        'Sauce should coat the beans, not drown them — bake longer if still watery.',
+        'Sauce should coat the beans, not drown them. Bake longer if still watery.',
       ],
       [
         'Нет гигантес — крупная белая фасоль; консервы — меньше варить.',
         'Соус должен обволакивать, не заливать — дольше в духовке, если жидко.',
       ],
       [
-        'Χωρίς γίγαντες — μεγάλα φασόλια βουτύρου ή κανελίνι.',
-        'Η σάλτσα να ντύνει, όχι να πνίγει — περισσότερο ψήσιμο αν είναι νερουλή.',
+        'Χωρίς γίγαντες: μεγάλα φασόλια βουτύρου ή κανελίνι.',
+        'Η σάλτσα να ντύνει, όχι να πνίγει· περισσότερο ψήσιμο αν είναι νερουλή.',
       ],
     ),
   }),
@@ -1923,9 +1923,9 @@ R({
     servingSize: L('1 portion (~280 g)', '1 порция (~280 г)', '1 μερίδα (~280 γρ.)'),
     title: L('Briam', 'Бриам', 'Μπριάμ'),
     summary: L(
-      'Oven-roasted potatoes, zucchini, and carrot in tomato with mint and parsley — Greek summer tray bake for oil days.',
+      'Oven-roasted potatoes, zucchini, and carrot in tomato with mint and parsley. Greek summer tray bake for oil days.',
       'Запечённые картофель, кабачки и морковь в томате с мятой — греческая летняя запеканка с маслом.',
-      'Πατάτες, κολοκυθάκια και καρότο στο φούρνο με ντομάτα και δυόσμο — καλοκαιρινό ταψί με λάδι.',
+      'Πατάτες, κολοκυθάκια και καρότο στο φούρνο με ντομάτα και δυόσμο· καλοκαιρινό ταψί με λάδι.',
     ),
     ingredients: lines(
       [
@@ -2014,9 +2014,9 @@ R({
     servingSize: L('1 bowl (~350 ml)', '1 миска (~350 мл)', '1 μπολ (~350 ml)'),
     title: L('Fasolatha', 'Фасолада', 'Φασολάδα'),
     summary: L(
-      'Greek white bean soup with carrot, celery, leek, and a bright lemon finish — olive oil for wine-and-oil days.',
+      'Greek white bean soup with carrot, celery, leek, and a bright lemon finish. Olive oil for wine-and-oil days.',
       'Греческий суп из белой фасоли с овощами и лимоном — с оливковым маслом.',
-      'Ελληνική σούπα άσπρων φασολιών με λαχανικά και λεμόνι — με ελαιόλαδο.',
+      'Ελληνική σούπα άσπρων φασολιών με λαχανικά και λεμόνι, με ελαιόλαδο.',
     ),
     ingredients: lines(
       [
@@ -2087,7 +2087,7 @@ R({
       ],
       [
         'Κονσέρβα: 3 κουτιά· λαχανικά 20 λεπτά, μετά φασόλια 15.',
-        'Με ντομάτα — ½ φλ. passata μαζί με το νερό.',
+        'Με ντομάτα: ½ φλ. passata μαζί με το νερό.',
       ],
     ),
   }),
@@ -2102,9 +2102,9 @@ R({
     servingSize: L('1 slice (~80 g)', '1 кусок (~80 г)', '1 κομμάτι (~80 γρ.)'),
     title: L('Semolina halva', 'Манный халва', 'Χαλβάς σιμιγδαλιού'),
     summary: L(
-      'Classic Greek Lenten halva — toasted semolina in spiced syrup with olive oil, raisins, and citrus peel.',
+      'Classic Greek Lenten halva: toasted semolina in spiced syrup with olive oil, raisins, and citrus peel.',
       'Классическая греческая постная халва — манка в пряном сиропе с маслом, изюмом и цедрой.',
-      'Κλασικός νηστίσιμος χαλβάς — σιμιγδάλι σε αρωματισμένο σιρόπι με λάδι και σταφίδες.',
+      'Κλασικός νηστίσιμος χαλβάς: σιμιγδάλι σε αρωματισμένο σιρόπι με λάδι και σταφίδες.',
     ),
     ingredients: lines(
       [
@@ -2163,7 +2163,7 @@ R({
     ),
     tips: lines(
       [
-        'Stand back when adding syrup — steam rises fast.',
+        'Stand back when adding syrup: steam rises fast.',
         'Coarser semolina gives a more traditional grainy texture.',
       ],
       [
@@ -2171,7 +2171,7 @@ R({
         'Крупная манка — более традиционная текстура.',
       ],
       [
-        'Προσοχή στο σιρόπι — βγάζει πολύ ατμό.',
+        'Προσοχή στο σιρόπι: βγάζει πολύ ατμό.',
         'Χοντρό σιμιγδάλι = πιο παραδοσιακή υφή.',
       ],
     ),
@@ -2187,9 +2187,9 @@ R({
     servingSize: L('1 bowl (~300 g)', '1 миска (~300 г)', '1 μπολ (~300 γρ.)'),
     title: L('Artichoke stew (à la polita)', 'Артишоки по-политски', 'Αγκινάρες αλά πολίτα'),
     summary: L(
-      'Artichokes with potato, carrot, and peas in a lemony dill sauce — Constantinopolitan-style Lenten stew with oil.',
+      'Artichokes with potato, carrot, and peas in a lemony dill sauce. Constantinopolitan-style Lenten stew with oil.',
       'Артишоки с картофелем, морковью и горошком в лимонно-укропном соусе — политский пост с маслом.',
-      'Αγκινάρες με πατάτα, καρότο και αρακά σε λεμονάτη σάλτσα με άνηθο — αλά πολίτα με λάδι.',
+      'Αγκινάρες με πατάτα, καρότο και αρακά σε λεμονάτη σάλτσα με άνηθο, αλά πολίτα με λάδι.',
     ),
     ingredients: lines(
       [
@@ -2265,7 +2265,7 @@ R({
         'Много укропа и лимона — характер политского стиля.',
       ],
       [
-        'Φρέσκες αγκινάρες — καθαρίστε και κρατήστε σε νερό με λεμόνι.',
+        'Φρέσκες αγκινάρες: καθαρίστε και κρατήστε σε νερό με λεμόνι.',
         'Πολύ άνηθος και λεμόνι = αλά πολίτα.',
       ],
     ),
@@ -2285,9 +2285,9 @@ R({
       'Μαυρομάτικα με σπανάκι',
     ),
     summary: L(
-      'Black-eyed peas simmered with spinach, parsley, and tomato — a simple Greek Lenten pot for oil days.',
+      'Black-eyed peas simmered with spinach, parsley, and tomato: a simple Greek Lenten pot for oil days.',
       'Фасоль чёрный глаз со шпинатом, петрушкой и томатом — простое греческое постное блюдо с маслом.',
-      'Μαυρομάτικα με σπανάκι, μαϊντανό και ντομάτα — απλό νηστίσιμο με λάδι.',
+      'Μαυρομάτικα με σπανάκι, μαϊντανό και ντομάτα, απλό νηστίσιμο με λάδι.',
     ),
     ingredients: lines(
       [
@@ -2333,14 +2333,14 @@ R({
       ],
       [
         'Βράστε τα μαυρομάτικα 30–40 λεπτά. Στραγγίξτε· κρατήστε ½ φλ. ζουμί.',
-        'Στο λάδι μαλακώστε κρεμμύδι 5 λεπτά. Ντομάτα, αλάτι, πιπέρι — 5 λεπτά.',
+        'Στο λάδι μαλακώστε κρεμμύδι 5 λεπτά. Ντομάτα, αλάτι, πιπέρι: 5 λεπτά.',
         'Σπανάκι χούφτες-χούφτες, μαϊντανός και φασόλια. Λίγο ζουμί αν χρειάζεται.',
         '10–15 λεπτά ακάλυπτα. Μερίδα ~300 γρ.',
       ],
     ),
     tips: lines(
       [
-        'Frozen spinach works — thaw and squeeze out excess water first.',
+        'Frozen spinach works. Thaw and squeeze out excess water first.',
         'Canned black-eyed peas: rinse and skip the long boil; simmer 15 minutes total with the greens.',
       ],
       [
@@ -2348,8 +2348,8 @@ R({
         'Консервы чёрный глаз — промойте; тушите со шпинатом ~15 мин.',
       ],
       [
-        'Κατεψυγμένο σπανάκι — ξεπαγώστε και στύψτε.',
-        'Κονσέρβα μαυρομάτικα — ξεπλύνετε· σιγοβράστε ~15 λεπτά με τα χόρτα.',
+        'Κατεψυγμένο σπανάκι: ξεπαγώστε και στύψτε.',
+        'Κονσέρβα μαυρομάτικα: ξεπλύνετε· σιγοβράστε ~15 λεπτά με τα χόρτα.',
       ],
     ),
   }),

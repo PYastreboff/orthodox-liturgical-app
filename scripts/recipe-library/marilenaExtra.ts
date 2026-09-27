@@ -52,9 +52,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('1 piece (~80 g)', '1 кусок (~80 г)', '1 κομμάτι (~80 γρ.)'),
     title: L('Lagana (Lenten flatbread)', 'Лагана (постный хлеб)', 'Λαγάνα'),
     summary: L(
-      'Sesame-topped flatbread baked for Clean Monday — soft inside, crisp edges.',
+      'Sesame-topped flatbread baked for Clean Monday: soft inside, crisp edges.',
       'Плоский хлеб с кунжутом к Чистому понедельнику — мягкий внутри, с хрустящей корочкой.',
-      'Πλατύ ψωμί με σουσάμι για την Καθαρά Δευτέρα — μαλακό μέσα, τραγανή κρούστα.',
+      'Πλατύ ψωμί με σουσάμι για την Καθαρά Δευτέρα· μαλακό μέσα, τραγανή κρούστα.',
     ),
     ingredients: lines(
       [
@@ -108,7 +108,7 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     tips: lines(
       [
         'Best the day it is baked; toast leftovers lightly.',
-        'On stricter days, reduce oil and skip the brush — texture will be denser.',
+        'On stricter days, reduce oil and skip the brush; texture will be denser.',
       ],
       [
         'Лучше в день выпечки; остатки слегка подсушите.',
@@ -132,9 +132,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('~60 g olives', '~60 г оливок', '~60 γρ. ελιές'),
     title: L('Marinated olive medley', 'Маринованные оливки', 'Μαριναρισμένες ελιές'),
     summary: L(
-      'Mixed olives with citrus, garlic, and herbs — a ready meze for fasting tables.',
+      'Mixed olives with citrus, garlic, and herbs, a ready meze for fasting tables.',
       'Ассорти оливок с цитрусом, чесноком и травами — готовая закуска к посту.',
-      'Μείγμα ελιών με εσπεριδοειδή, σκόρδο και βότανα — έτοιμο μεζέ για νηστεία.',
+      'Μείγμα ελιών με εσπεριδοειδή, σκόρδο και βότανα, έτοιμο μεζέ για νηστεία.',
     ),
     ingredients: lines(
       [
@@ -212,9 +212,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('~80 g', '~80 г', '~80 γρ.'),
     title: L('Skordalia (garlic potato spread)', 'Скордалия (чесночный соус)', 'Σκορδαλιά'),
     summary: L(
-      'Punchy garlic mashed with potato and olive oil — classic with fried vegetables or bread.',
+      'Punchy garlic mashed with potato and olive oil, classic with fried vegetables or bread.',
       'Острый чесночный соус на картофеле с маслом — классика к овощам и хлебу.',
-      'Έντονο σκόρδο με πατάτα και ελαιόλαδο — κλασικό με λαχανικά ή ψωμί.',
+      'Έντονο σκόρδο με πατάτα και ελαιόλαδο, κλασικό με λαχανικά ή ψωμί.',
     ),
     ingredients: lines(
       [
@@ -264,7 +264,7 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Start with fewer garlic cloves — you can always add more.',
+        'Start with fewer garlic cloves; you can always add more.',
         'Some families use soaked stale bread instead of potato.',
       ],
       [
@@ -289,9 +289,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('~80 g', '~80 г', '~80 γρ.'),
     title: L('Quick pickled vegetables', 'Быстрые маринованные овощи', 'Γρήγορα τουρσί λαχανικά'),
     summary: L(
-      'Crunchy vinegar pickles ready in hours — oil-free for strict fasting days.',
+      'Crunchy vinegar pickles ready in hours, oil-free for strict fasting days.',
       'Хрустящий уксусный маринад за несколько часов — без масла для строгого поста.',
-      'Τραγανό τουρσί με ξίδι σε λίγες ώρες — χωρίς λάδι για αυστηρή νηστεία.',
+      'Τραγανό τουρσί με ξίδι σε λίγες ώρες, χωρίς λάδι για αυστηρή νηστεία.',
     ),
     ingredients: lines(
       [
@@ -372,9 +372,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('~100 g', '~100 г', '~100 γρ.'),
     title: L('Santorini fava (yellow split-pea spread)', 'Санторини-фава', 'Φάβα Σαντορίνης'),
     summary: L(
-      'Silky yellow split peas with lemon and onion — a classic Greek meze bowl.',
+      'Silky yellow split peas with lemon and onion, a classic Greek meze bowl.',
       'Нежное пюре из жёлтого гороха с лимоном и луком — классический греческий мезе.',
-      'Βελούδινη φάβα με λεμόνι και κρεμμύδι — κλασικό ελληνικό μεζέ.',
+      'Βελούδινη φάβα με λεμόνι και κρεμμύδι, κλασικό ελληνικό μεζέ.',
     ),
     ingredients: lines(
       [
@@ -439,7 +439,7 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
       ],
       [
         'Η αυθεντική φάβα Σαντορίνης είναι ειδική· η κοινή κίτρινη δουλεύει στο σπίτι.',
-        'Σε αυστηρή νηστεία, χωρίς λάδι — μόνο λεμόνι.',
+        'Σε αυστηρή νηστεία, χωρίς λάδι· μόνο λεμόνι.',
       ],
     ),
   }),
@@ -455,9 +455,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('~60 g', '~60 г', '~60 γρ.'),
     title: L('Taramosalata (fish-roe spread)', 'Тарамасалата', 'Ταραμοσαλάτα'),
     summary: L(
-      'Creamy pink meze of cured fish roe whipped with bread or potato — for fish days.',
+      'Creamy pink meze of cured fish roe whipped with bread or potato, for fish days.',
       'Нежная розовая закуска из икры с хлебом или картофелем — для рыбных дней.',
-      'Κρεμώδες ροζ μεζέ από αυγοτάραχο με ψωμί ή πατάτα — για ημέρες ψαριού.',
+      'Κρεμώδες ροζ μεζέ από αυγοτάραχο με ψωμί ή πατάτα, για ημέρες ψαριού.',
     ),
     ingredients: lines(
       [
@@ -492,7 +492,7 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
       [
         'Blend or mash tarama with bread (or potato) until smooth.',
         'Stream in olive oil while whisking or blending; add lemon gradually.',
-        'Thin with cold water to a soft spread. Taste — it should be bright, not overly salty.',
+        'Thin with cold water to a soft spread. Taste: it should be bright, not overly salty.',
         'Chill 30 minutes. Serve with bread, lagana, or crudités.',
       ],
       [
@@ -504,13 +504,13 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
       [
         'Χτυπήστε την ταραμά με ψωμί (ή πατάτα) μέχρι λείο.',
         'Προσθέστε λάδι σταδιακά· μετά λεμόνι.',
-        'Αραιώστε με κρύο νερό. Δοκιμάστε — φωτεινό, όχι υπερβολικά αλμυρό.',
+        'Αραιώστε με κρύο νερό. Δοκιμάστε: φωτεινό, όχι υπερβολικά αλμυρό.',
         'Κρυώστε 30 λεπτά. Σερβίρετε με ψωμί ή λαχανικά.',
       ],
     ),
     tips: lines(
       [
-        'White tarama is milder than pink; both work — start with less and adjust.',
+        'White tarama is milder than pink; both work; start with less and adjust.',
         'Only for days when fish (and often fish products) are allowed.',
       ],
       [
@@ -540,9 +540,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('4–5 pieces', '4–5 шт.', '4–5 τεμ.'),
     title: L('Dolmades (rice-stuffed grape leaves)', 'Долмадес (голубцы в виноградных листьях)', 'Ντολμάδες'),
     summary: L(
-      'Grape leaves rolled around herbed rice — lemony, soft, and made for sharing.',
+      'Grape leaves rolled around herbed rice: lemony, soft, and made for sharing.',
       'Виноградные листья с рисом и травами — с лимоном, мягкие, к общей трапезе.',
-      'Αμπελόφυλλα με ρύζι και μυρωδικά — λεμονάτα, μαλακά, για μοίρασμα.',
+      'Αμπελόφυλλα με ρύζι και μυρωδικά· λεμονάτα, μαλακά, για μοίρασμα.',
     ),
     ingredients: lines(
       [
@@ -598,7 +598,7 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Do not overfill — rice expands as it cooks.',
+        'Do not overfill: rice expands as it cooks.',
         'Fresh lemon wedges at the table brighten leftovers.',
       ],
       [
@@ -606,7 +606,7 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
         'Дольки лимона к столу освежают остатки.',
       ],
       [
-        'Μην παραγεμίζετε — το ρύζι φουσκώνει.',
+        'Μην παραγεμίζετε· το ρύζι φουσκώνει.',
         'Φέτες λεμονιού στο τραπέζι φωτίζουν τα περισσεύματα.',
       ],
     ),
@@ -623,9 +623,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('~200 g', '~200 г', '~200 γρ.'),
     title: L('Skillet lemon potatoes', 'Картофель с лимоном на сковороде', 'Πατάτες λεμονάτες στο τηγάνι'),
     summary: L(
-      'Crisp mini potatoes with lemon, parsley, and olive oil — weeknight side in one pan.',
+      'Crisp mini potatoes with lemon, parsley, and olive oil: weeknight side in one pan.',
       'Хрустящий мелкий картофель с лимоном, петрушкой и маслом — гарнир на одной сковороде.',
-      'Τραγανές μίνι πατάτες με λεμόνι, μαϊντανό και ελαιόλαδο — συνοδευτικό σε ένα τηγάνι.',
+      'Τραγανές μίνι πατάτες με λεμόνι, μαϊντανό και ελαιόλαδο, συνοδευτικό σε ένα τηγάνι.',
     ),
     ingredients: lines(
       [
@@ -703,9 +703,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('1 square', '1 кусок', '1 κομμάτι'),
     title: L('Lenten spanakopita (no cheese)', 'Постная спанакопита (без сыра)', 'Νηστίσιμη σπανακόπιτα'),
     summary: L(
-      'Phyllo pie of spinach and mixed greens without feta — oil days only.',
+      'Phyllo pie of spinach and mixed greens without feta (oil days only).',
       'Пирог из фило со шпинатом и зеленью без брынзы — только в дни с маслом.',
-      'Πίτα με φύλλο, σπανάκι και χόρτα χωρίς φέτα — μόνο σε ημέρες με λάδι.',
+      'Πίτα με φύλλο, σπανάκι και χόρτα χωρίς φέτα, μόνο σε ημέρες με λάδι.',
     ),
     ingredients: lines(
       [
@@ -788,9 +788,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('~350 ml', '~350 мл', '~350 ml'),
     title: L('Greek island longevity stew', 'Островное рагу «долголетия»', 'Νησιώτικη σούπα μακροζωίας'),
     summary: L(
-      'Ikaria-style beans and greens in a gentle tomato broth — humble, filling Lenten soup.',
+      'Ikaria-style beans and greens in a gentle tomato broth: humble, filling Lenten soup.',
       'Бобы и зелень в томатном бульоне по-икарийски — простая сытная постная похлёбка.',
-      'Φασόλια και χόρτα σε ντοματένιο ζωμό ικαριώτικου ύφους — απλή χορταστική νηστίσιμη σούπα.',
+      'Φασόλια και χόρτα σε ντοματένιο ζωμό ικαριώτικου ύφους, απλή χορταστική νηστίσιμη σούπα.',
     ),
     ingredients: lines(
       [
@@ -852,7 +852,7 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Any sturdy green works — chase what is in season.',
+        'Any sturdy green works; chase what is in season.',
         'For strict days, sauté in water and finish without oil.',
       ],
       [
@@ -877,9 +877,9 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     servingSize: L('1 biscuit', '1 печенье', '1 παξιμάδι'),
     title: L('Paximadia (orange almond biscotti)', 'Паксимадья (апельсиново-миндальные)', 'Παξιμάδια αμυγδάλου'),
     summary: L(
-      'Twice-baked orange and almond rusks — dunkable Lenten cookies that keep well.',
+      'Twice-baked orange and almond rusks, dunkable Lenten cookies that keep well.',
       'Дважды печёные сухари с апельсином и миндалём — постное печенье, долго хранится.',
-      'Διπλοψημένα παξιμάδια με πορτοκάλι και αμύγδαλο — νηστίσιμα μπισκότα που διατηρούνται.',
+      'Διπλοψημένα παξιμάδια με πορτοκάλι και αμύγδαλο, νηστίσιμα μπισκότα που διατηρούνται.',
     ),
     ingredients: lines(
       [
@@ -935,7 +935,7 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
     ),
     tips: lines(
       [
-        'Store airtight up to 2 weeks — ideal for dunking in herbal tea.',
+        'Store airtight up to 2 weeks, ideal for dunking in herbal tea.',
         'On stricter days, swap oil for orange juice and a spoon of tahini if nuts/seeds are allowed.',
       ],
       [
@@ -943,7 +943,7 @@ export const MARILENA_EXTRA_RECIPES: readonly FastingRecipe[] = [
         'В строгий пост — вместо масла сок и ложка тахини, если семена разрешены.',
       ],
       [
-        'Σε κλειστό δοχείο έως 2 εβδομάδες — ιδανικά με τσάι.',
+        'Σε κλειστό δοχείο έως 2 εβδομάδες, ιδανικά με τσάι.',
         'Σε αυστηρή νηστεία, χυμός αντί λαδιού και λίγο ταχίνι αν επιτρέπονται οι σπόροι.',
       ],
     ),

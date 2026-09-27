@@ -1,70 +1,80 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react';
 import {
   Modal,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   useWindowDimensions,
   View,
-  type GestureResponderHandlers,
-  type ScrollViewProps, type ColorValue } from 'react-native';
+  type ColorValue,
+  type ScrollViewProps,
+} from 'react-native';
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+  type NativeGesture,
+} from 'react-native-gesture-handler';
+import Animated, {
+  interpolate,
+  runOnJS,
+  scrollTo,
+  useAnimatedRef,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+  type AnimatedRef,
+  type SharedValue,
+} from 'react-native-reanimated';
 
-import { useSwipeToDismissSheet } from '../../hooks/useSwipeToDismissSheet';
 import { radii } from '../../theme/tokens';
 
+const GESTURES_ENABLED = Platform.OS !== 'web';
+
 type SettingsSheetContextValue = {
-  onSheetScroll: (offsetY: number) => void;
-  resetSheetScroll: () => void;
-  scrollPanHandlers: GestureResponderHandlers;
-  /** False while a downward-at-top drag is being re-routed to sheet dismiss. */
-  scrollEnabled: boolean;
-  disarmScroll: () => void;
-  rearmScroll: () => void;
+  scrollGesture: NativeGesture;
+  scrollOffset: SharedValue<number>;
+  scrollView: AnimatedRef<Animated.ScrollView>;
 };
 
 const SettingsSheetContext = createContext<SettingsSheetContextValue | null>(null);
 
 /**
- * ScrollView wired for swipe-to-dismiss when scrolled to the top.
- *
- * A drag on the content starts on the native UIScrollView, which normally wins
- * over the sheet's PanResponder on iOS. When the drag begins at the very top we
- * briefly disable scrolling, the native pan is cancelled, and the gesture flows
- * to the sheet PanResponder (attached here too), so a downward pull from the
- * options dismisses the sheet. Scrolling returns on the next touch or when the
- * content is scrolled down.
+ * ScrollView for sheet content. Runs simultaneously with the sheet's pan, so a
+ * downward drag scrolls the list back to the top first and then pulls the sheet.
  */
-export function SettingsSheetScrollView({
-  onScroll,
-  onScrollBeginDrag,
-  ...props
-}: ScrollViewProps) {
+export function SettingsSheetScrollView(props: Omit<ScrollViewProps, 'onScroll'>) {
   const ctx = useContext(SettingsSheetContext);
+  const fallbackOffset = useSharedValue(0);
+  const fallbackScrollView = useAnimatedRef<Animated.ScrollView>();
+  const scrollOffset = ctx?.scrollOffset ?? fallbackOffset;
+
+  const onScroll = useAnimatedScrollHandler((event) => {
+    scrollOffset.set(event.contentOffset.y);
+  });
 
   useEffect(() => {
-    ctx?.resetSheetScroll();
-  }, [ctx]);
+    scrollOffset.set(0);
+    return () => {
+      scrollOffset.set(0);
+    };
+  }, [scrollOffset]);
 
-  return (
-    <ScrollView
+  const scroll = (
+    <Animated.ScrollView
       {...props}
-      {...(ctx?.scrollPanHandlers ?? null)}
-      scrollEnabled={ctx?.scrollEnabled ?? true}
-      onTouchStart={ctx?.rearmScroll}
-      onScrollBeginDrag={(event) => {
-        if (event.nativeEvent.contentOffset.y <= 0) ctx?.disarmScroll();
-        onScrollBeginDrag?.(event);
-      }}
+      ref={ctx?.scrollView ?? fallbackScrollView}
+      bounces={false}
+      overScrollMode="never"
       scrollEventThrottle={16}
-      onScroll={(event) => {
-        const y = event.nativeEvent.contentOffset.y;
-        if (y > 2) ctx?.rearmScroll();
-        ctx?.onSheetScroll(y);
-        onScroll?.(event);
-      }}
+      onScroll={onScroll}
     />
   );
+
+  if (!ctx || !GESTURES_ENABLED) return scroll;
+  return <GestureDetector gesture={ctx.scrollGesture}>{scroll}</GestureDetector>;
 }
 
 type Props = {
@@ -87,57 +97,105 @@ export function SettingsSheetFrame({
   handleColor,
   children,
 }: Props) {
-  const { panHandlers, scrollPanHandlers, translateY, onSheetScroll, resetSheetScroll } =
-    useSwipeToDismissSheet(onClose, visible);
-
   const { width: windowWidth } = useWindowDimensions();
   const isPhone = windowWidth < 600;
 
-  const [scrollEnabled, setScrollEnabled] = useState(true);
-  const disableScroll = useCallback(() => setScrollEnabled(false), []);
-  const enableScroll = useCallback(() => setScrollEnabled(true), []);
+  const translateY = useSharedValue(0);
+  const dragBase = useSharedValue(0);
+  const scrollOffset = useSharedValue(0);
+  const scrollView = useAnimatedRef<Animated.ScrollView>();
+
+  useEffect(() => {
+    if (visible) translateY.set(0);
+  }, [visible, translateY]);
+
+  const scrollGesture = useMemo(() => Gesture.Native(), []);
+
+  const panGesture = useMemo(
+    () =>
+      Gesture.Pan()
+        .activeOffsetY(8)
+        .failOffsetX([-24, 24])
+        .simultaneousWithExternalGesture(scrollGesture)
+        .onStart(() => {
+          dragBase.set(0);
+        })
+        .onUpdate((event) => {
+          if (scrollOffset.get() > 0 && translateY.get() === 0) {
+            dragBase.set(event.translationY);
+            return;
+          }
+          const next = Math.max(0, event.translationY - dragBase.get());
+          translateY.set(next);
+          if (next > 0 && scrollOffset.get() > 0) scrollTo(scrollView, 0, 0, false);
+        })
+        .onEnd((event) => {
+          const distance = translateY.get();
+          const shouldDismiss =
+            distance > Math.min(160, sheetHeight * 0.3) || (distance > 24 && event.velocityY > 900);
+          if (shouldDismiss) {
+            translateY.set(
+              withTiming(sheetHeight + 48, { duration: 180 }, (done) => {
+                if (done) runOnJS(onClose)();
+              }),
+            );
+          } else {
+            translateY.set(withSpring(0, { damping: 22, stiffness: 260, mass: 0.9 }));
+          }
+        }),
+    [scrollGesture, dragBase, scrollOffset, translateY, scrollView, sheetHeight, onClose],
+  );
+
+  const sheetStyle = useAnimatedStyle(() => {
+    const ty = translateY.get();
+    // At rest keep an empty transform: on iOS/Fabric a transformed view inside
+    // an overflow:hidden parent can get a miscalculated compositing frame.
+    return { transform: ty === 0 ? [] : [{ translateY: ty }] };
+  });
+
+  const backdropStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(translateY.get(), [0, sheetHeight], [1, 0], 'clamp'),
+  }));
+
+  const contextValue = useMemo(
+    () => ({ scrollGesture, scrollOffset, scrollView }),
+    [scrollGesture, scrollOffset, scrollView],
+  );
+
+  const sheet = (
+    <Animated.View
+      style={[
+        styles.sheet,
+        { backgroundColor: surfaceBg, borderColor, height: sheetHeight },
+        { bottom: isPhone ? 0 : 24 },
+        sheetStyle,
+      ]}
+    >
+      <View style={styles.handleRow}>
+        <View style={[styles.handle, { backgroundColor: handleColor }]} />
+      </View>
+      <SettingsSheetContext.Provider value={contextValue}>{children}</SettingsSheetContext.Provider>
+    </Animated.View>
+  );
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      {/* Single plain Pressable backdrop — tap anywhere closes, exactly like
-          the droplet/category picker modal that works on iOS. */}
-      <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" />
-      <View
-        style={[
-          styles.sheet,
-          { backgroundColor: surfaceBg, borderColor, height: sheetHeight },
-          { bottom: isPhone ? 0 : 24 },
-          translateY > 0 ? { transform: [{ translateY }] } : null,
-        ]}
-        {...panHandlers}
-      >
-        <View style={styles.handleRow}>
-          <View style={[styles.handle, { backgroundColor: handleColor }]} />
-        </View>
-        <SettingsSheetContext.Provider
-          value={{
-            onSheetScroll,
-            resetSheetScroll,
-            scrollPanHandlers,
-            scrollEnabled,
-            disarmScroll: disableScroll,
-            rearmScroll: enableScroll,
-          }}
-        >
-          {children}
-        </SettingsSheetContext.Provider>
-      </View>
+      <GestureHandlerRootView style={styles.root}>
+        <Animated.View style={[styles.backdrop, backdropStyle]}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityRole="button" />
+        </Animated.View>
+        {GESTURES_ENABLED ? <GestureDetector gesture={panGesture}>{sheet}</GestureDetector> : sheet}
+      </GestureHandlerRootView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   backdrop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(0,0,0,0.45)',
   },
   sheet: {
@@ -149,8 +207,6 @@ const styles = StyleSheet.create({
     maxWidth: 420,
     width: '100%',
     alignSelf: 'center',
-    // Plain (non-reanimated) view inside the modal: structurally the same as
-    // the working category picker, so hit-testing behaves on iOS.
     ...(Platform.OS === 'ios'
       ? {
           shadowColor: '#000',

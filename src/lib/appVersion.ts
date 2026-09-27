@@ -8,5 +8,5 @@ export function getAppVersion(): string {
   const config = Constants.expoConfig?.version?.trim();
   if (config) return config;
 
-  return '0.1.0';
+  return '1.0.0';
 }

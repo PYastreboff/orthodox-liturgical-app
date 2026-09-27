@@ -43,7 +43,7 @@ export const EASTER_FOODS: readonly EasterFood[] = [
     servingSize: L('wedge', 'кусок', 'μερίδα'),
     title: L('Pascha (sweet cheese)', 'Пасха (творожная)', 'Πασχαλινό τυρί (Πάσχα)'),
     meaning: L(
-      'The white, sweet cheese Pascha recalls the joy of the empty tomb and Christ risen. Its round form and “Christ is Risen” seal point to eternal life breaking through death — the heart of the feast.',
+      'The white, sweet cheese Pascha recalls the joy of the empty tomb and Christ risen. Its round form and “Christ is Risen” seal point to eternal life breaking through death, the heart of the feast.',
       'Белая сладкая пасха напоминает о пустом гробе и Воскресшем Христе. Круглая форма и печать «Христос Воскресе» — символ жизни, победившей смерть.',
       'Το λευκό, γλυκό τυρί της Πάσχας θυμίζει τον άδειο τάφο και τον Αναστάντα Χριστό. Η στρογγυλή μορφή και το σφράγισμα «Χριστός Ανέστη» δείχνουν τη ζωή που νίκησε τον θάνατο.',
     ),
@@ -132,12 +132,12 @@ export const EASTER_FOODS: readonly EasterFood[] = [
     servingSize: L('slice', 'ломтик', 'φέτα'),
     title: L('Kulich', 'Кулич', 'Κουλίτς'),
     meaning: L(
-      'The tall, sweet Paschal bread is blessed with the cheese Pascha and red eggs. Its dome shape suggests the church and Christ as the Living Bread — shared after the fast, with joy and “Christ is Risen!”',
+      'The tall, sweet Paschal bread is blessed with the cheese Pascha and red eggs. Its dome shape suggests the church and Christ as the Living Bread, shared after the fast with joy and “Christ is Risen!”',
       'Высокий сладкий кулич освящают вместе с пасхой и крашенными яйцами. Форма напоминает храм и Христа — Живого Хлеба, которым делятся после поста.',
-      'Το ψηλό γλυκό ψωμί ευλογείται με την Πάσχα και τα κόκκινα αυγά. Η κορυφή θυμίζει τον ναό και τον Χριστό — τον Ζωντανό Άρτο.',
+      'Το ψηλό γλυκό ψωμί ευλογείται με την Πάσχα και τα κόκκινα αυγά. Η κορυφή θυμίζει τον ναό και τον Χριστό, τον Ζωντανό Άρτο.',
     ),
     summary: L(
-      'Yeasted bread with eggs, butter, and raisins — baked in a tall cylinder mold.',
+      'Yeasted bread with eggs, butter, and raisins, baked in a tall cylinder mold.',
       'Дрожжевой кулич с яйцами, маслом и изюмом в высокой форме.',
       'Ζυμωτό ψωμί με αυγά, βούτυρο και σταφίδες σε ψηλό καλούπι.',
     ),
@@ -197,8 +197,8 @@ export const EASTER_FOODS: readonly EasterFood[] = [
         'Остудить в форме вертикально; завернуть в полотенце.',
       ],
       [
-        'Μαγιά με γάλα — 10 λεπτά.',
-        'Αλεύρι, ζάχαρη, κρόκοι, βούτυρο, μαγιά — ζύμωση 10–12 λεπτά.',
+        'Μαγιά με γάλα: 10 λεπτά.',
+        'Αλεύρι, ζάχαρη, κρόκοι, βούτυρο, μαγιά: ζύμωση 10–12 λεπτά.',
         'Σταφίδες, πρώτη ζύμωση 1–1½ ώρα.',
         'Σε ψηλά καλούπια, δεύτερη ζύμωση.',
         'Χτυπημένο αυγό. Ψήσιμο 160°C 45–55 λεπτά.',
@@ -221,7 +221,7 @@ export const EASTER_FOODS: readonly EasterFood[] = [
       'Το πλεγμένο πασχαλινό ψωμί φέρνει τη χαρά της Αναστάσεως. Τα τρία κορδόνια συμβολίζουν την Αγία Τριάδα.',
     ),
     summary: L(
-      'Soft, aromatic braided loaf with mahleb and orange — the Greek Paschal table centerpiece.',
+      'Soft, aromatic braided loaf with mahleb and orange, the centerpiece of the Greek Paschal table.',
       'Мягкий плетёный хлеб с махлебом и апельсином — центр греческого пасхального стола.',
       'Μαλακό πλεγμένο ψωμί με μαχλέπι και πορτοκάλι.',
     ),
@@ -280,7 +280,7 @@ export const EASTER_FOODS: readonly EasterFood[] = [
       ],
       [
         'Μαγιά στο γάλα.',
-        'Αλεύρι, μαχλέπι, αυγά, βούτυρο — ζύμωση.',
+        'Αλεύρι, μαχλέπι, αυγά, βούτυρο: ζύμωση.',
         'Ζύμωση, πλέξιμο 3 κορδονιών.',
         'Κόκκινο αυγό, δεύτερη ζύμωση.',
         'Ψήσιμο 175°C 35–40 λεπτά.',
@@ -297,7 +297,7 @@ export const EASTER_FOODS: readonly EasterFood[] = [
     servingSize: L('1 egg', '1 яйцо', '1 αυγό'),
     title: L('Red Paschal eggs', 'Красные яйца', 'Κόκκινα πασχαλινά αυγά'),
     meaning: L(
-      'The red egg recalls the blood of Christ and the stone rolled from the tomb. At the feast we greet one another: “Christ is Risen!” — and crack eggs together, Christ’s victory over death.',
+      'The red egg recalls the blood of Christ and the stone rolled from the tomb. At the feast we greet one another: “Christ is Risen!” and crack eggs together, a sign of Christ’s victory over death.',
       'Красное яйцо — Кровь Христова и камень от гроба. На пасхе говорят «Христос Воскресе!» и стукаются яйцами — победа над смертью.',
       'Το κόκκινο αυγό θυμίζει το Αίμα του Χριστού και την πέτρα του τάφου. «Χριστός Ανέστη!» και τσούγκρισμα αυγών.',
     ),

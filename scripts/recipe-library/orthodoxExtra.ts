@@ -49,9 +49,9 @@ export const ORTHODOX_EXTRA_RECIPES: FastingRecipe[] = [
     servingSize: L('½ cup (~120 g)', '½ стакана (~120 г)', '½ φλ. (~120 γρ.)'),
     title: L('Melitzanosalata', 'Баклажанная икра (мелитзаносалата)', 'Μελιτζανοσαλάτα'),
     summary: L(
-      'Smoky roasted eggplant mashed with garlic, lemon, and olive oil — a classic Greek fasting spread.',
+      'Smoky roasted eggplant mashed with garlic, lemon, and olive oil, a classic Greek fasting spread.',
       'Печёные баклажаны с чесноком, лимоном и оливковым маслом — греческая постная закуска.',
-      'Καπνιστή μελιτζάνα με σκόρδο, λεμόνι και ελαιόλαδο — κλασική νηστίσιμη μεζέ.',
+      'Καπνιστή μελιτζάνα με σκόρδο, λεμόνι και ελαιόλαδο, κλασική νηστίσιμη μεζέ.',
     ),
     ingredients: lines(
       [
@@ -116,7 +116,7 @@ export const ORTHODOX_EXTRA_RECIPES: FastingRecipe[] = [
     servingSize: L('1 bowl (~350 ml)', '1 миска (~350 мл)', '1 μπολ (~350 ml)'),
     title: L('Pea & mint soup', 'Гороховый суп с мятой', 'Χορταρόσουπα με αρακά και δυόσμο'),
     summary: L(
-      'Bright green split-pea soup finished with fresh mint — light but filling on strict-fast days.',
+      'Bright green split-pea soup finished with fresh mint, light but filling on strict-fast days.',
       'Суп из колотого гороха с мятой — лёгкий и сытный в строгий пост.',
       'Κρεμώδης σούπα αρακά με φρέσκο δυόσμο για αυστηρή νηστεία.',
     ),
@@ -169,7 +169,7 @@ export const ORTHODOX_EXTRA_RECIPES: FastingRecipe[] = [
     tips: lines(
       ['Frozen peas: use 4 cups and shorten cooking to 8 minutes.', 'Dill substitutes well if mint is unavailable.'],
       ['Замороженный горох — 4 стакана, варить 8 мин.', 'Укроп тоже подходит.'],
-      ['Με κατεψυγμένο αρακά — λιγότερος χρόνος.', 'Άνηθος αντικαθιστά τον δυόσμο.'],
+      ['Με κατεψυγμένο αρακά, λιγότερος χρόνος.', 'Άνηθος αντικαθιστά τον δυόσμο.'],
     ),
   }),
   R({
@@ -183,9 +183,9 @@ export const ORTHODOX_EXTRA_RECIPES: FastingRecipe[] = [
     servingSize: L('1 plate (~300 g)', '1 тарелка (~300 г)', '1 πιάτο (~300 γρ.)'),
     title: L('Barley & vegetable pilaf', 'Ячменная плова с овощами', 'Πλιγούρι λαχανικών'),
     summary: L(
-      'Pearl barley simmered with onion, carrot, and celery — an old monastic-style one-pot meal.',
+      'Pearl barley simmered with onion, carrot, and celery, an old monastic-style one-pot meal.',
       'Ячневая крупа с овощами — простое монастырское блюдо в один горшок.',
-      'Κριθαράκι με λαχανικά — απλό μοναστηριακό πιάτο.',
+      'Κριθαράκι με λαχανικά, απλό μοναστηριακό πιάτο.',
     ),
     ingredients: lines(
       [
@@ -253,9 +253,9 @@ export const ORTHODOX_EXTRA_RECIPES: FastingRecipe[] = [
     servingSize: L('1 generous plate', '1 большая тарелка', '1 γενναιόδωρο πιάτο'),
     title: L('Grilled vegetable platter', 'Овощи на гриле', 'Ψητά λαχανικά'),
     summary: L(
-      'Zucchini, peppers, and mushrooms with olive oil and oregano — perfect when wine and oil are allowed.',
+      'Zucchini, peppers, and mushrooms with olive oil and oregano, perfect when wine and oil are allowed.',
       'Кабачки, перец и грибы с маслом и орегано — для дней с маслом.',
-      'Κολοκυθάκια, πιπεριές και μανιτάρια με ελαιόλαδο — για ημέρες με έλαιο.',
+      'Κολοκυθάκια, πιπεριές και μανιτάρια με ελαιόλαδο, για ημέρες με έλαιο.',
     ),
     ingredients: lines(
       [
@@ -387,9 +387,9 @@ R({
     servingSize: L('1 glass (~250 g)', '1 стакан (~250 г)', '1 ποτήρι (~250 γρ.)'),
     title: L('Honey yogurt parfait', 'Йогурт с мёдом и орехами', 'Γιαούρτι με μέλι και καρύδια'),
     summary: L(
-      'Layered yogurt with honey, walnuts, and fruit — for non-fasting mornings after Liturgy.',
+      'Layered yogurt with honey, walnuts, and fruit, for non-fasting mornings after Liturgy.',
       'Йогурт с мёдом, орехами и фруктами — на дни без поста.',
-      'Στρωματωτό γιαούρτι με μέλι και καρύδια — για μη νηστίσιμες ημέρες.',
+      'Στρωματωτό γιαούρτι με μέλι και καρύδια, για μη νηστίσιμες ημέρες.',
     ),
     ingredients: lines(
       [
@@ -432,7 +432,7 @@ R({
       ],
     ),
     tips: lines(
-      ['Use thick Greek yogurt so layers stay distinct.', 'Not for fast days — save for feast or non-fast Sundays.'],
+      ['Use thick Greek yogurt so layers stay distinct.', 'Not for fast days: save for feast or non-fast Sundays.'],
       ['Густой греческий йогурт держит слои.', 'Не для поста — для праздничных дней.'],
       ['Παχύ στραγγιστό γιαούρτι.', 'Όχι για νηστεία.'],
     ),
@@ -448,9 +448,9 @@ R({
     servingSize: L('1 piece', '1 кусочек', '1 τεμάχιο'),
     title: L('Walnut halva bites', 'Халва с грецкими орехами', 'Χαλβά με καρύδια'),
     summary: L(
-      'Quick semolina halva portioned into walnut-studded bites — a fasting sweet for coffee hour inspiration.',
+      'Quick semolina halva portioned into walnut-studded bites, a fasting sweet for coffee hour inspiration.',
       'Быстрая манная халва с орехами — постный десерт.',
-      'Γρήγορος χαλβάς με καρύδια — νηστίσιμο γλυκό.',
+      'Γρήγορος χαλβάς με καρύδια, νηστίσιμο γλυκό.',
     ),
     ingredients: lines(
       [
@@ -499,7 +499,7 @@ R({
       ],
     ),
     tips: lines(
-      ['Stand back when adding hot syrup — it steams vigorously.', 'Store covered at room temperature 3 days.'],
+      ['Stand back when adding hot syrup: it steams vigorously.', 'Store covered at room temperature 3 days.'],
       ['Осторожно при вливании сиропа — парит.', 'Храните 3 дня в закрытой посуде.'],
       ['Προσοχή στον ατμό.', 'Διατηρείται 3 μέρες.'],
     ),
@@ -515,9 +515,9 @@ R({
     servingSize: L('1 bowl (~300 g)', '1 миска (~300 г)', '1 μπολ (~300 γρ.)'),
     title: L('Red lentil dal', 'Чечевичный дал', 'Ντάλ κόκκινων φακών'),
     summary: L(
-      'Spiced red lentils with turmeric and cumin — protein-rich and pantry-friendly for strict fast.',
+      'Spiced red lentils with turmeric and cumin, protein-rich and pantry-friendly for strict fast.',
       'Красная чечевица с куркумой и зирой — сытно в строгий пост.',
-      'Κόκκινες φακές με κουρκουμά — πλούσιες σε πρωτεΐνη για αυστηρή νηστεία.',
+      'Κόκκινες φακές με κουρκουμά, πλούσιες σε πρωτεΐνη για αυστηρή νηστεία.',
     ),
     ingredients: lines(
       [
@@ -591,9 +591,9 @@ R({
     servingSize: L('1 small bowl (~80 g)', '1 небольшая мисочка (~80 г)', '1 μικρό μπολ (~80 γρ.)'),
     title: L('Memorial wheat (kolyva)', 'Коливо', 'Κόλλυβα'),
     summary: L(
-      'Blessed boiled-wheat dish with honey, walnuts, and raisins — served at memorial services and mnemosyna.',
+      'Blessed boiled-wheat dish with honey, walnuts, and raisins, served at memorial services and mnemosyna.',
       'Благословенная пшеница с мёдом, орехами и изюмом — на поминальных трапезах.',
-      'Μοσχοβρασμένο σιτάρι με μέλι, καρύδια και σταφίδες — για μνημόσυνα.',
+      'Μοσχοβρασμένο σιτάρι με μέλι, καρύδια και σταφίδες, για μνημόσυνα.',
     ),
     ingredients: lines(
       [
@@ -641,7 +641,7 @@ R({
         'Πλύντε το σιτάρι και μουλιάστε το βράδυ (ή βράστε 45–60 λεπτά).',
         'Στραγγίστε. Προσθέστε μέλι, κανέλα και αλάτι.',
         'Ανακατέψτε καρύδια και σταφίδες. Πιέστε σε μπολ.',
-        'Στολίστε με άχνη, ρόδι και αμύγδαλα — συχνά σε σχήμα σταυρού.',
+        'Στολίστε με άχνη, ρόδι και αμύγδαλα, συχνά σε σχήμα σταυρού.',
       ],
     ),
     tips: lines(

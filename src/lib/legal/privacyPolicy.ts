@@ -19,7 +19,7 @@ export const PRIVACY_POLICY_SECTIONS: PrivacySection[] = [
     paragraphs: [
       'The App stores preferences locally on your device (for example theme, language, calendar mode, text size, serving role, and which sections you expand). On phones this uses on-device storage; on the web it uses your browser’s local storage.',
       'Personal dates you add (such as name days, birthdays, or days of repose), reminder settings, your place in the Bible reader, and cached calendar, recipe, and liturgy data are stored the same way. Reminders are scheduled as local notifications on your device.',
-      'None of this is uploaded to our servers — the App has no servers of its own. Clearing app data or site data removes it.',
+      'None of this is uploaded to our servers. The App has no servers of its own. Clearing app data or site data removes it.',
     ],
   },
   {

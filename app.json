@@ -1,9 +1,9 @@
 {
   "expo": {
     "name": "OrthoDaily",
-    "description": "Orthodox liturgical daybook — feasts, fasting, vestments, and readings oriented toward Moscow Patriarchate practice.",
+    "description": "Orthodox liturgical daybook: feasts, fasting, vestments, and readings oriented toward Moscow Patriarchate practice.",
     "slug": "orthodox-liturgical-app",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "orthodox-liturgical",
     "icon": "./assets/icon.png",
@@ -71,7 +71,7 @@
       "bundler": "metro",
       "name": "OrthoDaily",
       "shortName": "OrthoDaily",
-      "description": "Orthodox liturgical daybook — feasts, fasting, vestments, and readings.",
+      "description": "Orthodox liturgical daybook: feasts, fasting, vestments, and readings.",
       "title": "OrthoDaily"
     },
     "plugins": [

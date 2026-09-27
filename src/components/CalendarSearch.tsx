@@ -103,7 +103,7 @@ function SearchResultRow({
         },
       ]}
       accessibilityRole="button"
-      accessibilityLabel={`${formatResultDate(result.date, intlLocale)} — ${displayName}`}
+      accessibilityLabel={`${formatResultDate(result.date, intlLocale)}, ${displayName}`}
     >
       <View style={styles.resultDateCol}>
         <Text style={[styles.resultDate, { color: textColor }]}>

@@ -37,7 +37,7 @@ export default function PrivacyPolicyScreen() {
         <title>OrthoDaily - Privacy Policy</title>
         <meta
           name="description"
-          content="Privacy Policy for OrthoDaily — how the app stores preferences and loads liturgical data."
+          content="Privacy Policy for OrthoDaily: how the app stores preferences and loads liturgical data."
         />
       </Head>
       <SwipeBackShell onBack={goBack}>

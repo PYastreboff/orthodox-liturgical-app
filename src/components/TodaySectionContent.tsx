@@ -238,7 +238,7 @@ export function TodaySectionContent({ section, model }: Props) {
                       { color: colors.feastBorder },
                     ]}
                   >
-                    —
+                    ·
                   </Text>
                   <Text
                     style={[

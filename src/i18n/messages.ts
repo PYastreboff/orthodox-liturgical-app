@@ -15,7 +15,7 @@ const en = {
     welcome: 'Welcome!',
     welcomeTitle: 'Welcome to OrthoDaily!',
     welcomeBody:
-      'Your Orthodox daybook for feasts, fasting, vestments, and readings — oriented toward Moscow Patriarchate practice.',
+      'Your Orthodox daybook for feasts, fasting, vestments, and readings, oriented toward Moscow Patriarchate practice.',
     progress: '{current} of {total}',
     next: 'Next',
     prev: 'Previous',
@@ -23,13 +23,13 @@ const en = {
     skip: 'Skip',
     calendarTitle: 'Choose your calendar',
     calendarBody:
-      'Julian or Gregorian rubrics live in Settings. Civil dates stay Gregorian — only feasts and fasting change.',
+      'Julian or Gregorian rubrics live in Settings. Civil dates stay Gregorian. Only feasts and fasting change.',
     roleTitle: 'Serving Role',
     roleBody:
       'Layperson, chorister, altar server, reader, deacon, priest, or bishop. This controls vestments and guides on Today.',
     notificationsTitle: 'Phone notifications',
     notificationsBody:
-      'Optional fasting and liturgy alerts run on the iOS or Android app only — not on the website. Turn them on in Settings anytime.',
+      'Optional fasting and liturgy alerts run on the iOS or Android app only, not on the website. Turn them on in Settings anytime.',
   },
   tabs: {
     today: 'Today',
@@ -95,11 +95,11 @@ const en = {
     languageGreek: 'Ελληνικά',
     servingRole: 'Serving Role',
     servingRoleHint:
-      'Tailored church dress and serving guidance on Today — layperson, chorister, altar server, reader, deacon, priest, or bishop.',
+      'Tailored church dress and serving guidance on Today: layperson, chorister, altar server, reader, deacon, priest, or bishop.',
     servingRoleRowHint: 'Church dress and serving guides on Today.',
     notifications: 'Notifications',
     notificationsHint:
-      'Choose which local alerts you want. Times are approximate — confirm with your parish. Available on iOS and Android.',
+      'Choose which local alerts you want. Times are approximate. Confirm with your parish. Available on iOS and Android.',
     notificationsRowHint: 'Phone app only (iOS & Android).',
     notificationsMobileOnly:
       'Notifications are delivered by the iOS or Android app. The website cannot schedule alerts.',
@@ -143,7 +143,7 @@ const en = {
       'Marks the 40th day once on the calendar after the year of repose (day of repose counts as day 1).',
     reposeFortiethPreview: '40th day: {date}',
     reposeFortiethOn: '40th day on calendar',
-    reposeFortiethCalendarLabel: '{name} — 40th day',
+    reposeFortiethCalendarLabel: '{name}: 40th day',
     reposeDateHint: 'Pick Gregorian or Julian, then month, day, and year of repose.',
     personalDayPrevYear: 'Previous year',
     personalDayNextYear: 'Next year',
@@ -178,13 +178,13 @@ const en = {
     notifyPresanctified: 'Presanctified',
     notifyPresanctifiedHint: 'Afternoon alert (~16:30).',
     notifyWeeklyDigest: 'Weekly Digest',
-    notifyWeeklyDigestHint: 'Sunday morning (~8:00) — feasts, fasts, and personal days ahead.',
+    notifyWeeklyDigestHint: 'Sunday morning (~8:00): feasts, fasts, and personal days ahead.',
     navLabels: 'Navbar Labels',
     navLabelsHint: 'Show a one-word label under each navbar item.',
     notifyPermissionDenied: 'Notification permission is off in system settings.',
     notifyTestFailed: 'Could not schedule the test alert. Please try again.',
     notifyTestSent:
-      'Test alert sent — check your screen and Notification Center. If nothing appears, check iOS Settings → Notifications → OrthoDaily.',
+      'Test alert sent. Check your screen and Notification Center. If nothing appears, check iOS Settings → Notifications → OrthoDaily.',
     testNotification: 'Send Test Notification',
     testNotificationHint: 'Fires a sample alert now so you can check permissions and sound.',
     version: 'Version {version} · Moscow Patriarchate–oriented rubrics',
@@ -233,13 +233,14 @@ const en = {
     tipLarge: 'Generous tip',
     tipThanks: 'Thank you for your support!',
     tipFailed: 'The purchase could not be completed. Please try again.',
+    tipUnavailableIos: 'Tips via the App Store aren’t available right now. Please check back later.',
     prayers: 'Prayers',
     prayersRowHint: 'Choose which prayers appear on Today.',
     prayersModalHint: 'Morning, evening, and Communion are on by default. Turn on others as you like.',
     prayersModalFooter:
       'Texts are traditional Orthodox prayers; confirm wording with your parish prayer book where needed.',
     prayersOnCount: '{count} shown',
-    prayerOptionalHint: 'Optional — off by default.',
+    prayerOptionalHint: 'Optional, off by default.',
     colorsLegend: 'Guide',
     colorsLegendHint: 'What the colours and symbols on Today and Calendar mean.',
     colorsLegendLink: 'Colours & Fasting',
@@ -249,7 +250,7 @@ const en = {
     legendServicesTitle: 'Service Colours',
     legendServicesHint: 'Colour-coded pills on the Services and Liturgy screens.',
     legendPillDesc: {
-      strict: 'Plants only — no meat, dairy, eggs, fish, wine, or oil.',
+      strict: 'Plants only: no meat, dairy, eggs, fish, wine, or oil.',
       wineOil: 'Wine and oil allowed with plant foods.',
       fish: 'Fish, wine, and oil allowed; no meat or dairy.',
       dairy: 'Abstain from meat only.',
@@ -268,7 +269,7 @@ const en = {
     goToThisMonth: 'Go to this month',
     loading: 'Loading calendar days…',
     loadingProgress: '{loaded} of {total} days loaded',
-    loadingHint: 'Dashed border — still loading feasts and fasts from Orthocal',
+    loadingHint: 'Dashed border: still loading feasts and fasts from Orthocal',
     dayLoading: 'Loading feasts and fasts',
     subtitle:
       'Day numbers are civil (Gregorian). Cell labels and colours follow your liturgical calendar setting (Settings).',
@@ -281,7 +282,7 @@ const en = {
     legendToday: 'Today',
     legendTitle: 'Calendar colours',
     legendFastingHint:
-      'Light grey marks a fasting day — Great Lent, other fast seasons, and most Wednesdays and Fridays.',
+      'Light grey marks a fasting day: Great Lent, other fast seasons, and most Wednesdays and Fridays.',
     legendIconsTitle: 'Fasting symbols',
     legendIconsHint:
       'Fish allowed, wine allowed, oil allowed, abstain from meat, or no eating (total fast).',
@@ -300,7 +301,7 @@ const en = {
   today: {
     loading: 'Loading liturgical data…',
     refreshing: 'Updating…',
-    offline: 'Couldn’t reach the liturgical calendar service — showing local calendar defaults.',
+    offline: 'Couldn’t reach the liturgical calendar service. Showing local calendar defaults.',
     servingRole: 'Serving Role',
     roleLayperson: 'Layperson',
     roleChorister: 'Chorister',
@@ -382,7 +383,7 @@ const en = {
     vestmentsWhyHeading: 'Why these colours today?',
     churchClothingWhyHeading: 'What kind of liturgical day is it?',
     vestmentsHint:
-      'Confirm with your diocese or typikon — parish practice may vary.',
+      'Confirm with your diocese or typikon. Parish practice may vary.',
     slavonicLoading: 'Loading Church Slavonic scripture…',
     loadingFeasts: 'Loading feasts…',
     loadingSaints: 'Loading saints…',
@@ -408,7 +409,7 @@ const en = {
     sectionTitle: 'About Today',
     majorFeast: {
       generic:
-        '{title} is kept as a major feast in the Orthodox Church — a day of solemn liturgy, fasting rules relaxed where the typikon allows, and festal hymns at the services.',
+        '{title} is kept as a major feast in the Orthodox Church: a day of solemn liturgy, fasting rules relaxed where the typikon allows, and festal hymns at the services.',
       nativity:
         'The Nativity of Christ (Christmas) celebrates God becoming man for our salvation. The Church keeps a long fast beforehand and greets the feast with night liturgy, proclaiming that Christ the Savior is born in Bethlehem.',
       theophany:
@@ -418,7 +419,7 @@ const en = {
       palmSunday:
         'Palm Sunday opens Holy Week with the Lord’s entry into Jerusalem. The Church blesses branches and processes with them, remembering the crowd’s welcome of the King who would go on to suffer, die, and rise.',
       pascha:
-        'Pascha is the Feast of Feasts — the Resurrection of Christ from the dead. The Church celebrates through the night with light, procession, and the joyful proclamation that Christ is risen, trampling down death by death.',
+        'Pascha is the Feast of Feasts, the Resurrection of Christ from the dead. The Church celebrates through the night with light, procession, and the joyful proclamation that Christ is risen, trampling down death by death.',
       ascension:
         'The Ascension of the Lord marks Christ’s return to the Father forty days after Pascha. The Church teaches that the risen Body of Christ is enthroned in heaven and that we are called to live already by the hope of glory.',
       pentecost:
@@ -440,7 +441,7 @@ const en = {
       brightWeek:
         'Bright Week continues the joy of Pascha. Liturgically the Church still sings “Christ is risen” as though every day were Sunday, and fasting remains suspended as the faithful live in the light of the Resurrection.',
       holyWeek:
-        'Holy Week is the solemn passage with Christ toward the Cross. Services recount the final days in Jerusalem — the Bridegroom services, the Passion, and the preparation for Pascha.',
+        'Holy Week is the solemn passage with Christ toward the Cross. Services recount the final days in Jerusalem: the Bridegroom services, the Passion, and the preparation for Pascha.',
       greatFriday:
         'Great and Holy Friday is the day of the Lord’s crucifixion and burial. The Church keeps strict fast and venerates the shroud of Christ, standing at the foot of the Cross in mourning and hope.',
       holySaturday:
@@ -448,7 +449,7 @@ const en = {
       greatLent:
         'Great Lent is a season of repentance, prayer, and fasting as the Church prepares for Pascha. Weekday services are penitential; the faithful seek reconciliation and renewal in Christ.',
       lentSunday:
-        'On this Sunday in Lent the Church continues toward Pascha while keeping the Lord’s Day. {title} is observed in the Lenten cycle — still a day of worship, with fasting eased according to the typikon.',
+        'On this Sunday in Lent the Church continues toward Pascha while keeping the Lord’s Day. {title} is observed in the Lenten cycle, still a day of worship, with fasting eased according to the typikon.',
       lentSaturday:
         'This Saturday falls within Great Lent. {title} is kept with the Church’s penitential tone, though Saturday services often allow wine and oil where the rubrics permit.',
       dormitionFast:
@@ -462,9 +463,9 @@ const en = {
       fridayFast:
         'Friday is a traditional fast day, remembering the Passion of the Lord. {title} is observed as the Church unites weekday discipline with the memory of the Cross.',
       allSaints:
-        'The Sunday after Pentecost honors all the saints — known and unknown — who have shone forth in every age. The Church gives thanks for the communion of saints who surround us in the life of the Spirit.',
+        'The Sunday after Pentecost honors all the saints, known and unknown, who have shone forth in every age. The Church gives thanks for the communion of saints who surround us in the life of the Spirit.',
       allSaintsRussia:
-        'The second Sunday after Pentecost commemorates All Saints who shone forth in the Russian land — gold vestments on this Sunday, even when it falls during the Apostles’ Fast.',
+        'The second Sunday after Pentecost commemorates All Saints who shone forth in the Russian land (gold vestments on this Sunday, even when it falls during the Apostles’ Fast).',
     },
     ordinary: {
       sunday:
@@ -501,7 +502,7 @@ const en = {
     exceptionDairy: 'Dairy allowed',
     exceptionMeat: 'Meat allowed',
     foodsAllAllowed: 'All standard foods are allowed.',
-    foodsNoEating: 'Abstain from all food and drink — no eating.',
+    foodsNoEating: 'Abstain from all food and drink. No eating.',
     foodsWineOil: 'Wine and oil permitted; follow your typikon for other foods.',
     foodsFish: 'Fish, wine, and oil are generally permitted; no meat or dairy.',
     foodsDairy:
@@ -522,15 +523,15 @@ const en = {
       'Wednesday and Friday are fasting days in the Russian tradition. The only exceptions are Bright Week, the week after Pentecost, the Dodekahemeron (Nativity through Theophany), the week of the Publican and the Pharisee, and Cheesefare week (meat fast).',
     weeklySuspension: {
       bright_week:
-        'Bright Week — the week immediately after Pascha. Wednesday and Friday fast is not observed.',
+        'Bright Week, the week immediately after Pascha. Wednesday and Friday fast is not observed.',
       week_after_pentecost:
-        'The week after Pentecost — through the Saturday before the Fast of the Apostles. Wednesday and Friday fast is not observed.',
+        'The week after Pentecost, through the Saturday before the Fast of the Apostles. Wednesday and Friday fast is not observed.',
       dodekahemeron:
-        'The Dodekahemeron — from Nativity (25 December) through Theophany (6 January). Wednesday and Friday fast is not observed.',
+        'The Dodekahemeron, from Nativity (25 December) through Theophany (6 January). Wednesday and Friday fast is not observed.',
       publican_pharisee:
-        'The week of the Publican and the Pharisee — the preparatory week before Great Lent. Wednesday and Friday fast is not observed.',
+        'The week of the Publican and the Pharisee, the preparatory week before Great Lent. Wednesday and Friday fast is not observed.',
       cheesefare_week:
-        'Cheesefare week — the week before Clean Monday. No meat; dairy, eggs, fish, wine, and oil are allowed (not the usual Wed/Fri strict fast).',
+        'Cheesefare week, the week before Clean Monday. No meat; dairy, eggs, fish, wine, and oil are allowed (not the usual Wed/Fri strict fast).',
     },
     noteLent: 'Lenten rules may differ on weekends and feasts; confirm with your typikon.',
     noteMeatFast:
@@ -571,10 +572,10 @@ const en = {
     majorFeastHero: 'Major feast',
     ordinaryDay: 'Ordinary day',
     tone: 'Tone {n}',
-    toneUnknown: 'Tone —',
+    toneUnknown: 'Tone unknown',
   },
   services: {
-    footnote: 'Typical parish calendar recommendation only — confirm with your local schedule.',
+    footnote: 'Typical parish calendar recommendation only. Confirm with your local schedule.',
     note: {
       parishFeast: 'For the parish feast of {feast}',
     },
@@ -615,7 +616,7 @@ const en = {
       refresh: 'Refresh live streams',
       moreLink: 'More parish live broadcasts (GOARCH)',
       footnote:
-        'Streams from Orthodox parishes and monasteries on YouTube. Schedules vary — confirm with each community.',
+        'Streams from Orthodox parishes and monasteries on YouTube. Schedules vary. Confirm with each community.',
       channels: {
         stMarysOca: "St Mary's Orthodox Cathedral, Minneapolis",
         stElisabethLive: 'St Elisabeth Convent, Minsk',
@@ -641,7 +642,7 @@ const en = {
       great_friday: 'Great Friday',
     },
     footnote:
-      'Typical Russian Orthodox parish assignments — follow your rector and senior server on the day.',
+      'Typical Russian Orthodox parish assignments. Follow your rector and senior server on the day.',
     sourceAzbyka: 'Priest’s Liturgy: azbyka.ru altar-server duties (ponomar).',
     sourceOstrovsky:
       'Hierarchical Liturgy: Hieromonk Konstantin (Ostrovsky), Order of Hierarchical Services (2002), deacon.ru.',
@@ -672,7 +673,7 @@ const en = {
       greatEntranceCandles: 'Candles first in procession.',
       greatEntranceCross: 'Cross follows the candles.',
       greatEntranceFans: 'Ripidia (fans) after the cross.',
-      greatEntranceCenser: 'Censer last — cense the Gifts; re-enter through both deacon doors (censer, cross, fans, candles).',
+      greatEntranceCenser: 'Censer last: cense the Gifts; re-enter through both deacon doors (censer, cross, fans, candles).',
       greatEntranceNote:
         'Procession order: candles → cross → fans → censer. Stand on either side of the royal doors until clergy enter.',
       consecrationVeil: 'Open the veil at “Let us love one another”; close at “Take heed! Holy things for the holy!”',
@@ -682,20 +683,20 @@ const en = {
       communionCenser: 'Hand censer for censing the altar and prothesis after communion.',
     },
     hierarchical: {
-      smallCandle: 'Candle bearer (sveschenosets) — first in the procession.',
-      smallStaff: 'Staff bearer (pososhnik) — follows the candle bearer.',
+      smallCandle: 'Candle bearer (sveschenosets): first in the procession.',
+      smallStaff: 'Staff bearer (pososhnik): follows the candle bearer.',
       smallDeaconCensers: 'First and second deacons with censers.',
       smallSubdeaconLights:
         'Subdeacons (ipodiakons): dikiri, ripidia, and trikiri; open the royal doors.',
-      smallProtodeaconGospel: 'Protodeacon with the Gospel — after the lights.',
+      smallProtodeaconGospel: 'Protodeacon with the Gospel: after the lights.',
       smallEntranceNote:
         'Procession from the altar to the cathedra; subdeacons flank the bishop on the ambon.',
       gospelSubdeaconIncense:
         'Subdeacon with the incense boat while the protodeacon censes before the Gospel.',
       gospelOmophor:
         'Subdeacon holds the omophorion on the deacon’s shoulders during the Gospel.',
-      greatCandle: 'Candle bearer — leads the Great Entrance.',
-      greatStaff: 'Staff bearer — second.',
+      greatCandle: 'Candle bearer: leads the Great Entrance.',
+      greatStaff: 'Staff bearer: second.',
       greatDeaconCensers: 'Second and first deacons with censers.',
       greatSubdeaconLights:
         'Subdeacons: dikiri, trikiri, ripidia; third deacon carries the mitre on a paten.',
@@ -716,7 +717,7 @@ const en = {
       entranceCandles: 'Carry candles for the Great Entrance with the Presanctified Gifts.',
       entranceCenser: 'Hand the censer at the entrance; re-enter quietly after the Gifts are placed.',
       entranceNote:
-        'There is no full Proskomedia or consecration — the Gifts were sanctified earlier. Follow the priest’s cues.',
+        'There is no full Proskomedia or consecration. The Gifts were sanctified earlier. Follow the priest’s cues.',
       communionZeon: 'Bring zeon when directed before Communion of the faithful.',
       communionPlatter: 'Hold the communion cloth for the faithful.',
     },
@@ -727,7 +728,7 @@ const en = {
       vespersShroud: 'Assist with the shroud (plashchanitsa) procession as directed by the senior server.',
       vespersCandles: 'Carry candles for the taking-down and burial procession.',
       vespersCenser: 'Keep the censer ready for Vigil and the shroud censing.',
-      vespersNote: 'No Divine Liturgy today — Royal Hours in the morning, Vigil with the shroud in the afternoon.',
+      vespersNote: 'No Divine Liturgy today: Royal Hours in the morning, Vigil with the shroud in the afternoon.',
     },
   },
   readerGuide: {
@@ -738,7 +739,7 @@ const en = {
       great_friday: 'Great Friday',
     },
     footnote:
-      'Typical Russian Orthodox reader practice — confirm tones and assignments with your rector or choir director.',
+      'Typical Russian Orthodox reader practice. Confirm tones and assignments with your rector or choir director.',
     sourceApostol:
       'Priest’s Liturgy: Slavonic Apostol dialogue (orthodox.net English translation of the Apostol rubrics).',
     sourceRocor:
@@ -768,7 +769,7 @@ const en = {
       blessingStand:
         'Stand straight with the book closed until the Trisagion ends; open only when the prokeimenon begins.',
       blessingNote:
-        'While holding the book, do not bow or cross yourself during the dialogues — keep both hands on the Apostol.',
+        'While holding the book, do not bow or cross yourself during the dialogues. Keep both hands on the Apostol.',
       prokeimenonPeace: 'After “Peace be unto all,” answer: “And to thy spirit.”',
       prokeimenonAnnounce:
         'At “Wisdom!” announce: “The prokeimenon in the ___ tone,” then intone the prokeimenon; choir responds.',
@@ -780,7 +781,7 @@ const en = {
         'At the next “Wisdom!” announce the reading (Acts / Epistle of Paul to … / Catholic Epistle of …).',
       epistleRead: 'At “Let us attend!” read the Epistle clearly, raising the tone gradually.',
       epistleTwo:
-        'If two readings: begin the second at once with its title phrase — do not repeat “Wisdom!” between them.',
+        'If two readings: begin the second at once with its title phrase. Do not repeat “Wisdom!” between them.',
       epistlePeace: 'After the priest’s “Peace be unto thee,” answer: “And to thy spirit.”',
       alleluiaAnnounce: 'At “Wisdom!” announce: “Alleluia in the ___ tone”; choir sings Alleluia.',
       alleluiaVerses: 'Intone each alleluia verse; choir answers Alleluia after each.',
@@ -803,7 +804,7 @@ const en = {
         'The Epistle reader announces the prokeimenon and related verses “according to custom.”',
       prokeimenonSame: 'Use the same priest’s-liturgy dialogue when you are the one announcing.',
       prokeimenonNote:
-        'On a hierarchical Liturgy the first deacon often both announces and reads — follow the day’s assignment.',
+        'On a hierarchical Liturgy the first deacon often both announces and reads. Follow the day’s assignment.',
       epistleDeacon:
         'Usual practice: first deacon receives the bishop’s blessing with the Apostol and reads from the ambon.',
       epistleIfAssigned:
@@ -821,13 +822,13 @@ const en = {
       hoursRead: 'Read the Hours clearly if appointed; bow with the clergy at the usual places.',
       paremiaAnnounce: 'At the paremias, announce each reading as directed in the Triodion.',
       paremiaRead: 'Read the paremias from the centre or ambon; wait for “Wisdom!” cues from the deacon or priest.',
-      paremiaNote: 'There is usually no Sunday-style prokeimenon/alleluia dialogue — follow the Lenten order.',
+      paremiaNote: 'There is usually no Sunday-style prokeimenon/alleluia dialogue. Follow the Lenten order.',
     },
     greatFriday: {
       hoursPsalms: 'Read the appointed psalms of the Royal Hours with a steady, prayerful tone.',
       hoursTroparia: 'Announce troparia / kontakia of the Hours when assigned to the reader.',
       hoursScripture: 'Read the Old Testament, Epistle, and stand ready for the Gospel sequence.',
-      hoursNote: 'Royal Hours are long — mark all four Hours in advance and keep your place.',
+      hoursNote: 'Royal Hours are long. Mark all four Hours in advance and keep your place.',
       vespersParemia: 'At Vigil, read the paremias for the taking-down of the Lord.',
       vespersEpistle: 'Read the Epistle at Vigil if assigned; the Gospel follows with the shroud.',
     },
@@ -840,7 +841,7 @@ const en = {
       great_friday: 'Great Friday',
     },
     footnote:
-      'Typical Russian Orthodox diaconal practice — confirm local customs and assignments with your rector or bishop.',
+      'Typical Russian Orthodox diaconal practice. Confirm local customs and assignments with your rector or bishop.',
     sourcePriest:
       'Priest’s Liturgy: common diaconal order (litanies, entrances, Gospel, Communion) as used in Russian parish practice.',
     sourceHier:
@@ -878,14 +879,14 @@ const en = {
       gospelBless: 'Ask blessing with the closed Gospel: “Bless, Master, the bringer of the Good Tidings…”',
       gospelAnnounce: 'Announce “The reading is from the Holy Gospel according to …” and wait for “Glory to Thee…”',
       gospelRead: 'Read the Gospel facing the people (or as local custom); raise the tone gradually.',
-      gospelNote: 'If a second deacon serves, one may hold the censer while the other reads — follow the rector.',
+      gospelNote: 'If a second deacon serves, one may hold the censer while the other reads. Follow the rector.',
       litaniesFervent: 'Intone the Litany of Fervent Supplication after the Gospel; include special petitions when given.',
       litaniesCatechumens: 'If catechumens are present, intone their litany and dismissal as in the service book.',
       litaniesFaithful: 'Intone the two litanies of the faithful; then prepare for the Cherubic Hymn / Great Entrance.',
       greatCenser: 'Cense the proskomedia table and gifts before the entrance if that is your parish’s custom.',
       greatProcession: 'Process with the gifts (or with censer ahead of the priest) through the north door to the solea.',
       greatDoors: 'At the solea commemorate those appointed; re-enter the altar through the royal doors with the priest.',
-      greatEntranceNote: 'Do not rush commemorations — speak distinctly; servers follow your pace with candles and fans.',
+      greatEntranceNote: 'Do not rush commemorations. Speak distinctly; servers follow your pace with candles and fans.',
       anaphoraDoors: 'Close the royal doors and draw the curtain at the usual places unless directed otherwise.',
       anaphoraStand: 'Stand at the High Place or south side during the anaphora; answer the priest’s dialogues.',
       anaphoraZeon: 'Bring the zeon at “Holy Things are for the Holy”; assist with the veil and spoon as directed.',
@@ -903,7 +904,7 @@ const en = {
       smallCensers: 'First and second deacons process with censers in the Small Entrance order.',
       smallProtodeacon: 'Protodeacon carries the Gospel after the dikiri / trikiri and ripidia.',
       smallFlank: 'On the ambon, deacons flank the bishop; do not cross in front of him without need.',
-      smallEntranceNote: 'Follow Ostrovsky / local hierarchical order — candle, staff, censers, lights, Gospel.',
+      smallEntranceNote: 'Follow Ostrovsky / local hierarchical order: candle, staff, censers, lights, Gospel.',
       epistleFirst: 'Usual practice: first deacon receives the Apostol blessing from the bishop and reads.',
       epistleBless: 'Take the closed Apostol to the bishop; ask blessing, then go to the ambon.',
       epistleAmbon: 'Announce prokeimenon and Epistle as at a priest’s Liturgy unless a reader is assigned.',
@@ -928,9 +929,9 @@ const en = {
       paremiaWisdom: 'At the paremias, intone “Wisdom!” and “Let us attend!” before each reading as appointed.',
       paremiaPrayer:
         'During “Let my prayer arise,” stand with the censer; cense at the appointed verses.',
-      paremiaNote: 'Kneeling and silence mark this service — do not rush cues between paremias.',
+      paremiaNote: 'Kneeling and silence mark this service. Do not rush cues between paremias.',
       entranceSilent:
-        'Great Entrance with the Presanctified Gifts is done in silence (or with the appointed hymn) — no loud commemorations.',
+        'Great Entrance with the Presanctified Gifts is done in silence (or with the appointed hymn). No loud commemorations.',
       entranceKneel: 'Kneel with the clergy when the Gifts are brought forth, unless directed to stand.',
       entranceNote: 'Move slowly and reverently; servers with candles follow your pace closely.',
       communionInvite: 'After “Let us attend!” and the Communion hymn, invite the faithful as appointed.',
@@ -940,7 +941,7 @@ const en = {
       hoursCense: 'At the Royal Hours, cense at the appointed Gospel and Old Testament moments.',
       hoursGospel: 'If assigned, read or assist with the Passion Gospels in the Hours sequence.',
       hoursStand: 'Stand ready through all four Hours; keep the censer and Gospel book in place.',
-      hoursNote: 'Royal Hours are long — coordinate with the priest on who reads each Gospel.',
+      hoursNote: 'Royal Hours are long. Coordinate with the priest on who reads each Gospel.',
       vespersLitanies: 'Intone Vigil litanies for the taking-down of the Lord.',
       vespersGospel: 'Assist with the Gospel of the removal from the Cross as appointed.',
       vespersShroud:
@@ -956,7 +957,7 @@ const en = {
       great_friday: 'Great Friday',
     },
     footnote:
-      'Typical Russian Orthodox kliros practice — confirm tones, cut versions, and cues with your choir director.',
+      'Typical Russian Orthodox kliros practice. Confirm tones, cut versions, and cues with your choir director.',
     sourcePriest:
       'Priest’s Liturgy: common parish choir cues (antiphons through Communion) in Russian practice.',
     sourceHier:
@@ -981,33 +982,33 @@ const en = {
       prepareCommunion: 'Have the communion hymn (and any festive versions) ready before the Cherubic.',
       openingAmen: 'Answer “Amen” to the opening blessing; keep a steady tempo on the Great Litany responses.',
       openingAntiphons: 'Sing the antiphons (or Typical Psalms / Beatitudes) as appointed for the day.',
-      openingMercy: 'On “Lord, have mercy” litanies, watch the deacon’s pace — do not rush ahead.',
+      openingMercy: 'On “Lord, have mercy” litanies, watch the deacon’s pace. Do not rush ahead.',
       smallComeWorship: 'After the Small Entrance, sing “Come, let us worship…” then the day’s troparia.',
       smallTroparia: 'Sing troparia and kontakia in the appointed order and tones; end with the Theotokion if required.',
       smallTrisagion: 'Sing the Trisagion (or its feast substitute) and hold for the clergy’s entrance to the High Place.',
-      smallEntranceNote: 'If a feast replaces the Trisagion, have that hymn marked — do not start the usual Trisagion.',
+      smallEntranceNote: 'If a feast replaces the Trisagion, have that hymn marked. Do not start the usual Trisagion.',
       readingsProkeimenon: 'Respond to the prokeimenon verses; keep the tone clear for the reader / deacon.',
       readingsAlleluia: 'Sing Alleluia in the appointed tone after each verse.',
       readingsGospel: 'Stand quietly for the Gospel; answer “Glory to Thee, O Lord…” at the usual places.',
       cherubicStart: 'Begin the Cherubic Hymn when the deacon (or priest) cues; keep a prayerful, even pace.',
-      cherubicPause: 'Pause (or soften) while the clergy commemorate on the solea — do not cover the names.',
+      cherubicPause: 'Pause (or soften) while the clergy commemorate on the solea. Do not cover the names.',
       cherubicFinish: 'Finish the Cherubic after the gifts are placed; then the litany responses.',
       cherubicNote: 'Agree beforehand whether you use the full Cherubic or a parish shortened form.',
       anaphoraCreed: 'Sing the Creed together; start only after the doors / curtain cue your parish uses.',
       anaphoraMercy: 'Sing the Mercy of Peace / anaphora responses in time with the priest’s dialogues.',
-      anaphoraResponses: 'Watch for “A mercy of peace,” “It is meet,” and the Lord’s Prayer — mark page turns early.',
+      anaphoraResponses: 'Watch for “A mercy of peace,” “It is meet,” and the Lord’s Prayer. Mark page turns early.',
       communionHymn: 'Sing the appointed communion hymn until the clergy are ready for the people.',
       communionDuring: 'During the people’s Communion, continue soft communion singing or appointed hymns.',
       communionAfter: 'After Communion, sing the thanksgiving hymns and “Blessed be the name…” as appointed.',
     },
     hierarchical: {
       prepareManyYears: 'Prepare “Many years” (and any diocesan variants) for the bishop’s entrance and dismissal.',
-      prepareTone: 'Hierarchical services often run longer — mark cut points with the director in advance.',
+      prepareTone: 'Hierarchical services often run longer. Mark cut points with the director in advance.',
       openingMeet: 'At the meeting of the bishop, sing the appointed entrance hymns / Many years as cued.',
       openingResponses: 'Answer hierarchical blessings and litanies; watch the protodeacon for tempo.',
       openingNote: 'Do not begin festal hymns until the bishop is vested and the order is clear.',
       smallEisodikon: 'Sing the entrance hymn after the Small Entrance as for a hierarchical Liturgy.',
-      smallTroparia: 'Troparia may be fuller than usual — keep order sheets ready.',
+      smallTroparia: 'Troparia may be fuller than usual. Keep order sheets ready.',
       readingsFollow: 'Follow the first deacon / reader for prokeimenon and Alleluia cues.',
       readingsGospel: 'Stand for the hierarchical Gospel; respond at the usual Glory… places.',
       cherubicPace: 'Keep the Cherubic slow enough for the longer hierarchical procession.',
@@ -1020,20 +1021,20 @@ const en = {
     presanctified: {
       prepareBooks: 'Mark Vigil stichera, paremias cues, and Presanctified communion hymn.',
       preparePsalm: 'Have “Let my prayer arise” ready with the appointed verses.',
-      vespersPsalms: 'Sing Vigil psalmody and stichera at a Lenten pace — quieter than Sunday Liturgy.',
+      vespersPsalms: 'Sing Vigil psalmody and stichera at a Lenten pace, quieter than Sunday Liturgy.',
       vespersEntrance: 'At the evening entrance, sing the appointed hymn; watch for kneeling cues.',
       paremiaPrayer: 'During “Let my prayer arise,” sing the refrain; the reader / deacon takes the verses.',
       paremiaVerse: 'Keep the refrain soft and steady between verses; do not overlap the deacon’s censing cues.',
-      paremiaNote: 'This is the heart of Presanctified singing — rehearse the handoffs once if the choir is mixed.',
+      paremiaNote: 'This is the heart of Presanctified singing. Rehearse the handoffs once if the choir is mixed.',
       entranceHymn: 'At the entrance with the Gifts, sing the appointed hymn (often “Now the Powers…”).',
       entranceKneel: 'Kneel with the congregation unless your kliros custom is to stand and sing.',
-      entranceNote: 'The entrance is solemn and often quiet — avoid loud volume until the hymn’s peak if any.',
+      entranceNote: 'The entrance is solemn and often quiet. Avoid loud volume until the hymn’s peak if any.',
       communionHymn: 'Sing the Presanctified communion hymn; keep it long enough for Communion.',
       communionAfter: 'After Communion, finish with the appointed thanksgiving and dismissal responses.',
     },
     greatFriday: {
       hoursAntiphons: 'At the Royal Hours, sing the appointed antiphons and troparia of the Passion.',
-      hoursTroparia: 'Keep pages marked for all four Hours — the service is long and continuous.',
+      hoursTroparia: 'Keep pages marked for all four Hours. The service is long and continuous.',
       hoursNote: 'Coordinate volume with Gospel readings so clergy can be heard.',
       vespersAposticha: 'At Vigil, sing the aposticha and hymns of the taking-down of the Lord.',
       vespersShroud: 'During the shroud procession, sing the appointed burial / lamentation hymns.',
@@ -1048,7 +1049,7 @@ const en = {
       great_friday: 'Great Friday',
     },
     footnote:
-      'Typical Russian Orthodox parish practice — confirm local customs with your diocese or rector.',
+      'Typical Russian Orthodox parish practice. Confirm local customs with your diocese or rector.',
     sourcePriest:
       'Priest’s Liturgy: common cues with deacon, choir, and servers in Russian parish practice.',
     sourceHier:
@@ -1084,7 +1085,7 @@ const en = {
       greatCherubic: 'Pray the Cherubic prayers; wash hands; take up the diskos and chalice when ready.',
       greatProcession: 'Process with the gifts; commemorate clearly on the solea; re-enter through the royal doors.',
       greatPlace: 'Place the gifts on the altar; cover; cense; begin the litany of the offering.',
-      greatEntranceNote: 'Servers and choir follow your pace — do not rush commemorations.',
+      greatEntranceNote: 'Servers and choir follow your pace. Do not rush commemorations.',
       anaphoraDoors: 'Close doors / curtain at the usual moments; lead the dialogues with the deacon.',
       anaphoraPray: 'Pray the anaphora distinctly; wait for choir responses before continuing.',
       anaphoraEpiclesis: 'At the epiclesis, bless the gifts; ask for the zeon at the appointed time.',
@@ -1096,7 +1097,7 @@ const en = {
       prepareMeet: 'Meet the bishop at the doors with the cross / Gospel as your diocese directs.',
       prepareConcelebrate: 'Know your place among concelebrants (right / left; first priest duties).',
       prepareOrder: 'Confirm who carries chalice / diskos and who stands at the Holy Table.',
-      prepareNote: 'The bishop leads; priests assist — do not anticipate his blessings.',
+      prepareNote: 'The bishop leads; priests assist. Do not anticipate his blessings.',
       openingCathedra: 'During vesting and Hours, stand as directed at the cathedra or altar.',
       openingFollow: 'Follow the protodeacon’s litanies; answer only when it is your place.',
       smallProcession: 'Join the Small Entrance in the appointed order behind the lights and Gospel.',
@@ -1120,7 +1121,7 @@ const en = {
       paremiaPrayer: 'During “Let my prayer arise,” cense as the order directs.',
       entranceSilent: 'Bring forth the Presanctified Gifts in silence (or with the appointed hymn).',
       entrancePlace: 'Place the gifts on the altar; kneel or stand per local custom.',
-      entranceNote: 'There is no consecration — treat the Gifts with full reverence.',
+      entranceNote: 'There is no consecration. Treat the Gifts with full reverence.',
       communionBreak: 'Break the Lamb and prepare Communion as for Presanctified.',
       communionPeople: 'Commune the faithful; then thanksgiving and dismissal.',
     },
@@ -1189,62 +1190,62 @@ const en = {
     layWhatYouWearValue: 'Modest dress',
     layClothingA11y: 'Modest clothing for church',
     layFootnote:
-      'The coloured pill is what clergy wear in the altar today — you are not expected to match it.',
-    podryasnikA11y: 'Podryasnik — black under-cassock',
-    ryassaA11y: 'Ryassa — black outer cassock',
-    sticharionA11y: 'Sticharion — altar servers and deacons',
-    orarionA11y: 'Orarion — deacon stole',
-    epitrachelionA11y: 'Epitrachelion — priest stole',
-    phelonionA11y: 'Phelonion — priest outer vestment',
-    sakkosA11y: 'Sakkos — bishop outer vestment',
-    omophorionA11y: 'Omophorion — bishop pall',
+      'The coloured pill is what clergy wear in the altar today. You are not expected to match it.',
+    podryasnikA11y: 'Podryasnik: black under-cassock',
+    ryassaA11y: 'Ryassa: black outer cassock',
+    sticharionA11y: 'Sticharion: altar servers and deacons',
+    orarionA11y: 'Orarion: deacon stole',
+    epitrachelionA11y: 'Epitrachelion: priest stole',
+    phelonionA11y: 'Phelonion: priest outer vestment',
+    sakkosA11y: 'Sakkos: bishop outer vestment',
+    omophorionA11y: 'Omophorion: bishop pall',
     groupUndergarments: 'Undergarments',
     groupOuter: 'Vestments in the altar',
-    groupHolySaturdayVespers: 'Holy Saturday — vigil / burial',
-    groupHolySaturdayLiturgy: 'Holy Saturday — Paschal liturgy',
+    groupHolySaturdayVespers: 'Holy Saturday: vigil / burial',
+    groupHolySaturdayLiturgy: 'Holy Saturday: Paschal liturgy',
     footnote:
       'Based on the ROCOR Europe Liturgical Handbook. Local parish practice may vary on feast-day exceptions.',
     reason: {
-      pascha: 'Bright vestments for the Resurrection of Christ — white or gold symbolizes the uncreated Light of Pascha.',
+      pascha: 'Bright vestments for the Resurrection of Christ: white or gold symbolizes the uncreated Light of Pascha.',
       brightWeek: 'Throughout Bright Week the Church keeps festal white vestments in honour of the Risen Christ.',
-      theophany: 'White for Theophany — the Lord’s Baptism and the revelation of the Holy Trinity.',
+      theophany: 'White for Theophany, the Lord’s Baptism and the revelation of the Holy Trinity.',
       circumcision:
         'White for the Circumcision of Our Lord and the feast of St Basil the Great (1 January).',
-      annunciation: 'Blue for feasts of the Mother of God — here the Annunciation of the Archangel Gabriel.',
-      dormition: 'Blue for the Mother of God — the feast of her Dormition and translation to life.',
+      annunciation: 'Blue for feasts of the Mother of God, here the Annunciation of the Archangel Gabriel.',
+      dormition: 'Blue for the Mother of God, the feast of her Dormition and translation to life.',
       nativity: 'White for the Nativity of Christ until the leavetaking.',
       transfiguration: 'White for the Transfiguration of the Lord on Tabor.',
-      palmSunday: 'Green for Palm Sunday — the entry of the King of Glory into Jerusalem.',
+      palmSunday: 'Green for Palm Sunday, the entry of the King of Glory into Jerusalem.',
       pentecost: 'Green for Pentecost until the leavetaking.',
-      holySpirit: 'Green for the Day of the Holy Spirit — the Monday after Pentecost.',
-      pentecostSeason: 'Green for the Pentecost season — feasts of the Spirit.',
+      holySpirit: 'Green for the Day of the Holy Spirit, the Monday after Pentecost.',
+      pentecostSeason: 'Green for the Pentecost season, feasts of the Spirit.',
       trinityDay: 'Green for Trinity Day and the days following Pentecost.',
       ascension: 'White for the Ascension of the Lord until the leavetaking.',
       ascensionLeavetaking: 'White for the Leavetaking of Ascension.',
-      nativityTheotokos: 'Blue for the Nativity of the Theotokos — a feast of the Mother of God.',
+      nativityTheotokos: 'Blue for the Nativity of the Theotokos, a feast of the Mother of God.',
       presentation: 'Blue for the Presentation of the Lord in the Temple.',
       entryTheotokos:
         'Blue for the Entry of the Most-Holy Theotokos into the Temple.',
       pokrov: 'Blue for the Protection (Pokrov) of the Theotokos.',
       peterAndPaul: 'Gold for the feast of the Holy Apostles Peter and Paul.',
       nativityJohnBaptist:
-        'Red for the Nativity of St John the Baptist — and his other feast days in general.',
+        'Red for the Nativity of St John the Baptist, and his other feast days in general.',
       beheadingJohnBaptist:
-        'Red for the Beheading of St John the Baptist — a martyric feast of the Forerunner.',
+        'Red for the Beheading of St John the Baptist, a martyric feast of the Forerunner.',
       allSaintsRussia:
-        'Gold for All Saints of Russia — the second Sunday after Pentecost, even during the Apostles’ Fast.',
-      elevationCross: 'Red for feasts of the Cross — the Precious and Life-giving Cross.',
-      greatFriday: 'Black for Great and Holy Friday — the death of Christ on the Cross.',
+        'Gold for All Saints of Russia, the second Sunday after Pentecost, even during the Apostles’ Fast.',
+      elevationCross: 'Red for feasts of the Cross, the Precious and Life-giving Cross.',
+      greatFriday: 'Black for Great and Holy Friday, the death of Christ on the Cross.',
       holySaturday:
         'Black for the burial rites; white for the Paschal liturgy when the Church already proclaims the Resurrection.',
       holyWeek: 'Black for Great Monday, Tuesday, and Wednesday of Passion Week.',
-      greatLent: 'Black for weekdays of Great Lent — repentance and restraint.',
-      lentSunday: 'Purple for Lenten Sundays — the general Great Lent colour on weekends.',
+      greatLent: 'Black for weekdays of Great Lent: repentance and restraint.',
+      lentSunday: 'Purple for Lenten Sundays, the general Great Lent colour on weekends.',
       lentSaturday:
         'Purple for Lenten Saturdays; wine and oil may be allowed where the rubrics permit.',
-      wednesdayFast: 'Purple on Wednesday fast — commemorating the betrayal of Christ.',
-      fridayFast: 'Purple on Friday fast — commemorating the Passion of the Lord.',
-      sunday: 'Gold for the Lord’s Day — the weekly feast of the Resurrection.',
+      wednesdayFast: 'Purple on Wednesday fast, commemorating the betrayal of Christ.',
+      fridayFast: 'Purple on Friday fast, commemorating the Passion of the Lord.',
+      sunday: 'Gold for the Lord’s Day, the weekly feast of the Resurrection.',
       allSaints: 'Gold for the Sunday of All Saints after Pentecost.',
       apostlesFastSeason:
         'Purple on weekdays during the Apostles’ Fast; red on Sundays (All Saints feast Sundays stay gold).',
@@ -1254,7 +1255,7 @@ const en = {
       fastSeasonSunday:
         'Red on a Sunday during the Nativity, Dormition, or Apostles fast.',
       gold: 'Gold for a Sunday or great feast of the Lord or the saints.',
-      white: 'White for a great feast of the Lord — purity and the uncreated Light.',
+      white: 'White for a great feast of the Lord: purity and the uncreated Light.',
       blue: 'Blue for a feast of the Mother of God or her icons.',
       red: 'Red for the Cross, martyrs, angels, St John the Baptist, and Sundays during the minor fasts.',
       green: 'Green for the Holy Spirit, Palm Sunday, or Pentecost season.',
@@ -1327,7 +1328,7 @@ const en = {
     langGreek: 'Greek',
     langSlavonic: 'Church Slavonic',
     chooseBook: 'Choose book',
-    chooseChapter: 'Chapters — {book}',
+    chooseChapter: 'Chapters: {book}',
     chooseChapterShort: 'Choose chapter',
     chapterLabel: 'Chapter {n}',
     prevChapter: 'Previous chapter',
@@ -1561,7 +1562,7 @@ const en = {
   },
   jesusPrayer: {
     intro:
-      'The Jesus Prayer is the heart of Orthodox personal prayer — breathe slowly, bow if you wish, and say each word with attention.',
+      'The Jesus Prayer is the heart of Orthodox personal prayer. Breathe slowly, bow if you wish, and say each word with attention.',
     prayerLabel: 'The prayer',
     targetLabel: 'Rope length',
     targetA11y: '{count} prayers',
@@ -1569,16 +1570,16 @@ const en = {
     tapButton: 'Tap to count',
     tapHint: '{current} of {target}',
     progressA11y: '{current} of {target} prayers',
-    complete: 'Rope complete — glory to God',
+    complete: 'Rope complete, glory to God',
     countLabel: 'Prayers said',
     ofTarget: 'of {target}',
     reset: 'Start again',
     undo: 'Undo',
     showRope: 'Show prayer rope',
     hideRope: 'Hide prayer rope',
-    dividerLabel: 'Marker bead — Our Father',
+    dividerLabel: 'Marker bead: Our Father',
     dividerA11y: 'Marker bead for the Our Father',
-    tip: 'Traditional ropes are 33, 50, or 100 knots. Larger beads every 10 knots mark a pause for the Our Father or a bow — ask your priest or spiritual father for guidance.',
+    tip: 'Traditional ropes are 33, 50, or 100 knots. Larger beads every 10 knots mark a pause for the Our Father or a bow. Ask your priest or spiritual father for guidance.',
   },
   liturgy: {
     worship: {
@@ -1599,11 +1600,11 @@ const en = {
     },
     vespers: {
       intro:
-        'Great Vigil — the evening service before a liturgy. Fixed parts are below; stichera and aposticha change with the day.',
+        'Great Vigil, the evening service before a liturgy. Fixed parts are below; stichera and aposticha change with the day.',
       pageSubtitle:
         'The evening service before the Divine Liturgy; stichera and aposticha change with the day.',
       disclaimer:
-        'Variable hymns and readings depend on the day. Rubrics and local practice differ — follow your parish and bishop.',
+        'Variable hymns and readings depend on the day. Rubrics and local practice differ. Follow your parish and bishop.',
       loading: 'Loading Vigil text…',
       offline: 'Vigil text could not be loaded. Check your connection and try again.',
       opening: { title: 'Opening prayers' },
@@ -1617,17 +1618,17 @@ const en = {
     },
     chrysostom: {
       intro:
-        'The Divine Liturgy of St John Chrysostom — the usual Sunday and feast-day Eucharist in most Orthodox churches. The full text is below for personal follow-along; variable hymns and readings depend on the day.',
+        'The Divine Liturgy of St John Chrysostom, the usual Sunday and feast-day Eucharist in most Orthodox churches. The full text is below for personal follow-along; variable hymns and readings depend on the day.',
       pageSubtitle: 'The usual Sunday and feast-day Eucharist.',
       disclaimer:
-        'Full fixed parts (variable antiphons, troparia, and readings depend on the day). Rubrics and local commemorations differ — follow your parish and bishop.',
+        'Full fixed parts (variable antiphons, troparia, and readings depend on the day). Rubrics and local commemorations differ. Follow your parish and bishop.',
       loading: 'Loading liturgy text…',
       offline: 'Liturgy text could not be loaded. Check your connection and try again.',
       langEnglish: 'English',
       langGreek: 'Greek',
       langSlavonic: 'Church Slavonic',
       langCompare: 'Side by side',
-      compareHint: 'Choose languages for each column. Line alignment is approximate — sources differ in structure.',
+      compareHint: 'Choose languages for each column. Line alignment is approximate. Sources differ in structure.',
       compareGreek: 'English | Greek',
       compareSlavonic: 'English | Church Slavonic',
       rolePriest: 'Priest',
@@ -1651,7 +1652,7 @@ const en = {
     },
     basil: {
       intro:
-        'The Divine Liturgy of St Basil the Great — celebrated on the five Sundays of Great Lent, Holy Thursday, Holy Saturday, January 1, and the eves of Nativity and Theophany (with typikon exceptions). The full fixed text is below; variable hymns and readings depend on the day.',
+        'The Divine Liturgy of St Basil the Great, celebrated on the five Sundays of Great Lent, Holy Thursday, Holy Saturday, January 1, and the eves of Nativity and Theophany (with typikon exceptions). The full fixed text is below; variable hymns and readings depend on the day.',
       pageSubtitle: 'Served on Great Lent Sundays, Holy Week, and certain feast eves.',
       disclaimer:
         'GOARCH Hieratikon fixed parts. Russian follows the Chrysostom congregational text where the services are parallel; the anaphora differs in length and wording. Follow your parish and bishop.',
@@ -1671,7 +1672,7 @@ const en = {
   easterCooking: {
     sectionTitle: 'Easter Cooking',
     sectionHint:
-      'Great Lent looks toward Pascha. These traditional foods are blessed and shared at the feast — each carries the joy of the Resurrection.',
+      'Great Lent looks toward Pascha. These traditional foods are blessed and shared at the feast. Each carries the joy of the Resurrection.',
     openFromFasting: 'Paschal recipes & meanings',
     openFromFastingHint: 'Pascha, kulich, tsoureki, red eggs, and more',
     pageTitle: 'Easter Cooking',
@@ -1710,12 +1711,12 @@ const en = {
       'Recipes are hand-curated for OrthoDaily (not from a commercial recipe API). Adjust quantities to taste.',
     showingForToday: '{count} recipes fit today’s fasting rule',
     showingAll: 'Browsing the full recipe library',
-    moreHidden: '+{count} more — open a card or browse all',
+    moreHidden: '+{count} more. Open a card or browse all',
     browseAll: 'Browse all recipes',
     showTodayOnly: 'Show today’s recipes only',
-    totalFastNote: 'Total abstinence today — no recipes are suggested for this day.',
+    totalFastNote: 'Total abstinence today. No recipes are suggested for this day.',
     footnote:
-      'Home kitchen ideas aligned with common Orthodox fasting practice. Your parish typikon may differ. Recipes are hand-curated for OrthoDaily — not scraped from a recipe website.',
+      'Home kitchen ideas aligned with common Orthodox fasting practice. Your parish typikon may differ. Recipes are hand-curated for OrthoDaily, not scraped from a recipe website.',
     pageTitle: 'Lenten Recipes',
     pageSubtitle: 'Lenten meals for fasting days.',
     browserTitle: 'OrthoDaily - Lenten Recipes',
@@ -1740,9 +1741,9 @@ const en = {
     openFromFastingHint: 'Search The Recipe Library',
     forFastingDays: 'For Fasting Days',
     nonFastDayTitle: 'Lenten recipe library',
-    nonFastDayHint: 'No fast today — browse recipes for the next fast day or simple weekday meals.',
+    nonFastDayHint: 'No fast today. Browse recipes for the next fast day or simple weekday meals.',
     forOtherDaysTitle: 'Not Fasting Today',
-    forOtherDaysBody: 'These recipes are for fasting days — browse ahead for other days.',
+    forOtherDaysBody: 'These recipes are for fasting days. Browse ahead for other days.',
     notFoundTitle: 'Recipe Not Found',
     notFoundBody: 'This recipe is not in the library. Go back and pick another.',
     photoCredit: 'Food photos via Unsplash (illustrative).',
@@ -1787,24 +1788,24 @@ const en = {
     button: 'Print Day Sheet',
     hint: 'Export or print today’s liturgical summary.',
     shareTitle: 'OrthoDaily day sheet',
-    footer: 'From OrthoDaily — confirm fasting rules with your parish.',
+    footer: 'From OrthoDaily. Confirm fasting rules with your parish.',
     popupBlocked: 'Allow pop-ups to print this day sheet.',
     noGospels: 'No Gospel reading listed for this day.',
-    gospelCitationOnly: 'Citation only — full text not loaded.',
+    gospelCitationOnly: 'Citation only. Full text not loaded.',
   },
   notifications: {
     fastingTitle: 'Fasting day',
     fastingBodyGeneric: 'Today is a fasting day. Check OrthoDaily for the rule.',
-    fastingBodyGreatFriday: 'Great and Holy Friday — total abstinence.',
+    fastingBodyGreatFriday: 'Great and Holy Friday: total abstinence.',
     fastingBodyRule: 'Today’s fast: {rule}.',
     liturgyTitle: 'Divine Liturgy',
-    liturgyBody: 'A morning Liturgy is typical today — confirm the time with your parish.',
+    liturgyBody: 'A morning Liturgy is typical today. Confirm the time with your parish.',
     vespersTitle: 'Vigil',
     vespersBody:
-      'An afternoon or evening service is typical before tomorrow’s Liturgy — confirm with your parish.',
+      'An afternoon or evening service is typical before tomorrow’s Liturgy. Confirm with your parish.',
     presanctifiedTitle: 'Presanctified Liturgy',
     presanctifiedBody:
-      'Presanctified Liturgy is typical this evening — confirm the time with your parish.',
+      'Presanctified Liturgy is typical this evening. Confirm the time with your parish.',
     personalDayEveTitle: 'Tomorrow: personal commemoration',
     personalDayEveBody: 'Tomorrow: {title}.',
     channelFasting: 'Fasting days',
@@ -2057,6 +2058,7 @@ const ru = {
     tipLarge: 'Очень щедрые',
     tipThanks: 'Спасибо за поддержку!',
     tipFailed: 'Не удалось завершить покупку. Попробуйте ещё раз.',
+    tipUnavailableIos: 'Чаевые через App Store сейчас недоступны. Загляните позже.',
     prayers: 'Молитвы',
     prayersRowHint: 'Выберите, какие молитвы показывать на экране «Сегодня».',
     prayersModalHint:
@@ -2398,7 +2400,7 @@ const ru = {
     majorFeastHero: 'Великий праздник',
     ordinaryDay: 'Обычный день',
     tone: 'Глас {n}',
-    toneUnknown: 'Глас —',
+    toneUnknown: 'Глас не указан',
   },
   services: {
     footnote: 'Лишь типичная приходская рекомендация — уточняйте по местному расписанию.',

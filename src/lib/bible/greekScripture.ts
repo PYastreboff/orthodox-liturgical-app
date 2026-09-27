@@ -14,7 +14,7 @@ export async function applyGreekToSections(
     englishPassageByCitation,
     GREEK_TRANSLATIONS,
     GREEK_DETAIL,
-    'Greek unavailable — English (KJV)',
+    'Greek unavailable, showing English (KJV)',
   );
 }
 

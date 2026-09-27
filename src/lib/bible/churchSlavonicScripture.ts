@@ -21,6 +21,6 @@ export async function applyChurchSlavonicToSections(
     englishPassageByCitation,
     SLAVONIC_TRANSLATIONS,
     SLAVONIC_DETAIL,
-    'Slavonic unavailable — English (KJV)',
+    'Slavonic unavailable, showing English (KJV)',
   );
 }
