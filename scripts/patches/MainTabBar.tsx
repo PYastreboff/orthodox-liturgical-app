@@ -53,7 +53,6 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
           paddingBottom: float.hostBottomPad,
         },
       ]}
-      pointerEvents="box-none"
     >
       <View
         style={[
@@ -67,7 +66,7 @@ export function MainTabBar(props: MaterialTopTabBarProps) {
           style={styles.tabBarRow}
           onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}
         >
-          <View pointerEvents="none" style={styles.selectionLayer}>
+          <View style={styles.selectionLayer}>
             {selectionTranslateX ? (
               <Animated.View
                 style={[
@@ -111,6 +110,7 @@ const styles = StyleSheet.create({
   },
   selectionLayer: {
     ...StyleSheet.absoluteFillObject,
+    pointerEvents: 'none',
   },
   selectionFill: {
     position: 'absolute',

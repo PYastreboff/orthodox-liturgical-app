@@ -233,11 +233,10 @@ export function DayHero({
             styles.dayTitle,
             styles.dayTitleMeasure,
             dayTitleMeasureType,
-            { color: 'transparent' },
+            { color: 'transparent', pointerEvents: 'none' },
             phoneLayout ? styles.dayTitleWithCornersPhone : styles.dayTitleWithCorners,
           ]}
           numberOfLines={0}
-          pointerEvents="none"
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
           onTextLayout={(e) => {
