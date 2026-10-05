@@ -33,4 +33,6 @@ jobs:
 
       - run: npx expo-doctor
 
-      - run: npm audit --omit=dev --audit-level=high
+      # Fails on any high/critical production advisory except the unfixable ones listed in
+      # audit-ci.jsonc.
+      - run: npx --yes audit-ci@7 --config audit-ci.jsonc

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "high": true,
+  "skip-dev": true,
+  // No patched release exists upstream for either advisory (both affect every published
+  // version). Both sit in build-time tooling only — braces via Metro's file watcher,
+  // node-forge via @expo/cli code signing for expo-updates (not used) — and neither is
+  // bundled into the app. Remove each entry once a fixed version ships.
+  "allowlist": [
+    "GHSA-vfj7-8cjw-p6xm", // braces <= 3.0.3: stack exhaustion on deeply nested patterns
+    "GHSA-86w9-cpqp-85rv" // node-forge <= 1.4.0: lax PKCS#1 v1.5 signature parsing
+  ]
+}
