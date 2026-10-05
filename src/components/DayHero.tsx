@@ -399,7 +399,11 @@ export function DayHero({
 
       <View style={styles.chipRow}>
         <Pressable
-          style={[styles.chip, { backgroundColor: chipBg }]}
+          style={({ pressed }) => [
+            styles.chip,
+            { backgroundColor: chipBg },
+            pressed && styles.navBtnPressed,
+          ]}
           onPress={() => router.push('/day/date')}
           accessibilityRole="button"
           accessibilityLabel={toneLabel}
@@ -410,7 +414,12 @@ export function DayHero({
         {showFeastRankChip ? (
           isMajorFeastDay && majorFeastServiceLabel ? (
             <Pressable
-              style={[styles.chip, styles.feastChip, { backgroundColor: majorFeastChipBg }]}
+              style={({ pressed }) => [
+                styles.chip,
+                styles.feastChip,
+                { backgroundColor: majorFeastChipBg },
+                pressed && styles.navBtnPressed,
+              ]}
               onPress={() => router.push('/day/date')}
               accessibilityRole="button"
               accessibilityLabel={majorFeastServiceLabel}
@@ -435,7 +444,11 @@ export function DayHero({
             </Pressable>
           ) : (
             <Pressable
-              style={[styles.chip, { backgroundColor: chipBg }]}
+              style={({ pressed }) => [
+                styles.chip,
+                { backgroundColor: chipBg },
+                pressed && styles.navBtnPressed,
+              ]}
               onPress={() => router.push('/day/date')}
               accessibilityRole="button"
               accessibilityLabel={feastRankAccessibilityLabel(feastRank, lang)}
@@ -452,7 +465,12 @@ export function DayHero({
         ) : null}
         {heroFastChip ? (
           <Pressable
-            style={[styles.chip, styles.fastChip, { backgroundColor: chipBg }]}
+            style={({ pressed }) => [
+              styles.chip,
+              styles.fastChip,
+              { backgroundColor: chipBg },
+              pressed && styles.navBtnPressed,
+            ]}
             onPress={() => router.push('/day/fasting')}
             accessibilityRole="button"
             accessibilityLabel={heroFastA11y ?? undefined}
@@ -482,7 +500,14 @@ export function DayHero({
       </View>
 
       {canGoToToday ? (
-        <Pressable style={[styles.todayBtn, { backgroundColor: todayBtnBg }]} onPress={onToday}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.todayBtn,
+            { backgroundColor: todayBtnBg },
+            pressed && styles.navBtnPressed,
+          ]}
+          onPress={onToday}
+        >
           <Text style={[styles.todayBtnText, todayBtnType, { color: todayBtnFg }]}>
             {t('today.jumpToToday')}
           </Text>
@@ -622,6 +647,7 @@ const styles = StyleSheet.create({
   },
   navBtnPressed: {
     opacity: 0.75,
+    transform: [{ scale: 0.995 }],
   },
   navChevronSlot: {
     width: 24,

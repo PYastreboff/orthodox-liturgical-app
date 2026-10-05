@@ -14,6 +14,8 @@ import {
   type AnimatedStyle,
 } from 'react-native-reanimated';
 
+import { useFluidMotion } from './useFluidMotion';
+
 type SwipeToBack = {
   panHandlers: GestureResponderHandlers;
   animatedStyle: AnimatedStyle<ViewStyle>;
@@ -28,6 +30,7 @@ type SwipeToBack = {
 export function useSwipeToBack(onBack: () => void): SwipeToBack {
   const { width } = useWindowDimensions();
   const widthSv = useSharedValue(width);
+  const { reduceMotion, spring } = useFluidMotion();
 
   useEffect(() => {
     widthSv.value = width;
@@ -63,17 +66,29 @@ export function useSwipeToBack(onBack: () => void): SwipeToBack {
       const shouldBack = gesture.dx > w * 0.28 || (gesture.dx > 48 && gesture.vx > 0.45);
       if (shouldBack) {
         finishing.value = true;
-        translateX.value = withTiming(w, { duration: 200 }, (done) => {
-          if (done) runOnJS(finishBack)();
-        });
+        if (reduceMotion) {
+          translateX.value = withTiming(w, { duration: 120 }, (done) => {
+            if (done) runOnJS(finishBack)();
+          });
+        } else {
+          // Hand off the finger's velocity so the finish continues seamlessly (§5).
+          translateX.value = withSpring(w, { ...spring, velocity: gesture.vx }, (done) => {
+            if (done) runOnJS(finishBack)();
+          });
+        }
+      } else if (reduceMotion) {
+        translateX.value = withTiming(0, { duration: 120 });
       } else {
-        translateX.value = withSpring(0, { damping: 22, stiffness: 260, mass: 0.9 });
+        // Snap back carrying the release velocity — reversals stay continuous.
+        translateX.value = withSpring(0, { ...spring, velocity: gesture.vx });
       }
     },
     onPanResponderTerminate: () => {
       dragging.value = false;
       if (!finishing.value) {
-        translateX.value = withSpring(0, { damping: 22, stiffness: 260, mass: 0.9 });
+        translateX.value = reduceMotion
+          ? withTiming(0, { duration: 120 })
+          : withSpring(0, { ...spring });
       }
     },
   }).panHandlers;

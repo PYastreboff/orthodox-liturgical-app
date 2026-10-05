@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { useFluidMotion } from '../hooks/useFluidMotion';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { surfaceCard } from '../theme/cards';
 import { radii } from '../theme/tokens';
@@ -79,15 +80,20 @@ function SectionGroupSkeleton({
 /** Placeholder matching Gospel Card & Navigation List Sections. */
 export function TodaySkeleton({ isDark }: Props) {
   const { t } = useAppTranslation();
-  const opacity = useSharedValue(0.55);
+  const { reduceMotion } = useFluidMotion();
+  const opacity = useSharedValue(reduceMotion ? 1 : 0.55);
 
   useEffect(() => {
+    if (reduceMotion) {
+      opacity.value = 1;
+      return;
+    }
     opacity.value = withRepeat(
       withTiming(1, { duration: 900, easing: Easing.inOut(Easing.quad) }),
       -1,
       true,
     );
-  }, [opacity]);
+  }, [opacity, reduceMotion]);
 
   const pulse = useAnimatedStyle(() => ({ opacity: opacity.value }));
 

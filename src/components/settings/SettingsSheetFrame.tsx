@@ -29,6 +29,7 @@ import Animated, {
   type SharedValue,
 } from 'react-native-reanimated';
 
+import { useFluidMotion } from '../../hooks/useFluidMotion';
 import { radii } from '../../theme/tokens';
 
 const GESTURES_ENABLED = Platform.OS !== 'web';
@@ -99,6 +100,7 @@ export function SettingsSheetFrame({
 }: Props) {
   const { width: windowWidth } = useWindowDimensions();
   const isPhone = windowWidth < 600;
+  const { reduceMotion, spring } = useFluidMotion();
 
   const translateY = useSharedValue(0);
   const dragBase = useSharedValue(0);
@@ -110,6 +112,16 @@ export function SettingsSheetFrame({
   }, [visible, translateY]);
 
   const scrollGesture = useMemo(() => Gesture.Native(), []);
+
+  /**
+   * Soft boundary past the top: pulling up resists progressively instead of
+   * stopping hard (§9). Spring back to 0 releases the captured overshoot.
+   */
+  const rubberband = (overshoot: number, dimension: number) => {
+    'worklet';
+    const k = 0.55;
+    return (overshoot * dimension * k) / (dimension + k * Math.abs(overshoot));
+  };
 
   const panGesture = useMemo(
     () =>
@@ -125,7 +137,8 @@ export function SettingsSheetFrame({
             dragBase.set(event.translationY);
             return;
           }
-          const next = Math.max(0, event.translationY - dragBase.get());
+          const raw = event.translationY - dragBase.get();
+          const next = raw > 0 ? raw : -rubberband(-raw, sheetHeight);
           translateY.set(next);
           if (next > 0 && scrollOffset.get() > 0) scrollTo(scrollView, 0, 0, false);
         })
@@ -134,16 +147,27 @@ export function SettingsSheetFrame({
           const shouldDismiss =
             distance > Math.min(160, sheetHeight * 0.3) || (distance > 24 && event.velocityY > 900);
           if (shouldDismiss) {
-            translateY.set(
-              withTiming(sheetHeight + 48, { duration: 180 }, (done) => {
-                if (done) runOnJS(onClose)();
-              }),
-            );
+            if (reduceMotion) {
+              translateY.set(
+                withTiming(sheetHeight + 48, { duration: 150 }, (done) => {
+                  if (done) runOnJS(onClose)();
+                }),
+              );
+            } else {
+              // Hand off the release velocity so the exit continues the throw (§5).
+              translateY.set(
+                withSpring(sheetHeight + 48, { ...spring, velocity: event.velocityY }, (done) => {
+                  if (done) runOnJS(onClose)();
+                }),
+              );
+            }
+          } else if (reduceMotion) {
+            translateY.set(withTiming(0, { duration: 150 }));
           } else {
-            translateY.set(withSpring(0, { damping: 22, stiffness: 260, mass: 0.9 }));
+            translateY.set(withSpring(0, { ...spring, velocity: event.velocityY }));
           }
         }),
-    [scrollGesture, dragBase, scrollOffset, translateY, scrollView, sheetHeight, onClose],
+    [spring, reduceMotion, scrollGesture, dragBase, scrollOffset, translateY, scrollView, sheetHeight, onClose],
   );
 
   const sheetStyle = useAnimatedStyle(() => {

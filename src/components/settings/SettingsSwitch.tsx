@@ -9,17 +9,13 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { hoverAccessibilityProps } from '../../lib/a11y/hoverAccessible';
+import { useFluidMotion } from '../../hooks/useFluidMotion';
 import { colors } from '../../theme/tokens';
 
 const TRACK_WIDTH = 50;
 const THUMB_SIZE = 24;
 const TRACK_PADDING = 3;
 const THUMB_TRAVEL = TRACK_WIDTH - TRACK_PADDING * 2 - THUMB_SIZE;
-
-const TOGGLE_TIMING = {
-  duration: 240,
-  easing: Easing.bezier(0.42, 0, 0.58, 1),
-};
 
 type Props = {
   value: boolean;
@@ -39,10 +35,14 @@ export function SettingsSwitch({
 }: Props) {
   const progress = useSharedValue(value ? 1 : 0);
   const trackOff = isDark ? '#4a4640' : '#d4cfc6';
+  const { reduceMotion } = useFluidMotion();
 
   useEffect(() => {
-    progress.value = withTiming(value ? 1 : 0, TOGGLE_TIMING);
-  }, [progress, value]);
+    progress.value = withTiming(value ? 1 : 0, {
+      duration: reduceMotion ? 120 : 240,
+      easing: reduceMotion ? Easing.linear : Easing.bezier(0.42, 0, 0.58, 1),
+    });
+  }, [progress, value, reduceMotion]);
 
   const trackStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(
