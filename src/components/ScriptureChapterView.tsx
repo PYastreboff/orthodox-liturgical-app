@@ -1,9 +1,12 @@
 import { Platform, StyleSheet, Text, View, type ColorValue } from 'react-native';
 
 import type { BibleChapterVerse } from '../lib/bible/scriptureTranslation';
-import { READING_SERIF } from '../theme/fonts';
 
-const SCRIPTURE_SERIF = READING_SERIF;
+const SCRIPTURE_SERIF = Platform.select({
+  ios: 'Georgia',
+  android: 'serif',
+  default: 'Georgia, "Times New Roman", serif',
+});
 
 type Props = {
   chapterTitle: string;

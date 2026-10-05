@@ -8,9 +8,12 @@ import { liturgicalItemHasText, noneForDayLabel } from '../lib/liturgical/liturg
 import type { ReadingsSingleLanguage } from '../lib/readings/textLanguage';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import { LiturgicalReadingIcon } from './LiturgicalReadingIcon';
-import { READING_SERIF } from '../theme/fonts';
 
-const SCRIPTURE_SERIF = READING_SERIF;
+const SCRIPTURE_SERIF = Platform.select({
+  ios: 'Georgia',
+  android: 'serif',
+  default: 'Georgia, "Times New Roman", serif',
+});
 
 function passageTitle(item: LiturgicalTextItem): string {
   const suffix = item.detail ? ` (${item.detail})` : item.source ? ` (${item.source})` : '';

@@ -17,7 +17,6 @@ import {
 } from '../lib/prayers/prayers';
 import { surfaceCard } from '../theme/cards';
 import { radii } from '../theme/tokens';
-import { READING_SERIF } from '../theme/fonts';
 
 type Props = {
   textColor: ColorValue;
@@ -32,7 +31,11 @@ type Props = {
   scrollRoute?: string;
 };
 
-const PRAYER_SERIF = READING_SERIF;
+const PRAYER_SERIF = Platform.select({
+  ios: 'Georgia',
+  android: 'serif',
+  default: 'Georgia, "Times New Roman", serif',
+});
 
 /** Rubric / stage direction — not the prayer itself. */
 function isRubricLine(paragraph: string): boolean {

@@ -15,7 +15,6 @@ import {
 import { prayerParagraphs } from '../lib/prayers/prayers';
 import { colors } from '../theme/tokens';
 import { PrayerRopeVisual } from './PrayerRopeVisual';
-import { READING_SERIF } from '../theme/fonts';
 
 const TARGET_STORAGE_KEY = '@orthoDaily/jesusPrayerTarget';
 
@@ -28,7 +27,11 @@ type Props = {
   hintType: { fontSize: number; lineHeight: number };
 };
 
-const PRAYER_SERIF = READING_SERIF;
+const PRAYER_SERIF = Platform.select({
+  ios: 'Georgia',
+  android: 'serif',
+  default: 'Georgia, "Times New Roman", serif',
+});
 
 function pulse(strong = false) {
   if (Platform.OS === 'web') return;
