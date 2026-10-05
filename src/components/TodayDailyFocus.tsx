@@ -11,6 +11,7 @@ import { useLiturgicalVestmentAccent } from '../state/VestmentAccentContext';
 import { iconBadgeSurface, surfaceCard } from '../theme/cards';
 import { colors, radii, typography } from '../theme/tokens';
 import { SectionIcon } from './SectionIcon';
+import { READING_SERIF } from '../theme/fonts';
 
 type Props = {
   gospel: ReadingExcerpt | null;
@@ -19,11 +20,7 @@ type Props = {
   loading?: boolean;
 };
 
-const SCRIPTURE_SERIF = Platform.select({
-  ios: 'Georgia',
-  android: 'serif',
-  default: 'Georgia, "Times New Roman", serif',
-});
+const SCRIPTURE_SERIF = READING_SERIF;
 
 export function TodayDailyFocus({
   gospel,

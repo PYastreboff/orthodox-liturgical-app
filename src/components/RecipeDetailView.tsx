@@ -41,12 +41,9 @@ import { recipeImageUris } from '../lib/recipes/recipeImages';
 import { RemoteImage } from './RemoteImage';
 import { useResolvedColorScheme } from '../theme/useResolvedColorScheme';
 import { colors } from '../theme/tokens';
+import { READING_SERIF } from '../theme/fonts';
 
-const TITLE_SERIF = Platform.select({
-  ios: 'Georgia',
-  android: 'serif',
-  default: 'Georgia, "Times New Roman", serif',
-});
+const TITLE_SERIF = READING_SERIF;
 
 const CONTENT_MAX_WIDTH = 720;
 const CONTENT_PAD = 20;

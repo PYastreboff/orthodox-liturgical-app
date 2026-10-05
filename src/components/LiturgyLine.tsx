@@ -12,12 +12,9 @@ import {
 } from '../lib/liturgy/parseLiturgyLine';
 import type { LiturgyTextLang } from '../lib/liturgy/liturgyViewMode';
 import { colors } from '../theme/tokens';
+import { READING_SERIF } from '../theme/fonts';
 
-const LITURGY_SERIF = Platform.select({
-  ios: 'Georgia',
-  android: 'serif',
-  default: 'Georgia, "Times New Roman", serif',
-});
+const LITURGY_SERIF = READING_SERIF;
 
 type Props = {
   line: string;
