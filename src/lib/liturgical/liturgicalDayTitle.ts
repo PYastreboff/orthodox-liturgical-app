@@ -43,9 +43,13 @@ export function isOrthocalGreatFeastLevel(day: OrthocalDay | null | undefined): 
 
 /** orthocal feast_level ≥ 7 — hero/calendar major-feast styling (red border, pink cell). */
 export function isOrthocalMajorFeastLevel(day: OrthocalDay | null | undefined): boolean {
-  if ((day?.feast_level ?? 0) >= ORTHOCAL_MAJOR_FEAST_LEVEL_MIN) return true;
+  const level = day?.feast_level ?? 0;
+  if (level >= ORTHOCAL_MAJOR_FEAST_LEVEL_MIN) return true;
   const desc = day?.feast_level_description?.toLowerCase().trim() ?? '';
-  return desc.includes('major feast theotokos') || desc.includes('major feast lord');
+  if (desc.includes('major feast theotokos') || desc.includes('major feast lord')) return true;
+  // Some data labels use "great feast" + Theotokos for the major feasts; treat as major for UI.
+  if ((level >= ORTHOCAL_GREAT_FEAST_LEVEL_MIN || desc.includes('great feast')) && (desc.includes('theotokos') || desc.includes('lord'))) return true;
+  return false;
 }
 
 /** orthocal `pascha_distance` for Holy Week (Pascha = 0). */

@@ -18,6 +18,7 @@ import { usePhoneLayout } from '../hooks/usePhoneLayout';
 import { useAppTranslation } from '../i18n/useAppTranslation';
 import type { LiturgicalDayAppearance } from '../lib/calendar/dayAppearance';
 import type { HeroFastChipDisplay } from '../i18n/fastingLabels';
+import { ORTHOCAL_GREAT_FEAST_LEVEL_MIN } from '../lib/liturgical/liturgicalDayTitle';
 import { vestmentHeroGradient } from '../lib/liturgical/vestmentGradient';
 import {
   SERVING_ROLE_ICON_NAMES,
@@ -143,6 +144,10 @@ export function DayHero({
       : isDark
         ? 'rgba(214,58,82,0.28)'
         : 'rgba(214,58,82,0.16)';
+  // Red ring for every great-feast-ranked day (orthocal ≥ 6: Pokrov, Peter & Paul, the
+  // Forerunner's feasts …), not only the level 7–8 major feasts.
+  const showFeastBorder =
+    isMajorFeastDay || (orthocalFeastLevel ?? 0) >= ORTHOCAL_GREAT_FEAST_LEVEL_MIN;
   const majorFeastBorder = isDark ? colors.feastHoverBorderDark : colors.feastBorder;
   const majorFeastTypikonColor = darkHeroSurface ? colors.feastBorder : fg;
   const majorFeastTypikonBackdrop = darkHeroSurface
@@ -196,7 +201,7 @@ export function DayHero({
         styles.heroShell,
         cardElevation(isDark),
         isDark ? styles.heroShellDark : null,
-        isMajorFeastDay
+        showFeastBorder
           ? { borderWidth: 4, borderColor: majorFeastBorder }
           : null,
       ]}
