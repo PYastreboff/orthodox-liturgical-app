@@ -1,27 +1,27 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-10-21T07:39:05.548Z",
+  "updated": "2026-10-21T18:38:36.981Z",
   "streams": [
     {
       "channelId": "stMarysOca",
       "youtubeChannelId": "UCZETfaMpsHKv8PAceNhfNoA",
       "videoId": "_uou56-Z4EM",
       "status": "upcoming",
-      "seenAt": "2026-10-21T07:39:05.548Z"
+      "seenAt": "2026-10-21T18:38:36.981Z"
     },
     {
       "channelId": "stElisabethLive",
       "youtubeChannelId": "UChLvuym-rwjcu2QD-4DNTvw",
-      "videoId": "3xJs1i3fxZ4",
+      "videoId": "kiKmoiWySzU",
       "status": "upcoming",
-      "seenAt": "2026-10-21T07:39:05.548Z"
+      "seenAt": "2026-10-21T18:38:36.981Z"
     },
     {
       "channelId": "holyTrinityCharlotte",
       "youtubeChannelId": "UC_tj74p8QV0nyjx8TjRKlLw",
       "videoId": "ONoaawaO0Qw",
       "status": "upcoming",
-      "seenAt": "2026-10-21T07:39:05.548Z"
+      "seenAt": "2026-10-21T18:38:36.981Z"
     }
   ]
 }
