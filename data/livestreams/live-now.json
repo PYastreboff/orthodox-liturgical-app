@@ -1,41 +1,34 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-17T22:23:05.206Z",
+  "updated": "2026-11-18T04:19:42.518Z",
   "streams": [
     {
       "channelId": "stMarysOca",
       "youtubeChannelId": "UCZETfaMpsHKv8PAceNhfNoA",
       "videoId": "sIEOGYDbE-0",
       "status": "upcoming",
-      "seenAt": "2026-11-17T22:23:05.206Z"
-    },
-    {
-      "channelId": "stElisabethLive",
-      "youtubeChannelId": "UChLvuym-rwjcu2QD-4DNTvw",
-      "videoId": "SzwEgMbYuZo",
-      "status": "upcoming",
-      "seenAt": "2026-11-17T22:23:05.206Z"
+      "seenAt": "2026-11-18T04:19:42.518Z"
     },
     {
       "channelId": "sretensky",
       "youtubeChannelId": "UChehtwB_W8DzPIna__igDxQ",
       "videoId": "WMdTTBUI0Jo",
       "status": "upcoming",
-      "seenAt": "2026-11-17T22:23:05.206Z"
+      "seenAt": "2026-11-18T04:19:42.518Z"
     },
     {
       "channelId": "stSpyridon",
       "youtubeChannelId": "UChjL3efVHBTogdMjCe_d4-g",
       "videoId": "fZ5jYpsX3yM",
       "status": "upcoming",
-      "seenAt": "2026-11-17T22:23:05.206Z"
+      "seenAt": "2026-11-18T04:19:42.518Z"
     },
     {
       "channelId": "holyTrinityCharlotte",
       "youtubeChannelId": "UC_tj74p8QV0nyjx8TjRKlLw",
       "videoId": "ONoaawaO0Qw",
       "status": "upcoming",
-      "seenAt": "2026-11-17T22:23:05.206Z"
+      "seenAt": "2026-11-18T04:19:42.518Z"
     }
   ]
 }
